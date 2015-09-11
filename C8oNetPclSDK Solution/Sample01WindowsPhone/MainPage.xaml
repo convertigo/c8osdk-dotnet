@@ -1,0 +1,34 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="Sample01WindowsPhone.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    shell:SystemTray.IsVisible="True">
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Height="750" Width="450">
+            <StackPanel>
+                <Button Content="Transac1" Tap="Transac1_Tap"/>
+                <TextBlock x:Name="Transac1TextBlock" Foreground="Red" />
+                <Button Content="Transac2" Tap="Transac2_Tap"/>
+                <TextBlock x:Name="Transac2TextBlock" Foreground="Red" />
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+
+</phone:PhoneApplicationPage>

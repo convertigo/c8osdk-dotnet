@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage 
+  xmlns="http://xamarin.com/schemas/2014/forms"
+  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+  xmlns:ctrls="clr-namespace:Sample02XamarinForms;assembly=Sample02XamarinForms"
+  x:Class="Sample02XamarinForms.C8oCallPage">
+
+  <ScrollView
+    Orientation="Vertical">
+
+    <StackLayout>
+
+      <!-- <Entry x:Name="requestableEntry"
+        Placeholder="&lt;project&gt;.&lt;sequence&gt; or &lt;project&gt;.&lt;connector&gt;.&lt;transaction&gt;"/>
+
+      <ListView x:Name="requestableHistory" /> -->
+
+      <ctrls:AutoCompleteEntry x:Name="requestableEntry" />
+
+      <StackLayout x:Name="variables" />
+
+      <Button
+        Text="Call"
+        Clicked="OnCallButtonClicked" />
+
+      <StackLayout x:Name="response">
+        <Label x:Name="responseLabel" />
+      </StackLayout>
+      
+    </StackLayout>
+    
+  </ScrollView>
+  
+</ContentPage>
