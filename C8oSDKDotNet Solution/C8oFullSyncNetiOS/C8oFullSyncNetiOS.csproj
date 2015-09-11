@@ -69,9 +69,9 @@
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\C8oNetPclSDK\C8oNetPclSDK.csproj">
+    <ProjectReference Include="..\C8oNetPclSDK\C8oSDKPCL.csproj">
       <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
-      <Name>C8oNetPclSDK</Name>
+      <Name>C8oSDKPCL</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\C8oFullSyncNet\C8oFullSyncNet.projitems" Label="Shared" Condition="Exists('..\C8oFullSyncNet\C8oFullSyncNet.projitems')" />

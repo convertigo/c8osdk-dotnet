@@ -73,9 +73,9 @@
       <Project>{d7aac1ac-dae9-4d4a-82e9-185d0830daba}</Project>
       <Name>C8oControls</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\C8oNetPclSDK\C8oNetPclSDK.csproj">
+    <ProjectReference Include="..\..\C8oNetPclSDK\C8oSDKPCL.csproj">
       <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
-      <Name>C8oNetPclSDK</Name>
+      <Name>C8oSDKPCL</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\..\BigFileTransfer\BigFileTransfer.projitems" Label="Shared" Condition="Exists('..\..\BigFileTransfer\BigFileTransfer.projitems')" />

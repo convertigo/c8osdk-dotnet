@@ -108,9 +108,9 @@
       <IsAppExtension>false</IsAppExtension>
       <IsWatchApp>false</IsWatchApp>
     </ProjectReference>
-    <ProjectReference Include="..\..\C8oNetPclSDK\C8oNetPclSDK.csproj">
+    <ProjectReference Include="..\..\C8oNetPclSDK\C8oSDKPCL.csproj">
       <Project>{67f9d3a8-f71e-4428-913f-c37ae82cdb24}</Project>
-      <Name>C8oNetPclSDK</Name>
+      <Name>C8oSDKPCL</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sample02XamarinForms\Sample02XamarinForms.csproj">
       <Name>Sample02XamarinForms</Name>

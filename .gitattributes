@@ -84,10 +84,10 @@ C8oSDKDotNet[!!-~]Solution/C8oNetPclSDK/C8oExceptionMessage.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oNetPclSDK/C8oHttpException.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oNetPclSDK/C8oJSONResponseListener.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oNetPclSDK/C8oLogger.cs -text
-C8oSDKDotNet[!!-~]Solution/C8oNetPclSDK/C8oNetPclSDK.csproj -text
 C8oSDKDotNet[!!-~]Solution/C8oNetPclSDK/C8oNetPclSDK.csproj.user -text
 C8oSDKDotNet[!!-~]Solution/C8oNetPclSDK/C8oResponseListener.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oNetPclSDK/C8oRessourceNotFoundException.cs -text
+C8oSDKDotNet[!!-~]Solution/C8oNetPclSDK/C8oSDKPCL.csproj -text
 C8oSDKDotNet[!!-~]Solution/C8oNetPclSDK/C8oSettings.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oNetPclSDK/C8oTranslator.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oNetPclSDK/C8oUnavailableLocalCacheException.cs -text
