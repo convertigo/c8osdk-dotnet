@@ -45,7 +45,12 @@ namespace Convertigo.SDK.FullSync.Enums
 
         public static readonly FullSyncRequestable VIEW = new FullSyncRequestable("view", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
         {
-            return fullSyncInterface.HandleGetViewRequest(fullSyncDatabase, parameters);
+            // Gets the design doc parameter value
+            String ddocParameterValue = C8oUtils.PeekParameterStringValue(parameters, FullSyncGetViewParameter.DDOC.name, false);
+            // Gets the view name parameter value
+            String viewParameterValue = C8oUtils.PeekParameterStringValue(parameters, FullSyncGetViewParameter.VIEW.name, false);
+
+            return fullSyncInterface.HandleGetViewRequest(fullSyncDatabase, ddocParameterValue, viewParameterValue, parameters);
         });
 
         public static readonly FullSyncRequestable SYNC = new FullSyncRequestable("sync", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>

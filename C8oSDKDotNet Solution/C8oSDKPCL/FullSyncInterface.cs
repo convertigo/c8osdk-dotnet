@@ -114,7 +114,7 @@ namespace Convertigo.SDK.FullSync
 
         //*** GetView ***//
 
-        public abstract Object HandleGetViewRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters);
+        public abstract Object HandleGetViewRequest(String fullSyncDatatbaseName, String ddocParameterValue, String viewParameterValue, Dictionary<String, Object> parameters);
 
         //*** Sync, ReplicatePull, ReplicatePush ***//
 

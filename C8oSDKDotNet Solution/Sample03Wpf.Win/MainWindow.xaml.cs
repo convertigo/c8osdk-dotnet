@@ -87,5 +87,16 @@ namespace Sample03Wpf.Win
         {
             c8o.Call("fs://.all", new Dictionary<String, Object>(), jsonListener);
         }
+
+        private void CallButtonFsViewClick(object sender, RoutedEventArgs e)
+        {
+            Dictionary<string, object> data = new Dictionary<string, object>();
+
+            data.Add(FullSyncGetViewParameter.DDOC.name, "ddoc");
+            data.Add(FullSyncGetViewParameter.VIEW.name, "ifdata");
+            // data.Add("key", "\"fix\"");
+
+            c8o.Call("fs://.view", data, jsonListener);
+        }
     }
 }

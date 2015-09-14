@@ -315,18 +315,10 @@ namespace Convertigo.SDK.FullSync
 
         //*** GetView ***//
 
-        public override Object HandleGetViewRequest(String fullSyncDatabaseName, Dictionary<String, Object> parameters)
+        public override Object HandleGetViewRequest(String fullSyncDatabaseName, String ddocParameterValue, String viewParameterValue, Dictionary<String, Object> parameters)
         {
             FullSyncDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
             Database database = fullSyncDatabase.GetDatabase();
-            // Gets the view name parameter value
-            String viewParameterValue = C8oUtils.GetParameterStringValue(parameters, FullSyncGetViewParameter.VIEW.name, false);
-            if (viewParameterValue == null)
-            {
-                // Error
-            }
-            // Gets the design doc parameter value
-            String ddocParameterValue = C8oUtils.GetParameterStringValue(parameters, FullSyncGetViewParameter.DDOC.name, false);
 
             // Gets the view depending to its programming language (Javascript / Java)
             Couchbase.Lite.View view;

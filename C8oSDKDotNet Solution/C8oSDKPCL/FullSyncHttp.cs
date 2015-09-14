@@ -263,9 +263,14 @@ namespace Convertigo.SDK
             return execute(request);
         }
 
-        public override Object HandleGetViewRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters)
+        public override Object HandleGetViewRequest(String fullSyncDatatbaseName, String ddocParameterValue, String viewParameterValue, Dictionary<String, Object> parameters)
         {
-            throw new NotImplementedException();
+            String uri = handleQuery(getDocumentUrl(fullSyncDatatbaseName, "_design/" + ddocParameterValue) + "/_view/" + viewParameterValue, parameters);
+
+            HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
+            request.Method = "GET";
+
+            return execute(request);
         }
 
         public override Object HandleSyncRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters, Listeners.C8oResponseListener c8oResponseListener)
