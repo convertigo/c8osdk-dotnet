@@ -40,7 +40,7 @@ namespace Sample03Wpf.Win
 
             String endpoint = "http://devus.twinsoft.fr:18080/convertigo/projects/couchDB";
             C8oSettings c8oSettings = new C8oSettings();
-            c8oSettings.fullSyncInterface = new FullSyncHttp("http://localhost:5984");
+            c8oSettings.fullSyncInterface = new FullSyncHttp("http://localhost:5984", "admin", "admin");
             c8oSettings.defaultFullSyncDatabaseName = "fsdebug_fullsync";
 
             c8o = new C8o(endpoint, c8oSettings);
@@ -76,8 +76,16 @@ namespace Sample03Wpf.Win
 
             data.Add("_id", "post");
             data.Add("data", "ok");
+            data.Add(FullSyncPostDocumentParameter.POLICY.name, FullSyncPolicy.MERGE.value);
+            data.Add("sub.data2", "good");
+            data.Add("sub.data4", "great!");
 
             c8o.Call("fs://.post", data, jsonListener);
+        }
+
+        private void CallButtonFsAllDocsClick(object sender, RoutedEventArgs e)
+        {
+            c8o.Call("fs://.all", new Dictionary<String, Object>(), jsonListener);
         }
     }
 }

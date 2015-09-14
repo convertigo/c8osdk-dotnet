@@ -26,19 +26,11 @@ namespace Convertigo.SDK
         public FullSyncHttp(String serverUrl, String username = null, String password = null)
         {
             this.serverUrl = serverUrl;
-            /*
-            if (username != null && !username.isEmpty() && password != null && !password.isEmpty())
+
+            if (username != null && !String.IsNullOrWhiteSpace(username) && password != null && !String.IsNullOrWhiteSpace(password))
             {
-                try
-                {
-                    authBasicHeader = new BasicScheme().authenticate(new UsernamePasswordCredentials(username, password), forAuth, null);
-                }
-                catch (AuthenticationException e)
-                {
-                    //TODO:
-                }
+                authBasicHeader = "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(username + ":" + password));
             }
-             */
         }
 
         public override void Init(C8o c8o, C8oSettings c8oSettings, String endpointFirstPart)
@@ -64,7 +56,7 @@ namespace Convertigo.SDK
             }
         }
 
-        public override Object HandleGetDocumentRequest(String fullSyncDatatbaseName, String docidParameterValue, Dictionary<String, Object> parameters)
+        public override Object HandleGetDocumentRequest(String fullSyncDatatbaseName, String docidParameterValue, Dictionary<String, Object> parameters = null)
         {
             String uri = handleQuery(getDocumentUrl(fullSyncDatatbaseName, docidParameterValue), parameters);
 
@@ -88,22 +80,18 @@ namespace Convertigo.SDK
 
         public override Object handlePostDocumentRequest(String fullSyncDatatbaseName, FullSyncPolicy fullSyncPolicy, Dictionary<String, Object> parameters)
         {
-            JObject postData = new JObject();
             Dictionary<String, Object> options = new Dictionary<String, Object>();
 
-            foreach (KeyValuePair<String, Object> kvp in parameters)
+            foreach (String key in parameters.Keys.ToList())
             {
-                Match isUse = reFsUse.Match(kvp.Key);
+                Match isUse = reFsUse.Match(key);
                 if (isUse.Success)
                 {
                     if (isUse.Groups[1].Success)
                     {
-                        options.Add(isUse.Groups[1].Value, kvp.Value);
+                        options.Add(isUse.Groups[1].Value, parameters[key]);
                     }
-                }
-                else
-                {
-                    postData.Add(kvp.Key, kvp.Value.ToString());
+                    parameters.Remove(key);
                 }
             }
 
@@ -119,13 +107,160 @@ namespace Convertigo.SDK
             {
                 subkeySeparatorParameterValue = ".";
             }
+
+            JObject postData = new JObject();
+
+            foreach (KeyValuePair<String, Object> kvp in parameters)
+            {
+                JObject obj = postData;
+                String key = kvp.Key;
+                String[] paths = key.Split(subkeySeparatorParameterValue.ToCharArray());
+
+                if (paths.Length > 1)
+                {
+
+                    for (int i = 0; i < paths.Length - 1; i++)
+                    {
+                        String path = paths[i];
+                        if (obj[path] is JObject)
+                        {
+                            obj = obj[path] as JObject;
+                        }
+                        else
+                        {
+                            obj = (obj[path] = new JObject()) as JObject;
+                        }
+                    }
+                    
+                    key = paths[paths.Length - 1];
+                }
+                obj[key] = JToken.FromObject(kvp.Value);
+            }
+
+            postData = applyPolicy(fullSyncDatatbaseName, postData, fullSyncPolicy);
             
             return execute(request, postData);
         }
 
+        private JObject applyPolicy(String fullSyncDatatbaseName, JObject document, FullSyncPolicy fullSyncPolicy)
+        {
+            if (fullSyncPolicy == FullSyncPolicy.NONE)
+            {
+
+            }
+            else if (fullSyncPolicy == FullSyncPolicy.CREATE)
+            {
+                document.Remove("_id");
+                document.Remove("_rev");
+            }
+            else
+            {
+                String docid = document.GetValue("_id").ToString();
+
+                if (docid != null)
+                {
+                    if (fullSyncPolicy == FullSyncPolicy.OVERRIDE)
+                    {
+                        String rev = getDocumentRev(fullSyncDatatbaseName, docid);
+
+                        if (rev != null)
+                        {
+                            document["_rev"] = rev;
+                        }
+                    }
+                    else if (fullSyncPolicy == FullSyncPolicy.MERGE)
+                    {
+                        JObject dbDocument = HandleGetDocumentRequest(fullSyncDatatbaseName, docid) as JObject;
+
+                        if (dbDocument.GetValue("_id") != null)
+                        {
+                            document.Remove("_rev");
+                            merge(dbDocument, document);
+                            document = dbDocument;
+                        }
+                    }
+                }
+            }
+
+            document.Remove("_c8oMeta");
+
+            return document;
+        }
+
+        private void merge(JObject jsonTarget, JObject jsonSource)
+        {
+            foreach (KeyValuePair<String, JToken> kvp in jsonSource)
+            {
+                try
+                {
+                    JToken targetValue = jsonTarget.GetValue(kvp.Key);
+                    if (targetValue != null)
+                    {
+                        if (targetValue is JObject && kvp.Value is JObject)
+                        {
+                            merge(targetValue as JObject, kvp.Value as JObject);
+                        }
+                        else if (targetValue is JArray && kvp.Value is JArray)
+                        {
+                            merge(targetValue as JArray, kvp.Value as JArray);
+                        }
+                        else
+                        {
+                            jsonTarget.Add(kvp.Key, kvp.Value);
+                        }
+                    }
+                    else
+                    {
+                        jsonTarget.Add(kvp.Key, kvp.Value);
+                    }
+                }
+                catch (Exception e)
+                {
+                    //TODO: handle
+                }
+            }
+        }
+
+        private void merge(JArray targetArray, JArray sourceArray)
+        {
+		    int targetSize = targetArray.Count;
+		    int sourceSize = sourceArray.Count;
+		
+		    for (int i = 0; i < sourceSize; i++)
+            {
+			    try
+                {
+				    JToken targetValue = targetSize > i ? targetArray[i] : null;
+				    JToken sourceValue = sourceArray[i];
+				    if (sourceValue != null && targetValue != null) {
+					    if (targetValue is JObject && sourceValue is JObject) {
+						    merge(targetValue as JObject, sourceValue as JObject);
+					    }
+					    if (targetValue is JArray && sourceValue is JArray) {
+                            merge(targetValue as JArray, sourceValue as JArray);
+					    }
+					    else {
+						    targetArray[i] = sourceValue;
+					    }
+				    }
+				    else if (sourceValue != null && targetValue == null) {
+					    targetArray.Add(sourceValue);
+				    }
+			    } catch (Exception e) {
+				    //TODO: handle
+				
+			    }
+		    }
+        }
+
         public override Object HandleAllDocumentsRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters)
         {
-            throw new NotImplementedException();
+            String uri = handleQuery(getDocumentUrl(fullSyncDatatbaseName, "_all_docs"), parameters);
+
+            HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
+            request.Method = "GET";
+
+            return execute(request);
         }
 
         public override Object HandleGetViewRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters)
@@ -162,19 +297,7 @@ namespace Convertigo.SDK
         {
             throw new NotImplementedException();
         }
-        /*
-        private String assertParameter(Dictionary<String, Object> parameters, String parameter)
-        {
-            String value = C8oUtils.GetParameterStringValue(parameters, parameter, false);
 
-            if (value == null)
-            {
-                throw new ArgumentException("missing the '" + parameter + "' parameter");
-            }
-
-            return value;
-        }
-        */
         private Dictionary<String, Object> handleRev(String fullSyncDatatbaseName, String docid, Dictionary<String, Object> parameters)
         {
             String rev = C8oUtils.GetParameterStringValue(parameters, FullSyncDeleteDocumentParameter.REV.name, false);
@@ -245,7 +368,7 @@ namespace Convertigo.SDK
         private String handleQuery(String url, Dictionary<String, Object> query)
         {
 		    StringBuilder uri = new StringBuilder(url);
-		    if (query != null || query.Count > 0)
+		    if (query != null && query.Count > 0)
             {
                 uri.Append("?");
                 foreach (KeyValuePair<String, Object> kvp in query)
@@ -266,7 +389,7 @@ namespace Convertigo.SDK
 
             if (authBasicHeader != null)
             {
-
+                request.Headers["Authorization"] = authBasicHeader;
             }
 
             if (document != null)

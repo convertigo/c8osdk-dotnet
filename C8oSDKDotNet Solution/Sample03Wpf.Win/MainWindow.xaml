@@ -3,11 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="171*"/>
+            <RowDefinition Height="148*"/>
+        </Grid.RowDefinitions>
         <Button x:Name="CallButton" Content="Call" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="CallButtonClick"/>
-        <TextBlock x:Name="OutputArea" HorizontalAlignment="Left" Margin="10,35,0,0" TextWrapping="Wrap" Text="..." VerticalAlignment="Top" Height="274" Width="497"/>
+        <TextBlock x:Name="OutputArea" TextWrapping="Wrap" Text="..." Margin="10,35,10,0" Grid.RowSpan="2"/>
         <Button x:Name="CallButtonFsDoc" Content="FS Doc" HorizontalAlignment="Left" Margin="90,10,0,0" VerticalAlignment="Top" Width="75" Click="CallButtonFsDocClick"/>
         <Button x:Name="CallButtonFsDeleteDoc" Content="FS Del" HorizontalAlignment="Left" Margin="170,10,0,0" VerticalAlignment="Top" Width="75" Click="CallButtonFsDeleteDocClick"/>
         <Button x:Name="CallButtonFsPostDoc" Content="FS Post" HorizontalAlignment="Left" Margin="250,10,0,0" VerticalAlignment="Top" Width="75" Click="CallButtonFsPostDocClick"/>
+        <Button x:Name="CallButtonFsAllDocs" Content="FS AllDocs" HorizontalAlignment="Left" Margin="330,10,0,0" VerticalAlignment="Top" Width="75" Click="CallButtonFsAllDocsClick"/>
 
     </Grid>
 </Window>
