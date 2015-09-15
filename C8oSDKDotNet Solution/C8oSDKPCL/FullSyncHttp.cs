@@ -280,12 +280,59 @@ namespace Convertigo.SDK
 
         public override Object HandleReplicatePullRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters, Listeners.C8oResponseListener c8oResponseListener)
         {
-            throw new NotImplementedException();
+            JObject source = new JObject();
+            source.Add("url", c8o.GetEndpointPart(1) + "/fullsync" + '/' + fullSyncDatatbaseName);
+
+            CookieCollection cookies = c8o.GetCookies();
+
+            if (cookies.Count > 0)
+            {
+                JObject headers = new JObject();
+                StringBuilder cookieHeader = new StringBuilder();
+
+                foreach (Cookie cookie in c8o.GetCookies())
+                {
+                    cookieHeader.Append(cookie.Name).Append("=").Append(cookie.Value).Append("; ");
+                }
+
+                cookieHeader.Remove(cookieHeader.Length - 2, 2);
+
+                headers.Add("Cookie", cookieHeader.ToString());
+                source.Add("headers", headers);
+            }
+
+            return postReplicate(source , fullSyncDatatbaseName + "_device", true, false);
         }
 
         public override Object HandleReplicatePushRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters, Listeners.C8oResponseListener c8oResponseListener)
         {
             throw new NotImplementedException();
+        }
+
+        private JObject postReplicate(JToken source, JToken target, bool createTarget, bool continuous, bool cancel = false, JArray docIds = null, String proxy = null)
+        {
+            HttpWebRequest request = HttpWebRequest.CreateHttp(serverUrl + "/_replicate");
+            request.Method = "POST";
+
+            JObject json = new JObject();
+
+            json.Add("source", source);
+            json.Add("target", target);
+            json.Add("create_target", createTarget);
+            json.Add("continuous", continuous);
+            json.Add("cancel", cancel);
+            
+            if (docIds != null)
+            {
+                json.Add("doc_ids", docIds);
+            }
+
+            if (proxy != null)
+            {
+                json.Add("proxy", proxy);
+            }
+
+            return execute(request, json);
         }
 
         public override Object HandleResetDatabaseRequest(String fullSyncDatatbaseName)
@@ -355,7 +402,7 @@ namespace Convertigo.SDK
                 throw new ArgumentException("blank 'db' not allowed");
 		    }
             db = WebUtility.UrlEncode(db);
-		    return serverUrl + '/' + db;
+		    return serverUrl + '/' + db + "_device";
 	    }
 	
 	    private String getDocumentUrl(String db, String docid)

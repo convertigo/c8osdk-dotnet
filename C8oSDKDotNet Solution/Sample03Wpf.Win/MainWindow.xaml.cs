@@ -38,7 +38,7 @@ namespace Sample03Wpf.Win
                 });
             });
 
-            String endpoint = "http://devus.twinsoft.fr:18080/convertigo/projects/couchDB";
+            String endpoint = "http://devus.twinsoft.fr:18080/convertigo/projects/FsDebug";
             C8oSettings c8oSettings = new C8oSettings();
             c8oSettings.fullSyncInterface = new FullSyncHttp("http://localhost:5984", "admin", "admin");
             c8oSettings.defaultFullSyncDatabaseName = "fsdebug_fullsync";
@@ -48,7 +48,8 @@ namespace Sample03Wpf.Win
 
         private void CallButtonClick(object sender, RoutedEventArgs e)
         {
-            c8o.Call(".CouchDB.GetServerInfo", new Dictionary<string,object>(), jsonListener);
+            //c8o.Call("..GetServerInfo", new Dictionary<string,object>(), jsonListener);
+            c8o.Call(".Set42", new Dictionary<string, object>(), jsonListener);
         }
 
         private void CallButtonFsDocClick(object sender, RoutedEventArgs e)
@@ -90,13 +91,30 @@ namespace Sample03Wpf.Win
 
         private void CallButtonFsViewClick(object sender, RoutedEventArgs e)
         {
-            Dictionary<string, object> data = new Dictionary<string, object>();
+            Dictionary<String, Object> data = new Dictionary<String, Object>();
 
             data.Add(FullSyncGetViewParameter.DDOC.name, "ddoc");
             data.Add(FullSyncGetViewParameter.VIEW.name, "ifdata");
             // data.Add("key", "\"fix\"");
 
             c8o.Call("fs://.view", data, jsonListener);
+        }
+
+        private void CallButtonFsPullClick(object sender, RoutedEventArgs e)
+        {
+            Dictionary<String, Object> data = new Dictionary<String, Object>();
+
+            c8o.Call("fs://retaildb.replicate_pull", data, jsonListener);
+        }
+
+        private void CallButtonFsPushClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CallButtonFsSyncClick(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
