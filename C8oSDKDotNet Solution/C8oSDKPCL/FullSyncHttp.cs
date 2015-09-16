@@ -89,7 +89,7 @@ namespace Convertigo.SDK
                 {
                     if (isUse.Groups[1].Success)
                     {
-                        options.Add(isUse.Groups[1].Value, parameters[key]);
+                        options[isUse.Groups[1].Value] = parameters[key];
                     }
                     parameters.Remove(key);
                 }
@@ -155,7 +155,7 @@ namespace Convertigo.SDK
             }
             else
             {
-                String docid = document.GetValue("_id").ToString();
+                String docid = document["_id"].ToString();
 
                 if (docid != null)
                 {
@@ -172,7 +172,7 @@ namespace Convertigo.SDK
                     {
                         JObject dbDocument = HandleGetDocumentRequest(fullSyncDatatbaseName, docid) as JObject;
 
-                        if (dbDocument.GetValue("_id") != null)
+                        if (dbDocument["_id"] != null)
                         {
                             document.Remove("_rev");
                             merge(dbDocument, document);
@@ -193,7 +193,7 @@ namespace Convertigo.SDK
             {
                 try
                 {
-                    JToken targetValue = jsonTarget.GetValue(kvp.Key);
+                    JToken targetValue = jsonTarget[kvp.Key];
                     if (targetValue != null)
                     {
                         if (targetValue is JObject && kvp.Value is JObject)
@@ -206,12 +206,12 @@ namespace Convertigo.SDK
                         }
                         else
                         {
-                            jsonTarget.Add(kvp.Key, kvp.Value);
+                            jsonTarget[kvp.Key] = kvp.Value;
                         }
                     }
                     else
                     {
-                        jsonTarget.Add(kvp.Key, kvp.Value);
+                        jsonTarget[kvp.Key] = kvp.Value;
                     }
                 }
                 catch (Exception e)
@@ -281,7 +281,7 @@ namespace Convertigo.SDK
         public override Object HandleReplicatePullRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters, Listeners.C8oResponseListener c8oResponseListener)
         {
             JObject source = new JObject();
-            source.Add("url", c8o.GetEndpointPart(1) + "/fullsync" + '/' + fullSyncDatatbaseName);
+            source["url"] = c8o.GetEndpointPart(1) + "/fullsync" + '/' + fullSyncDatatbaseName + '/';
 
             CookieCollection cookies = c8o.GetCookies();
 
@@ -297,11 +297,11 @@ namespace Convertigo.SDK
 
                 cookieHeader.Remove(cookieHeader.Length - 2, 2);
 
-                headers.Add("Cookie", cookieHeader.ToString());
-                source.Add("headers", headers);
+                headers["Cookie"] = cookieHeader.ToString();
+                source["headers"] = headers;
             }
 
-            return postReplicate(source , fullSyncDatatbaseName + "_device", true, false);
+            return postReplicate(c8oResponseListener, source, fullSyncDatatbaseName + "_device", true, false, false, null, null, true);
         }
 
         public override Object HandleReplicatePushRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters, Listeners.C8oResponseListener c8oResponseListener)
@@ -309,30 +309,120 @@ namespace Convertigo.SDK
             throw new NotImplementedException();
         }
 
-        private JObject postReplicate(JToken source, JToken target, bool createTarget, bool continuous, bool cancel = false, JArray docIds = null, String proxy = null)
+        private JObject postReplicate(Listeners.C8oResponseListener c8oResponseListener, JToken source, JToken target, bool createTarget, bool continuous, bool cancel, JArray docIds, String proxy, bool isPull)
         {
             HttpWebRequest request = HttpWebRequest.CreateHttp(serverUrl + "/_replicate");
             request.Method = "POST";
 
             JObject json = new JObject();
+            String sourceId = (source is JObject && source["url"] != null ? source["url"] : source).ToString();
+            String targetId = (target is JObject && target["url"] != null ? target["url"] : target).ToString();
 
-            json.Add("source", source);
-            json.Add("target", target);
-            json.Add("create_target", createTarget);
-            json.Add("continuous", continuous);
-            json.Add("cancel", cancel);
+            json["source"] = source;
+            json["target"] = target;
+            json["create_target"] = createTarget;
+            json["continuous"] = false;
+            json["cancel"] = true;
             
             if (docIds != null)
             {
-                json.Add("doc_ids", docIds);
+                json["doc_ids"] = docIds;
             }
 
             if (proxy != null)
             {
-                json.Add("proxy", proxy);
+                json["proxy"] = proxy;
             }
 
-            return execute(request, json);
+            JObject response = execute(request, json);
+            c8o.Log(C8oLogLevel.WARN, response.ToString());
+
+            if (cancel)
+            {
+                return response;
+            }
+
+            json["cancel"] = false;
+
+            request = HttpWebRequest.CreateHttp(serverUrl + "/_replicate");
+            request.Method = "POST";
+            /*
+            response = execute(request, json);
+            c8o.Log(C8oLogLevel.WARN, response.ToString());
+
+            String localId = response["_local_id"].ToString();
+            localId = localId.Substring(0, localId.IndexOf('+'));
+
+            for (int i = 0; i < 1000; i++)
+            {
+                request = HttpWebRequest.CreateHttp(getDatabaseUrl(fullSyncDatatbaseName) + "/_local/" + localId);
+                c8o.Log(C8oLogLevel.WARN, request.RequestUri.ToString());
+                request.Method = "GET";
+
+                response = execute(request);
+                c8o.Log(C8oLogLevel.WARN, response.ToString());
+            }
+            */
+            response = null;
+
+            JObject progress = new JObject();
+            progress["direction"] = isPull ? "pull" : "push";
+            progress["ok"] = true;
+            progress["status"] = "Active";
+
+            Task.Run(async () =>
+            {
+                long checkPoint_Interval = 1000;
+
+                while (response == null)
+                {
+                    await Task.Delay(TimeSpan.FromMilliseconds(checkPoint_Interval));
+                    
+                    if (response != null)
+                    {
+                        break;
+                    }
+
+                    HttpWebRequest req = HttpWebRequest.CreateHttp(serverUrl + "/_active_tasks");
+                    req.Method = "GET";
+
+                    JObject res = execute(req);
+                    c8o.Log(C8oLogLevel.WARN, res.ToString());
+
+                    JObject task = null;
+                    foreach (JToken item in res["item"])
+                    {
+                        if (item["target"].ToString() == targetId && item["source"].ToString() == sourceId)
+                        {
+                            task = item as JObject;
+                            break;
+                        }
+                    }
+
+                    if (task != null)
+                    {
+                        checkPoint_Interval = (long) task["checkpoint_interval"].ToObject(typeof(long));
+
+                        progress["total"] = task["source_seq"];
+                        progress["current"] = task["revisions_checked"];
+                        progress["taskInfo"] = task.ToString();
+
+                        HandleFullSyncResponse(progress, new Dictionary<string, object>(), c8oResponseListener);
+
+                        c8o.Log(C8oLogLevel.WARN, progress.ToString());
+                    }
+                }
+            });
+
+            response = execute(request, json);
+            response.Remove("_c8oMeta");
+
+            progress["total"] = response["source_last_seq"];
+            progress["current"] = response["source_last_seq"];
+            progress["taskInfo"] = response.ToString();
+            progress["status"] = "Stopped";
+                
+            return response;
         }
 
         public override Object HandleResetDatabaseRequest(String fullSyncDatatbaseName)
@@ -358,7 +448,7 @@ namespace Convertigo.SDK
                 rev = getDocumentRev(fullSyncDatatbaseName, docid);
                 if (rev != null)
                 {
-                    parameters.Add(FullSyncDeleteDocumentParameter.REV.name, getDocumentRev(fullSyncDatatbaseName, docid));
+                    parameters[FullSyncDeleteDocumentParameter.REV.name] = getDocumentRev(fullSyncDatatbaseName, docid);
                 }
             }
             return parameters;
@@ -370,10 +460,10 @@ namespace Convertigo.SDK
             String rev = null;
             try
             {
-                JObject _c8oMeta = head.GetValue("_c8oMeta") as JObject;
-                if ("success" == _c8oMeta.GetValue("status").ToString())
+                JObject _c8oMeta = head["_c8oMeta"] as JObject;
+                if ("success" == _c8oMeta["status"].ToString())
                 {
-                    rev = (_c8oMeta.GetValue("headers") as JObject).GetValue("ETag").ToString();
+                    rev = (_c8oMeta["headers"] as JObject)["ETag"].ToString();
                     rev = rev.Substring(1, rev.Length - 2);
                 }
             }
@@ -509,11 +599,11 @@ namespace Convertigo.SDK
                     json = new JObject();
                     try
                     {
-                        json.Add("item", JArray.Parse(entityContent));
+                        json["item"] = JArray.Parse(entityContent);
                     }
                     catch (Exception e2)
                     {
-                        json.Add("data", entityContent);
+                        json["data"] = entityContent;
                     }
                 }
             }
@@ -525,7 +615,7 @@ namespace Convertigo.SDK
                 {
                     StreamReader streamReader = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding(charset));
                     String entityContent = streamReader.ReadToEnd();
-                    json.Add("data", entityContent);
+                    json["data"] = entityContent;
                 }
                 else
                 {
@@ -541,7 +631,7 @@ namespace Convertigo.SDK
             JObject c8oMeta = new JObject();
 			
 			int code = (int) response.StatusCode;
-			c8oMeta.Add("statusCode", code);
+			c8oMeta["statusCode"] = code;
 			
 			String status =
 					code < 100 ? "unknown" :
@@ -550,20 +640,20 @@ namespace Convertigo.SDK
 					code < 400 ? "redirection" :
 					code < 500 ? "client error" :
 					code < 600 ? "server error" : "unknown";
-			c8oMeta.Add("status", status);
+			c8oMeta["status"] = status;
 			
-			c8oMeta.Add("reasonPhrase", response.StatusDescription);
+			c8oMeta["reasonPhrase"] = response.StatusDescription;
 			
 			JObject headers = new JObject();
 
             foreach (String name in response.Headers.AllKeys)
             {
-                headers.Add(name, response.Headers[name]);
+                headers[name] = response.Headers[name];
             }
 
-            c8oMeta.Add("headers", headers);
+            c8oMeta["headers"] = headers;
 			
-			json.Add("_c8oMeta", c8oMeta);
+			json["_c8oMeta"] = c8oMeta;
 
             response.Dispose();
 

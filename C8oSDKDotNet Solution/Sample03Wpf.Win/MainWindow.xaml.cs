@@ -56,7 +56,7 @@ namespace Sample03Wpf.Win
         {
             Dictionary<string, object> data = new Dictionary<string, object>();
 
-            data.Add(FullSyncGetDocumentParameter.DOCID.name, "fix");
+            data[FullSyncGetDocumentParameter.DOCID.name] = "fix";
 
             c8o.Call("fs://.get", data, jsonListener);
         }
@@ -66,7 +66,7 @@ namespace Sample03Wpf.Win
             
             Dictionary<string, object> data = new Dictionary<string, object>();
 
-            data.Add(FullSyncDeleteDocumentParameter.DOCID.name, "del");
+            data[FullSyncDeleteDocumentParameter.DOCID.name] = "del";
 
             c8o.Call("fs://.delete", data, jsonListener);
         }
@@ -75,11 +75,11 @@ namespace Sample03Wpf.Win
         {
             Dictionary<string, object> data = new Dictionary<string, object>();
 
-            data.Add("_id", "post");
-            data.Add("data", "ok");
-            data.Add(FullSyncPostDocumentParameter.POLICY.name, FullSyncPolicy.MERGE.value);
-            data.Add("sub.data2", "good");
-            data.Add("sub.data4", "great!");
+            data["_id"] = "post";
+            data["data"] = "ok";
+            data[FullSyncPostDocumentParameter.POLICY.name] = FullSyncPolicy.MERGE.value;
+            data["sub.data2"] = "good";
+            data["sub.data4"] = "great!";
 
             c8o.Call("fs://.post", data, jsonListener);
         }
@@ -93,9 +93,9 @@ namespace Sample03Wpf.Win
         {
             Dictionary<String, Object> data = new Dictionary<String, Object>();
 
-            data.Add(FullSyncGetViewParameter.DDOC.name, "ddoc");
-            data.Add(FullSyncGetViewParameter.VIEW.name, "ifdata");
-            // data.Add("key", "\"fix\"");
+            data[FullSyncGetViewParameter.DDOC.name] = "ddoc";
+            data[FullSyncGetViewParameter.VIEW.name] = "ifdata";
+            // data["key", "\"fix\"");
 
             c8o.Call("fs://.view", data, jsonListener);
         }
