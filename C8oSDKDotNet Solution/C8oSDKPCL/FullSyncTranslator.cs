@@ -33,7 +33,7 @@ namespace Convertigo.SDK
             XElement couchdb_output = new XElement(XML_KEY_COUCHDB_OUTPUT);
 
             // Translates the JSON document
-             C8oTranslator.JsonValueToXml(json, xmlDocument, couchdb_output);
+             C8oTranslator.JsonToXml(json, couchdb_output);
             rootElement.Add(couchdb_output);
             return xmlDocument;
         }
@@ -52,7 +52,22 @@ namespace Convertigo.SDK
 
             foreach (KeyValuePair<String, Object> item in dict)
             {
-                str += item.Key + " : " + item.Value + ", ";
+                String valueStr;
+                if (item.Value is IDictionary<String, Object>)
+                {
+                    valueStr = DictionaryToString(item.Value as IDictionary<String, Object>);
+                }
+                else if (item.Value is IList<Object>)
+                {
+                    valueStr = ListToString(item.Value as IList<Object>);
+                }
+                else
+                {
+                    valueStr = item.Value.ToString();
+                }
+
+
+                str += item.Key + " : " + valueStr + ", ";
             }
 
             if (dict.Count > 0)
@@ -61,6 +76,24 @@ namespace Convertigo.SDK
             }
 
             str += " }";
+
+            return str;
+        }
+
+        public static String ListToString(IList<Object> list)
+        {
+            String str = "[";
+            foreach (Object item in list)
+            {
+                str = str + item.ToString() + ", ";
+            }
+
+            if (list.Count > 0)
+            {
+                str = str.Remove(str.Length - 2);
+            }
+
+            str = str + "]";
 
             return str;
         }

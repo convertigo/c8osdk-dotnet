@@ -65,7 +65,16 @@ namespace Convertigo.SDK.FullSync
             {
                 throw new ArgumentException(C8oExceptionMessage.InvalidParameterValue(C8o.ENGINE_PARAMETER_PROJECT, C8oExceptionMessage.UnknownValue("fullSync requestable", fullSyncRequestableValue)));
             }
-            Object response = fullSyncRequestable.HandleFullSyncRequest(this, databaseName, data, c8oResponseListener);
+
+            Object response;
+            try
+            {
+                response = fullSyncRequestable.HandleFullSyncRequest(this, databaseName, data, c8oResponseListener);
+            }
+            catch (Exception e)
+            {
+                throw new C8oException(C8oExceptionMessage.ToDo(), e);
+            }
             if (response == null)
             {
                 throw new C8oException(C8oExceptionMessage.couchNullResult());

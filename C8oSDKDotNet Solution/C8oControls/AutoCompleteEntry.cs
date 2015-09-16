@@ -129,11 +129,12 @@ namespace C8oControls
                     {
                         this.history.Remove(value);
                     }
-                    if (this.history.Count < HISTORY_LIMIT)
+                    if (this.history.Count >= HISTORY_LIMIT)
                     {
-                        this.history.Add(value);
-                        this.SaveHistory();
+                        this.history.RemoveAt(0);
                     }
+                    this.history.Add(value);
+                    this.SaveHistory();
                 }
             }
         }
@@ -179,6 +180,16 @@ namespace C8oControls
             }
 
             List<String> filteredHistory = new List<String>();
+
+            //for (int i = this.history.Count - 1; i >= 0; i++)
+            //{
+            //    String element = this.history.ElementAt<String>(i);
+            //    if (element.StartsWith(value))
+            //    {
+            //        filteredHistory.Add(element);
+            //    }
+            //}
+
             foreach (String element in this.history)
             {
                 if (element.StartsWith(value))
@@ -186,6 +197,8 @@ namespace C8oControls
                     filteredHistory.Add(element);
                 }
             }
+
+            filteredHistory.Reverse();
 
             this.listView.ItemsSource = filteredHistory;
             int count = this.Count();

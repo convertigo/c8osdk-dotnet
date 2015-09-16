@@ -2,7 +2,7 @@
 <ContentPage 
   xmlns="http://xamarin.com/schemas/2014/forms"
   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-  xmlns:ctrls="clr-namespace:Sample02XamarinForms;assembly=Sample02XamarinForms"
+  xmlns:ctrls="clr-namespace:C8oControls;assembly=C8oControls"
   x:Class="Sample02XamarinForms.C8oCallPage">
 
   <ScrollView
@@ -23,7 +23,12 @@
         Text="Call"
         Clicked="OnCallButtonClicked" />
 
+      <Button
+        Text="Refresh"
+        Clicked="OnRefreshButtonClicked" />
+
       <StackLayout x:Name="response">
+        <Label x:Name="counterLabel" />
         <Label x:Name="responseLabel" />
       </StackLayout>
       

@@ -24,6 +24,8 @@ namespace Convertigo.SDK.FullSync
 
         //*** Constants ***//
 
+        private static readonly String JS_VIEW_COMPILER_TYPE = "Couchbase.Lite.Listener.JSViewCompiler";
+
         private static readonly String ATTACHMENT_INTERNAL_TYPE = "Couchbase.Lite.Internal.AttachmentInternal";
         private static readonly String ATTACHMENT_INTERNAL_PROPERTY_DATABASE = "Database";
         private static readonly String ATTACHMENT_INTERNAL_PROPERTY_CONTENT_URL = "ContentUrl";
@@ -59,7 +61,14 @@ namespace Convertigo.SDK.FullSync
             // If the default fullSync database name is specified then adds the related database to the list
             if (this.defaultFullSyncDatabaseName != null)
             {
-                this.fullSyncDatabases.Add(new FullSyncDatabase(this.manager, this.defaultFullSyncDatabaseName, this.fullSyncDatabaseUrlBase, this.c8o));
+                try
+                {
+                    this.fullSyncDatabases.Add(new FullSyncDatabase(this.manager, this.defaultFullSyncDatabaseName, this.fullSyncDatabaseUrlBase, this.c8o));
+                }
+                catch (Exception e)
+                {
+                    throw new C8oException(C8oExceptionMessage.ToDo(), e);
+                }
             }
         }
 
@@ -320,7 +329,7 @@ namespace Convertigo.SDK.FullSync
             FullSyncDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
             Database database = fullSyncDatabase.GetDatabase();
 
-            // Gets the view depending to its programming language (Javascript / Java)
+            // Gets the view depending to its programming language (Javascript / C#)
             Couchbase.Lite.View view;
             if (ddocParameterValue != null)
             {
@@ -329,7 +338,7 @@ namespace Convertigo.SDK.FullSync
             }
             else
             {
-                // Java view
+                // C# view
                 view = database.GetView(viewParameterValue);
             }
             if (view == null)
@@ -350,21 +359,42 @@ namespace Convertigo.SDK.FullSync
         public override Object HandleSyncRequest(String fullSyncDatabaseName, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
         {
             FullSyncDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
-            fullSyncDatabase.StartAllReplications(parameters, c8oResponseListener);
+            try
+            {
+                fullSyncDatabase.StartAllReplications(parameters, c8oResponseListener);
+            }
+            catch (Exception e)
+            {
+                throw new C8oException(C8oExceptionMessage.ToDo(), e);
+            }
             return VoidResponse.GetInstance();
         }
 
         public override Object HandleReplicatePullRequest(String fullSyncDatabaseName, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
         {
             FullSyncDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
-            fullSyncDatabase.StartPullReplication(parameters, c8oResponseListener);
+            try
+            {
+                fullSyncDatabase.StartPullReplication(parameters, c8oResponseListener);
+            }
+            catch (Exception e)
+            {
+                throw new C8oException(C8oExceptionMessage.ToDo(), e);
+            }
             return VoidResponse.GetInstance();
         }
 
         public override Object HandleReplicatePushRequest(String fullSyncDatabaseName, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
         {
             FullSyncDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
-            fullSyncDatabase.StartPushReplication(parameters, c8oResponseListener);
+            try
+            {
+                fullSyncDatabase.StartPushReplication(parameters, c8oResponseListener);
+            }
+            catch (Exception e)
+            {
+                throw new C8oException(C8oExceptionMessage.ToDo(), e);
+            }
             return VoidResponse.GetInstance();
         }
 
@@ -409,19 +439,31 @@ namespace Convertigo.SDK.FullSync
 
         private Couchbase.Lite.View CompileView(String viewName, JObject viewProps, Database database)
         {
-            JToken language = null;
-            viewProps.TryGetValue("language", out language);
-            if (language == null)
+            JToken language;
+            if (!viewProps.TryGetValue("language", out language))
             {
                 language = "javascript";
             }
-            JToken mapSource = null;
-            viewProps.TryGetValue("map", out mapSource);
-            if (mapSource == null)
+            JToken mapSource;
+            if (!viewProps.TryGetValue("map", out mapSource))
             {
                 return null;
             }
 
+            //Assembly couchbaseLiteAssembly = Assembly.GetAssembly(typeof(IViewCompiler));
+            //String tmp = "";
+            //foreach (Type type in couchbaseLiteAssembly.ExportedTypes)
+            //{
+            //    tmp = tmp + type.Namespace + " // " + type.Name + " \n";
+            //}
+            //Type jsViewCompilerType = couchbaseLiteAssembly.GetType(FullSyncMobile.JS_VIEW_COMPILER_TYPE);
+            //ConstructorInfo[] constructors = jsViewCompilerType.GetConstructors();
+            // ConstructorInfo attachmentInternalConstructor = attachmentInternalType.GetConstructor(new Type[] { typeof(String), typeof(IDictionary<String, Object>) });
+            // Object attachmentInternal = attachmentInternalConstructor.Invoke(attachmentInternalConstructorParams);
+
+            IViewCompiler viewCompiler = Couchbase.Lite.View.Compiler;
+            IViewCompiler test = new JSViewCompilerCopy();
+            Couchbase.Lite.View.Compiler = test;
             MapDelegate mapBlock = Couchbase.Lite.View.Compiler.CompileMap((String) mapSource, (String) language);
             if (mapBlock == null)
             {
@@ -432,7 +474,7 @@ namespace Convertigo.SDK.FullSync
             ReduceDelegate reduceBlock = null;
             if (viewProps.TryGetValue("reduce", out reduceSource))
             {
-                // Couchbase.Lite.View.compiler est null et Couchbase.Lite.Listener.JSViewCompiler est inaccessible
+                // Couchbase.Lite.View.compiler est null et Couchbase.Lite.Listener.JSViewCompiler est inaccessible (même avec la reflection)
                 
                 reduceBlock = Couchbase.Lite.View.Compiler.CompileReduce((String) reduceSource, (String) language);
                 if (reduceBlock == null)
@@ -449,6 +491,7 @@ namespace Convertigo.SDK.FullSync
                 if ("raw".Equals((String) collation)) 
                 {
                     // ???
+                    
                 }
             }
 
@@ -459,7 +502,6 @@ namespace Convertigo.SDK.FullSync
         {
             String tdViewName = designDocumentName + "/" + viewName;
             Couchbase.Lite.View view = database.GetExistingView(tdViewName);
-
             if (view == null || view.Map == null)
             {
                 // No TouchDB view is defined, or it hasn't had a map block assigned
@@ -529,7 +571,7 @@ namespace Convertigo.SDK.FullSync
 
             if (responseTypeString.Equals(C8o.RESPONSE_TYPE_JSON))
             {
-                return C8oTranslator.StringToJsonValue(responseString);
+                return C8oTranslator.StringToJson(responseString);
             }
             else if (responseTypeString.Equals(C8o.RESPONSE_TYPE_XML))
             {

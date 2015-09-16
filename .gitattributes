@@ -39,6 +39,7 @@ C8oSDKDotNet[!!-~]Solution/BigFileTransferSampleForms/BigFileTransferSampleForms
 C8oSDKDotNet[!!-~]Solution/BigFileTransferSampleForms/BigFileTransferSampleForms.iOS/Resources/Icon-Small@2x.png -text
 C8oSDKDotNet[!!-~]Solution/BigFileTransferSampleForms/BigFileTransferSampleForms.iOS/Resources/Icon-Small@3x.png -text
 C8oSDKDotNet[!!-~]Solution/BigFileTransferSampleForms/BigFileTransferSampleForms.iOS/Resources/LaunchScreen.storyboard -text
+C8oSDKDotNet[!!-~]Solution/BigFileTransferSampleForms/BigFileTransferSampleForms.iOS/app.config -text
 C8oSDKDotNet[!!-~]Solution/BigFileTransferSampleForms/BigFileTransferSampleForms.iOS/iTunesArtwork -text
 C8oSDKDotNet[!!-~]Solution/BigFileTransferSampleForms/BigFileTransferSampleForms.iOS/iTunesArtwork@2x -text
 C8oSDKDotNet[!!-~]Solution/BigFileTransferSampleForms/BigFileTransferSampleForms.iOS/packages.config -text
@@ -65,6 +66,7 @@ C8oSDKDotNet[!!-~]Solution/C8oFullSyncNet/CblEnum.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oFullSyncNet/CblTranslator.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oFullSyncNet/FullSyncMobile.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oFullSyncNet/FullSyncResponses.cs -text
+C8oSDKDotNet[!!-~]Solution/C8oFullSyncNet/JSViewCompilerCopy.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oFullSyncNet/VoidResponse.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oFullSyncNetAndroid/C8oFullSyncNetAndroid.csproj -text
 C8oSDKDotNet[!!-~]Solution/C8oFullSyncNetAndroid/Properties/AssemblyInfo.cs -text
@@ -80,22 +82,19 @@ C8oSDKDotNet[!!-~]Solution/C8oFullSyncNetiOS/packages.config -text
 C8oSDKDotNet[!!-~]Solution/C8oNetPclSDK[!!-~]Solution.sln -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKDotNet[!!-~]Solution.sln -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8o.cs -text
-C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oException.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oExceptionListener.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oExceptionMessage.cs -text
-C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oHttpException.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oJSONResponseListener.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oLogger.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oNetPclSDK.csproj.user -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oResponseListener.cs -text
-C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oRessourceNotFoundException.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oSDKPCL.csproj -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oSettings.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oTranslator.cs -text
-C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oUnavailableLocalCacheException.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oUtils.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oXMLResponseListener.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/ConcurrentQueue.cs -text
+C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/Exceptions.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/FullSyncEnum2.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/FullSyncHttp.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/FullSyncInterface.cs -text
@@ -293,7 +292,6 @@ C8oSDKDotNet[!!-~]Solution/Sample02XamarinForms/Sample02XamarinForms.iOS/iTunesA
 C8oSDKDotNet[!!-~]Solution/Sample02XamarinForms/Sample02XamarinForms.iOS/iTunesArtwork@2x -text
 C8oSDKDotNet[!!-~]Solution/Sample02XamarinForms/Sample02XamarinForms.iOS/packages.config -text
 C8oSDKDotNet[!!-~]Solution/Sample02XamarinForms/Sample02XamarinForms/App.cs -text
-C8oSDKDotNet[!!-~]Solution/Sample02XamarinForms/Sample02XamarinForms/AutoCompleteEntry.cs -text
 C8oSDKDotNet[!!-~]Solution/Sample02XamarinForms/Sample02XamarinForms/C8oCallPage.xaml -text
 C8oSDKDotNet[!!-~]Solution/Sample02XamarinForms/Sample02XamarinForms/C8oCallPage.xaml.cs -text
 C8oSDKDotNet[!!-~]Solution/Sample02XamarinForms/Sample02XamarinForms/C8oInitPage.xaml -text

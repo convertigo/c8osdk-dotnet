@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)FullSyncMobile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FullSyncResponses.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CblTranslator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)JSViewCompilerCopy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VoidResponse.cs" />
   </ItemGroup>
 </Project>

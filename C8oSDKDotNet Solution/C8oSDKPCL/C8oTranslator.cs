@@ -20,7 +20,13 @@ namespace Convertigo.SDK
 	    private static String XML_KEY_ATTACHMENT = "attachment";
 	    private static String XML_KEY_NAME = "name";
 
-        public static void JsonValueToXml(JToken json, XDocument xmlDocument, XElement parentElement)
+        /// <summary>
+        /// Translates the specidied JSON to XML and append it to the specidief XML element.
+        /// </summary>
+        /// <param name="json"></param>
+        /// <param name="xmlDocument"></param>
+        /// <param name="parentElement"></param>
+        public static void JsonToXml(JToken json, XElement parentElement)
         {
             // Translates the JSON object depending to its type
             if (json is JObject)
@@ -40,7 +46,7 @@ namespace Convertigo.SDK
                 foreach (String key in keys)
                 {
                     JToken keyValue = jsonObject.GetValue(key);
-                    JsonKeyToXml(key, keyValue, xmlDocument, parentElement);
+                    JsonKeyToXml(key, keyValue, parentElement);
                 }
             }
             else if (json is JArray)
@@ -52,7 +58,7 @@ namespace Convertigo.SDK
                     // Create the XML element
                     XElement item = new XElement(XML_KEY_ITEM);
                     parentElement.Add(item);
-                    JsonValueToXml(jsonItem, xmlDocument, item);
+                    JsonToXml(jsonItem, item);
                 }
             }
             else if (json is JValue)
@@ -62,7 +68,7 @@ namespace Convertigo.SDK
             }
         }
 
-        public static void JsonKeyToXml(String jsonKey, JToken jsonValue, XDocument xmlDocument, XElement parentElement)
+        public static void JsonKeyToXml(String jsonKey, JToken jsonValue, XElement parentElement)
         {
             // Replaces the key if it is not specified
             if (String.IsNullOrEmpty(jsonKey))
@@ -82,7 +88,7 @@ namespace Convertigo.SDK
                 parentElement.Add(attachmentElement);
 
                 // Translates the attachment value (it won't override attachment name element because the attachment value is normally a JSON object)
-                JsonValueToXml(jsonValue, xmlDocument, attachmentElement);
+                JsonToXml(jsonValue, attachmentElement);
             }
             else
             {
@@ -92,7 +98,7 @@ namespace Convertigo.SDK
                 parentElement.Add(childElement);
 
                 // Translates the JSON value
-                JsonValueToXml(jsonValue, xmlDocument, childElement);
+                JsonToXml(jsonValue, childElement);
             }
         }
 
@@ -132,7 +138,7 @@ namespace Convertigo.SDK
             return XDocument.Parse(xmlString);
         } 
 
-        public static Object StringToJsonValue(String jsonValueString)
+        public static Object StringToJson(String jsonValueString)
         {
             try
             {
@@ -173,17 +179,17 @@ namespace Convertigo.SDK
 
         //*** Unused ***//
 
-        public static byte[] stringToByteArray(string str)
+        public static byte[] StringToByteArray(string str)
         {
             return Encoding.UTF8.GetBytes(str);
         }
 
-        public static string byteArrayToString(byte[] bytes)
+        public static string ByteArrayToString(byte[] bytes)
         {
             return Convert.ToBase64String(bytes);
         }
 
-        public static byte[] hexStringToByteArray(String hex)
+        public static byte[] HexStringToByteArray(String hex)
         {
             // Checks if the string length is not even
             int plus = 0;

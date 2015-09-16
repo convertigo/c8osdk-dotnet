@@ -27,7 +27,7 @@ namespace BigFileTransferSampleForms
             // Initializes c8o variables
             C8oSettings c8oSettings = new C8oSettings();
             c8oSettings.fullSyncInterface = fullSyncInterface;
-            C8oExceptionListener c8oExceptionListener = new C8oExceptionListener((exception) => 
+            C8oExceptionListener c8oExceptionListener = new C8oExceptionListener((exception, requestParameters) => 
             {
                 this.infoLabel.Text = exception.Message;
             });

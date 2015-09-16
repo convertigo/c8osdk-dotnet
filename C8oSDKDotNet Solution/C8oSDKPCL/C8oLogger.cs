@@ -12,6 +12,7 @@ using Convertigo.SDK.Utils;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System.IO;
+using Convertigo.SDK.Exceptions;
 
 namespace Convertigo.SDK
 {
@@ -100,40 +101,45 @@ namespace Convertigo.SDK
             this.uidRemoteLogs = C8oTranslator.DoubleToHexString(C8oUtils.GetUnixEpochTime(currentTime));
         }
 
-        private Boolean isLoggableRemote(C8oLogLevel logLevel)
+        private Boolean IsLoggableRemote(C8oLogLevel logLevel)
         {
             return this.isLogRemote && logLevel.priority >= this.remoteLogLevel.priority;
         }
 
-        private Boolean isLoggableConsole(C8oLogLevel logLevel)
+        private Boolean IsLoggableConsole(C8oLogLevel logLevel)
         {
             return true;
         }
 
         //*** Basics log ***//
 
-        public void log(C8oLogLevel logLevel, String message)
+        public void Log(C8oLogLevel logLevel, String message)
         {
-            this.log(logLevel, message, this.isLoggableConsole(logLevel), this.isLoggableRemote(logLevel));
+            this.Log(logLevel, message, this.IsLoggableConsole(logLevel), this.IsLoggableRemote(logLevel));
         }
 
-        public void log(C8oLogLevel logLevel, String message, Boolean isLoggableConsole, Boolean isLoggableRemote)
+        public void Log(C8oLogLevel logLevel, String message, Boolean isLoggableConsole, Boolean isLoggableRemote)
         {
             if (isLoggableConsole)
             {
-                // TMP
-                Debug.WriteLine(logLevel.name + " - " + message);
+                C8oLogger.LogLocal(logLevel, message);
             }
 
             if (isLoggableRemote)
             {
                 String time = (DateTime.Now.Subtract(this.startTimeRemoteLog)).TotalSeconds + "";
                 this.remoteLogs.Enqueue(new C8oLog(time, logLevel, message));
-                this.logRemote();
+                this.LogRemote();
             }
         }
 
-        private void logRemote()
+        public static void LogLocal(C8oLogLevel logLevel, String message)
+        {
+            // TMP
+            Debug.WriteLine(logLevel.name + " - " + message);
+        }
+
+        private void LogRemote()
         {
             Task.Run(async () =>
             {
@@ -183,7 +189,7 @@ namespace Convertigo.SDK
                         this.isLogRemote = false;
                         if (this.handleExceptionsOnLog)
                         {
-                            this.c8oExceptionListener.OnException(e);
+                            this.c8oExceptionListener.OnException(new C8oException(C8oExceptionMessage.ToDo(), e), null);
                         }
                         return;
                     }
@@ -197,7 +203,7 @@ namespace Convertigo.SDK
                         {
                             this.remoteLogLevel = c8oLogLevel;
                         }
-                        this.logRemote();
+                        this.LogRemote();
                     }
                 }
             }).ContinueWith((completedTask) => 
@@ -216,18 +222,16 @@ namespace Convertigo.SDK
         /// </summary>
         /// <param name="methodName">The method name</param>
         /// <param name="parameters">Array containing method parameters</param>
-        public void logMethodCall(String methodName, params Object[] parameters)
+        public void LogMethodCall(String methodName, params Object[] parameters)
         {
-            Boolean isLoggableConsole = this.isLoggableConsole(C8oLogLevel.DEBUG);
-            Boolean isLoggableRemote = this.isLoggableRemote(C8oLogLevel.DEBUG);
+            Boolean isLoggableConsole = this.IsLoggableConsole(C8oLogLevel.DEBUG);
+            Boolean isLoggableRemote = this.IsLoggableRemote(C8oLogLevel.DEBUG);
             if (isLoggableConsole || isLoggableRemote)
             {
                 String methodCallLogMessage = "Method call : " + methodName;
 
-                this.log(C8oLogLevel.DEBUG, methodCallLogMessage, isLoggableConsole, isLoggableRemote);
-
-                isLoggableConsole = this.isLoggableConsole(C8oLogLevel.TRACE);
-                isLoggableRemote = this.isLoggableRemote(C8oLogLevel.TRACE);
+                isLoggableConsole = this.IsLoggableConsole(C8oLogLevel.TRACE);
+                isLoggableRemote = this.IsLoggableRemote(C8oLogLevel.TRACE);
                 if (isLoggableConsole || isLoggableRemote)
                 {
                     methodCallLogMessage += ", Parameters : [";
@@ -239,7 +243,11 @@ namespace Convertigo.SDK
                     // Remove the last character
                     methodCallLogMessage = methodCallLogMessage.Substring(0, methodCallLogMessage.Length - 2) + "]";
 
-                    this.log(C8oLogLevel.TRACE, methodCallLogMessage, isLoggableConsole, isLoggableRemote);
+                    this.Log(C8oLogLevel.TRACE, methodCallLogMessage, isLoggableConsole, isLoggableRemote);
+                }
+                else
+                {
+                    this.Log(C8oLogLevel.DEBUG, methodCallLogMessage, isLoggableConsole, isLoggableRemote);
                 }
             }
         }
@@ -249,10 +257,10 @@ namespace Convertigo.SDK
         /// </summary>
         /// <param name="url">The c8o call URL</param>
         /// <param name="parameters">c8o call parameters</param>
-        public void logC8oCall(String url, Dictionary<String, String> parameters)
+        public void LogC8oCall(String url, Dictionary<String, String> parameters)
         {
-            Boolean isLoggableConsole = this.isLoggableConsole(C8oLogLevel.DEBUG);
-            Boolean isLoggableRemote = this.isLoggableRemote(C8oLogLevel.DEBUG);
+            Boolean isLoggableConsole = this.IsLoggableConsole(C8oLogLevel.DEBUG);
+            Boolean isLoggableRemote = this.IsLoggableRemote(C8oLogLevel.DEBUG);
 
             if (isLoggableConsole || isLoggableRemote)
             {
@@ -260,7 +268,7 @@ namespace Convertigo.SDK
                     " URL=" + url + ", " +
                     " Parameters=" + parameters;
 
-                this.log(C8oLogLevel.DEBUG, c8oCallLogMessage, isLoggableConsole, isLoggableRemote);
+                this.Log(C8oLogLevel.DEBUG, c8oCallLogMessage, isLoggableConsole, isLoggableRemote);
             }
         }
 
@@ -270,9 +278,9 @@ namespace Convertigo.SDK
         /// <param name="response"></param>
         /// <param name="url"></param>
         /// <param name="parameters"></param>
-        public void logC8oCallXMLResponse(XDocument response, String url, Dictionary<String, String> parameters)
+        public void LogC8oCallXMLResponse(XDocument response, String url, Dictionary<String, String> parameters)
         {
-            this.logC8oCallResponse(C8oTranslator.XmlToString(response), "XML", url, parameters);
+            this.LogC8oCallResponse(C8oTranslator.XmlToString(response), "XML", url, parameters);
         }
 
         /// <summary>
@@ -281,15 +289,15 @@ namespace Convertigo.SDK
         /// <param name="response"></param>
         /// <param name="url"></param>
         /// <param name="parameters"></param>
-        public void logC8oCallJSONResponse(JObject response, String url, Dictionary<String, String> parameters)
+        public void LogC8oCallJSONResponse(JObject response, String url, Dictionary<String, String> parameters)
         {
-            this.logC8oCallResponse(C8oTranslator.JsonToString(response), "JSON", url, parameters);
+            this.LogC8oCallResponse(C8oTranslator.JsonToString(response), "JSON", url, parameters);
         }
 
-        private void logC8oCallResponse(String responseStr, String responseType, String url, Dictionary<String, String> parameters)
+        private void LogC8oCallResponse(String responseStr, String responseType, String url, Dictionary<String, String> parameters)
         {
-            Boolean isLoggableConsole = this.isLoggableConsole(C8oLogLevel.TRACE);
-            Boolean isLoggableRemote = this.isLoggableRemote(C8oLogLevel.TRACE);
+            Boolean isLoggableConsole = this.IsLoggableConsole(C8oLogLevel.TRACE);
+            Boolean isLoggableRemote = this.IsLoggableRemote(C8oLogLevel.TRACE);
 
             if (isLoggableConsole || isLoggableRemote)
             {
@@ -298,11 +306,11 @@ namespace Convertigo.SDK
                     " Parameters=" + parameters + ", " +
                     " Response=" + responseStr;
 
-                this.log(C8oLogLevel.TRACE, c8oCallJSONResponseLogMessage, isLoggableConsole, isLoggableRemote);
+                this.Log(C8oLogLevel.TRACE, c8oCallJSONResponseLogMessage, isLoggableConsole, isLoggableRemote);
             }
         }
 
-        public void setRemoteLogParameters(HttpInterface httpInterface, Boolean isLogRemote, String urlBase, String deviceUuid)
+        public void SetRemoteLogParameters(HttpInterface httpInterface, Boolean isLogRemote, String urlBase, String deviceUuid)
         {
             this.httpInterface = httpInterface;
             this.isLogRemote = isLogRemote;

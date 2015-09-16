@@ -75,8 +75,15 @@ namespace Convertigo.SDK.FullSync.Enums
             // Checks if the value type is String and the request parameter type is not
             if (typeof(String).IsAssignableFrom(value.GetType()) && !typeof(String).IsAssignableFrom(replicationParameter.type))
             {
-                // Tries to convert the string to the request parameter type
-                value = C8oTranslator.StringToObject((String)value, replicationParameter.type);
+                try
+                {
+                    // Tries to convert the string to the request parameter type
+                    value = C8oTranslator.StringToObject((String)value, replicationParameter.type);
+                }
+                catch (Exception e)
+                {
+                    throw new C8oException(C8oExceptionMessage.ToDo(), e);
+                }
             }
             // Checks if the type is valid
             if (replicationParameter.type.IsAssignableFrom(value.GetType()))

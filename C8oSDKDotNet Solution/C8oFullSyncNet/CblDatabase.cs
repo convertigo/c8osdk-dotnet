@@ -8,6 +8,7 @@ using Convertigo.SDK.Listeners;
 using Convertigo.SDK.Utils;
 using Convertigo.SDK.FullSync.Enums;
 using System.Net;
+using Convertigo.SDK.Exceptions;
 
 namespace Convertigo.SDK.FullSync
 {
@@ -45,7 +46,14 @@ namespace Convertigo.SDK.FullSync
             this.c8o = c8o;
             this.databaseName = databaseName;
             C8oSettings c8oSettings = c8o.c8oSettings;
-            this.database = manager.GetDatabase(databaseName + FullSyncDatabase.LOCAL_DATABASE_SUFFIX);
+            try
+            {
+                this.database = manager.GetDatabase(databaseName + FullSyncDatabase.LOCAL_DATABASE_SUFFIX);
+            }
+            catch (Exception e)
+            {
+                throw new C8oException(C8oExceptionMessage.ToDo(), e);
+            }
 
             // The "/" at the end is important
             String fullSyncDatabaseUrlStr = fullSyncDatabasesUrlStr + this.databaseName + "/";
@@ -92,8 +100,11 @@ namespace Convertigo.SDK.FullSync
 
         private void StartReplication(FullSyncReplication fullSyncReplication, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
         {
-            lock (fullSyncReplication.replication)
-            {
+
+            int TMP = this.database.DocumentCount;
+
+            //lock (fullSyncReplication.replication)
+            //{
                 //Replication replication = fullSyncReplication.replication;
                 // Cancel the replication if it is already running
                 if (fullSyncReplication.replication.IsRunning)
@@ -112,8 +123,14 @@ namespace Convertigo.SDK.FullSync
                         {
                             return;
                         }
-                        CblEnum.SetReplication(fullSyncReplicateDatabaseParameter, fullSyncReplication.replication, parameterValue);
-                        //fullSyncReplicateDatabaseParameter.SetReplication(fullSyncReplication.replication, parameterValue);
+                        try
+                        {
+                            CblEnum.SetReplication(fullSyncReplicateDatabaseParameter, fullSyncReplication.replication, parameterValue);
+                        }
+                        catch (Exception e)
+                        {
+                            throw new C8oException(C8oExceptionMessage.ToDo(), e);
+                        }
                     }
                 }
 
@@ -165,7 +182,7 @@ namespace Convertigo.SDK.FullSync
 
                 // Finally starts the replication
                 fullSyncReplication.replication.Start();
-            }
+            //}
         }
 
         /// <summary>

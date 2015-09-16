@@ -102,7 +102,7 @@ namespace Convertigo.SDK.Utils
             {
                 try
                 {
-                    return C8oTranslator.StringToJsonValue(parameter.Value as String);
+                    return C8oTranslator.StringToJson(parameter.Value as String);
                 }
                 catch (FormatException e)
                 {

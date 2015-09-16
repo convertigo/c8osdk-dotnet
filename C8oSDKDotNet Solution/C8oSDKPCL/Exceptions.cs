@@ -8,8 +8,7 @@ namespace Convertigo.SDK.Exceptions
 {
     public class C8oException : Exception
     {
-
-        public C8oException(String message) 
+        public C8oException(String message)
             : base(message)
         {
         }
@@ -36,6 +35,27 @@ namespace Convertigo.SDK.Exceptions
             }*/
             return exception;
         }
+    }
 
+    public class C8oHttpException : Exception
+    {
+        public C8oHttpException(String message, Exception innerException)
+            : base(message, innerException)
+        {
+
+        }
+    }
+
+    public class C8oRessourceNotFoundException : Exception
+    {
+        public C8oRessourceNotFoundException(String message) : base(message) { }
+        public C8oRessourceNotFoundException(String message, Exception innerException) : base(message, innerException) { }
+    }
+
+    public class C8oUnavailableLocalCacheException : Exception
+    {
+
+        public C8oUnavailableLocalCacheException(String message) : base(message) { }
+        public C8oUnavailableLocalCacheException(String message, Exception innerException) : base(message, innerException) { }
     }
 }

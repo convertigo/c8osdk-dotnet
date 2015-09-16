@@ -1,4 +1,5 @@
-﻿using Convertigo.SDK;
+﻿using C8oControls;
+using Convertigo.SDK;
 using Convertigo.SDK.FullSync;
 using Convertigo.SDK.Listeners;
 using Convertigo.SDK.Utils;
@@ -47,6 +48,13 @@ namespace Sample02XamarinForms
                 variableKeyValuePair.Children.Add(this.variablesEntries[i][1]);
                 this.variables.Children.Add(variableKeyValuePair);
             }
+
+            // TMP
+            //this.requestableEntry.Text = "fs://.view";
+            //this.variablesEntries[0][0].Text = "view";
+            //this.variablesEntries[0][1].Text = "view01";
+            //this.variablesEntries[1][0].Text = "ddoc";
+            //this.variablesEntries[1][1].Text = "design";
         }
 
         public void Init(FullSyncInterface fullSyncInterface, FileReader fileReader)
@@ -60,18 +68,60 @@ namespace Sample02XamarinForms
             c8oSettings.defaultFullSyncDatabaseName = "testclientsdk_fullsync";
 
             // Listeners
-            C8oExceptionListener c8oExceptionListener = new C8oExceptionListener((exception) =>
+            C8oExceptionListener c8oExceptionListener = new C8oExceptionListener((exception, requestaParameters) =>
             {
-                this.responseLabel.Text = exception.Message;
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    this.responseLabel.Text = "" + exception.Message;
+                });
             });
+
             this.c8oJsonResponseListener = new C8oJsonResponseListener((jsonResponse, parameters) =>
             {
-                String str = jsonResponse.ToString();
-                this.responseLabel.Text = str;
+                counter++;
+                //if (counter >= limit)
+                //{
+                    counter = 0;
+                    // limit++; 
+                    String str = jsonResponse.ToString();
+                    Debug.WriteLine(str);
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        this.responseLabel.Text = str;
+                    });
+                //}
+
+                //Device.BeginInvokeOnMainThread(() =>
+                //{
+                //    this.counterLabel.Text = "" + counter + " / " + limit;
+                //});
+
+
+
+                /*String str = jsonResponse.ToString();
                 Debug.WriteLine(str);
+                long current;
+                if (C8oUtils.TryGetValueAndCheckType<long>(jsonResponse, "current", out current))
+                {
+                    if (current > this.counter)
+                    {
+                        this.counter += 1000;
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            this.responseLabel.Text = str;
+                        });
+                    }
+                }
+                else
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        this.responseLabel.Text = str;
+                    });
+                }*/
 
                 // Checks if the request is a GetDocument fullSync request
-                if (FullSyncUtils.IsFullSyncRequest(parameters))
+                /*if (FullSyncUtils.IsFullSyncRequest(parameters))
                 {
                     String sequence = C8oUtils.GetParameterStringValue(parameters, C8o.ENGINE_PARAMETER_SEQUENCE);
                     if (sequence != null && sequence.Equals("get"))
@@ -125,7 +175,7 @@ namespace Sample02XamarinForms
                             }
                         }
                     }
-                }
+                }*/
 
             });
 
@@ -143,7 +193,13 @@ namespace Sample02XamarinForms
             return null;
         }
 
-        private int counter = 0;
+        private int counter;
+        private int limit;
+
+        void OnRefreshButtonClicked(object sender, EventArgs args)
+        {
+            this.counter = 10;
+        }
 
         void OnCallButtonClicked(object sender, EventArgs args)
         {
@@ -171,7 +227,7 @@ namespace Sample02XamarinForms
                 String r = this.requestableEntry.Text;
                 if (r != null && !r.Equals(""))
                 {
-                    C8oXmlResponseListener rl = new C8oXmlResponseListener((xmlResponse, requestParameters) =>
+                    /*C8oXmlResponseListener rl = new C8oXmlResponseListener((xmlResponse, requestParameters) =>
                     {
                         Device.BeginInvokeOnMainThread(() =>
                         {
@@ -182,13 +238,15 @@ namespace Sample02XamarinForms
                             }
                             this.responseLabel.Text = str;
                         });
-                    });
+                    });*/
 
-                    Task task = new Task(() =>
-                    {
-                        this.c8o.Call(r, parameters, rl);
-                    });
-                    task.Start();
+                    //Task task = new Task(() =>
+                    //{
+                        this.counter = 10;
+                        this.limit = 10;
+                        this.c8o.Call(r, parameters, this.c8oJsonResponseListener);
+                    //});
+                    //task.Start();
                 }
                 //else
                 //{
