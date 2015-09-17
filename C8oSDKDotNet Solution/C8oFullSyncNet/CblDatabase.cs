@@ -12,7 +12,7 @@ using Convertigo.SDK.Exceptions;
 
 namespace Convertigo.SDK.FullSync
 {
-    public class FullSyncDatabase
+    public class CblDatabase
     {
         //*** Constants ***//
 
@@ -41,14 +41,14 @@ namespace Convertigo.SDK.FullSync
             get { return this.databaseName; }
         }
 
-        public FullSyncDatabase(Manager manager, String databaseName, String fullSyncDatabasesUrlStr, C8o c8o)
+        public CblDatabase(Manager manager, String databaseName, String fullSyncDatabasesUrlStr, C8o c8o)
         {
             this.c8o = c8o;
             this.databaseName = databaseName;
             C8oSettings c8oSettings = c8o.c8oSettings;
             try
             {
-                this.database = manager.GetDatabase(databaseName + FullSyncDatabase.LOCAL_DATABASE_SUFFIX);
+                this.database = manager.GetDatabase(databaseName + CblDatabase.LOCAL_DATABASE_SUFFIX);
             }
             catch (Exception e)
             {
@@ -72,8 +72,8 @@ namespace Convertigo.SDK.FullSync
                 Boolean isSecure = false;
                 Boolean httpOnly = false;
 
-                pullReplication.SetCookie(FullSyncDatabase.AUTHENTICATION_COOKIE_NAME, authenticationCookieValue, "/", expirationDate, isSecure, httpOnly);
-                pushReplication.SetCookie(FullSyncDatabase.AUTHENTICATION_COOKIE_NAME, authenticationCookieValue, "/", expirationDate, isSecure, httpOnly);
+                pullReplication.SetCookie(CblDatabase.AUTHENTICATION_COOKIE_NAME, authenticationCookieValue, "/", expirationDate, isSecure, httpOnly);
+                pushReplication.SetCookie(CblDatabase.AUTHENTICATION_COOKIE_NAME, authenticationCookieValue, "/", expirationDate, isSecure, httpOnly);
             }
 
             this.pullFullSyncReplication = new FullSyncReplication(pullReplication);
@@ -102,6 +102,7 @@ namespace Convertigo.SDK.FullSync
         {
 
             int TMP = this.database.DocumentCount;
+            IEnumerable<Replication> reps = database.AllReplications;
 
             //lock (fullSyncReplication.replication)
             //{
@@ -182,6 +183,7 @@ namespace Convertigo.SDK.FullSync
 
                 // Finally starts the replication
                 fullSyncReplication.replication.Start();
+                // fullSyncReplication.replication.Restart();
             //}
         }
 
@@ -190,9 +192,9 @@ namespace Convertigo.SDK.FullSync
         /// </summary>
         public void DestroyReplications()
         {
-            FullSyncDatabase.DestroyReplication(this.pullFullSyncReplication);
+            CblDatabase.DestroyReplication(this.pullFullSyncReplication);
             this.pullFullSyncReplication = null;
-            FullSyncDatabase.DestroyReplication(this.pushFullSyncReplication);
+            CblDatabase.DestroyReplication(this.pushFullSyncReplication);
             this.pushFullSyncReplication = null;
         }
 
@@ -201,7 +203,7 @@ namespace Convertigo.SDK.FullSync
             if (fullSyncReplication.replication != null)
             {
                 fullSyncReplication.replication.Stop();
-                fullSyncReplication.replication.DeleteCookie(FullSyncDatabase.AUTHENTICATION_COOKIE_NAME);
+                fullSyncReplication.replication.DeleteCookie(CblDatabase.AUTHENTICATION_COOKIE_NAME);
                 fullSyncReplication.replication = null;
             }
         }

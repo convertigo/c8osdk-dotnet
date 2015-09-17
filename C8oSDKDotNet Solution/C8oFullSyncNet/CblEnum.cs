@@ -16,7 +16,7 @@ namespace Convertigo.SDK.FullSync.Enums
     {
         private static Boolean initialized = false;
         private static Dictionary<FullSyncRequestParameter, Action<Query, Object>> fullSyncRequestParameters;
-        private static Dictionary<FullSyncPolicy, Func<FullSyncDatabase, Dictionary<String, Object>, Document>> fullSyncPolicies;
+        private static Dictionary<FullSyncPolicy, Func<CblDatabase, Dictionary<String, Object>, Document>> fullSyncPolicies;
         private static Dictionary<FullSyncReplicationParameter, Action<Replication, Object>> fullSyncReplicationParameters;
 
         private static void Init()
@@ -55,10 +55,10 @@ namespace Convertigo.SDK.FullSync.Enums
             }
         }
 
-        internal static Document PostDocument(FullSyncPolicy policy, FullSyncDatabase fullSyncDatabase, Dictionary<String, Object> newProperties)
+        internal static Document PostDocument(FullSyncPolicy policy, CblDatabase fullSyncDatabase, Dictionary<String, Object> newProperties)
         {
             Init();
-            Func<FullSyncDatabase, Dictionary<String, Object>, Document> postDocumentOp = null;
+            Func<CblDatabase, Dictionary<String, Object>, Document> postDocumentOp = null;
             if (fullSyncPolicies.TryGetValue(policy, out postDocumentOp))
             {
                 return postDocumentOp(fullSyncDatabase, newProperties);
@@ -216,9 +216,9 @@ namespace Convertigo.SDK.FullSync.Enums
 
         private static void InitFullSyncPolicies()
         {
-            fullSyncPolicies = new Dictionary<FullSyncPolicy, Func<FullSyncDatabase, Dictionary<String, Object>, Document>>();
+            fullSyncPolicies = new Dictionary<FullSyncPolicy, Func<CblDatabase, Dictionary<String, Object>, Document>>();
             FullSyncPolicy policy;
-            Func<FullSyncDatabase, Dictionary<String, Object>, Document> func;
+            Func<CblDatabase, Dictionary<String, Object>, Document> func;
             // CREATE
             policy = FullSyncPolicy.CREATE;
             func = (fullSyncDatabase, newProperties) =>

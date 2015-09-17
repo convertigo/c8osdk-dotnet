@@ -62,7 +62,7 @@ namespace Sample02XamarinForms
             //*** C8o objects ***//
 
             // Settings
-            String endpoint = "https://192.168.100.86:18081/convertigo/projects/TestClientSDK";
+            String endpoint = "http://192.168.100.86:18080/convertigo/projects/TestClientSDK";
             C8oSettings c8oSettings = new C8oSettings();
             c8oSettings.fullSyncInterface = fullSyncInterface;
             c8oSettings.defaultFullSyncDatabaseName = "testclientsdk_fullsync";
@@ -70,9 +70,16 @@ namespace Sample02XamarinForms
             // Listeners
             C8oExceptionListener c8oExceptionListener = new C8oExceptionListener((exception, requestaParameters) =>
             {
+                String errorMsg = exception.Message;
+                Exception inner = exception.InnerException;
+                while (inner != null)
+                {
+                    errorMsg = errorMsg + "\n-->" + inner.Message;
+                    inner = inner.InnerException;
+                }
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    this.responseLabel.Text = "" + exception.Message;
+                    this.responseLabel.Text = errorMsg;
                 });
             });
 
@@ -201,6 +208,11 @@ namespace Sample02XamarinForms
             this.counter = 10;
         }
 
+        private class C8oResponseListenerTmp : C8oResponseListener
+        {
+
+        }
+
         void OnCallButtonClicked(object sender, EventArgs args)
         {
             this.requestableEntry.AddToHistory(this.requestableEntry.Text);
@@ -244,7 +256,14 @@ namespace Sample02XamarinForms
                     //{
                         this.counter = 10;
                         this.limit = 10;
-                        this.c8o.Call(r, parameters, this.c8oJsonResponseListener);
+                        if (r.EndsWith("replicate_pull"))
+                        {
+                            this.c8o.Call(r, parameters, null);
+                        }
+                        else
+                        {
+                            this.c8o.Call(r, parameters, this.c8oJsonResponseListener);
+                        }
                     //});
                     //task.Start();
                 }

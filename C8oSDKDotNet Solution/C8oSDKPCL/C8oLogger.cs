@@ -54,7 +54,7 @@ namespace Convertigo.SDK
         /// <summary>
         /// Contains logs to be sent to the Convertigo server.
         /// </summary>
-        private ConcurrentQueue<C8oLog> remoteLogs;
+        private Queue<C8oLog> remoteLogs;
         /// <summary>
         /// Indicates if a thread is sending logs.
         /// </summary>
@@ -92,7 +92,7 @@ namespace Convertigo.SDK
 
             // Remote log
             this.isLogRemote = false;
-            this.remoteLogs = new ConcurrentQueue<C8oLog>();
+            this.remoteLogs = new Queue<C8oLog>();
             this.alreadyRemoteLogging = new Boolean[] { false };
             this.remoteLogLevel = C8oLogLevel.NULL;
 

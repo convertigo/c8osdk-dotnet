@@ -40,7 +40,7 @@ namespace Convertigo.SDK.FullSync
         /// </summary>
         private Manager manager;
         private String fullSyncDatabaseUrlBase;
-        private List<FullSyncDatabase> fullSyncDatabases;
+        private List<CblDatabase> fullSyncDatabases;
 
         //*** Constructors / Initializations ***//
 
@@ -52,7 +52,7 @@ namespace Convertigo.SDK.FullSync
         {
             base.Init(c8o, c8oSettings, endpointFirstPart);
 
-            this.fullSyncDatabases = new List<FullSyncDatabase>();
+            this.fullSyncDatabases = new List<CblDatabase>();
 
             this.c8o = c8o;
             this.fullSyncDatabaseUrlBase = endpointFirstPart + FullSyncInterface.FULL_SYNC_URL_PATH;
@@ -63,7 +63,7 @@ namespace Convertigo.SDK.FullSync
             {
                 try
                 {
-                    this.fullSyncDatabases.Add(new FullSyncDatabase(this.manager, this.defaultFullSyncDatabaseName, this.fullSyncDatabaseUrlBase, this.c8o));
+                    // this.fullSyncDatabases.Add(new FullSyncDatabase(this.manager, this.defaultFullSyncDatabaseName, this.fullSyncDatabaseUrlBase, this.c8o));
                 }
                 catch (Exception e)
                 {
@@ -76,6 +76,11 @@ namespace Convertigo.SDK.FullSync
 
         public override void HandleFullSyncResponse(Object response, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
         {
+            if (c8oResponseListener == null)
+            {
+                return;
+            }
+
             // Calls back the listener
             if (c8oResponseListener is C8oCblResponseListener)
             {
@@ -110,6 +115,11 @@ namespace Convertigo.SDK.FullSync
                 {
                     (c8oResponseListener as C8oJsonResponseListener).OnJsonResponse(CblTranslator.FullSyncDefaultResponseToJson((FullSyncDefaultResponse)response), parameters);
                 }
+                // !!! TMP !!!
+                else if (response is JObject)
+                {
+                    (c8oResponseListener as C8oJsonResponseListener).OnJsonResponse(response as JObject, parameters);
+                }
             }
             else if (c8oResponseListener is C8oXmlResponseListener)
             {
@@ -140,9 +150,9 @@ namespace Convertigo.SDK.FullSync
             }
         }
 
-        private FullSyncDatabase FindDatabase(String databaseName)
+        private CblDatabase FindDatabase(String databaseName)
         {
-            FullSyncDatabase fullSyncDatabase = this.fullSyncDatabases.Find(x => x.DatabaseName.Equals(databaseName));
+            CblDatabase fullSyncDatabase = this.fullSyncDatabases.Find(x => x.DatabaseName.Equals(databaseName));
             return fullSyncDatabase;
         }
 
@@ -156,7 +166,7 @@ namespace Convertigo.SDK.FullSync
         /// <returns></returns>
         public override Object HandleGetDocumentRequest(String fullSyncDatatbaseName, String docidParameterValue, Dictionary<String, Object> parameters)
         {
-            FullSyncDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatatbaseName);
+            CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatatbaseName);
             Database database = fullSyncDatabase.GetDatabase();
 
             // Gets the document form the local database
@@ -222,7 +232,7 @@ namespace Convertigo.SDK.FullSync
         /// <returns></returns>
         public override Object handleDeleteDocumentRequest(String fullSyncDatatbaseName, String docidParameterValue, Dictionary<String, Object> parameters)
         {
-            FullSyncDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatatbaseName);
+            CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatatbaseName);
 
             String revParameterValue = C8oUtils.GetParameterStringValue(parameters, FullSyncDeleteDocumentParameter.REV.name, false);
 
@@ -257,7 +267,7 @@ namespace Convertigo.SDK.FullSync
 
         public override Object handlePostDocumentRequest(String fullSyncDatabaseName, FullSyncPolicy fullSyncPolicy, Dictionary<String, Object> parameters)
         {
-            FullSyncDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
+            CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
             
             // Gets the subkey separator parameter
             String subkeySeparatorParameterValue = C8oUtils.GetParameterStringValue(parameters, FullSyncPostDocumentParameter.SUBKEY_SEPARATOR.name, false);
@@ -310,8 +320,20 @@ namespace Convertigo.SDK.FullSync
 
         public override Object HandleAllDocumentsRequest(String fullSyncDatabaseName, Dictionary<String, Object> parameters)
         {
-            FullSyncDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
+            CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
             Database database = fullSyncDatabase.GetDatabase();
+
+            
+            // !!! TMP !!!
+            if (parameters.ContainsKey("count"))
+            {
+                JObject json = new JObject();
+                json.Add("count", database.DocumentCount);
+                return json;
+            }
+            // !!! TMP !!!
+
+
             // Creates the fullSync query and add parameters to it
             Query query = database.CreateAllDocumentsQuery();
 
@@ -326,7 +348,7 @@ namespace Convertigo.SDK.FullSync
 
         public override Object HandleGetViewRequest(String fullSyncDatabaseName, String ddocParameterValue, String viewParameterValue, Dictionary<String, Object> parameters)
         {
-            FullSyncDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
+            CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
             Database database = fullSyncDatabase.GetDatabase();
 
             // Gets the view depending to its programming language (Javascript / C#)
@@ -358,7 +380,7 @@ namespace Convertigo.SDK.FullSync
 
         public override Object HandleSyncRequest(String fullSyncDatabaseName, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
         {
-            FullSyncDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
+            CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
             try
             {
                 fullSyncDatabase.StartAllReplications(parameters, c8oResponseListener);
@@ -372,7 +394,7 @@ namespace Convertigo.SDK.FullSync
 
         public override Object HandleReplicatePullRequest(String fullSyncDatabaseName, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
         {
-            FullSyncDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
+            CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
             try
             {
                 fullSyncDatabase.StartPullReplication(parameters, c8oResponseListener);
@@ -386,7 +408,7 @@ namespace Convertigo.SDK.FullSync
 
         public override Object HandleReplicatePushRequest(String fullSyncDatabaseName, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
         {
-            FullSyncDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
+            CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
             try
             {
                 fullSyncDatabase.StartPushReplication(parameters, c8oResponseListener);
@@ -402,7 +424,7 @@ namespace Convertigo.SDK.FullSync
 
         public override Object HandleResetDatabaseRequest(String fullsyncDatabaseName)
         {
-            FullSyncDatabase fullSyncDatabase = this.FindDatabase(fullsyncDatabaseName);
+            CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullsyncDatabaseName); // this.FindDatabase(fullsyncDatabaseName);
             if (fullSyncDatabase != null)
             {
                 fullSyncDatabase.GetDatabase().Delete();
@@ -412,7 +434,7 @@ namespace Convertigo.SDK.FullSync
 	    }
 
 
-        public FullSyncDatabase GetOrCreateFullSyncDatabase(String databaseName)
+        public CblDatabase GetOrCreateFullSyncDatabase(String databaseName)
         {
             // Searches if the database already exists
             /*foreach (FullSyncDatabase existingFullSyncDatabase in this.fullSyncDatabases)
@@ -422,7 +444,7 @@ namespace Convertigo.SDK.FullSync
                     return existingFullSyncDatabase;
                 }
             }*/
-            FullSyncDatabase existingFullSyncDatabase = this.FindDatabase(databaseName);
+            CblDatabase existingFullSyncDatabase = this.FindDatabase(databaseName);
             if (existingFullSyncDatabase != null)
             {
                 return existingFullSyncDatabase;
@@ -430,8 +452,8 @@ namespace Convertigo.SDK.FullSync
 
 
             // Creates a new database
-            FullSyncDatabase fullSyncDatabase = new FullSyncDatabase(this.manager, databaseName, this.fullSyncDatabaseUrlBase, this.c8o);
-            this.fullSyncDatabases.Add(fullSyncDatabase);
+            CblDatabase fullSyncDatabase = new CblDatabase(this.manager, databaseName, this.fullSyncDatabaseUrlBase, this.c8o);
+            // this.fullSyncDatabases.Add(fullSyncDatabase);
             return fullSyncDatabase;
         }
 
@@ -526,7 +548,7 @@ namespace Convertigo.SDK.FullSync
 
         public override Object GetResponseFromLocalCache(String c8oCallRequestIdentifier)
         {
-            FullSyncDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(C8o.LOCAL_CACHE_DATABASE_NAME);
+            CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(C8o.LOCAL_CACHE_DATABASE_NAME);
             Document localCacheDocument = fullSyncDatabase.GetDatabase().GetExistingDocument(c8oCallRequestIdentifier);
 
             if (localCacheDocument == null)
@@ -586,7 +608,7 @@ namespace Convertigo.SDK.FullSync
 
         public override void SaveResponseToLocalCache(String c8oCallRequestIdentifier, String responseString, String responseType, int timeToLive)
         {
-            FullSyncDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(C8o.LOCAL_CACHE_DATABASE_NAME);
+            CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(C8o.LOCAL_CACHE_DATABASE_NAME);
             Document localCacheDocument = fullSyncDatabase.GetDatabase().GetDocument(c8oCallRequestIdentifier);
 
             Dictionary<String, Object> properties = new Dictionary<String, Object>();

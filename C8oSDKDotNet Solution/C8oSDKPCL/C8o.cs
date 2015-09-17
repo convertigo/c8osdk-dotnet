@@ -256,10 +256,10 @@ namespace Convertigo.SDK
                 {
                     throw new System.ArgumentNullException(C8oExceptionMessage.InvalidArgumentNullParameter("Call parameters"));
                 }
-                if (c8oResponseListener == null)
+                /*if (c8oResponseListener == null)
                 {
                     throw new System.ArgumentNullException(C8oExceptionMessage.InvalidArgumentNullParameter("C8oExceptionListener"));
-                }
+                }*/
 
                 
                     // Checks if this is a fullSync request

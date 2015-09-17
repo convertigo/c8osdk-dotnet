@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Convertigo.SDK.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,7 +24,9 @@ namespace Convertigo.SDK.Utils
         /// <summary>
         /// Allows to lock on the front or the rear enven if the queue is empty.
         /// </summary>
-        private QueueElement<T> nullElement;
+        // private QueueElement<T> nullElement;
+
+        private Boolean[] locker;
 
         /// <summary>
         /// The number of elements in the queue.
@@ -34,7 +37,7 @@ namespace Convertigo.SDK.Utils
             {
                 int count = 0;
                 QueueElement<T> item = this.front;
-                while (item != this.nullElement)
+                while (item != null)
                 {
                     count++;
                     item = item.next;
@@ -56,9 +59,10 @@ namespace Convertigo.SDK.Utils
         /// </summary>
         public ConcurrentQueue()
         {
-            this.nullElement = new QueueElement<T>(default(T));
-            this.front = this.nullElement;
-            this.rear = this.nullElement;
+            // this.nullElement = new QueueElement<T>(default(T));
+            this.front = null;//this.nullElement;
+            this.rear = this.front;
+            this.locker = new Boolean[] {};
         }
 
         /// <summary>
@@ -76,11 +80,24 @@ namespace Convertigo.SDK.Utils
             // Queue : v1 -> v3 -> null
             // t = 3 : t1 se libère, t2 passe, ajoute sa valeur et se libère
             // Queue : v1 -> v3 -> v2 -> null
- 
+
+            QueueElement<T> newRear = new QueueElement<T>(value);
+
+            if (this.rear == null)
+            {
+                lock (this.locker)
+                {
+                    if (this.rear == null)
+                    {
+                        this.rear = newRear;
+                        this.front = this.rear;
+                        return;
+                    }
+                }
+            }
+
             lock (this.rear)
             {
-                QueueElement<T> newRear = new QueueElement<T>(value);
-                // The next element of the previous rear becomes the current rear
                 this.rear.next = newRear;
                 this.rear = newRear;
             }
@@ -92,15 +109,16 @@ namespace Convertigo.SDK.Utils
         /// <returns></returns>
         public T Dequeue()
         {
+            if (this.front == null)
+            {
+                throw new ArgumentNullException(C8oExceptionMessage.ToDo());
+            }
+
             lock (this.front)
             {
-                T value = default(T);
-                if (this.front != this.nullElement)
-                {
-                    value = this.front.value;
-                    // The current front becomes the next element od the previous front
-                    this.front = this.front.next;
-                }
+                T value = this.front.value;
+                // The current front becomes the next element od the previous front
+                this.front = this.front.next;
                 return value;
             }
         }

@@ -21,6 +21,9 @@ namespace Convertigo.SDK
         /// Indicate if https calls trust all certificates or not
         /// </summary>
         internal bool trustAllCetificates;
+        /// <summary>
+        /// Cookies to send to the Convertigo server.
+        /// </summary>
         internal CookieCollection cookies;
 
         //*** Log ***//
@@ -68,21 +71,19 @@ namespace Convertigo.SDK
 
         //*** Getter / Setter ***//
 
-        public C8oSettings setTimeout(int timeout)
+        //*** HTTP ***//
+
+        public C8oSettings SetTimeout(int timeout)
         {
             this.timeout = timeout;
-
             return this;
         }
-
-        public C8oSettings setTrustAllCertificates(bool trustAllCetificates)
+        public C8oSettings SetTrustAllCertificates(bool trustAllCetificates)
         {
             this.trustAllCetificates = trustAllCetificates;
-
             return this;
         }
-
-        public C8oSettings addCookie(String name, String value)
+        public C8oSettings AddCookie(String name, String value)
         {
             if (this.cookies == null)
             {
@@ -92,5 +93,36 @@ namespace Convertigo.SDK
 
             return this;
         }
+
+        //*** Log ***//
+
+        public C8oSettings SetIsLogRemote(Boolean isLogRemote)
+        {
+            this.isLogRemote = isLogRemote;
+            return this;
+        }
+        public C8oSettings SetHandleExceptionsOnLog(Boolean handleExceptionsOnLog)
+        {
+            this.handleExceptionsOnLog = handleExceptionsOnLog;
+            return this;
+        }
+        //*** FullSync ***//
+
+        public C8oSettings SetDefaultFullSyncDatabaseName(String defaultFullSyncDatabaseName)
+        {
+            this.defaultFullSyncDatabaseName = defaultFullSyncDatabaseName;
+            return this;
+        }
+        public C8oSettings SetAuthenticationCookieValue(String authenticationCookieValue)
+        {
+            this.authenticationCookieValue = authenticationCookieValue;
+            return this;
+        }
+        public C8oSettings SetFullSyncInterface(FullSyncInterface fullSyncInterface)
+        {
+            this.fullSyncInterface = fullSyncInterface;
+            return this;
+        }
+        
     }
 }
