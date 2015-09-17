@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Convertigo.SDK.FullSync
+namespace Convertigo.SDK
 {
     /// <summary>
     /// Represents a void response in case of c8o call which returns nothing directly.
     /// </summary>
-    internal class VoidResponse
+    public class VoidResponse
     {
         private static readonly VoidResponse VOID_RESPONSE_INSTANCE = new VoidResponse();
 	

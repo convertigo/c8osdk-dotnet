@@ -17,6 +17,7 @@
         <Button x:Name="CallButtonFsPull" Content="FS Pull" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.507,0.55" Click="CallButtonFsPullClick"/>
         <Button x:Name="CallButtonFsPush" Content="FS Push" HorizontalAlignment="Left" Margin="90,35,0,0" VerticalAlignment="Top" Width="75" Click="CallButtonFsPushClick"/>
         <Button x:Name="CallButtonFsSync" Content="FS Sync" HorizontalAlignment="Left" Margin="170,35,0,0" VerticalAlignment="Top" Width="75" Click="CallButtonFsSyncClick"/>
+        <Button x:Name="CallButtonFsReset" Content="FS Reset" HorizontalAlignment="Left" Margin="250,35,0,0" VerticalAlignment="Top" Width="75" Click="CallButtonFsResetClick"/>
 
     </Grid>
 </Window>

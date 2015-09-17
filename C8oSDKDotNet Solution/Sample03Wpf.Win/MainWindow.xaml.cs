@@ -109,12 +109,24 @@ namespace Sample03Wpf.Win
 
         private void CallButtonFsPushClick(object sender, RoutedEventArgs e)
         {
+            Dictionary<String, Object> data = new Dictionary<String, Object>();
 
+            c8o.Call("fs://retaildb.replicate_push", data, jsonListener);
         }
 
         private void CallButtonFsSyncClick(object sender, RoutedEventArgs e)
         {
 
+            Dictionary<String, Object> data = new Dictionary<String, Object>();
+
+            c8o.Call("fs://retaildb.sync", data, jsonListener);
+        }
+
+        private void CallButtonFsResetClick(object sender, RoutedEventArgs e)
+        {
+            Dictionary<String, Object> data = new Dictionary<String, Object>();
+
+            c8o.Call("fs://retaildb.reset", data, jsonListener);
         }
     }
 }

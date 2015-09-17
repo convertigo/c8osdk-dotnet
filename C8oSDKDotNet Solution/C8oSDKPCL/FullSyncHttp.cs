@@ -40,19 +40,23 @@ namespace Convertigo.SDK
             this.c8o = c8o;
         }
 
-        public override void HandleFullSyncResponse(Object response, Dictionary<String, Object> parameters, Listeners.C8oResponseListener c8oResponseListener)
+        public override void HandleFullSyncResponse(Object response, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
         {
-            if (c8oResponseListener is C8oJsonResponseListener)
+            if (response is JObject)
             {
-                (c8oResponseListener as C8oJsonResponseListener).OnJsonResponse((response as JObject), parameters);
-            }
-            else if (c8oResponseListener is C8oXmlResponseListener)
-            {
-
-            }
-            else
-            {
-                throw new ArgumentException(C8oExceptionMessage.UnknownType("c8oResponseListener", c8oResponseListener));
+                JObject json = response as JObject;
+                if (c8oResponseListener is C8oJsonResponseListener)
+                {
+                    (c8oResponseListener as C8oJsonResponseListener).OnJsonResponse(json, parameters);
+                }
+                else if (c8oResponseListener is C8oXmlResponseListener)
+                {
+                    (c8oResponseListener as C8oXmlResponseListener).OnXmlResponse(FullSyncTranslator.FullSyncJsonToXml(json), parameters);
+                }
+                else
+                {
+                    throw new ArgumentException(C8oExceptionMessage.UnknownType("c8oResponseListener", c8oResponseListener));
+                }
             }
         }
 
@@ -273,15 +277,50 @@ namespace Convertigo.SDK
             return execute(request);
         }
 
-        public override Object HandleSyncRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters, Listeners.C8oResponseListener c8oResponseListener)
+        public override Object HandleSyncRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
         {
-            throw new NotImplementedException();
+            Task.Run(() =>
+            {
+                HandleReplicatePushRequest(fullSyncDatatbaseName, parameters, c8oResponseListener);
+            });
+            return HandleReplicatePullRequest(fullSyncDatatbaseName, parameters, c8oResponseListener);
         }
 
-        public override Object HandleReplicatePullRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters, Listeners.C8oResponseListener c8oResponseListener)
+        public override Object HandleReplicatePullRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
         {
-            JObject source = new JObject();
-            source["url"] = c8o.GetEndpointPart(1) + "/fullsync" + '/' + fullSyncDatatbaseName + '/';
+            return postReplicate(fullSyncDatatbaseName, parameters, c8oResponseListener, true);
+        }
+
+        public override Object HandleReplicatePushRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
+        {
+            return postReplicate(fullSyncDatatbaseName, parameters, c8oResponseListener, false);
+        }
+
+        private Object postReplicate(String fullSyncDatatbaseName, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener, bool isPull)
+        {
+            bool createTarget = true;
+            bool continuous = false;
+            bool cancel = false;
+
+            if (parameters.ContainsKey("create_target"))
+            {
+                createTarget = parameters["create_target"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (parameters.ContainsKey("continuous"))
+            {
+                continuous = parameters["continuous"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (parameters.ContainsKey("cancel"))
+            {
+                continuous = parameters["cancel"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
+            }
+
+            JToken local = fullSyncDatatbaseName + "_device";
+            JObject remote = new JObject();
+
+            remote["url"] = c8o.GetEndpointPart(1) + "/fullsync" + '/' + fullSyncDatatbaseName + '/';
 
             CookieCollection cookies = c8o.GetCookies();
 
@@ -298,42 +337,23 @@ namespace Convertigo.SDK
                 cookieHeader.Remove(cookieHeader.Length - 2, 2);
 
                 headers["Cookie"] = cookieHeader.ToString();
-                source["headers"] = headers;
+                remote["headers"] = headers;
             }
-
-            return postReplicate(c8oResponseListener, source, fullSyncDatatbaseName + "_device", true, false, false, null, null, true);
-        }
-
-        public override Object HandleReplicatePushRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters, Listeners.C8oResponseListener c8oResponseListener)
-        {
-            throw new NotImplementedException();
-        }
-
-        private JObject postReplicate(Listeners.C8oResponseListener c8oResponseListener, JToken source, JToken target, bool createTarget, bool continuous, bool cancel, JArray docIds, String proxy, bool isPull)
-        {
+            
             HttpWebRequest request = HttpWebRequest.CreateHttp(serverUrl + "/_replicate");
             request.Method = "POST";
 
             JObject json = new JObject();
-            String sourceId = (source is JObject && source["url"] != null ? source["url"] : source).ToString();
-            String targetId = (target is JObject && target["url"] != null ? target["url"] : target).ToString();
 
-            json["source"] = source;
-            json["target"] = target;
+            String sourceId = (isPull ? remote["url"] : local).ToString();
+            String targetId = (isPull ? local : remote["url"]).ToString();
+
+            json["source"] = isPull ? remote : local;
+            json["target"] = isPull ? local : remote;
             json["create_target"] = createTarget;
             json["continuous"] = false;
             json["cancel"] = true;
             
-            if (docIds != null)
-            {
-                json["doc_ids"] = docIds;
-            }
-
-            if (proxy != null)
-            {
-                json["proxy"] = proxy;
-            }
-
             JObject response = execute(request, json);
             c8o.Log(C8oLogLevel.WARN, response.ToString());
 
@@ -346,23 +366,7 @@ namespace Convertigo.SDK
 
             request = HttpWebRequest.CreateHttp(serverUrl + "/_replicate");
             request.Method = "POST";
-            /*
-            response = execute(request, json);
-            c8o.Log(C8oLogLevel.WARN, response.ToString());
 
-            String localId = response["_local_id"].ToString();
-            localId = localId.Substring(0, localId.IndexOf('+'));
-
-            for (int i = 0; i < 1000; i++)
-            {
-                request = HttpWebRequest.CreateHttp(getDatabaseUrl(fullSyncDatatbaseName) + "/_local/" + localId);
-                c8o.Log(C8oLogLevel.WARN, request.RequestUri.ToString());
-                request.Method = "GET";
-
-                response = execute(request);
-                c8o.Log(C8oLogLevel.WARN, response.ToString());
-            }
-            */
             response = null;
 
             JObject progress = new JObject();
@@ -387,6 +391,12 @@ namespace Convertigo.SDK
                     req.Method = "GET";
 
                     JObject res = execute(req);
+
+                    if (response != null)
+                    {
+                        break;
+                    }
+
                     c8o.Log(C8oLogLevel.WARN, res.ToString());
 
                     JObject task = null;
@@ -407,7 +417,7 @@ namespace Convertigo.SDK
                         progress["current"] = task["revisions_checked"];
                         progress["taskInfo"] = task.ToString();
 
-                        HandleFullSyncResponse(progress, new Dictionary<string, object>(), c8oResponseListener);
+                        HandleFullSyncResponse(progress, parameters, c8oResponseListener);
 
                         c8o.Log(C8oLogLevel.WARN, progress.ToString());
                     }
@@ -421,23 +431,118 @@ namespace Convertigo.SDK
             progress["current"] = response["source_last_seq"];
             progress["taskInfo"] = response.ToString();
             progress["status"] = "Stopped";
-                
-            return response;
+            
+            if (continuous)
+            {
+
+                progress["status"] = "Idle";
+                json["continuous"] = true;
+
+                request = HttpWebRequest.CreateHttp(serverUrl + "/_replicate");
+                request.Method = "POST";
+
+                response = execute(request, json);
+                c8o.Log(C8oLogLevel.WARN, response.ToString());
+                /*
+                String localId = response["_local_id"].ToString();
+                localId = localId.Substring(0, localId.IndexOf('+'));
+
+                for (int i = 0; i < 1000; i++)
+                {
+                    request = HttpWebRequest.CreateHttp(getDatabaseUrl(fullSyncDatatbaseName) + "/_local/" + localId);
+                    c8o.Log(C8oLogLevel.WARN, request.RequestUri.ToString());
+                    request.Method = "GET";
+
+                    response = execute(request);
+                    c8o.Log(C8oLogLevel.WARN, response.ToString());
+                }
+                */
+            }
+            else
+            {
+                progress["status"] = "Stopped";
+            }
+
+            HandleFullSyncResponse(progress, parameters, c8oResponseListener);
+
+            return VoidResponse.GetInstance();
         }
 
         public override Object HandleResetDatabaseRequest(String fullSyncDatatbaseName)
         {
-            throw new NotImplementedException();
+            String uri = getDatabaseUrl(fullSyncDatatbaseName);
+
+            HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
+            request.Method = "DELETE";
+
+            execute(request);
+
+            request = HttpWebRequest.CreateHttp(uri);
+            request.Method = "PUT";
+
+            return execute(request);
         }
 
         public override Object GetResponseFromLocalCache(String c8oCallRequestIdentifier)
         {
-            throw new NotImplementedException();
+            JObject localCacheDocument = HandleGetDocumentRequest(C8o.LOCAL_CACHE_DATABASE_NAME, c8oCallRequestIdentifier) as JObject;
+
+            if (localCacheDocument == null)
+            {
+                throw new C8oUnavailableLocalCacheException(C8oExceptionMessage.ToDo());
+            }
+
+
+            String responseString = "" + localCacheDocument[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE];
+            String responseTypeString = "" + localCacheDocument[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE];
+            Object expirationDate = localCacheDocument[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE];
+
+            long expirationDateLong;
+
+            if (expirationDate != null)
+            {
+                if (expirationDate is long)
+                {
+                    expirationDateLong = (long) expirationDate;
+                    double currentTime = C8oUtils.GetUnixEpochTime(DateTime.Now);
+                    if (expirationDateLong < currentTime)
+                    {
+                        throw new C8oUnavailableLocalCacheException(C8oExceptionMessage.timeToLiveExpired());
+                    }
+                }
+                else
+                {
+                    throw new C8oUnavailableLocalCacheException(C8oExceptionMessage.invalidLocalCacheResponseInformation());
+                }
+            }
+
+            if (responseTypeString.Equals(C8o.RESPONSE_TYPE_JSON))
+            {
+                return C8oTranslator.StringToJsonValue(responseString);
+            }
+            else if (responseTypeString.Equals(C8o.RESPONSE_TYPE_XML))
+            {
+                return C8oTranslator.StringToXml(responseString);
+            }
+            else
+            {
+                throw new C8oException(C8oExceptionMessage.ToDo());
+            }
         }
 
         public override void SaveResponseToLocalCache(String c8oCallRequestIdentifier, String responseString, String responseType, int timeToLive)
         {
-            throw new NotImplementedException();
+            Dictionary<String, Object> properties = new Dictionary<String, Object>();
+            properties[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE] = responseString;
+            properties[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE_TYPE] = responseType;
+
+            if (timeToLive != null)
+            {
+                long expirationDate = (long) C8oUtils.GetUnixEpochTime(DateTime.Now) + timeToLive;
+                properties[C8o.LOCAL_CACHE_DOCUMENT_KEY_EXPIRATION_DATE] = expirationDate;
+            }
+
+            handlePostDocumentRequest(C8o.LOCAL_CACHE_DATABASE_NAME, FullSyncPolicy.OVERRIDE, properties);
         }
 
         private Dictionary<String, Object> handleRev(String fullSyncDatatbaseName, String docid, Dictionary<String, Object> parameters)
