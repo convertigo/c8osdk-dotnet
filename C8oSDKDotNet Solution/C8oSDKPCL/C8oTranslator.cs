@@ -214,5 +214,16 @@ namespace Convertigo.SDK
 
             return bytes;
         }
+
+        public static JObject DictionaryToJson(IDictionary<String, Object> dict)
+        {
+            JObject json = new JObject();
+            foreach (KeyValuePair<String, Object> item in dict)
+            {
+                JValue value = new JValue(item.Value);
+                json.Add(item.Key, value);
+            }
+            return json;
+        }
     }
 }

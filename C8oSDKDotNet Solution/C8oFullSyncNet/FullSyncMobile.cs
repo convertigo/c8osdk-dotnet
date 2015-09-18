@@ -546,7 +546,7 @@ namespace Convertigo.SDK.FullSync
 
         //*** Local cache ***//
 
-        public override Object GetResponseFromLocalCache(String c8oCallRequestIdentifier)
+        public override LocalCacheResponse GetResponseFromLocalCache(String c8oCallRequestIdentifier)
         {
             CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(C8o.LOCAL_CACHE_DATABASE_NAME);
             Document localCacheDocument = fullSyncDatabase.GetDatabase().GetExistingDocument(c8oCallRequestIdentifier);
@@ -556,7 +556,24 @@ namespace Convertigo.SDK.FullSync
                 throw new C8oUnavailableLocalCacheException(C8oExceptionMessage.ToDo());
             }
 
-            Object response = localCacheDocument.GetProperty(C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE);
+            IDictionary<String, Object> properties = localCacheDocument.Properties;
+
+            String response;
+            String responseType;
+            long expirationDate;
+            if (!C8oUtils.TryGetParameterObjectValue<String>(properties, C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE, out response) || !C8oUtils.TryGetParameterObjectValue<String>(properties, C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE_TYPE, out responseType))
+            {
+                throw new C8oUnavailableLocalCacheException(C8oExceptionMessage.invalidLocalCacheResponseInformation());
+            }
+            if (C8oUtils.TryGetParameterObjectValue<long>(properties, C8o.LOCAL_CACHE_DOCUMENT_KEY_EXPIRATION_DATE, out expirationDate))
+            {
+                expirationDate = 0;
+            }
+
+            return new LocalCacheResponse(response, responseType, expirationDate);
+
+
+            /*Object response = localCacheDocument.GetProperty(C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE);
             Object responseType = localCacheDocument.GetProperty(C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE_TYPE);
             Object expirationDate = localCacheDocument.GetProperty(C8o.LOCAL_CACHE_DOCUMENT_KEY_EXPIRATION_DATE);
 
@@ -579,7 +596,7 @@ namespace Convertigo.SDK.FullSync
 			    if (expirationDate is long) 
                 {
 				    expirationDateLong = (long) expirationDate;
-                    double currentTime = C8oUtils.GetUnixEpochTime(DateTime.Now);
+                    long currentTime = C8oUtils.GetUnixEpochTime(DateTime.Now);
 				    if (expirationDateLong < currentTime) 
                     {
 					    throw new C8oUnavailableLocalCacheException(C8oExceptionMessage.timeToLiveExpired());
@@ -602,22 +619,22 @@ namespace Convertigo.SDK.FullSync
             else
             {
                 throw new C8oException(C8oExceptionMessage.ToDo());
-            }
+            }*/
         }
 
 
-        public override void SaveResponseToLocalCache(String c8oCallRequestIdentifier, String responseString, String responseType, int timeToLive)
+        public override void SaveResponseToLocalCache(String c8oCallRequestIdentifier, LocalCacheResponse localCacheResponse)
         {
             CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(C8o.LOCAL_CACHE_DATABASE_NAME);
             Document localCacheDocument = fullSyncDatabase.GetDatabase().GetDocument(c8oCallRequestIdentifier);
 
             Dictionary<String, Object> properties = new Dictionary<String, Object>();
-            properties.Add(C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE, responseString);
-            properties.Add(C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE_TYPE, responseType);
-            if (timeToLive != null)
+            properties.Add(C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE, localCacheResponse.Response);
+            properties.Add(C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE_TYPE, localCacheResponse.ResponseType);
+            if (localCacheResponse.ExpirationDate > 0)
             {
-                double expirationDate = C8oUtils.GetUnixEpochTime(DateTime.Now) + timeToLive;
-                properties.Add(C8o.LOCAL_CACHE_DOCUMENT_KEY_EXPIRATION_DATE, expirationDate);
+                // long expirationDate = C8oUtils.GetUnixEpochTime(DateTime.Now) + timeToLive;
+                properties.Add(C8o.LOCAL_CACHE_DOCUMENT_KEY_EXPIRATION_DATE, localCacheResponse.ExpirationDate);
             }
 
             SavedRevision currentRevision = localCacheDocument.CurrentRevision;

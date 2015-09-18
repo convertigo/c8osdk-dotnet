@@ -145,7 +145,7 @@ namespace Convertigo.SDK.FullSync
         /// </summary>
         /// <param name="c8oCallRequestIdentifier"></param>
         /// <returns></returns>
-        public abstract Object GetResponseFromLocalCache(String c8oCallRequestIdentifier);
+        public abstract LocalCacheResponse GetResponseFromLocalCache(String c8oCallRequestIdentifier);
 
         /// <summary>
         /// Saves the c8o call response into the local cache.
@@ -154,7 +154,7 @@ namespace Convertigo.SDK.FullSync
         /// <param name="responseString"></param>
         /// <param name="responseType"></param>
         /// <param name="timeToLive"></param>
-        public abstract void SaveResponseToLocalCache(String c8oCallRequestIdentifier, String responseString, String responseType, int timeToLive);
+        public abstract void SaveResponseToLocalCache(String c8oCallRequestIdentifier, LocalCacheResponse localCacheResponse);
 
     }
 

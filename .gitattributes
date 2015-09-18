@@ -81,6 +81,7 @@ C8oSDKDotNet[!!-~]Solution/C8oFullSyncNetiOS/packages.config -text
 C8oSDKDotNet[!!-~]Solution/C8oNetPclSDK[!!-~]Solution.sln -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKDotNet[!!-~]Solution.sln -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8o.cs -text
+C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oEnum.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oExceptionListener.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oExceptionMessage.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oJSONResponseListener.cs -text
@@ -101,6 +102,7 @@ C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/FullSyncTranslator.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/FullSyncUtils.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/HttpInterface.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/JavaEnumTemplate.cs -text
+C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/LocalCacheResponse.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/Properties/AssemblyInfo.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/VoidResponse.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/packages.config -text

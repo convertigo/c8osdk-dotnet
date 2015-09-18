@@ -85,47 +85,17 @@ namespace Sample02XamarinForms
 
             this.c8oJsonResponseListener = new C8oJsonResponseListener((jsonResponse, parameters) =>
             {
-                counter++;
-                //if (counter >= limit)
-                //{
-                    counter = 0;
-                    // limit++; 
-                    String str = jsonResponse.ToString();
-                    Debug.WriteLine(str);
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        this.responseLabel.Text = str;
-                    });
-                //}
+                String str = jsonResponse.ToString();
+                Debug.WriteLine(str);
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    this.responseLabel.Text = str;
+                });
 
                 //Device.BeginInvokeOnMainThread(() =>
                 //{
                 //    this.counterLabel.Text = "" + counter + " / " + limit;
                 //});
-
-
-
-                /*String str = jsonResponse.ToString();
-                Debug.WriteLine(str);
-                long current;
-                if (C8oUtils.TryGetValueAndCheckType<long>(jsonResponse, "current", out current))
-                {
-                    if (current > this.counter)
-                    {
-                        this.counter += 1000;
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            this.responseLabel.Text = str;
-                        });
-                    }
-                }
-                else
-                {
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        this.responseLabel.Text = str;
-                    });
-                }*/
 
                 // Checks if the request is a GetDocument fullSync request
                 /*if (FullSyncUtils.IsFullSyncRequest(parameters))
@@ -200,19 +170,6 @@ namespace Sample02XamarinForms
             return null;
         }
 
-        private int counter;
-        private int limit;
-
-        void OnRefreshButtonClicked(object sender, EventArgs args)
-        {
-            this.counter = 10;
-        }
-
-        private class C8oResponseListenerTmp : C8oResponseListener
-        {
-
-        }
-
         void OnCallButtonClicked(object sender, EventArgs args)
         {
             this.requestableEntry.AddToHistory(this.requestableEntry.Text);
@@ -235,9 +192,8 @@ namespace Sample02XamarinForms
 
             try
             {
-                // this.c8o.call(this.requestableEntry.Text, parameters, this.c8oJsonResponseListener);
-                String r = this.requestableEntry.Text;
-                if (r != null && !r.Equals(""))
+                String requestable = this.requestableEntry.Text;
+                if (requestable != null && !requestable.Equals(""))
                 {
                     /*C8oXmlResponseListener rl = new C8oXmlResponseListener((xmlResponse, requestParameters) =>
                     {
@@ -254,46 +210,17 @@ namespace Sample02XamarinForms
 
                     //Task task = new Task(() =>
                     //{
-                        this.counter = 10;
-                        this.limit = 10;
-                        if (r.EndsWith("replicate_pull"))
+                        if (requestable.EndsWith("replicate_pullERROR"))
                         {
-                            this.c8o.Call(r, parameters, null);
+                            this.c8o.Call(requestable, parameters, null);
                         }
                         else
                         {
-                            this.c8o.Call(r, parameters, this.c8oJsonResponseListener);
+                            this.c8o.Call(requestable, parameters, this.c8oJsonResponseListener);
                         }
                     //});
                     //task.Start();
                 }
-                //else
-                //{
-                    //Dictionary<String, Object> parametersTest = new Dictionary<string, object>();
-                    //parametersTest.Add("_use_policy", "override");
-                    //parametersTest.Add("_id", "doc003");
-                    //Object[] array = new Object[] { "un", 2, false };
-                    //parametersTest.Add("array", array);
-                    //Dictionary<String, Object> dict = new Dictionary<string, object>();
-                    //dict.Add("un", "un");
-                    //dict.Add("deux", 2);
-                    //dict.Add("trois", false);
-                    //parametersTest.Add("dict", dict);
-
-                    //C8oXmlResponseListener rl = new C8oXmlResponseListener((xmlResponse, requestParameters) => 
-                    //{
-                    //    Device.BeginInvokeOnMainThread(() =>
-                    //    {
-                    //        this.responseLabel.Text = xmlResponse.ToString();
-                    //    });
-                    //});
-
-                    //Task task = new Task(async () =>
-                    //{
-                    //    await this.c8o.Call("fs://.post", parametersTest, rl);
-                    //});
-                    //task.Start();
-                //}
             }
             catch (Exception e)
             {

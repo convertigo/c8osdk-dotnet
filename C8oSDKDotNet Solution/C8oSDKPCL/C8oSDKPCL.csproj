@@ -41,6 +41,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="C8o.cs" />
+    <Compile Include="C8oEnum.cs" />
     <Compile Include="C8oExceptionListener.cs" />
     <Compile Include="C8oExceptionMessage.cs" />
     <Compile Include="C8oJSONResponseListener.cs" />
@@ -59,7 +60,9 @@
     <Compile Include="FullSyncUtils.cs" />
     <Compile Include="HttpInterface.cs" />
     <Compile Include="JavaEnumTemplate.cs" />
+    <Compile Include="LocalCacheResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VoidResponse.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

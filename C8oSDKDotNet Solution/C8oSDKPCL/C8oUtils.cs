@@ -115,21 +115,23 @@ namespace Convertigo.SDK.Utils
             }
         }
 
-        public static Object GetParameterObjectValue(IDictionary<String, Object> parameters, String name, Boolean useName, Type type)
+        public static Boolean TryGetParameterObjectValue<T>(IDictionary<String, Object> parameters, String name, out T value, Boolean useName = false, T defaultValue = default(T))
         {
             KeyValuePair<String, Object> parameter = C8oUtils.GetParameter(parameters, name, useName);
             if (parameter.Key != null && parameter.Value != null)
             {
                 if (parameter.Value is String)
                 {
-                    return C8oTranslator.StringToObject(parameter.Value as String, type);
+                    value = (T) C8oTranslator.StringToObject(parameter.Value as String, typeof(T));
                 }
                 else
                 {
-                    return parameter.Value;
+                    value = (T) parameter.Value;
                 }
+                return true;
             }
-            return null;
+            value = defaultValue;
+            return false;
         }
 
         //*** Others ***//
@@ -150,10 +152,10 @@ namespace Convertigo.SDK.Utils
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        public static double GetUnixEpochTime(DateTime date)
+        public static long GetUnixEpochTime(DateTime date)
         {
             TimeSpan timeSpan = date.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, 0));
-            return timeSpan.TotalMilliseconds;
+            return (long) timeSpan.TotalMilliseconds;
         }
 
         //public static T GetParameterAndCheckType<T>(IDictionary<String, Object> parameters, String name, T defaultValue = default(T))
@@ -198,6 +200,17 @@ namespace Convertigo.SDK.Utils
             }
             value = default(T);
             return false;
+        }
+
+        public static String IdentifyC8oCallRequest(IDictionary<String, Object> parameters, String responseType)
+        {
+            JObject json = new JObject();
+            foreach (KeyValuePair<String, Object> parameter in parameters)
+            {
+                JValue value = new JValue(parameter.Value);
+                json.Add(parameter.Key, value);
+            }
+            return responseType + json.ToString();
         }
 
     }

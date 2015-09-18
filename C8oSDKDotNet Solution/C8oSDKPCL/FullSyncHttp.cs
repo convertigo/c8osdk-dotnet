@@ -483,67 +483,76 @@ namespace Convertigo.SDK
             return execute(request);
         }
 
-        public override Object GetResponseFromLocalCache(String c8oCallRequestIdentifier)
+        public override LocalCacheResponse GetResponseFromLocalCache(String c8oCallRequestIdentifier)
         {
-            JObject localCacheDocument = HandleGetDocumentRequest(C8o.LOCAL_CACHE_DATABASE_NAME, c8oCallRequestIdentifier) as JObject;
-
-            if (localCacheDocument == null)
-            {
-                throw new C8oUnavailableLocalCacheException(C8oExceptionMessage.ToDo());
-            }
-
-
-            String responseString = "" + localCacheDocument[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE];
-            String responseTypeString = "" + localCacheDocument[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE];
-            Object expirationDate = localCacheDocument[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE];
-
-            long expirationDateLong;
-
-            if (expirationDate != null)
-            {
-                if (expirationDate is long)
-                {
-                    expirationDateLong = (long) expirationDate;
-                    double currentTime = C8oUtils.GetUnixEpochTime(DateTime.Now);
-                    if (expirationDateLong < currentTime)
-                    {
-                        throw new C8oUnavailableLocalCacheException(C8oExceptionMessage.timeToLiveExpired());
-                    }
-                }
-                else
-                {
-                    throw new C8oUnavailableLocalCacheException(C8oExceptionMessage.invalidLocalCacheResponseInformation());
-                }
-            }
-
-            if (responseTypeString.Equals(C8o.RESPONSE_TYPE_JSON))
-            {
-                return C8oTranslator.StringToJsonValue(responseString);
-            }
-            else if (responseTypeString.Equals(C8o.RESPONSE_TYPE_XML))
-            {
-                return C8oTranslator.StringToXml(responseString);
-            }
-            else
-            {
-                throw new C8oException(C8oExceptionMessage.ToDo());
-            }
+            return null;
         }
 
-        public override void SaveResponseToLocalCache(String c8oCallRequestIdentifier, String responseString, String responseType, int timeToLive)
+        //public override Object GetResponseFromLocalCache(String c8oCallRequestIdentifier)
+        //{
+        //    JObject localCacheDocument = HandleGetDocumentRequest(C8o.LOCAL_CACHE_DATABASE_NAME, c8oCallRequestIdentifier) as JObject;
+
+        //    if (localCacheDocument == null)
+        //    {
+        //        throw new C8oUnavailableLocalCacheException(C8oExceptionMessage.ToDo());
+        //    }
+
+
+        //    String responseString = "" + localCacheDocument[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE];
+        //    String responseTypeString = "" + localCacheDocument[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE];
+        //    Object expirationDate = localCacheDocument[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE];
+
+        //    long expirationDateLong;
+
+        //    if (expirationDate != null)
+        //    {
+        //        if (expirationDate is long)
+        //        {
+        //            expirationDateLong = (long) expirationDate;
+        //            double currentTime = C8oUtils.GetUnixEpochTime(DateTime.Now);
+        //            if (expirationDateLong < currentTime)
+        //            {
+        //                throw new C8oUnavailableLocalCacheException(C8oExceptionMessage.timeToLiveExpired());
+        //            }
+        //        }
+        //        else
+        //        {
+        //            throw new C8oUnavailableLocalCacheException(C8oExceptionMessage.invalidLocalCacheResponseInformation());
+        //        }
+        //    }
+
+        //    if (responseTypeString.Equals(C8o.RESPONSE_TYPE_JSON))
+        //    {
+        //        return C8oTranslator.StringToJson(responseString);
+        //    }
+        //    else if (responseTypeString.Equals(C8o.RESPONSE_TYPE_XML))
+        //    {
+        //        return C8oTranslator.StringToXml(responseString);
+        //    }
+        //    else
+        //    {
+        //        throw new C8oException(C8oExceptionMessage.ToDo());
+        //    }
+        //}
+
+        public override void SaveResponseToLocalCache(String c8oCallRequestIdentifier, LocalCacheResponse localCacheResponse)
         {
-            Dictionary<String, Object> properties = new Dictionary<String, Object>();
-            properties[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE] = responseString;
-            properties[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE_TYPE] = responseType;
-
-            if (timeToLive != null)
-            {
-                long expirationDate = (long) C8oUtils.GetUnixEpochTime(DateTime.Now) + timeToLive;
-                properties[C8o.LOCAL_CACHE_DOCUMENT_KEY_EXPIRATION_DATE] = expirationDate;
-            }
-
-            handlePostDocumentRequest(C8o.LOCAL_CACHE_DATABASE_NAME, FullSyncPolicy.OVERRIDE, properties);
         }
+
+        //public override void SaveResponseToLocalCache(String c8oCallRequestIdentifier, String responseString, String responseType, int timeToLive)
+        //{
+        //    Dictionary<String, Object> properties = new Dictionary<String, Object>();
+        //    properties[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE] = responseString;
+        //    properties[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE_TYPE] = responseType;
+
+        //    if (timeToLive != null)
+        //    {
+        //        long expirationDate = (long) C8oUtils.GetUnixEpochTime(DateTime.Now) + timeToLive;
+        //        properties[C8o.LOCAL_CACHE_DOCUMENT_KEY_EXPIRATION_DATE] = expirationDate;
+        //    }
+
+        //    handlePostDocumentRequest(C8o.LOCAL_CACHE_DATABASE_NAME, FullSyncPolicy.OVERRIDE, properties);
+        //}
 
         private Dictionary<String, Object> handleRev(String fullSyncDatatbaseName, String docid, Dictionary<String, Object> parameters)
         {

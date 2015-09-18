@@ -23,10 +23,6 @@
         Text="Call"
         Clicked="OnCallButtonClicked" />
 
-      <Button
-        Text="Refresh"
-        Clicked="OnRefreshButtonClicked" />
-
       <StackLayout x:Name="response">
         <Label x:Name="counterLabel" />
         <Label x:Name="responseLabel" />

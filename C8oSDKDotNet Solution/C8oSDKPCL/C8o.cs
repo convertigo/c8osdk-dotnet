@@ -17,6 +17,7 @@ using System.Diagnostics;
 using Convertigo.SDK.Utils;
 using Convertigo.SDK.FullSync;
 using Convertigo.SDK.Http;
+using Convertigo.SDK.C8oEnum;
 
 // TODO
 // doc
@@ -186,19 +187,20 @@ namespace Convertigo.SDK
 
         //*** C8o calls ***//        
 
-        public void Call(String requestable, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
+        public void Call(String requestable, Dictionary<String, Object> parameters = null, C8oResponseListener c8oResponseListener = null)
         {
             this.Call(requestable, parameters, c8oResponseListener, this.c8oExceptionListener);
         }
 
-        public void Call(String requestable, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener, C8oExceptionListener c8oExceptionListener)
+        public void Call(String requestable, Dictionary<String, Object> parameters = null, C8oResponseListener c8oResponseListener = null, C8oExceptionListener c8oExceptionListener = null)
         {
             try
             {
                 // Checks parameters validity
                 if (parameters == null)
                 {
-                    throw new System.ArgumentNullException(C8oExceptionMessage.InvalidArgumentNullParameter("Call parameters"));
+                    // throw new System.ArgumentNullException(C8oExceptionMessage.InvalidArgumentNullParameter("Call parameters"));
+                    parameters = new Dictionary<String, Object>();
                 }
                 if (requestable == null)
                 {
@@ -237,12 +239,12 @@ namespace Convertigo.SDK
             }
         }
 
-        public void Call(Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
+        public void Call(Dictionary<String, Object> parameters = null, C8oResponseListener c8oResponseListener = null)
         {
             this.Call(parameters, c8oResponseListener, this.c8oExceptionListener);
         }
 
-        public void Call(Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener, C8oExceptionListener c8oExceptionListener)
+        public void Call(Dictionary<String, Object> parameters = null, C8oResponseListener c8oResponseListener = null, C8oExceptionListener c8oExceptionListener = null)
         {
             // IMPORTANT : all c8o calls have to end here !
 
@@ -254,14 +256,18 @@ namespace Convertigo.SDK
                 // Checks parameters validity
                 if (parameters == null)
                 {
-                    throw new System.ArgumentNullException(C8oExceptionMessage.InvalidArgumentNullParameter("Call parameters"));
+                    // throw new System.ArgumentNullException(C8oExceptionMessage.InvalidArgumentNullParameter("Call parameters"));
+                    parameters = new Dictionary<String, Object>();
                 }
                 /*if (c8oResponseListener == null)
                 {
                     throw new System.ArgumentNullException(C8oExceptionMessage.InvalidArgumentNullParameter("C8oExceptionListener"));
                 }*/
 
-                
+                // Creates a async task running on another thread
+                // Exceptions have to be handled by the C8oExceptionListener
+                Task task = new Task(async () =>
+                {                
                     // Checks if this is a fullSync request
                     Boolean isFullSyncRequest = FullSyncUtils.IsFullSyncRequest(parameters);
                     if (isFullSyncRequest)
@@ -282,12 +288,9 @@ namespace Convertigo.SDK
                     // Or else if this is an HTTP request
                     else
                     {
-                        // Creates a async task running on another thread
-                        // Exceptions have to be handled by the C8oExceptionListener
-                        Task task = new Task(async () =>
+
+                        try
                         {
-                            try
-                            {
                             this.c8oLogger.Log(C8oLogLevel.DEBUG, "Starts the asynchronous task");
                             this.c8oLogger.Log(C8oLogLevel.DEBUG, "Is HTTP request");
                             // Defines the response type
@@ -308,41 +311,99 @@ namespace Convertigo.SDK
                             //*** Local cache ***//
 
                             //String c8oCallRequestIdentifier = null;
-                            //// Allows to enable or disable the local cache on a Convertigo requestable
-                            //Boolean localCacheEnabledParameterValue = false;
-                            //// Defines the time to live of the cached response, in milliseconds
-                            //int localCacheTimeToLiveParameterValue = 0;
-                            // Checks if the local cache have to be used
-                            //Object localCacheParameterValue;
-                            //try {
-                            //    localCacheParameterValue = C8oUtils.GetParameterObjectValue(parameters, C8o.ENGINE_PARAMETER_LOCAL_CACHE, false, typeof(IDictionary<String, Object>));
-                            //} catch (C8oException e) {
-                            //    throw new C8oException(C8oExceptionMessage.getNameValuePairObjectValue(C8o.ENGINE_PARAMETER_LOCAL_CACHE), e);
+                            //Boolean localCacheEnabled = false;
+
+                            //// Checks if local cache parameters are sent
+                            //IDictionary<String, Object> localCacheParameters;
+                            //if (C8oUtils.TryGetParameterObjectValue <IDictionary<String, Object>>(parameters, C8o.ENGINE_PARAMETER_LOCAL_CACHE, out localCacheParameters))
+                            //{
+                            //    // Checks if the local cache is enabled
+                            //    if (C8oUtils.TryGetParameterObjectValue<Boolean>(parameters, C8o.LOCAL_CACHE_PARAMETER_KEY_ENABLED, out localCacheEnabled, defaultValue: localCacheEnabled))
+                            //    {
+                            //        // Removes local cache parameters and build the c8o call request identifier
+                            //        parameters.Remove(C8o.ENGINE_PARAMETER_LOCAL_CACHE);
+                            //        c8oCallRequestIdentifier = C8oUtils.IdentifyC8oCallRequest(parameters, responseType);
+
+                            //        // Retrieves the local cache policy
+                            //        String localCachePolicyStr;
+                            //        if (C8oUtils.TryGetParameterObjectValue<String>(parameters, C8o.LOCAL_CACHE_PARAMETER_KEY_POLICY, out localCachePolicyStr))
+                            //        {
+                            //            LocalCachePolicy localCachePolicy = LocalCachePolicy.GetLocalCachePolicy(localCachePolicyStr);
+                            //            if (localCachePolicy == null || !localCachePolicy.IsAvailable())
+                            //            {
+
+                            //            }
+                            //        }
+                            //    }
                             //}
-                            //// If the engine parameter for local cache is specified
-                            //if (localCacheParameterValue != null) {
-                            //    // Checks if this is a JSON object (represented by a IDictionary once translated) 
-                            //    if (localCacheParameterValue is IDictionary<String, Object>) {
-                            //        IDictionary<String, Object> localCacheParameterValueJson = (IDictionary<String, Object>) localCacheParameterValue;
+
+
+
+
+
+
+                            ////String c8oCallRequestIdentifier = null;
+                            ////// Allows to enable or disable the local cache on a Convertigo requestable
+                            ////Boolean localCacheEnabledParameterValue = false;
+                            ////// Defines the time to live of the cached response, in milliseconds
+                            ////int localCacheTimeToLiveParameterValue = 0;
+                            //// Checks if the local cache have to be used
+                            ////Object localCacheParameterValue;
+                            ////try {
+                            ////    localCacheParameterValue = C8oUtils.TryGetParameterObjectValue(parameters, C8o.ENGINE_PARAMETER_LOCAL_CACHE, false, typeof(IDictionary<String, Object>));
+                            ////} catch (C8oException e) {
+                            ////    throw new C8oException(C8oExceptionMessage.getNameValuePairObjectValue(C8o.ENGINE_PARAMETER_LOCAL_CACHE), e);
+                            ////}
+                            ////// If the engine parameter for local cache is specified
+                            ////if (localCacheParameterValue != null) {
+                            ////    // Checks if this is a JSON object (represented by a IDictionary once translated) 
+                            ////    if (localCacheParameterValue is IDictionary<String, Object>) {
+                            ////IDictionary<String, Object> localCacheParameterValueJson = (IDictionary<String, Object>) localCacheParameterValue;
+
+                            //    // Allows to enable or disable the local cache on a Convertigo requestable
+                            //Boolean localCacheEnabledParameterValue = false;
+                            //    IDictionary<String, Object> localCacheParameterValueJson;
+                            //    if (C8oUtils.TryGetParameterObjectValue(parameters, C8o.ENGINE_PARAMETER_LOCAL_CACHE, out localCacheParameterValueJson)) 
+                            //    {                                    
+                            //        //// The local cache policy
+                            //        //String localCachePolicyParameterValue;
+                            //        //try {
+                            //        //    // Gets local cache properties
+                            //        //    localCacheEnabledParameterValue = (Boolean) C8oUtils.TryGetParameterObjectValue(localCacheParameterValueJson, C8o.LOCAL_CACHE_PARAMETER_KEY_ENABLED, false, typeof(Boolean));
+                            //        //    localCachePolicyParameterValue = (String) C8oUtils.TryGetParameterObjectValue(localCacheParameterValueJson, C8o.LOCAL_CACHE_PARAMETER_KEY_POLICY, true, typeof(String));
+                            //        //    localCacheTimeToLiveParameterValue = (long) C8oUtils.TryGetParameterObjectValue(localCacheParameterValueJson, C8o.LOCAL_CACHE_PARAMETER_KEY_TTL, false, typeof(long));
+                            //        //} catch (C8oException e) {
+                            //        //    return new C8oException(C8oExceptionMessage.getLocalCacheParameters(), e);
+                            //        //}
+                            //        String c8oCallRequestIdentifier = null;
+                            //        if (!C8oUtils.TryGetParameterObjectValue<Boolean>(parameters, C8o.LOCAL_CACHE_PARAMETER_KEY_ENABLED, out localCacheEnabledParameterValue)) 
+                            //        {
+                            //            localCacheEnabledParameterValue = false;
+                            //        }
+                            //        // Defines the time to live of the cached response, in milliseconds
+                            //        long localCacheTimeToLiveParameterValue;
+                            //        if (!C8oUtils.TryGetParameterObjectValue<long>(parameters, C8o.LOCAL_CACHE_PARAMETER_KEY_TTL, out localCacheTimeToLiveParameterValue)) 
+                            //        {
+                            //            localCacheTimeToLiveParameterValue = 0;
+                            //        }
                             //        // The local cache policy
                             //        String localCachePolicyParameterValue;
-                            //        try {
-                            //            // Gets local cache properties
-                            //            localCacheEnabledParameterValue = C8oUtils.getAndCheck(localCacheParameterValueJson, C8o.LOCAL_CACHE_PARAMETER_KEY_ENABLED, Boolean.class, false, Boolean.TRUE);
-                            //            localCachePolicyParameterValue = C8oUtils.getAndCheck(localCacheParameterValueJson, C8o.LOCAL_CACHE_PARAMETER_KEY_POLICY, String.class, true, null);
-                            //            localCacheTimeToLiveParameterValue = C8oUtils.getAndCheck(localCacheParameterValueJson, C8o.LOCAL_CACHE_PARAMETER_KEY_TTL, Integer.class, false, localCacheTimeToLiveParameterValue);
-                            //        } catch (C8oException e) {
-                            //            return new C8oException(C8oExceptionMessage.getLocalCacheParameters(), e);
+                            //        if (!C8oUtils.TryGetParameterObjectValue<String>(parameters, C8o.LOCAL_CACHE_PARAMETER_KEY_POLICY, out localCachePolicyParameterValue)) 
+                            //        {
+                            //            localCachePolicyParameterValue = "";
                             //        }
+
+
+
+
                             //        if (localCacheEnabledParameterValue) {
                             //            // Checks if the same request is stored in the local cache
-                            //            C8oUtils.removeParameter(parameters, C8o.ENGINE_PARAMETER_LOCAL_CACHE);
-                            //            try {
-                            //                c8oCallRequestIdentifier = C8oUtils.identifyC8oCallRequest(parameters, responseType);
-                            //            } catch (C8oException e) {
-                            //                return new C8oException(C8oExceptionMessage.serializeC8oCallRequest(), e);
-                            //            }
-                            //            try {
+                            //            parameters.Remove(C8o.ENGINE_PARAMETER_LOCAL_CACHE);
+                            //            c8oCallRequestIdentifier = C8oUtils.IdentifyC8oCallRequest(parameters, responseType);
+
+                            //            this.fullSyncInterface.GetResponseFromLocalCache(c8oCallRequestIdentifier);
+
+                            //            /*try {
                             //                localCacheDocument = C8o.this.getDocumentFromLocalCache(c8oCallRequestIdentifier);
                             //            } catch (C8oException e) {
                             //                return new C8oException(C8oExceptionMessage.getResponseFromLocalCache(), e);
@@ -353,11 +414,11 @@ namespace Convertigo.SDK
                             //                return new C8oException(C8oExceptionMessage.getResponseFromLocalCacheDocument(), e);
                             //            } catch (C8oUnavailableLocalCacheException e) {
                             //                // Does nothing because in this case it means that the local cache is unavailable for this request
-                            //            }
+                            //            }*/
                             //        }
-                            //    } else {
-                            //        return new IllegalArgumentException(C8oExceptionMessage.toDo());
-                            //    }
+                            //    //} else {
+                            //    //    return new IllegalArgumentException(C8oExceptionMessage.toDo());
+                            //    //}
                             //}
 
                             //*** Get response ***//
@@ -404,9 +465,9 @@ namespace Convertigo.SDK
                         {
                             C8o.HandleException(c8oExceptionListener, parameters, e);
                         }
-                    });
-                    task.Start();
-                }
+                    }
+                });
+                task.Start();
             }
             catch (Exception e)
             {
