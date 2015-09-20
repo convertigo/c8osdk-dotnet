@@ -40,7 +40,8 @@ namespace MobileFormsDemo
             myC8o.Call(".login",
                 new Dictionary<string, object> {
                     { "username", "demo@twinsoft.fr" },
-                    { "password", "d3m0tw1n" } },
+                    { "password", "d3m0tw1n" }
+                },
                 new C8oJsonResponseListener((jsonResponse, parameters) =>
                 {
                     myC8o.Log(C8oLogLevel.DEBUG, jsonResponse.ToString());
