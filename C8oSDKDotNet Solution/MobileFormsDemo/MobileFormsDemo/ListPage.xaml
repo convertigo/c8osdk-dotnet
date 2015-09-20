@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MobileFormsDemo;assembly=MobileFormsDemo"
+             x:Class="MobileFormsDemo.ListPage">
+
+
+    <ContentPage.BindingContext>
+        <local:ListViewModel />
+    </ContentPage.BindingContext>
+    
+    <StackLayout>
+        <Button Text="Sync" Clicked="OnSyncClicked"/>
+        <Label Text="Progress" />
+        <Label FontSize="Large" HorizontalOptions="Center"  Text="{Binding Progress}">
+            <Label.BindingContext>
+                <local:SyncModel />
+            </Label.BindingContext>
+        </Label>
+        <Button Text="List" Clicked="OnListClicked"/>
+        <ListView ItemsSource="{Binding Customers}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <ViewCell.View>
+                            <StackLayout>
+                                <Label Text="{Binding Name}" />
+                                <Label Text="{Binding Address}" />
+                            </StackLayout>
+                        </ViewCell.View>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+</ContentPage>

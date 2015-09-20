@@ -106,6 +106,16 @@ C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/LocalCacheResponse.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/Properties/AssemblyInfo.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/VoidResponse.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/packages.config -text
+C8oSDKDotNet[!!-~]Solution/MobileFormsDemo/MobileFormsDemo/App.cs -text
+C8oSDKDotNet[!!-~]Solution/MobileFormsDemo/MobileFormsDemo/GettingStarted.Xamarin -text
+C8oSDKDotNet[!!-~]Solution/MobileFormsDemo/MobileFormsDemo/ListPage.xaml -text
+C8oSDKDotNet[!!-~]Solution/MobileFormsDemo/MobileFormsDemo/ListPage.xaml.cs -text
+C8oSDKDotNet[!!-~]Solution/MobileFormsDemo/MobileFormsDemo/ListViewModel.cs -text
+C8oSDKDotNet[!!-~]Solution/MobileFormsDemo/MobileFormsDemo/MobileFormsDemo.csproj -text
+C8oSDKDotNet[!!-~]Solution/MobileFormsDemo/MobileFormsDemo/Model.cs -text
+C8oSDKDotNet[!!-~]Solution/MobileFormsDemo/MobileFormsDemo/Properties/AssemblyInfo.cs -text
+C8oSDKDotNet[!!-~]Solution/MobileFormsDemo/MobileFormsDemo/SyncModel.cs -text
+C8oSDKDotNet[!!-~]Solution/MobileFormsDemo/MobileFormsDemo/packages.config -text
 C8oSDKDotNet[!!-~]Solution/Sample01Android/Assets/AboutAssets.txt -text
 C8oSDKDotNet[!!-~]Solution/Sample01Android/C8oExceptionListenerImpCustom.cs -text
 C8oSDKDotNet[!!-~]Solution/Sample01Android/C8oExceptionListenerImpDefault.cs -text
