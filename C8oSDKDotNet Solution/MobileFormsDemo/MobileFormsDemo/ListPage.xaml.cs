@@ -36,7 +36,12 @@ namespace MobileFormsDemo
             App.myC8o.Call("fs://.view",
                 new Dictionary<string, object>
                 {
-                    {"key", "Account"}
+                    {"ddoc", "SFDesign"},
+                    {"view", "Objects"},
+                    {"startkey", "'Contact'"},
+                    {"endkey", "'ContactZ'"} /*,
+                    {"limit", 3},
+                    {"skip", 5}*/
                 },
                 new C8oJsonResponseListener((jsonResponse, parameters) =>
                 {

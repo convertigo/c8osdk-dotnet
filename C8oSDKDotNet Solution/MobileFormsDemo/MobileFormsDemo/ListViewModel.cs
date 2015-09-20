@@ -73,7 +73,7 @@ namespace MobileFormsDemo
             List<Customer> data = new List<Customer>();
             foreach (JObject jo in (JArray)json["rows"])
             {
-                data.Add(new Customer((String)jo["key"], (String)jo["value"]["rev"]));
+                data.Add(new Customer((String)jo.SelectToken("value.name"), (String)jo.SelectToken("value.id")));
             }
             this.Customers = data;
         }
