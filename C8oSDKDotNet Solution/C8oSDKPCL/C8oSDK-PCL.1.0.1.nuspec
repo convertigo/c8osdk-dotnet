@@ -23,7 +23,7 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="lib\C8oSDKPCL.dll" target="lib\C8oSDKPCL.dll" />
+        <file src="bin\Release\C8oSDKPCL.dll" target="lib\C8oSDKPCL.dll" />
         <file src="tools\install.ps1" target="tools\install.ps1" />
     </files>
 </package>
