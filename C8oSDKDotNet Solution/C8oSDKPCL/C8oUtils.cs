@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Convertigo.SDK.Exceptions;
 using Newtonsoft.Json.Linq;
+using Convertigo.SDK.C8oEnum;
 
 namespace Convertigo.SDK.Utils
 {
@@ -120,7 +121,7 @@ namespace Convertigo.SDK.Utils
             KeyValuePair<String, Object> parameter = C8oUtils.GetParameter(parameters, name, useName);
             if (parameter.Key != null && parameter.Value != null)
             {
-                if (parameter.Value is String)
+                if (parameter.Value is String && typeof(T) != typeof(String))
                 {
                     value = (T) C8oTranslator.StringToObject(parameter.Value as String, typeof(T));
                 }
@@ -202,7 +203,7 @@ namespace Convertigo.SDK.Utils
             return false;
         }
 
-        public static String IdentifyC8oCallRequest(IDictionary<String, Object> parameters, String responseType)
+        public static String IdentifyC8oCallRequest(IDictionary<String, Object> parameters, ResponseType responseType)
         {
             JObject json = new JObject();
             foreach (KeyValuePair<String, Object> parameter in parameters)
@@ -210,7 +211,7 @@ namespace Convertigo.SDK.Utils
                 JValue value = new JValue(parameter.Value);
                 json.Add(parameter.Key, value);
             }
-            return responseType + json.ToString();
+            return responseType.Value + json.ToString();
         }
 
     }

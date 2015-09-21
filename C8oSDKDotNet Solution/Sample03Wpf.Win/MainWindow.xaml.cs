@@ -40,8 +40,8 @@ namespace Sample03Wpf.Win
 
             String endpoint = "http://devus.twinsoft.fr:18080/convertigo/projects/FsDebug";
             C8oSettings c8oSettings = new C8oSettings();
-            c8oSettings.fullSyncInterface = new FullSyncHttp("http://localhost:5984", "admin", "admin");
-            c8oSettings.defaultFullSyncDatabaseName = "fsdebug_fullsync";
+            // c8oSettings.fullSyncInterface = new FullSyncHttp("http://localhost:5984", "admin", "admin");
+            c8oSettings.SetDefaultFullSyncDatabaseName("fsdebug_fullsync");
 
             c8o = new C8o(endpoint, c8oSettings);
         }

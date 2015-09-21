@@ -102,7 +102,7 @@ namespace Convertigo.SDK
             }
         }
 
-        //*** XML / JSON to String ***//
+        //*** XML / JSON / Stream to String ***//
 
         public static String XmlToString(XDocument xmlDocument)
         {
@@ -114,14 +114,29 @@ namespace Convertigo.SDK
             return jsonObject.ToString();
         }
 
+        public static String StreamToString(Stream stream)
+        {
+            //try
+            //{
+                // stream.Position = 0;
+                // stream.Seek(0, SeekOrigin.Begin);               
+                StreamReader streamReader = new StreamReader(stream);
+                String tmp = streamReader.ReadToEnd();
+                return tmp;
+            //}
+            //catch (Exception e)
+            //{
+            //    return "";
+            //}
+        }
+
         //*** Stream to XML / JSON ***//
 
         public static JObject StreamToJson(Stream stream)
         {
             // Converts the Stream to String then String to JObject
-            StreamReader streamReader = new StreamReader(stream);
-            String jsonString = streamReader.ReadToEnd();
-            JObject json = JObject.Parse(jsonString);
+            String jsonString = StreamToString(stream);
+            JObject json = (JObject) StringToJson(jsonString); // JObject.Parse(jsonString);
             return json;
         }
 

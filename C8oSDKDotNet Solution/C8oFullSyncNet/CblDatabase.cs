@@ -16,7 +16,7 @@ namespace Convertigo.SDK.FullSync
     {
         //*** Constants ***//
 
-        /// <summary>sddfgdfg
+        /// <summary>
         /// The suffix added to locally replicated databases name.
         /// </summary>
         public static String LOCAL_DATABASE_SUFFIX = "_mobile";
@@ -60,10 +60,10 @@ namespace Convertigo.SDK.FullSync
             Uri fullSyncDatabaseUrl = new Uri(fullSyncDatabaseUrlStr);
 
             Replication pullReplication = this.database.CreatePullReplication(fullSyncDatabaseUrl);
-            Replication  pushReplication = this.database.CreatePushReplication(fullSyncDatabaseUrl);
+            Replication pushReplication = this.database.CreatePushReplication(fullSyncDatabaseUrl);
 
             // ??? Does surely something but do not know what, it is optional so it is still here ???
-            String authenticationCookieValue = c8oSettings.authenticationCookieValue;
+            String authenticationCookieValue = c8oSettings.AuthenticationCookieValue;
             if (authenticationCookieValue != null)
             {
                 DateTime expirationDate = DateTime.Now;

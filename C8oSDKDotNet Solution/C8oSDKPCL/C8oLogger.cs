@@ -180,7 +180,8 @@ namespace Convertigo.SDK
                     JObject jsonResponse;
                     try
                     {
-                        WebResponse webResponse = await HttpInterface.HandleRequest(this.remoteLogUrl, parameters);
+                       //  WebResponse webResponse = await HttpInterface.HandleRequest(this.remoteLogUrl, parameters);
+                        WebResponse webResponse = await this.httpInterface.HandleRequest(this.remoteLogUrl, parameters);
                         Stream streamResponse = webResponse.GetResponseStream();
                         jsonResponse = C8oTranslator.StreamToJson(streamResponse);
                     }

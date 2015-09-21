@@ -32,21 +32,34 @@ namespace Convertigo.SDK
         /// Indicate if logs are sent to the Convertigo server.
         /// Default is true.
         /// </summary>
-        public Boolean isLogRemote;
-        public Boolean handleExceptionsOnLog;
+        internal Boolean isLogRemote;
+        internal Boolean handleExceptionsOnLog;
 
         //*** FullSync ***//
 
-        public String defaultFullSyncDatabaseName;
-        public String authenticationCookieValue;
-        public FullSyncInterface fullSyncInterface;
+        internal String defaultFullSyncDatabaseName;
+        internal String authenticationCookieValue;
+
+        internal String fullSyncServerUrl;
+        internal String fullSyncUsername;
+        internal String fullSyncPassword;
+
+        //*** Properties ***//
+
+        public String AuthenticationCookieValue
+        {
+            get
+            {
+                return this.authenticationCookieValue;
+            }
+        }
 
         //*** Constructor ***//
 
         public C8oSettings()
         {
             //*** HTTP ***//
-            this.timeout = 0;
+            this.timeout = -1;
             this.trustAllCetificates = false;
             this.cookies = null;
             //*** Log ***//
@@ -55,7 +68,9 @@ namespace Convertigo.SDK
             //*** FullSync ***//
             this.defaultFullSyncDatabaseName = null;
             this.authenticationCookieValue = null;
-            this.fullSyncInterface = null; // new DefaultFullSyncInterface2();
+            this.fullSyncServerUrl = "http://localhost:5984";
+            this.fullSyncUsername = null;
+            this.fullSyncPassword = null;
         }
 
         public override string ToString() 
@@ -75,6 +90,10 @@ namespace Convertigo.SDK
 
         public C8oSettings SetTimeout(int timeout)
         {
+            if (timeout <= 0)
+            {
+                timeout = -1;
+            }
             this.timeout = timeout;
             return this;
         }
@@ -118,9 +137,19 @@ namespace Convertigo.SDK
             this.authenticationCookieValue = authenticationCookieValue;
             return this;
         }
-        public C8oSettings SetFullSyncInterface(FullSyncInterface fullSyncInterface)
+        public C8oSettings SetFullSyncServerUrl(String fullSyncServerUrl)
         {
-            this.fullSyncInterface = fullSyncInterface;
+            this.fullSyncServerUrl = fullSyncServerUrl;
+            return this;
+        }
+        public C8oSettings SetfFullSyncUsername(String fullSyncUsername)
+        {
+            this.fullSyncUsername = fullSyncUsername;
+            return this;
+        }
+        public C8oSettings SetFullSyncPassword(String fullSyncPassword)
+        {
+            this.fullSyncPassword = fullSyncPassword;
             return this;
         }
         

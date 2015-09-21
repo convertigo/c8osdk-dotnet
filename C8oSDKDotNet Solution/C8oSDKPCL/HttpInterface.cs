@@ -12,19 +12,36 @@ namespace Convertigo.SDK.Http
     public class HttpInterface
     {
 
-        public async static Task<WebResponse> HandleRequest(String url, Dictionary<String, Object> parameters, CookieContainer cookieContainer = null)
+        private int timeout;
+
+        public HttpInterface(C8oSettings c8oSettings)
+        {
+            this.timeout = c8oSettings.timeout;
+        }
+
+        public async Task<WebResponse> HandleRequest(String url, Dictionary<String, Object> parameters, CookieContainer cookieContainer = null)
         {
             // Initializes the HTTP request
             HttpWebRequest webRequest = (HttpWebRequest)HttpWebRequest.Create(url);
             webRequest.ContentType = "application/x-www-form-urlencoded";
             webRequest.Method = "POST";
             webRequest.CookieContainer = cookieContainer;
-
+            
             // First get the request stream before send it
             Stream postStream;
             try
             {
-                postStream = await Task<Stream>.Factory.FromAsync(webRequest.BeginGetRequestStream, webRequest.EndGetRequestStream, webRequest);
+                Task<Stream> beginGetRequestStreamTask = Task<Stream>.Factory.FromAsync(webRequest.BeginGetRequestStream, webRequest.EndGetRequestStream, webRequest);
+                Boolean finished = beginGetRequestStreamTask.Wait(this.timeout);
+                if (finished)
+                {
+                    postStream = beginGetRequestStreamTask.Result;
+                }
+                else
+                {
+                    throw new C8oException(C8oExceptionMessage.ToDo());
+                }
+                // postStream = await Task<Stream>.Factory.FromAsync(webRequest.BeginGetRequestStream, webRequest.EndGetRequestStream, webRequest);
             }
             catch (Exception e)
             {
@@ -51,10 +68,20 @@ namespace Convertigo.SDK.Http
             postStream.Dispose();
 
             // Then get the response stream
-            WebResponse response;
+            WebResponse response = null;
             try
             {
-                response = await Task<WebResponse>.Factory.FromAsync(webRequest.BeginGetResponse, webRequest.EndGetResponse, webRequest);
+                Task<WebResponse> task = Task<WebResponse>.Factory.FromAsync(webRequest.BeginGetResponse, webRequest.EndGetResponse, webRequest);
+                Boolean finished = task.Wait(this.timeout);
+                if (finished)
+                {
+                    response = task.Result;
+                }
+                else
+                {
+                    throw new C8oException(C8oExceptionMessage.ToDo());
+                }
+                // response = await Task<WebResponse>.Factory.FromAsync(webRequest.BeginGetResponse, webRequest.EndGetResponse, webRequest);
             }
             catch (Exception e)
             {
@@ -63,6 +90,5 @@ namespace Convertigo.SDK.Http
               
             return response;
         }
-
     }
 }

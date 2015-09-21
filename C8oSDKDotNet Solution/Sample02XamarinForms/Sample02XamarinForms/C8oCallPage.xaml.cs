@@ -64,8 +64,9 @@ namespace Sample02XamarinForms
             // Settings
             String endpoint = "http://192.168.100.86:18080/convertigo/projects/TestClientSDK";
             C8oSettings c8oSettings = new C8oSettings();
-            c8oSettings.fullSyncInterface = fullSyncInterface;
-            c8oSettings.defaultFullSyncDatabaseName = "testclientsdk_fullsync";
+            // c8oSettings.SetFullSyncInterface(fullSyncInterface);
+            c8oSettings.SetDefaultFullSyncDatabaseName("testclientsdk_fullsync");
+            c8oSettings.SetTimeout(5000);
 
             // Listeners
             C8oExceptionListener c8oExceptionListener = new C8oExceptionListener((exception, requestaParameters) =>
