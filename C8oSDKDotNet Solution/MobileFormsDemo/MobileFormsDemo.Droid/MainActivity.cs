@@ -17,7 +17,7 @@ namespace MobileFormsDemo.Droid
             base.OnCreate(bundle);
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
-            LoadApplication(new App(new Convertigo.SDK.FullSync.FullSyncMobile()));
+            LoadApplication(new App());
         }
     }
 }
