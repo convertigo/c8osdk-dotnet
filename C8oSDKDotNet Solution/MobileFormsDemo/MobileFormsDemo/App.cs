@@ -17,15 +17,14 @@ namespace MobileFormsDemo
         public static C8o myC8o;
         public static Dictionary<String, Object> models;
 
-        public App(FullSyncInterface fs)
+        public App()
         {
             myC8o = new C8o("http://52.3.148.154/convertigo/projects/SalesforceFullSync",
                 new C8oSettings().
                     SetTimeout(10000).
                     SetTrustAllCertificates(true).
                     SetDefaultFullSyncDatabaseName("salesforcefullsync_fullsync").
-                    SetIsLogRemote(true).
-                    SetFullSyncInterface(fs)
+                    SetIsLogRemote(true)
             );
 
             models = new Dictionary<string, object>();
