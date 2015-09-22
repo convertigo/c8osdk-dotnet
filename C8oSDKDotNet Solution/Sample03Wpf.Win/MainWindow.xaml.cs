@@ -1,6 +1,7 @@
 ﻿using Convertigo.SDK;
 using Convertigo.SDK.FullSync.Enums;
 using Convertigo.SDK.Listeners;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,13 +38,12 @@ namespace Sample03Wpf.Win
                     OutputArea.Text = jsonResponse.ToString();
                 });
             });
-
-            String endpoint = "http://devus.twinsoft.fr:18080/convertigo/projects/FsDebug";
-            C8oSettings c8oSettings = new C8oSettings();
-            // c8oSettings.fullSyncInterface = new FullSyncHttp("http://localhost:5984", "admin", "admin");
-            c8oSettings.SetDefaultFullSyncDatabaseName("fsdebug_fullsync");
-
-            c8o = new C8o(endpoint, c8oSettings);
+            
+            c8o = new C8o("http://tonus.twinsoft.fr:18080/convertigo/projects/FsDebug", new C8oSettings()
+                .SetDefaultFullSyncDatabaseName("fsdebug_fullsync")
+                .SetFullSyncUsername("admin")
+                .SetFullSyncPassword("admin")
+            );
         }
 
         private void CallButtonClick(object sender, RoutedEventArgs e)
@@ -54,34 +54,30 @@ namespace Sample03Wpf.Win
 
         private void CallButtonFsDocClick(object sender, RoutedEventArgs e)
         {
-            Dictionary<string, object> data = new Dictionary<string, object>();
-
-            data[FullSyncGetDocumentParameter.DOCID.name] = "fix";
-
-            c8o.Call("fs://.get", data, jsonListener);
+            c8o.Call("fs://.get", new Dictionary<string, object>
+            {
+                {FullSyncGetDocumentParameter.DOCID.name, "fix"}
+            }, jsonListener);
         }
 
         private void CallButtonFsDeleteDocClick(object sender, RoutedEventArgs e)
         {
-            
-            Dictionary<string, object> data = new Dictionary<string, object>();
-
-            data[FullSyncDeleteDocumentParameter.DOCID.name] = "del";
-
-            c8o.Call("fs://.delete", data, jsonListener);
+            c8o.Call("fs://.delete", new Dictionary<string, object>
+            {
+                {FullSyncDeleteDocumentParameter.DOCID.name, "del"}
+            }, jsonListener);
         }
 
         private void CallButtonFsPostDocClick(object sender, RoutedEventArgs e)
         {
-            Dictionary<string, object> data = new Dictionary<string, object>();
-
-            data["_id"] = "post";
-            data["data"] = "ok";
-            data[FullSyncPostDocumentParameter.POLICY.name] = FullSyncPolicy.MERGE.value;
-            data["sub.data2"] = "good";
-            data["sub.data4"] = "great!";
-
-            c8o.Call("fs://.post", data, jsonListener);
+            c8o.Call("fs://.post", new Dictionary<string, object>
+            {
+                {"_id", "post"},
+                {"data", "ok"},
+                {FullSyncPostDocumentParameter.POLICY.name, FullSyncPolicy.MERGE.value},
+                {"sub.data2", "good"},
+                {"sub.data4", "great!"}
+            }, jsonListener);
         }
 
         private void CallButtonFsAllDocsClick(object sender, RoutedEventArgs e)
@@ -91,13 +87,11 @@ namespace Sample03Wpf.Win
 
         private void CallButtonFsViewClick(object sender, RoutedEventArgs e)
         {
-            Dictionary<String, Object> data = new Dictionary<String, Object>();
-
-            data[FullSyncGetViewParameter.DDOC.name] = "ddoc";
-            data[FullSyncGetViewParameter.VIEW.name] = "ifdata";
-            // data["key", "\"fix\"");
-
-            c8o.Call("fs://.view", data, jsonListener);
+            c8o.Call("fs://.view", new Dictionary<String, Object>
+            {
+                {FullSyncGetViewParameter.DDOC.name, "ddoc"},
+                {FullSyncGetViewParameter.VIEW.name, "ifdata"}
+            }, jsonListener);
         }
 
         private void CallButtonFsPullClick(object sender, RoutedEventArgs e)
@@ -127,6 +121,21 @@ namespace Sample03Wpf.Win
             Dictionary<String, Object> data = new Dictionary<String, Object>();
 
             c8o.Call("fs://retaildb.reset", data, jsonListener);
+        }
+
+        async private void CallButtonIncClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                JObject res = await c8o.CallJson(".Inc", new Dictionary<string, object> { { "input", "10" } });
+                res = await c8o.CallJson(".Inc", new Dictionary<string, object> { { "input", res.SelectToken("document.output") } });
+                res = await c8o.CallJson(".Inc", new Dictionary<string, object> { { "input", res.SelectToken("document.output") } });
+                jsonListener.OnJsonResponse(res, new Dictionary<string, object>());
+            }
+            catch (Exception ex)
+            {
+                OutputArea.Text = "Exception: " + ex;
+            }
         }
     }
 }
