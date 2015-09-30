@@ -1,6 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ctrls="clr-namespace:C8oControls;assembly=C8oControls"
              x:Class="Sample02XamarinForms.C8oInitPage">
-  <Label Text="{Binding MainText}" VerticalOptions="Center" HorizontalOptions="Center" />
+
+  <ScrollView
+    Orientation="Vertical">
+
+    <StackLayout>
+
+      <ctrls:AutoCompleteEntry x:Name="endpointEntry" />
+
+      <Button
+        Text="Validate"
+        Clicked="OnValidateButtonClicked" />
+
+    </StackLayout>
+
+  </ScrollView>
+  
+  
 </ContentPage>

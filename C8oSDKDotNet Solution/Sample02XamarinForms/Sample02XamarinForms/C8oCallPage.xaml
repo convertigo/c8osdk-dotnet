@@ -10,11 +10,6 @@
 
     <StackLayout>
 
-      <!-- <Entry x:Name="requestableEntry"
-        Placeholder="&lt;project&gt;.&lt;sequence&gt; or &lt;project&gt;.&lt;connector&gt;.&lt;transaction&gt;"/>
-
-      <ListView x:Name="requestableHistory" /> -->
-
       <ctrls:AutoCompleteEntry x:Name="requestableEntry" />
 
       <StackLayout x:Name="variables" />

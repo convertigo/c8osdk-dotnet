@@ -13,20 +13,13 @@ namespace Sample02XamarinForms
 {
     public class App : Application
     {
-
-        private FullSyncInterface fullSyncInterface;
-        private FileReader fileReader;
-
-        public App(FullSyncInterface fullSyncInterface, FileReader fileReader)
+        public App(FileReader fileReader)
         {
-            this.fullSyncInterface = fullSyncInterface;
-            this.fileReader = fileReader;
-            MainPage = new C8oCallPage();
+            MainPage = new NavigationPage(new C8oInitPage(fileReader));
         }
 
         protected override void OnStart()
         {
-            (MainPage as C8oCallPage).Init(this.fullSyncInterface, this.fileReader);
         }
 
         protected override void OnSleep()

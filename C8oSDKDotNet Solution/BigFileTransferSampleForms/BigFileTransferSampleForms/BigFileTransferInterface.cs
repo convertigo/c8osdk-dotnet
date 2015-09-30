@@ -27,22 +27,6 @@ namespace BigFileTransfer
             this.fileManager = fileManager;
         }
 
-        //public void DowloadFileChunks(String fileId, Action<int, int> progress)
-        //{
-        //    String requestable = "fs://" + this.databaseName + ".replicate_pull";
-        //    Dictionary<String, Object> parameters = new Dictionary<string,object>();
-        //    //IEnumerable<String> docids = 
-        //    //parameters.Add("docids", docids);
-        //    C8oJsonResponseListener responseListener = new C8oJsonResponseListener((jsonResponse, requestaParameters) =>
-        //    {
-        //    });
-        //    // this.c8o.call(requestable, parameters, responseListener);
-        //}
-
-
-
-
-
         public async Task DownloadFile(String fileId, String filePath, Action<String> progress, Action<DownloadStatus> progressBis)
         {
             String reqRepPull = "fs://" + this.databaseName + ".replicate_pull";
@@ -53,20 +37,35 @@ namespace BigFileTransfer
             // 0 : Authenticates the user on the Convertigo server in order to replicate wanted documents
             //
 
-            String reqAuth = "AttachmentTest.SetAuthentication";
+            Boolean[] locker = new Boolean[] { false };
+            String reqAuth = "BigFileTransfer.Authenticate";
             Dictionary<String, Object> parameters = new Dictionary<string, object>();
             parameters.Add("userId", fileId);
             C8oJsonResponseListener responseListener = new C8oJsonResponseListener((jsonResponse, requestParameters) =>
             {
                 String authResponse = jsonResponse.ToString();
                 String aaa = "";
+                lock (locker)
+                {
+                    locker[0] = true;
+                    Monitor.Pulse(locker);
+                }
             });
             c8o.Call(reqAuth, parameters, responseListener);
+
+            // Waits the end of the replication if it is not finished
+            lock (locker)
+            {
+                if (!locker[0])
+                {
+                    Monitor.Wait(locker);
+                }
+            }
 
             //
             // 1 : Replicate the document discribing the chunks ids list
             //
-            Boolean[] locker = new Boolean[] { false };
+            locker = new Boolean[] { false };
             parameters = new Dictionary<string, object>();
             responseListener = new C8oJsonResponseListener((jsonResponse, requestParameters) =>
             {
@@ -89,7 +88,7 @@ namespace BigFileTransfer
                     {
                         if (status.Equals("Active"))
                         {
-                            locker[0] = true;
+                            // locker[0] = true;
                         }
                         else if (status.Equals("Offline"))
                         {
@@ -98,6 +97,7 @@ namespace BigFileTransfer
                         }
                         else if (status.Equals("Stopped"))
                         {
+                            locker[0] = true;
                             Monitor.Pulse(locker);
                         }
                     }
@@ -133,6 +133,9 @@ namespace BigFileTransfer
             //
             // 2 : Gets the document describing the chunks list
             //
+
+            locker = new Boolean[] { false };
+
             List<String> chunkIdsList = new List<String>();
             parameters = new Dictionary<string, object>();
             parameters.Add("docid", fileId);
@@ -178,76 +181,34 @@ namespace BigFileTransfer
                 {
                     exception = e;
                 }
+                lock (locker)
+                {
+                    Monitor.Pulse(locker);
+                }
             });
             try
             {
-                this.c8o.Call(reqGetDoc, parameters, responseListener);
+                this.c8o.Call("fs://" + this.databaseName + ".all", parameters, responseListener);
             }
             catch (Exception e)
             {
                 throw e;
             }
-            if (exception != null)
-            {
-                throw exception;
-            }
-
-            /*//
-            // 3 : Replicate the documents containing chunks
-            //
-            locker = new Boolean[] { false };
-            parameters = new Dictionary<string, object>();
-            //docids = 
-            //parameters.Add("docids", docids);
-            responseListener = new C8oJsonResponseListener((jsonResponse, requestParameters) =>
-            {
-                String status;
-                if (C8oUtils.TryGetValueAndCheckType<String>(jsonResponse, "status", out status))
-                {
-                    // Checks the replication status
-                    lock (locker)
-                    {
-                        if (status.Equals("Active"))
-                        {
-                            locker[0] = true;
-
-                            // Monitor progress
-
-                        }
-                        else if (status.Equals("Offline"))
-                        {
-                            locker[0] = true;
-                            Monitor.Pulse(locker);
-                        }
-                        else if (status.Equals("Stopped"))
-                        {
-                            Monitor.Pulse(locker);
-                        }
-                    }
-                }
-            });
-            task = new Task(async () =>
-            {
-                try
-                {
-                    await c8o.Call(reqRepPull, parameters, responseListener);
-                }
-                catch (Exception e)
-                {
-
-                }
-            });
-            task.Start();
-
-            // Waits the end of the replication if it is not finished
-            // Chunks could start to be merged here
             lock (locker)
             {
                 if (!locker[0])
                 {
                     Monitor.Wait(locker);
                 }
-            }*/
+            }
+            if (exception != null)
+            {
+                throw exception;
+            }
+
+            // Waits the end of the replication if it is not finished
+            // Chunks could start to be merged here
+            
 
             //
             // 4 : Gets documents containing chunks as attachment and merge chunks into one file
@@ -295,165 +256,7 @@ namespace BigFileTransfer
             {
                 throw e;
             }
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //public void StoreFile(String fileId, String destinationPath)
-        //{
-        //    List<String> chunkIdsList = new List<String>();
-        //    // [0] : worked, [1] : finished 
-        //    Boolean[] waiter = new Boolean[] { false, false };
-
-        //    String requestable = "fs://" + this.databaseName + ".get";            
-        //    Dictionary<String, Object> parameters = new Dictionary<string,object>();
-        //    parameters.Add("docid", fileId);
-        //    C8oJsonResponseListener responseListener = new C8oJsonResponseListener((jsonResponse, requestParameters) => 
-        //    {
-        //        String jsonStr = jsonResponse.ToString();
-        //        JArray chunkIds;
-        //        if (C8oUtils.TryGetValueAndCheckType<JArray>(jsonResponse, "chunkIds", out chunkIds))
-        //        {
-        //            foreach (JToken chunkId in chunkIds) 
-        //            {
-        //                if (chunkId is JValue && (chunkId as JValue).Value is String)
-        //                {
-        //                    chunkIdsList.Add((chunkId as JValue).Value as String);
-        //                }
-        //            }
-        //        }
-
-        //        long numberOfChunksToBeCreated;
-        //        if (C8oUtils.TryGetValueAndCheckType<long>(jsonResponse, "numberOfChunksToBeCreated", out numberOfChunksToBeCreated))
-        //        {
-        //            if (chunkIdsList.Count == numberOfChunksToBeCreated)
-        //            {
-        //                waiter[0] = true;
-        //            }
-        //        }
-
-        //        lock (waiter)
-        //        {
-        //            waiter[1] = true;
-        //            Monitor.Pulse(waiter);
-        //        }                
-        //    });
-
-        //    // this.c8o.call(requestable, parameters, responseListener);
-
-
-        //    List<String> contentPathes = new List<String>();
-        //    // [0] : worked, [1] : finished 
-        //    Boolean[] waiter2 = new Boolean[] { false, false };
-
-        //    Task task = new Task(() =>
-        //    {
-        //        lock (waiter)
-        //        {
-        //            // If the operation is not finished
-        //            if (!waiter[1])
-        //            {
-        //                Monitor.Wait(waiter);
-        //            }
-        //        }
-
-        //        foreach (String chunkIdStr in chunkIdsList)
-        //        {
-        //            requestable = "fs://" + this.databaseName + ".get";
-        //            parameters = new Dictionary<string, object>();
-        //            parameters.Add("docid", chunkIdStr);
-
-        //            responseListener = new C8oJsonResponseListener((jsonResponse, requestParameters) =>
-        //            {
-        //                // Checks if there are attachments
-        //                JObject attachments;
-        //                if (C8oUtils.TryGetValueAndCheckType<JObject>(jsonResponse, "_attachments", out attachments))
-        //                {
-        //                    String toto = attachments.ToString();
-
-        //                    // 
-        //                    JObject attachmentInfo;
-        //                    if (C8oUtils.TryGetValueAndCheckType<JObject>(attachments, chunkIdStr, out attachmentInfo))
-        //                    {
-        //                        String contentPath;
-        //                        if (C8oUtils.TryGetValueAndCheckType<String>(attachmentInfo, "content_path", out contentPath))
-        //                        {
-        //                            contentPathes.Add(contentPath);
-        //                        }
-        //                    }
-        //                }
-        //            });
-        //            // this.c8o.call(requestable, parameters, responseListener);
-        //        }
-        //        lock (waiter2)
-        //        {
-        //            waiter2[1] = true;
-        //            Monitor.Pulse(waiter2);
-        //        }
-        //    });
-        //    task.Start();
-
-        //    Task task2 = new Task(() =>
-        //    {
-        //        lock (waiter2)
-        //        {
-        //            // If the operation is not finished
-        //            if (!waiter2[1])
-        //            {
-        //                Monitor.Wait(waiter2);
-        //            }
-        //        }
-
-
-        //        try
-        //        {
-        //            Stream createdFileStream = fileManager.CreateFile("/sdcard/CaptureTestXXX7.PNG");
-        //            createdFileStream.Position = 0;
-
-        //            foreach (String contentPath in contentPathes)
-        //            {
-        //                String contentPath2 = UrlToPath(contentPath);
-        //                Stream chunkFileStream = fileManager.OpenFile(contentPath2);                        
-        //                chunkFileStream.CopyTo(createdFileStream, 4096);
-        //                chunkFileStream.Dispose();
-        //                createdFileStream.Position = createdFileStream.Length;
-        //            }
-        //            createdFileStream.Dispose();
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            String ttt = "";
-        //        }
-
-
-        //    });
-        //    task2.Start();
-        //    //String t = "";
-            
-            
-        //}
+        }       
 
         private static String UrlToPath(String url)
         {

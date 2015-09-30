@@ -28,7 +28,7 @@ namespace Sample02XamarinForms.Droid
                 return fileBytes;
             });
 
-            LoadApplication(new App(new FullSyncMobile(), androidFileReader));        
+            LoadApplication(new App(androidFileReader));        
         }
     }
 }

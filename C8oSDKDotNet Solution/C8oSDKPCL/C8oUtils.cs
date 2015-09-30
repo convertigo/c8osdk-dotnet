@@ -214,5 +214,10 @@ namespace Convertigo.SDK.Utils
             return responseType.Value + json.ToString();
         }
 
+        public static String UrlDecode(String str)
+        {
+            return Uri.UnescapeDataString(str);
+        }
+
     }
 }

@@ -5,6 +5,7 @@ using Convertigo.SDK.Listeners;
 using Convertigo.SDK.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -29,10 +30,36 @@ namespace BigFileTransferSampleForms
             // c8oSettings.fullSyncInterface = fullSyncInterface;
             C8oExceptionListener c8oExceptionListener = new C8oExceptionListener((exception, requestParameters) => 
             {
-                this.infoLabel.Text = exception.Message;
+                String errMsg = "";
+                while (exception != null)
+                {
+                    errMsg = errMsg + exception.Message;
+                    exception = exception.InnerException;
+                }
+                Debug.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!   " + errMsg);
+                Task task = new Task(async () =>
+                {
+                    try
+                    {
+                        Action<String> progress = new Action<String>((data) =>
+                        {
+                            Device.BeginInvokeOnMainThread(() =>
+                            {
+                                this.infoLabel.Text = errMsg;
+                            });
+                        });
+                    }
+                    catch (Exception e)
+                    {
+                        String t = "";
+                    }
+                });
+
+                task.Start();
+
             });
             this.c8o = new C8o("http://192.168.100.86:18080/convertigo/projects/TestClientSDK", c8oSettings, c8oExceptionListener);
-            this.databaseName = "attachmenttest_fullsync";
+            this.databaseName = "bigfiletransfer";
             this.bfti = new BigFileTransferInterface(c8o, this.databaseName, fileManager);
         }
 

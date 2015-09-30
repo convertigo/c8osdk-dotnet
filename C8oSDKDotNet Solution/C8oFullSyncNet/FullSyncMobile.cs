@@ -200,15 +200,17 @@ namespace Convertigo.SDK.FullSync
                             if (contentUrl != null && contentUrl is Uri)
                             {
                                 Uri uri = (Uri)contentUrl;
-                                attachment.Metadata.Add(ATTACHMENT_PROPERTY_KEY_CONTENT_URL, uri.AbsoluteUri);
+                                String absoluteUri = C8oUtils.UrlDecode(uri.AbsoluteUri);
+                                String absolutePath = C8oUtils.UrlDecode(uri.AbsolutePath);
+                                attachment.Metadata.Add(ATTACHMENT_PROPERTY_KEY_CONTENT_URL, absoluteUri);
                                 if (attachmentProperty.Value is JObject)
                                 {
-                                    (attachmentProperty.Value as JObject).Add(ATTACHMENT_PROPERTY_KEY_CONTENT_URL, uri.AbsoluteUri);
+                                    (attachmentProperty.Value as JObject).Add(ATTACHMENT_PROPERTY_KEY_CONTENT_URL, absoluteUri);
                                 }
-                                attachment.Metadata.Add("content_path", uri.AbsolutePath);
+                                attachment.Metadata.Add("content_path", absolutePath);
                                 if (attachmentProperty.Value is JObject)
                                 {
-                                    (attachmentProperty.Value as JObject).Add("content_path", uri.AbsolutePath);
+                                    (attachmentProperty.Value as JObject).Add("content_path", absolutePath);
                                 }
                             }
                         }
