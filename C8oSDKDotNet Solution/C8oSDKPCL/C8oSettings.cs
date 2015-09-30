@@ -142,7 +142,7 @@ namespace Convertigo.SDK
             this.fullSyncServerUrl = fullSyncServerUrl;
             return this;
         }
-        public C8oSettings SetfFullSyncUsername(String fullSyncUsername)
+        public C8oSettings SetFullSyncUsername(String fullSyncUsername)
         {
             this.fullSyncUsername = fullSyncUsername;
             return this;

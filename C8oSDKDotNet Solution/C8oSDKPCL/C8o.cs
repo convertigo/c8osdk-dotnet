@@ -486,7 +486,35 @@ namespace Convertigo.SDK
             return this.endpointGroups[i];
         }
 
+        public Task<JObject> CallJson(String requestable, Dictionary<String, Object> parameters = null)
+        {
+            TaskCompletionSource<JObject> task = new TaskCompletionSource<JObject>();
 
+            Call(requestable, parameters, new C8oJsonResponseListener((jsonResponse, data) =>
+            {
+                task.TrySetResult(jsonResponse);
+            }), new C8oExceptionListener((exception, data) =>
+            {
+                task.TrySetException(exception);
+            }));
+
+            return task.Task;
+        }
+
+        public Task<XDocument> CallXml(String requestable, Dictionary<String, Object> parameters = null)
+        {
+            TaskCompletionSource<XDocument> task = new TaskCompletionSource<XDocument>();
+
+            Call(requestable, parameters, new C8oXmlResponseListener((xmlResponse, data) =>
+            {
+                task.TrySetResult(xmlResponse);
+            }), new C8oExceptionListener((exception, data) =>
+            {
+                task.TrySetException(exception);
+            }));
+
+            return task.Task;
+        }
 
     }
 }
