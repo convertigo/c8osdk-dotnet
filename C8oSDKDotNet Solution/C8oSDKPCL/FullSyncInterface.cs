@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -111,11 +112,11 @@ namespace Convertigo.SDK.FullSync
         /// <param name="fullSyncDatabase"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public abstract Object handleDeleteDocumentRequest(String fullSyncDatatbaseName, String docidParameterValue, Dictionary<String, Object> parameters);
+        public abstract Object HandleDeleteDocumentRequest(String fullSyncDatatbaseName, String docidParameterValue, Dictionary<String, Object> parameters);
 
         //*** PostDocument ***//
 
-        public abstract Object handlePostDocumentRequest(String fullSyncDatatbaseName, FullSyncPolicy fullSyncPolicy, Dictionary<String, Object> parameters);
+        public abstract Object HandlePostDocumentRequest(String fullSyncDatatbaseName, FullSyncPolicy fullSyncPolicy, Dictionary<String, Object> parameters);
 
         //*** GetAllDocuments ***//
 
@@ -137,7 +138,6 @@ namespace Convertigo.SDK.FullSync
 
         public abstract Object HandleResetDatabaseRequest(String fullSyncDatatbaseName);
 
-
         //*** Local cache ***//
 
         /// <summary>
@@ -155,7 +155,6 @@ namespace Convertigo.SDK.FullSync
         /// <param name="responseType"></param>
         /// <param name="timeToLive"></param>
         public abstract void SaveResponseToLocalCache(String c8oCallRequestIdentifier, LocalCacheResponse localCacheResponse);
-
     }
 
     //internal class DefaultFullSyncInterface2 : FullSyncInterface

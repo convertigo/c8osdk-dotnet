@@ -1,0 +1,14 @@
+﻿<Window x:Class="Sample04Wpf.Win.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="482.544" Width="711.391">
+    <Grid>
+        <Button x:Name="AllDocs" Content="All docs" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="AllDocsClick"/>
+        <Button x:Name="Dl40k" Content="Dl 40k" HorizontalAlignment="Left" Margin="90,10,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-0.058,0.583" Click="Dl40kClick"/>
+        <Button x:Name="Dl200m" Content="Dl 200m" HorizontalAlignment="Left" Margin="170,10,0,0" VerticalAlignment="Top" Width="75" Click="Dl200mClick"/>
+        <ScrollViewer HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top" Height="397" Width="683">
+            <TextBlock x:Name="OutputArea" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top"><Run Text="..."/></TextBlock>
+        </ScrollViewer>
+
+    </Grid>
+</Window>

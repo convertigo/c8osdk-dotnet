@@ -22,7 +22,7 @@
     <MandroidI18n />
     <JavaMaximumHeapSize />
     <JavaOptions />
-    <TargetFrameworkVersion>v5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
     <NuGetPackageImportStamp>55d1e35e</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -95,6 +95,10 @@
     <Content Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\C8oBigFileTransfer\C8oBigFileTransfer.csproj">
+      <Project>{96165803-8e2d-48bd-b8d8-e43749927600}</Project>
+      <Name>C8oBigFileTransfer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\C8oFullSyncNetAndroid\C8oFullSyncNetAndroid.csproj">
       <Project>{4f9ba553-8252-412d-98c8-c113cc009f82}</Project>
       <Name>C8oFullSyncNetAndroid</Name>

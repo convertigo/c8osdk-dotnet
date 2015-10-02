@@ -98,14 +98,16 @@ namespace Sample03Wpf.Win
         {
             Dictionary<String, Object> data = new Dictionary<String, Object>();
 
-            c8o.Call("fs://retaildb.replicate_pull", data, jsonListener);
+            //c8o.Call("fs://retaildb.replicate_pull", data, jsonListener);
+            c8o.Call("fs://.replicate_pull", data, jsonListener);
         }
 
         private void CallButtonFsPushClick(object sender, RoutedEventArgs e)
         {
             Dictionary<String, Object> data = new Dictionary<String, Object>();
 
-            c8o.Call("fs://retaildb.replicate_push", data, jsonListener);
+            //c8o.Call("fs://retaildb.replicate_push", data, jsonListener);
+            c8o.Call("fs://.replicate_push", data, jsonListener);
         }
 
         private void CallButtonFsSyncClick(object sender, RoutedEventArgs e)
@@ -113,7 +115,8 @@ namespace Sample03Wpf.Win
 
             Dictionary<String, Object> data = new Dictionary<String, Object>();
 
-            c8o.Call("fs://retaildb.sync", data, jsonListener);
+            //c8o.Call("fs://retaildb.sync", data, jsonListener);
+            c8o.Call("fs://.sync", data, jsonListener);
         }
 
         private void CallButtonFsResetClick(object sender, RoutedEventArgs e)

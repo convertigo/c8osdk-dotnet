@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace BigFileTransfer
+namespace C8oBigFileTransfer
 {
     public class FileManager
     {

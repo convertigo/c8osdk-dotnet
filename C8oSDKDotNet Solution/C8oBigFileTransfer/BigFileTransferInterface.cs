@@ -10,8 +10,9 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Linq;
 using Convertigo.SDK.Exceptions;
+using System.Net;
 
-namespace BigFileTransfer
+namespace C8oBigFileTransfer
 {
     public class BigFileTransferInterface
     {
@@ -39,9 +40,8 @@ namespace BigFileTransfer
 
             Boolean[] locker = new Boolean[] { false };
             String reqAuth = "BigFileTransfer.Authenticate";
-            Dictionary<String, Object> parameters = new Dictionary<string, object>();
-            parameters.Add("userId", fileId);
-            C8oJsonResponseListener responseListener = new C8oJsonResponseListener((jsonResponse, requestParameters) =>
+            Dictionary<String, Object> parameters = new Dictionary<string, object>(){{"userId", fileId}};
+            c8o.Call(reqAuth, parameters, new C8oJsonResponseListener((jsonResponse, requestParameters) =>
             {
                 String authResponse = jsonResponse.ToString();
                 String aaa = "";
@@ -50,8 +50,7 @@ namespace BigFileTransfer
                     locker[0] = true;
                     Monitor.Pulse(locker);
                 }
-            });
-            c8o.Call(reqAuth, parameters, responseListener);
+            }));
 
             // Waits the end of the replication if it is not finished
             lock (locker)
@@ -67,7 +66,7 @@ namespace BigFileTransfer
             //
             locker = new Boolean[] { false };
             parameters = new Dictionary<string, object>();
-            responseListener = new C8oJsonResponseListener((jsonResponse, requestParameters) =>
+            C8oJsonResponseListener responseListener = new C8oJsonResponseListener((jsonResponse, requestParameters) =>
             {
 
                 progress(jsonResponse.ToString());
@@ -188,7 +187,7 @@ namespace BigFileTransfer
             });
             try
             {
-                this.c8o.Call("fs://" + this.databaseName + ".all", parameters, responseListener);
+                this.c8o.Call("fs://" + this.databaseName + ".get", parameters, responseListener);
             }
             catch (Exception e)
             {
@@ -233,21 +232,52 @@ namespace BigFileTransfer
                             {
                                 contentPathes.Add(contentPath);
                             }
+                            else
+                            {
+                                if (C8oUtils.TryGetValueAndCheckType<String>(attachmentInfo, "content_url", out contentPath))
+                                {
+                                    contentPathes.Add(contentPath);
+                                }
+                            }
                         }
+                    }
+
+                    lock (locker)
+                    {
+                        Monitor.Pulse(locker);
                     }
                 });
                 c8o.Call(reqGetDoc, parameters, responseListener);
+
+                lock (locker)
+                {
+                    if (!locker[0])
+                    {
+                        Monitor.Wait(locker);
+                    }
+                }
             }
+
             try
             {
                 Stream createdFileStream = fileManager.CreateFile(filePath);
                 createdFileStream.Position = 0;
                 foreach (String contentPath in contentPathes)
                 {
-                    String contentPath2 = UrlToPath(contentPath);
-                    Stream chunkFileStream = fileManager.OpenFile(contentPath2);
-                    chunkFileStream.CopyTo(createdFileStream, 4096);
-                    chunkFileStream.Dispose();
+                    Stream chunkStream;
+                    if (contentPath.StartsWith("http://") || contentPath.StartsWith("http://"))
+                    {
+                        HttpWebRequest request = HttpWebRequest.CreateHttp(contentPath);
+                        HttpWebResponse response = Task<WebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request).Result as HttpWebResponse;
+                        chunkStream = response.GetResponseStream();
+                    }
+                    else
+                    {
+                        String contentPath2 = UrlToPath(contentPath);
+                        chunkStream = fileManager.OpenFile(contentPath2);
+                    }
+                    chunkStream.CopyTo(createdFileStream, 4096);
+                    chunkStream.Dispose();
                     createdFileStream.Position = createdFileStream.Length;
                 }
                 createdFileStream.Dispose();

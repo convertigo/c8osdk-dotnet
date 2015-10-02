@@ -1,4 +1,4 @@
-﻿using BigFileTransfer;
+﻿using C8oBigFileTransfer;
 using Convertigo.SDK.FullSync;
 using System;
 using System.Collections.Generic;

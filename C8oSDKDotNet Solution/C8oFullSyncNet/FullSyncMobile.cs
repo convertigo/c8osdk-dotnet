@@ -233,7 +233,7 @@ namespace Convertigo.SDK.FullSync
         /// <param name="fullSyncDatabase"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public override Object handleDeleteDocumentRequest(String fullSyncDatatbaseName, String docidParameterValue, Dictionary<String, Object> parameters)
+        public override Object HandleDeleteDocumentRequest(String fullSyncDatatbaseName, String docidParameterValue, Dictionary<String, Object> parameters)
         {
             CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatatbaseName);
 
@@ -268,7 +268,7 @@ namespace Convertigo.SDK.FullSync
 
         //*** PostDocument ***//
 
-        public override Object handlePostDocumentRequest(String fullSyncDatabaseName, FullSyncPolicy fullSyncPolicy, Dictionary<String, Object> parameters)
+        public override Object HandlePostDocumentRequest(String fullSyncDatabaseName, FullSyncPolicy fullSyncPolicy, Dictionary<String, Object> parameters)
         {
             CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
             

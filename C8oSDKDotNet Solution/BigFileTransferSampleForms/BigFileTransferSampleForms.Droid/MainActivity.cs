@@ -7,7 +7,7 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 using Convertigo.SDK.FullSync;
-using BigFileTransfer;
+using C8oBigFileTransfer;
 using System.IO;
 
 namespace BigFileTransferSampleForms.Droid

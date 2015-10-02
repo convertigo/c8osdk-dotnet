@@ -1,4 +1,4 @@
-﻿using BigFileTransfer;
+﻿using C8oBigFileTransfer;
 using Convertigo.SDK;
 using Convertigo.SDK.FullSync;
 using Convertigo.SDK.Listeners;
@@ -58,7 +58,7 @@ namespace BigFileTransferSampleForms
                 task.Start();
 
             });
-            this.c8o = new C8o("http://192.168.100.86:18080/convertigo/projects/TestClientSDK", c8oSettings, c8oExceptionListener);
+            this.c8o = new C8o("http://192.168.100.71:18080/convertigo/projects/BigFileTransfer", c8oSettings, c8oExceptionListener);
             this.databaseName = "bigfiletransfer";
             this.bfti = new BigFileTransferInterface(c8o, this.databaseName, fileManager);
         }

@@ -24,7 +24,7 @@ namespace Convertigo.SDK.FullSync.Enums
         public static readonly FullSyncRequestable DELETE = new FullSyncRequestable("delete", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
         {
             String docidParameterValue = C8oUtils.PeekParameterStringValue(parameters, FullSyncGetDocumentParameter.DOCID.name, true);
-            return fullSyncInterface.handleDeleteDocumentRequest(fullSyncDatabase, docidParameterValue, parameters);
+            return fullSyncInterface.HandleDeleteDocumentRequest(fullSyncDatabase, docidParameterValue, parameters);
         });
 
         public static readonly FullSyncRequestable POST = new FullSyncRequestable("post", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
@@ -35,7 +35,7 @@ namespace Convertigo.SDK.FullSync.Enums
             // Finds the policy corresponding to the parameter value if it exists
             FullSyncPolicy fullSyncPolicy = FullSyncPolicy.GetFullSyncPolicy(fullSyncPolicyParameter);
 
-            return fullSyncInterface.handlePostDocumentRequest(fullSyncDatabase, fullSyncPolicy, parameters);
+            return fullSyncInterface.HandlePostDocumentRequest(fullSyncDatabase, fullSyncPolicy, parameters);
         });
 
         public static readonly FullSyncRequestable ALL = new FullSyncRequestable("all", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
