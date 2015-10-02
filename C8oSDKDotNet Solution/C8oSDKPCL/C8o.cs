@@ -165,7 +165,7 @@ namespace Convertigo.SDK
             {
                 try
                 {
-                    AssemblyName assemblyName = new AssemblyName(fullSyncMobileAssemblies[fullSyncMobileAssemblyC]);
+                    AssemblyName assemblyName = new AssemblyName(fullSyncMobileAssemblies[fullSyncMobileAssemblyC++]);
                     fullSyncMobileAssembly = Assembly.Load(assemblyName);
                     fullSyncMobileAssemblyFound = true;
                 }
@@ -486,7 +486,7 @@ namespace Convertigo.SDK
             return this.endpointGroups[i];
         }
 
-        public Task<JObject> CallJson(String requestable, Dictionary<String, Object> parameters = null)
+        public Task<JObject> CallJsonAsync(String requestable, Dictionary<String, Object> parameters = null)
         {
             TaskCompletionSource<JObject> task = new TaskCompletionSource<JObject>();
 
@@ -501,7 +501,7 @@ namespace Convertigo.SDK
             return task.Task;
         }
 
-        public Task<XDocument> CallXml(String requestable, Dictionary<String, Object> parameters = null)
+        public Task<XDocument> CallXmlAsync(String requestable, Dictionary<String, Object> parameters = null)
         {
             TaskCompletionSource<XDocument> task = new TaskCompletionSource<XDocument>();
 
