@@ -44,9 +44,11 @@ namespace Sample04Wpf.Win
                 });
             });
 
-            c8o = new C8o("http://tonus.twinsoft.fr:18080/convertigo/projects/BigFileTransferSample");
+            String c8oEndpoint = "http://tonus.twinsoft.fr:18080/convertigo/projects/";
 
-            bigFileTransfer = new BigFileTransferInterface("http://tonus.twinsoft.fr:18080/convertigo/projects/BigFileTransfer", new C8oSettings()
+            c8o = new C8o(c8oEndpoint + "BigFileTransferSample");
+
+            bigFileTransfer = new BigFileTransferInterface(c8oEndpoint + "lib_BigFileTransfer", new C8oSettings()
                 .SetDefaultFullSyncDatabaseName("bigfiletransfer")
                 .SetFullSyncUsername("admin")
                 .SetFullSyncPassword("admin")
