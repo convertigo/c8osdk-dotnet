@@ -1,9 +1,5 @@
 * text=auto !eol
 C8oSDKDotNet[!!-~]Solution/.project -text svneol=unset#text/plain
-C8oSDKDotNet[!!-~]Solution/BigFileTransfer/BigFileTransfer.projitems -text
-C8oSDKDotNet[!!-~]Solution/BigFileTransfer/BigFileTransfer.shproj -text
-C8oSDKDotNet[!!-~]Solution/BigFileTransfer/BigFileTransferInterface.cs -text
-C8oSDKDotNet[!!-~]Solution/BigFileTransfer/FileManager.cs -text
 C8oSDKDotNet[!!-~]Solution/BigFileTransferSampleForms/BigFileTransferSampleForms.Droid/Assets/AboutAssets.txt -text
 C8oSDKDotNet[!!-~]Solution/BigFileTransferSampleForms/BigFileTransferSampleForms.Droid/BigFileTransferSampleForms.Droid.csproj -text
 C8oSDKDotNet[!!-~]Solution/BigFileTransferSampleForms/BigFileTransferSampleForms.Droid/MainActivity.cs -text
@@ -86,7 +82,6 @@ C8oSDKDotNet[!!-~]Solution/C8oFullSyncNetiOS/app.config -text
 C8oSDKDotNet[!!-~]Solution/C8oFullSyncNetiOS/packages.config -text
 C8oSDKDotNet[!!-~]Solution/C8oNetPclSDK[!!-~]Solution.sln -text
 C8oSDKDotNet[!!-~]Solution/C8oNetPclSDK[!!-~]Solution.v12.suo -text
-C8oSDKDotNet[!!-~]Solution/C8oSDKDotNet[!!-~]Solution.sln -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8o.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oEnum.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/C8oExceptionListener.cs -text
