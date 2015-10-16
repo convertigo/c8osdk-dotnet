@@ -636,6 +636,12 @@ namespace Convertigo.SDK.FullSync
         //    return new FullSyncDatabase(this.manager, databaseName, this.fullSyncDatabaseUrlBase, this.c8o);
         //}
 
+        public static void Init()
+        {
+            //C8o.FullSyncInterfaceUsed = new FullSyncMobile().GetType();
+            C8o.FullSyncInterfaceUsed = Type.GetType("Convertigo.SDK.FullSync.FullSyncMobile", true);
+        }
+
     }
 
 }

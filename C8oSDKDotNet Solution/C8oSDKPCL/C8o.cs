@@ -78,6 +78,9 @@ namespace Convertigo.SDK
         private static String[] fullSyncMobileAssemblies = { "C8oFullSyncNetAndroid", "C8oFullSyncNetiOS" };
         private static String fullSyncMobileClassName = "Convertigo.SDK.FullSync.FullSyncMobile";
 
+        //*** Static configuration ***//
+        public static Type FullSyncInterfaceUsed;
+
         //*** Attributes ***//
 
         /// <summary>
@@ -157,9 +160,11 @@ namespace Convertigo.SDK
             }
             this.httpInterface = new HttpInterface(c8oSettings);
 
+            /** Android OK but iOS KO
             // Retrieves the fullSyncMobile class thanks to reflection
             Boolean fullSyncMobileAssemblyFound = false;
             Assembly fullSyncMobileAssembly = null;
+
             int fullSyncMobileAssemblyC = 0;
             while (!fullSyncMobileAssemblyFound && fullSyncMobileAssemblyC < C8o.fullSyncMobileAssemblies.Length)
             {
@@ -214,15 +219,7 @@ namespace Convertigo.SDK
             {
                 this.fullSyncInterface = new FullSyncHttp(c8oSettings.fullSyncServerUrl, c8oSettings.fullSyncUsername, c8oSettings.fullSyncPassword);
             }
-
-            try
-            {
-                this.fullSyncInterface.Init(this, c8oSettings, this.endpointGroups[1]);
-            }
-            catch (Exception e)
-            {
-                throw new C8oException(C8oExceptionMessage.ToDo(), e);
-            }
+*/
 
             this.c8oLogger = new C8oLogger(this.c8oExceptionListener, c8oSettings);
             this.c8oLogger.SetRemoteLogParameters(this.httpInterface, true, this.endpointGroups[1], "deviceUuid");
@@ -234,6 +231,24 @@ namespace Convertigo.SDK
             if (trustAllCertificates)
             {
                 // Unavailable :(
+            }
+
+            try
+            {
+                this.fullSyncInterface = FullSyncInterfaceUsed.GetTypeInfo().DeclaredConstructors.ElementAt(0).Invoke(new Object[0]) as FullSyncInterface;
+            }
+            catch (Exception e)
+            {
+                fullSyncInterface = new FullSyncHttp(c8oSettings.fullSyncServerUrl, c8oSettings.fullSyncUsername, c8oSettings.fullSyncPassword);
+            }
+
+            try
+            {
+                this.fullSyncInterface.Init(this, c8oSettings, this.endpointGroups[1]);
+            }
+            catch (Exception e)
+            {
+                throw new C8oException(C8oExceptionMessage.ToDo(), e);
             }
         }
 

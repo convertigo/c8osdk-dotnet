@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="Sample04Wpf.Win.Login"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" d:DesignWidth="300">
+    <StackPanel VerticalAlignment="Top">
+        <Label Content="Login" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="22" Height="39"/>
+        <StackPanel Orientation="Horizontal" Height="26" Margin="0,10,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Label Content="Username" Width="85"/>
+            <TextBox x:Name="UsernameField" TextWrapping="Wrap" Text="Jim" VerticalContentAlignment="Center" Width="215"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,10,0,0" Height="26" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Label Content="Password" Width="85"/>
+            <PasswordBox x:Name="PasswordField" Width="216" Password="Jim"/>
+        </StackPanel>
+        <Button x:Name="LoginButton" Content="Login" VerticalAlignment="Top" Margin="10,10,10,0" Click="LoginButtonClick"/>
+    </StackPanel>
+</UserControl>

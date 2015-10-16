@@ -16,57 +16,35 @@ namespace C8oBigFileTransfer
 {
     public class BigFileTransferInterface
     {
-
-        private String databaseName;
-        private C8o c8o;
+        private String endpoint;
+        private C8oSettings c8oSettings;
         private FileManager fileManager;
 
-        public BigFileTransferInterface(C8o c8o, String databaseName, FileManager fileManager)
+        public BigFileTransferInterface(String endpoint, C8oSettings c8oSettings, FileManager fileManager)
         {
-            this.c8o = c8o;
-            this.databaseName = databaseName;
+            this.endpoint = endpoint;
+            this.c8oSettings = c8oSettings;
             this.fileManager = fileManager;
         }
 
-        public async Task DownloadFile(String fileId, String filePath, Action<String> progress, Action<DownloadStatus> progressBis)
+        public async Task DownloadFile(String uuid, String filePath, Action<String> progress, Action<DownloadStatus> progressBis)
         {
-            String reqRepPull = "fs://" + this.databaseName + ".replicate_pull";
-            String reqGetDoc = "fs://" + this.databaseName + ".get";
-            Exception exception = null;
+            C8o c8o = new C8o(endpoint, c8oSettings);
 
             //
             // 0 : Authenticates the user on the Convertigo server in order to replicate wanted documents
             //
 
-            Boolean[] locker = new Boolean[] { false };
-            String reqAuth = "BigFileTransfer.Authenticate";
-            Dictionary<String, Object> parameters = new Dictionary<string, object>(){{"userId", fileId}};
-            c8o.Call(reqAuth, parameters, new C8oJsonResponseListener((jsonResponse, requestParameters) =>
-            {
-                String authResponse = jsonResponse.ToString();
-                String aaa = "";
-                lock (locker)
-                {
-                    locker[0] = true;
-                    Monitor.Pulse(locker);
-                }
-            }));
-
-            // Waits the end of the replication if it is not finished
-            lock (locker)
-            {
-                if (!locker[0])
-                {
-                    Monitor.Wait(locker);
-                }
-            }
-
+            JObject json = await c8o.CallJsonAsync(".SelectUuid", new Dictionary<String, Object>{{"uuid", uuid}});
+            progress(json.ToString());
+            
             //
             // 1 : Replicate the document discribing the chunks ids list
             //
-            locker = new Boolean[] { false };
-            parameters = new Dictionary<string, object>();
-            C8oJsonResponseListener responseListener = new C8oJsonResponseListener((jsonResponse, requestParameters) =>
+
+            Boolean[] locker = new Boolean[] { false };
+
+            c8o.Call("fs://.replicate_pull", null, new C8oJsonResponseListener((jsonResponse, requestParameters) =>
             {
 
                 progress(jsonResponse.ToString());
@@ -101,19 +79,7 @@ namespace C8oBigFileTransfer
                         }
                     }
                 }
-            });
-            Task task = new Task(async () =>
-            {
-                try
-                {
-                    c8o.Call(reqRepPull, parameters, responseListener);
-                }
-                catch (Exception e)
-                {
-                    exception = e;
-                }
-            });
-            task.Start();
+            }));
 
             // Waits the end of the replication if it is not finished
             lock (locker)
@@ -122,171 +88,53 @@ namespace C8oBigFileTransfer
                 {
                     Monitor.Wait(locker);
                 }
-            }
-
-            if (exception != null)
-            {
-                throw exception;
             }
 
             //
             // 2 : Gets the document describing the chunks list
             //
 
-            locker = new Boolean[] { false };
+            JObject meta = await c8o.CallJsonAsync("fs://.get", new Dictionary<String, Object> { { "docid", uuid } });
 
-            List<String> chunkIdsList = new List<String>();
-            parameters = new Dictionary<string, object>();
-            parameters.Add("docid", fileId);
-            responseListener = new C8oJsonResponseListener((jsonResponse, requestParameters) =>
+            progress(meta.ToString());
+
+            int chunks = (int) meta["chunks"];
+
+            Stream createdFileStream = fileManager.CreateFile(filePath);
+            createdFileStream.Position = 0;
+
+            AppendChunk(createdFileStream, meta.SelectToken("_attachments.0.content_url").ToString());
+            await c8o.CallJsonAsync("fs://.delete", new Dictionary<String, Object> { { "docid", uuid } });
+
+            for (int i = 1; i < chunks; i++)
             {
-                progress(jsonResponse.ToString());
-
-                String errorMessage = "Fields are missing";
-                try
-                {
-                    JArray chunkIds;
-                    if (C8oUtils.TryGetValueAndCheckType<JArray>(jsonResponse, "chunkIds", out chunkIds))
-                    {
-                        // Chunks are replicated from the database with the same order as they are stored into the database
-                        // So, merge chunks in this order will work
-                        foreach (JToken chunkId in chunkIds)
-                        {
-                            if (chunkId is JValue && (chunkId as JValue).Value is String)
-                            {
-                                chunkIdsList.Add((chunkId as JValue).Value as String);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception(errorMessage + " : chunksId");
-                    }
-
-                    long numberOfChunksToBeCreated;
-                    if (C8oUtils.TryGetValueAndCheckType<long>(jsonResponse, "numberOfChunksToBeCreated", out numberOfChunksToBeCreated))
-                    {
-                        if (chunkIdsList.Count != numberOfChunksToBeCreated)
-                        {
-                            throw new Exception("Invalid number of chunks");
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception(errorMessage + " : numberOfChunksToBeCreated");
-                    }
-                }
-                catch (Exception e)
-                {
-                    exception = e;
-                }
-                lock (locker)
-                {
-                    Monitor.Pulse(locker);
-                }
-            });
-            try
-            {
-                this.c8o.Call("fs://" + this.databaseName + ".get", parameters, responseListener);
+                meta = await c8o.CallJsonAsync("fs://.get", new Dictionary<String, Object> { { "docid", uuid + "_" + i } });
+                AppendChunk(createdFileStream, meta.SelectToken("_attachments." + i + ".content_url").ToString());
+                await c8o.CallJsonAsync("fs://.delete", new Dictionary<String, Object> { { "docid", uuid + "_" + i } });
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            lock (locker)
-            {
-                if (!locker[0])
-                {
-                    Monitor.Wait(locker);
-                }
-            }
-            if (exception != null)
-            {
-                throw exception;
-            }
+            createdFileStream.Dispose();
 
-            // Waits the end of the replication if it is not finished
-            // Chunks could start to be merged here
-            
-
-            //
-            // 4 : Gets documents containing chunks as attachment and merge chunks into one file
-            //
-            List<String> contentPathes = new List<String>();
-            foreach (String chunkId in chunkIdsList)
-            {
-                parameters = new Dictionary<string, object>();
-                parameters.Add("docid", chunkId);
-
-                responseListener = new C8oJsonResponseListener((jsonResponse, requestParameters) =>
-                {
-                    // Checks if there are attachments
-                    JObject attachments;
-                    if (C8oUtils.TryGetValueAndCheckType<JObject>(jsonResponse, "_attachments", out attachments))
-                    {
-                        JObject attachmentInfo;
-                        if (C8oUtils.TryGetValueAndCheckType<JObject>(attachments, chunkId, out attachmentInfo))
-                        {
-                            String contentPath;
-                            if (C8oUtils.TryGetValueAndCheckType<String>(attachmentInfo, "content_path", out contentPath))
-                            {
-                                contentPathes.Add(contentPath);
-                            }
-                            else
-                            {
-                                if (C8oUtils.TryGetValueAndCheckType<String>(attachmentInfo, "content_url", out contentPath))
-                                {
-                                    contentPathes.Add(contentPath);
-                                }
-                            }
-                        }
-                    }
-
-                    lock (locker)
-                    {
-                        Monitor.Pulse(locker);
-                    }
-                });
-                c8o.Call(reqGetDoc, parameters, responseListener);
-
-                lock (locker)
-                {
-                    if (!locker[0])
-                    {
-                        Monitor.Wait(locker);
-                    }
-                }
-            }
-
-            try
-            {
-                Stream createdFileStream = fileManager.CreateFile(filePath);
-                createdFileStream.Position = 0;
-                foreach (String contentPath in contentPathes)
-                {
-                    Stream chunkStream;
-                    if (contentPath.StartsWith("http://") || contentPath.StartsWith("http://"))
-                    {
-                        HttpWebRequest request = HttpWebRequest.CreateHttp(contentPath);
-                        HttpWebResponse response = Task<WebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request).Result as HttpWebResponse;
-                        chunkStream = response.GetResponseStream();
-                    }
-                    else
-                    {
-                        String contentPath2 = UrlToPath(contentPath);
-                        chunkStream = fileManager.OpenFile(contentPath2);
-                    }
-                    chunkStream.CopyTo(createdFileStream, 4096);
-                    chunkStream.Dispose();
-                    createdFileStream.Position = createdFileStream.Length;
-                }
-                createdFileStream.Dispose();
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            c8o.CallJsonAsync("fs://.replicate_push").Start();
         }       
+
+        private void AppendChunk(Stream createdFileStream, String contentPath)
+        {
+            Stream chunkStream;
+            if (contentPath.StartsWith("http://") || contentPath.StartsWith("https://"))
+            {
+                HttpWebRequest request = HttpWebRequest.CreateHttp(contentPath);
+                HttpWebResponse response = Task<WebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request).Result as HttpWebResponse;
+                chunkStream = response.GetResponseStream();
+            }
+            else
+            {
+                String contentPath2 = UrlToPath(contentPath);
+                chunkStream = fileManager.OpenFile(contentPath2);
+            }
+            chunkStream.CopyTo(createdFileStream, 4096);
+            chunkStream.Dispose();
+            createdFileStream.Position = createdFileStream.Length;
+        }
 
         private static String UrlToPath(String url)
         {
