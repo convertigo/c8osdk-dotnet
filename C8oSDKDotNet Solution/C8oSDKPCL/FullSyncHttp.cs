@@ -340,7 +340,7 @@ namespace Convertigo.SDK
                 continuous = parameters["cancel"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
             }
 
-            JToken local = fullSyncDatatbaseName + "_device";
+            JToken local = fullSyncDatatbaseName + localSuffix;
             JObject remote = new JObject();
 
             remote["url"] = c8o.GetEndpointPart(1) + "/fullsync" + '/' + fullSyncDatatbaseName + '/';
@@ -378,7 +378,7 @@ namespace Convertigo.SDK
             json["cancel"] = true;
             
             JObject response = Execute(request, json);
-            c8o.Log(C8oLogLevel.WARN, response.ToString());
+            c8o.Log(C8oLogLevel.WARN, "CANCEL REPLICATE:\n" + response.ToString());
 
             if (cancel)
             {
@@ -502,6 +502,26 @@ namespace Convertigo.SDK
 
             request = HttpWebRequest.CreateHttp(uri);
             request.Method = "PUT";
+
+            return Execute(request);
+        }
+
+        public override Object HandleCreateDatabaseRequest(String fullSyncDatatbaseName)
+        {
+            String uri = GetDatabaseUrl(fullSyncDatatbaseName);
+
+            HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
+            request.Method = "PUT";
+
+            return Execute(request);
+        }
+
+        public override Object HandleDestroyDatabaseRequest(String fullSyncDatatbaseName)
+        {
+            String uri = GetDatabaseUrl(fullSyncDatatbaseName);
+
+            HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
+            request.Method = "DELETE";
 
             return Execute(request);
         }
@@ -631,7 +651,7 @@ namespace Convertigo.SDK
 
             db = WebUtility.UrlEncode(db);
 
-		    return serverUrl + '/' + db + "_device";
+		    return serverUrl + '/' + db + localSuffix;
 	    }
 	
 	    private String GetDocumentUrl(String db, String docid)

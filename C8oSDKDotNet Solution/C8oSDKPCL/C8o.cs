@@ -280,6 +280,10 @@ namespace Convertigo.SDK
                     // throw new System.ArgumentNullException(C8oExceptionMessage.InvalidArgumentNullParameter("Call parameters"));
                     parameters = new Dictionary<String, Object>();
                 }
+                else
+                {
+                    parameters = new Dictionary<String, Object>(parameters);
+                }
                 if (requestable == null)
                 {
                     throw new System.ArgumentNullException(C8oExceptionMessage.InvalidArgumentNullParameter("Call requestable"));

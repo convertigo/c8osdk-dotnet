@@ -175,6 +175,13 @@ namespace Convertigo.SDK.FullSync.Enums
                 query.Limit = (int)value;
             };
             fullSyncRequestParameters.Add(requestParameter, action);
+            // INCLUDE_DOCS
+            requestParameter = FullSyncRequestParameter.INCLUDE_DOCS;
+            action = (query, value) =>
+            {
+                // missing include_docs !
+            };
+            fullSyncRequestParameters.Add(requestParameter, action);
             // MAP_ONLY
             requestParameter = FullSyncRequestParameter.MAP_ONLY;
             action = (query, value) =>
@@ -270,7 +277,9 @@ namespace Convertigo.SDK.FullSync.Enums
             policy = FullSyncPolicy.NONE;
             func = (fullSyncDatabase, newProperties) =>
             {
-                Document createdDocument = fullSyncDatabase.GetDatabase().CreateDocument();
+                Document createdDocument = (newProperties.ContainsKey(FullSyncInterface.FULL_SYNC__ID)) ?
+                    fullSyncDatabase.GetDatabase().GetDocument(newProperties[FullSyncInterface.FULL_SYNC__ID].ToString()) :
+                    fullSyncDatabase.GetDatabase().CreateDocument();
                 createdDocument.PutProperties(newProperties);
                 return createdDocument;
             };

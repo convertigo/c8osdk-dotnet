@@ -1,6 +1,7 @@
 ﻿using C8oBigFileTransfer;
 using Convertigo.SDK;
 using Convertigo.SDK.Listeners;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,10 +45,12 @@ namespace Sample04Wpf.Win
                 });
             });
 
-            String c8oEndpoint = "http://tonus.twinsoft.fr:18080/convertigo/projects/";
+            // String c8oEndpoint = "http://tonus.twinsoft.fr:18080/convertigo/projects/";
+            String c8oEndpoint = "http://nicolasa.convertigo.net/cems/projects/";
+            // String c8oEndpoint = "http://devus.twinsoft.fr:18080/convertigo/projects/";
 
             c8o = new C8o(c8oEndpoint + "BigFileTransferSample");
-
+           
             bigFileTransfer = new BigFileTransferInterface(c8oEndpoint + "lib_BigFileTransfer", new C8oSettings()
                 .SetDefaultFullSyncDatabaseName("bigfiletransfer")
                 .SetFullSyncUsername("admin")
@@ -61,6 +64,14 @@ namespace Sample04Wpf.Win
                 FileStream fileStream = File.Open(path, FileMode.Open, FileAccess.Read);
                 return fileStream;
             }));
+
+            bigFileTransfer.RaiseDebug += (Object sender, String debug) =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    OutputArea.Text = debug;
+                });
+            };
         }
     }
 }

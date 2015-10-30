@@ -33,9 +33,12 @@ namespace Convertigo.SDK.FullSync
 
         public String defaultFullSyncDatabaseName;
 
+        protected String localSuffix;
+
         public virtual void Init(C8o c8o, C8oSettings c8oSettings, String endpointFirstPart)
         {
             this.defaultFullSyncDatabaseName = c8oSettings.defaultFullSyncDatabaseName;
+            localSuffix = (c8oSettings.fullSyncLocalSuffix != null) ? c8oSettings.fullSyncLocalSuffix : "_device";
         }
 
         //*** Request handlers ***//
@@ -137,6 +140,12 @@ namespace Convertigo.SDK.FullSync
         //*** Reset ***//
 
         public abstract Object HandleResetDatabaseRequest(String fullSyncDatatbaseName);
+
+        //*** Create ***//
+        public abstract Object HandleCreateDatabaseRequest(String fullSyncDatatbaseName);
+
+        //*** Destroy ***//
+        public abstract Object HandleDestroyDatabaseRequest(String fullSyncDatatbaseName);
 
         //*** Local cache ***//
 

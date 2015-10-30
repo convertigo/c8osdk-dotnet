@@ -18,7 +18,9 @@ namespace Sample04XamarinForms
             // The root page of your application
             MainPage = new Login(this);
 
-            String c8oEndpoint = "http://tonus.twinsoft.fr:18080/convertigo/projects/";
+            // String c8oEndpoint = "http://tonus.twinsoft.fr:18080/convertigo/projects/";
+            String c8oEndpoint = "http://nicolasa.convertigo.net/cems/projects/";
+            // String c8oEndpoint = "http://devus.twinsoft.fr:18080/convertigo/projects/";
 
             c8o = new C8o(c8oEndpoint + "BigFileTransferSample");
 

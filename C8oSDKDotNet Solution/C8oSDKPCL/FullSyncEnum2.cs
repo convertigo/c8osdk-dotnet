@@ -73,6 +73,16 @@ namespace Convertigo.SDK.FullSync.Enums
             return fullSyncInterface.HandleResetDatabaseRequest(fullSyncDatabase);
         });
 
+        public static readonly FullSyncRequestable CREATE = new FullSyncRequestable("create", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
+        {
+            return fullSyncInterface.HandleCreateDatabaseRequest(fullSyncDatabase);
+        });
+
+        public static readonly FullSyncRequestable DESTROY = new FullSyncRequestable("destroy", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
+        {
+            return fullSyncInterface.HandleDestroyDatabaseRequest(fullSyncDatabase);
+        });
+
         public readonly String value;
         private readonly Func<FullSyncInterface, String, Dictionary<String, Object>, C8oResponseListener, Object> handleFullSyncrequestOp;
 
@@ -102,7 +112,7 @@ namespace Convertigo.SDK.FullSync.Enums
 
         public static FullSyncRequestable[] Values()
         {
-            return new FullSyncRequestable[] { GET, DELETE, POST, ALL, VIEW, SYNC, REPLICATE_PULL, REPLICATE_PUSH, RESET };
+            return new FullSyncRequestable[] { GET, DELETE, POST, ALL, VIEW, SYNC, REPLICATE_PULL, REPLICATE_PUSH, RESET, CREATE, DESTROY };
         }
     }
 
@@ -121,6 +131,7 @@ namespace Convertigo.SDK.FullSync.Enums
         public static readonly FullSyncRequestParameter INDEX_UPDATE_MODE = new FullSyncRequestParameter("index_update_mode", typeof(String));
         public static readonly FullSyncRequestParameter KEYS = new FullSyncRequestParameter("keys", typeof(IEnumerable<Object>));
         public static readonly FullSyncRequestParameter LIMIT = new FullSyncRequestParameter("limit", typeof(int));
+        public static readonly FullSyncRequestParameter INCLUDE_DOCS = new FullSyncRequestParameter("include_docs", typeof(Boolean));
         public static readonly FullSyncRequestParameter MAP_ONLY = new FullSyncRequestParameter("map_only", typeof(Boolean));
         public static readonly FullSyncRequestParameter PREFETCH = new FullSyncRequestParameter("prefetch", typeof(Boolean));
         public static readonly FullSyncRequestParameter SKIP = new FullSyncRequestParameter("skip", typeof(int));

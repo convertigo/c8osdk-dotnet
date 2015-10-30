@@ -339,11 +339,22 @@ namespace Convertigo.SDK.FullSync
 
             // Creates the fullSync query and add parameters to it
             Query query = database.CreateAllDocumentsQuery();
-
+            
             FullSyncMobile.AddParametersToQuery(query, parameters);
 
             QueryEnumerator result = query.Run();
-
+            /*
+            if (parameters["include_docs"] == (true as Object))
+            {
+                IEnumerator<QueryRow> queryRows = queryEnumerator.GetEnumerator();
+                while (queryRows.MoveNext())
+                {
+                    QueryRow queryRow = queryRows.Current;
+                    JObject queryRowJson = FullSyncTranslator.DictionaryToJson(queryRow.AsJSONDictionary());
+                    rowsArray.Add(queryRowJson);
+                }
+            }
+            */
             return result;
         }
 
@@ -436,6 +447,21 @@ namespace Convertigo.SDK.FullSync
 		    return new FullSyncDefaultResponse(true);
 	    }
 
+        public override Object HandleCreateDatabaseRequest(String fullsyncDatabaseName)
+        {
+            CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullsyncDatabaseName);
+            return new FullSyncDefaultResponse(true);
+        }
+
+        public override Object HandleDestroyDatabaseRequest(String fullsyncDatabaseName)
+        {
+            Database db = manager.GetDatabase(fullsyncDatabaseName);
+            if (db != null)
+            {
+                manager.ForgetDatabase(db);
+            }
+            return new FullSyncDefaultResponse(true);
+        }
 
         public CblDatabase GetOrCreateFullSyncDatabase(String databaseName)
         {
@@ -452,7 +478,6 @@ namespace Convertigo.SDK.FullSync
             {
                 return existingFullSyncDatabase;
             }
-
 
             // Creates a new database
             CblDatabase fullSyncDatabase = new CblDatabase(this.manager, databaseName, this.fullSyncDatabaseUrlBase, this.c8o);

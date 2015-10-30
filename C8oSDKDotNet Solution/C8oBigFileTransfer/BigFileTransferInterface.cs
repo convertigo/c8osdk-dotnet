@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using Convertigo.SDK.Exceptions;
 using System.Net;
+using Convertigo.SDK.FullSync.Enums;
 
 namespace C8oBigFileTransfer
 {
@@ -19,103 +20,297 @@ namespace C8oBigFileTransfer
         private String endpoint;
         private C8oSettings c8oSettings;
         private FileManager fileManager;
-
-        public BigFileTransferInterface(String endpoint, C8oSettings c8oSettings, FileManager fileManager)
+        private C8o c8oTask;
+        private bool tasksDbCreated = false;
+        private bool alive = true;
+        private Dictionary<String, DownloadStatus> tasks = null;
+        public event EventHandler<DownloadStatus> RaiseDownloadStatus;
+        public event EventHandler<String> RaiseDebug;
+        public event EventHandler<Exception> RaiseException;
+        
+        public BigFileTransferInterface(String endpoint, C8oSettings c8oSettings, FileManager fileManager, String taskDb = "bigfiletransfer_tasks")
         {
             this.endpoint = endpoint;
-            this.c8oSettings = c8oSettings;
+            this.c8oSettings = c8oSettings.Clone();
             this.fileManager = fileManager;
+
+            c8oTask = new C8o(endpoint, c8oSettings.Clone().SetDefaultFullSyncDatabaseName(taskDb));
+
         }
 
-        public async Task DownloadFile(String uuid, String filePath, Action<String> progress, Action<DownloadStatus> progressBis)
+        public void Start()
         {
-            C8o c8o = new C8o(endpoint, c8oSettings);
-
-            //
-            // 0 : Authenticates the user on the Convertigo server in order to replicate wanted documents
-            //
-
-            JObject json = await c8o.CallJsonAsync(".SelectUuid", new Dictionary<String, Object>{{"uuid", uuid}});
-            progress(json.ToString());
-            
-            //
-            // 1 : Replicate the document discribing the chunks ids list
-            //
-
-            Boolean[] locker = new Boolean[] { false };
-
-            c8o.Call("fs://.replicate_pull", null, new C8oJsonResponseListener((jsonResponse, requestParameters) =>
+            if (tasks == null)
             {
-
-                progress(jsonResponse.ToString());
-
-                int current = -1;
-                int total = -1;
-                C8oUtils.TryGetValueAndCheckType<int>(jsonResponse, "current", out current);
-                C8oUtils.TryGetValueAndCheckType<int>(jsonResponse, "total", out total);
-                DownloadStatus dlStatus = new DownloadStatus(current, total);
-                progressBis(dlStatus);
-
-
-                String status;
-                if (C8oUtils.TryGetValueAndCheckType<String>(jsonResponse, "status", out status))
+                tasks = new Dictionary<String, DownloadStatus>();
+                
+                Task.Factory.StartNew(async () =>
                 {
-                    // Checks the replication status
-                    lock (locker)
+                    await CheckTaskDb();
+                    int skip = 0;
+
+                    Dictionary<String, Object> param = new Dictionary<String, Object>
                     {
-                        if (status.Equals("Active"))
+                        {"limit", 1},
+                        {"include_docs", true}
+                    };
+
+                    while (alive)
+                    {
+                        try
                         {
-                            // locker[0] = true;
+                            param["skip"] = skip;
+                            JObject res = await c8oTask.CallJsonAsync("fs://.all", param);
+
+                            if ((res["rows"] as JArray).Count > 0)
+                            {
+                                JObject task = res["rows"][0]["doc"] as JObject;
+                                if (task == null)
+                                {
+                                    task = await c8oTask.CallJsonAsync("fs://.get", new Dictionary<String, Object>{{"docid", res["rows"][0]["id"].ToString()}});
+                                }
+                                String uuid = task["_id"].ToString();
+
+                                if (!tasks.ContainsKey(uuid))
+                                {
+                                    String filePath = task["filePath"].Value<String>();
+
+                                    DownloadStatus downloadStatus = tasks[uuid] = new DownloadStatus(uuid, filePath);
+                                    Notify(downloadStatus);
+
+                                    await Task.Factory.StartNew(async () =>
+                                    {
+                                        await DownloadFile(downloadStatus, task);
+
+                                    });
+                                    skip = 0;
+                                }
+                                else
+                                {
+                                    skip++;
+                                }
+                            }
+                            else
+                            {
+                                lock (this)
+                                {
+                                    Monitor.Wait(this);
+                                    skip = 0;
+                                }
+                            }
                         }
-                        else if (status.Equals("Offline"))
+                        catch (Exception e)
                         {
-                            // locker[0] = false;
-                            Monitor.Pulse(locker);
-                        }
-                        else if (status.Equals("Stopped"))
-                        {
-                            locker[0] = true;
-                            Monitor.Pulse(locker);
+                            e.ToString();
                         }
                     }
-                }
-            }));
+                });
+            }
+        }
 
-            // Waits the end of the replication if it is not finished
-            lock (locker)
+        private async Task CheckTaskDb()
+        {
+            if (!tasksDbCreated)
             {
-                if (!locker[0])
+                await c8oTask.CallJsonAsync("fs://.create");
+                tasksDbCreated = true;
+            }
+        }
+
+        public async Task AddFile(String uuid, String filePath)
+        {
+            await CheckTaskDb();
+
+            JObject res = await c8oTask.CallJsonAsync("fs://.post", new Dictionary<String, Object>
+            {
+                {"_id", uuid},
+                {"filePath", filePath},
+                {"replicated", false},
+                {"assembled", false},
+                {"remoteDeleted", false}
+            });
+
+            lock (this)
+            {
+                Monitor.Pulse(this);
+            }
+        }
+
+        public async Task DownloadFile(DownloadStatus downloadStatus, JObject task)
+        {
+            try
+            {
+                C8o c8o = new C8o(endpoint, c8oSettings.Clone().SetFullSyncLocalSuffix("_" + downloadStatus.Uuid));
+                bool authenticated = false;
+
+                //
+                // 0 : Authenticates the user on the Convertigo server in order to replicate wanted documents
+                //
+                if (!task["replicated"].Value<bool>() || !task["remoteDeleted"].Value<bool>())
                 {
-                    Monitor.Wait(locker);
+                    JObject json = await c8o.CallJsonAsync(".SelectUuid", new Dictionary<String, Object> { { "uuid", downloadStatus.Uuid } });
+
+                    Debug("SelectUuid:\n" + json.ToString());
+
+                    if (json.SelectToken("document.selected").ToString() != "true")
+                    {
+                        if (!task["replicated"].Value<bool>())
+                        {
+                            throw new Exception("uuid not selected");
+                        }
+                    }
+                    else
+                    {
+                        authenticated = true;
+                        downloadStatus.State = DownloadStatus.StateAuthenticated;
+                        Notify(downloadStatus);
+                    }
+                }
+
+                //
+                // 1 : Replicate the document discribing the chunks ids list
+                //
+
+                if (!task["replicated"].Value<bool>())
+                {
+                    Boolean[] locker = new Boolean[] { false };
+
+                    c8o.Call("fs://.replicate_pull", null, new C8oJsonResponseListener((jsonResponse, requestParameters) =>
+                    {
+                        Debug("Replicate:\n" + jsonResponse.ToString());
+
+                        String status;
+                        if (C8oUtils.TryGetValueAndCheckType<String>(jsonResponse, "status", out status))
+                        {
+                            // Checks the replication status
+                            lock (locker)
+                            {
+                                if (status.Equals("Active"))
+                                {
+                                    // locker[0] = true;
+                                }
+                                else if (status.Equals("Offline"))
+                                {
+                                    // locker[0] = false;
+                                    Monitor.Pulse(locker);
+                                }
+                                else if (status.Equals("Stopped"))
+                                {
+                                    locker[0] = true;
+                                    Monitor.Pulse(locker);
+                                }
+                            }
+                        }
+                    }));
+
+                    downloadStatus.State = DownloadStatus.StateReplicate;
+                    Notify(downloadStatus);
+
+                    Dictionary<String, Object> allOptions = new Dictionary<String, Object> { {"limit", "0"} };
+
+                    // Waits the end of the replication if it is not finished
+                    while (!locker[0])
+                    {
+                        try
+                        {
+                            JObject all = await c8o.CallJsonAsync("fs://.all", allOptions);
+                            int current = Math.Max(all["total_rows"].Value<int>() - 2, 0);
+                            if (current != downloadStatus.Current)
+                            {
+                                downloadStatus.Current = current;
+                                Notify(downloadStatus);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Debug(e.ToString());
+                        }
+                        lock (locker)
+                        {
+                            Monitor.Wait(locker, 500);
+                        }
+                    }
+
+                    if (downloadStatus.Current < downloadStatus.Total)
+                    {
+                        throw new Exception("replication not completed");
+                    }
+
+                    JObject res = await c8oTask.CallJsonAsync("fs://.post", new Dictionary<String, Object> {
+                        {"_use_policy", FullSyncPolicy.MERGE.value},
+                        {"_id", task["_id"].Value<String>()},
+                        {"replicated", task["replicated"] = true}
+                    });
+                    Debug("replicated true:\n" + res.ToString());
+                }
+
+                if (!task["assembled"].Value<bool>())
+                {
+                    downloadStatus.State = DownloadStatus.StateAssembling;
+                    Notify(downloadStatus);
+                    //
+                    // 2 : Gets the document describing the chunks list
+                    //
+                    Stream createdFileStream = fileManager.CreateFile(downloadStatus.Filepath);
+                    createdFileStream.Position = 0;
+
+                    for (int i = 0; i < downloadStatus.Total; i++)
+                    {
+                        JObject meta = await c8o.CallJsonAsync("fs://.get", new Dictionary<String, Object> { { "docid", downloadStatus.Uuid + "_" + i } });
+                        Debug(meta.ToString());
+
+                        AppendChunk(createdFileStream, meta.SelectToken("_attachments.chunk.content_url").ToString());
+                    }
+                    createdFileStream.Dispose();
+
+                    JObject res = await c8o.CallJsonAsync("fs://.destroy");
+                    Debug("destroy local true:\n" + res.ToString());
+
+                    res = await c8oTask.CallJsonAsync("fs://.post", new Dictionary<String, Object> {
+                        {"_use_policy", FullSyncPolicy.MERGE.value},
+                        {"_id", task["_id"].Value<String>()},
+                        {"assembled", task["assembled"] = true}
+                    });
+                    Debug("assembled true:\n" + res.ToString());
+                }
+
+                if (!task["remoteDeleted"].Value<bool>() && authenticated)
+                {
+                    downloadStatus.State = DownloadStatus.StateCleaning;
+                    Notify(downloadStatus);
+
+                    JObject res = await c8o.CallJsonAsync(".DeleteUuid", new Dictionary<String, Object> { { "uuid", downloadStatus.Uuid } });
+                    Debug("deleteUuid:\n" + res.ToString());
+
+                    res = await c8oTask.CallJsonAsync("fs://.post", new Dictionary<String, Object> {
+                        {"_use_policy", FullSyncPolicy.MERGE.value},
+                        {"_id", task["_id"].Value<String>()},
+                        {"remoteDeleted", task["remoteDeleted"] = true}
+                    });
+                    Debug("remoteDeleted true:\n" + res.ToString());
+                }
+
+                if (task["replicated"].Value<bool>() && task["assembled"].Value<bool>() && task["remoteDeleted"].Value<bool>())
+                {
+                    JObject res = await c8oTask.CallJsonAsync("fs://.delete", new Dictionary<String, Object> { { "docid", downloadStatus.Uuid } });
+                    Debug("local delete:\n" + res.ToString());
+
+                    downloadStatus.State = DownloadStatus.StateFinished;
+                    Notify(downloadStatus);
                 }
             }
-
-            //
-            // 2 : Gets the document describing the chunks list
-            //
-
-            JObject meta = await c8o.CallJsonAsync("fs://.get", new Dictionary<String, Object> { { "docid", uuid } });
-
-            progress(meta.ToString());
-
-            int chunks = (int) meta["chunks"];
-
-            Stream createdFileStream = fileManager.CreateFile(filePath);
-            createdFileStream.Position = 0;
-
-            AppendChunk(createdFileStream, meta.SelectToken("_attachments.0.content_url").ToString());
-            await c8o.CallJsonAsync("fs://.delete", new Dictionary<String, Object> { { "docid", uuid } });
-
-            for (int i = 1; i < chunks; i++)
+            catch (Exception e)
             {
-                meta = await c8o.CallJsonAsync("fs://.get", new Dictionary<String, Object> { { "docid", uuid + "_" + i } });
-                AppendChunk(createdFileStream, meta.SelectToken("_attachments." + i + ".content_url").ToString());
-                await c8o.CallJsonAsync("fs://.delete", new Dictionary<String, Object> { { "docid", uuid + "_" + i } });
+                Notify(e);
             }
-            createdFileStream.Dispose();
 
-            c8o.CallJsonAsync("fs://.replicate_push").Start();
-        }       
+            tasks.Remove(downloadStatus.Uuid);
+            
+            lock (this)
+            {
+                Monitor.Pulse(this);
+            }
+        }
 
         private void AppendChunk(Stream createdFileStream, String contentPath)
         {
@@ -150,5 +345,28 @@ namespace C8oBigFileTransfer
             return url;
         }
 
+        private void Notify(DownloadStatus downloadStatus)
+        {
+            if (RaiseDownloadStatus != null)
+            {
+                RaiseDownloadStatus(this, downloadStatus);
+            }
+        }
+
+        private void Notify(Exception exception)
+        {
+            if (RaiseException != null)
+            {
+                RaiseException(this, exception);
+            }
+        }
+
+        private void Debug(String debug)
+        {
+            if (RaiseDebug != null)
+            {
+                RaiseDebug(this, debug);
+            }
+        }
     }
 }

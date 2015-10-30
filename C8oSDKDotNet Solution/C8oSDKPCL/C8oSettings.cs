@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
-using Convertigo.SDK.FullSync; 
+using Convertigo.SDK.FullSync;
+using Newtonsoft.Json; 
 
 namespace Convertigo.SDK
 {
@@ -43,6 +44,7 @@ namespace Convertigo.SDK
         internal String fullSyncServerUrl;
         internal String fullSyncUsername;
         internal String fullSyncPassword;
+        internal String fullSyncLocalSuffix;
 
         //*** Properties ***//
 
@@ -71,6 +73,7 @@ namespace Convertigo.SDK
             this.fullSyncServerUrl = "http://localhost:5984";
             this.fullSyncUsername = null;
             this.fullSyncPassword = null;
+            this.fullSyncLocalSuffix = null;
         }
 
         public override string ToString() 
@@ -97,11 +100,13 @@ namespace Convertigo.SDK
             this.timeout = timeout;
             return this;
         }
+
         public C8oSettings SetTrustAllCertificates(bool trustAllCetificates)
         {
             this.trustAllCetificates = trustAllCetificates;
             return this;
         }
+
         public C8oSettings AddCookie(String name, String value)
         {
             if (this.cookies == null)
@@ -120,6 +125,7 @@ namespace Convertigo.SDK
             this.isLogRemote = isLogRemote;
             return this;
         }
+
         public C8oSettings SetHandleExceptionsOnLog(Boolean handleExceptionsOnLog)
         {
             this.handleExceptionsOnLog = handleExceptionsOnLog;
@@ -132,26 +138,52 @@ namespace Convertigo.SDK
             this.defaultFullSyncDatabaseName = defaultFullSyncDatabaseName;
             return this;
         }
+
         public C8oSettings SetAuthenticationCookieValue(String authenticationCookieValue)
         {
             this.authenticationCookieValue = authenticationCookieValue;
             return this;
         }
+
         public C8oSettings SetFullSyncServerUrl(String fullSyncServerUrl)
         {
             this.fullSyncServerUrl = fullSyncServerUrl;
             return this;
         }
+
         public C8oSettings SetFullSyncUsername(String fullSyncUsername)
         {
             this.fullSyncUsername = fullSyncUsername;
             return this;
         }
+
         public C8oSettings SetFullSyncPassword(String fullSyncPassword)
         {
             this.fullSyncPassword = fullSyncPassword;
             return this;
         }
-        
+
+        public C8oSettings SetFullSyncLocalSuffix(String fullSyncLocalSuffix)
+        {
+            this.fullSyncLocalSuffix = fullSyncLocalSuffix;
+            return this;
+        }
+
+        public C8oSettings Clone()
+        {
+            C8oSettings clone = new C8oSettings();
+            clone.timeout = timeout;
+            clone.trustAllCetificates = trustAllCetificates;
+            clone.cookies = cookies;
+            clone.isLogRemote = isLogRemote;
+            clone.handleExceptionsOnLog = handleExceptionsOnLog;
+            clone.defaultFullSyncDatabaseName = defaultFullSyncDatabaseName;
+            clone.authenticationCookieValue = authenticationCookieValue;
+            clone.fullSyncServerUrl = fullSyncServerUrl;
+            clone.fullSyncUsername = fullSyncUsername;
+            clone.fullSyncPassword = fullSyncPassword;
+            clone.fullSyncLocalSuffix = fullSyncLocalSuffix;
+            return clone;
+        }
     }
 }
