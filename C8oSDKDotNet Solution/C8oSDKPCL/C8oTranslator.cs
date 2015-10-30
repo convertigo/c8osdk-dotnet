@@ -162,8 +162,7 @@ namespace Convertigo.SDK
             }
             catch (Exception e)
             {
-                return jsonValueString;
-                //throw new System.FormatException(C8oExceptionMessage.StringToJsonValue(jsonValueString), e);
+                throw new System.FormatException(C8oExceptionMessage.StringToJsonValue(jsonValueString), e);
             }
         }
 

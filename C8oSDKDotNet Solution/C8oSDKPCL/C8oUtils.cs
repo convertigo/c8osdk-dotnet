@@ -107,13 +107,10 @@ namespace Convertigo.SDK.Utils
                 }
                 catch (FormatException e)
                 {
-                    throw new C8oException(C8oExceptionMessage.GetParameterJsonValue(parameter), e);
+                    // throw new C8oException(C8oExceptionMessage.GetParameterJsonValue(parameter), e);
                 }
             }
-            else
-            {
-                return parameter.Value;
-            }
+            return parameter.Value;
         }
 
         public static Boolean TryGetParameterObjectValue<T>(IDictionary<String, Object> parameters, String name, out T value, Boolean useName = false, T defaultValue = default(T))
