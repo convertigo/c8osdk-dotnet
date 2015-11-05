@@ -17,10 +17,6 @@ namespace Convertigo.SDK.FullSync
         //*** Constants ***//
 
         /// <summary>
-        /// The suffix added to locally replicated databases name.
-        /// </summary>
-        public static String LOCAL_DATABASE_SUFFIX = "_mobile";
-        /// <summary>
         /// The name of the authentication cookie.
         /// </summary>
         public static String AUTHENTICATION_COOKIE_NAME = "SyncGatewaySession";
@@ -29,7 +25,7 @@ namespace Convertigo.SDK.FullSync
 
         //*** Attributes ***//
 
-        private String databaseName;
+        private String localDatabaseName;
         private Database database;
         private FullSyncReplication pullFullSyncReplication;
         private FullSyncReplication pushFullSyncReplication;
@@ -38,17 +34,27 @@ namespace Convertigo.SDK.FullSync
 
         public String DatabaseName
         {
-            get { return this.databaseName; }
+            get { return this.localDatabaseName; }
         }
 
-        public CblDatabase(Manager manager, String databaseName, String fullSyncDatabasesUrlStr, C8o c8o)
+        public CblDatabase(Manager manager, String databaseName, String fullSyncDatabasesUrlStr, C8o c8o, String localSuffix)
         {
             this.c8o = c8o;
-            this.databaseName = databaseName;
+            
+            localDatabaseName = databaseName + localSuffix;
+
             C8oSettings c8oSettings = c8o.c8oSettings;
             try
             {
-                this.database = manager.GetDatabase(databaseName + CblDatabase.LOCAL_DATABASE_SUFFIX);
+                this.database = manager.GetDatabase(localDatabaseName);
+                if (this.database == null)
+                {
+                    this.database = manager.GetDatabase(localDatabaseName);
+                    if (this.database == null)
+                    {
+                        this.database = manager.GetDatabase(localDatabaseName);
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -56,7 +62,7 @@ namespace Convertigo.SDK.FullSync
             }
 
             // The "/" at the end is important
-            String fullSyncDatabaseUrlStr = fullSyncDatabasesUrlStr + this.databaseName + "/";
+            String fullSyncDatabaseUrlStr = fullSyncDatabasesUrlStr + databaseName + "/";
             Uri fullSyncDatabaseUrl = new Uri(fullSyncDatabaseUrlStr);
 
             Replication pullReplication = this.database.CreatePullReplication(fullSyncDatabaseUrl);

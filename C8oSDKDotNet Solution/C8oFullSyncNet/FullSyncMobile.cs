@@ -170,6 +170,7 @@ namespace Convertigo.SDK.FullSync
             CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatatbaseName);
             Database database = fullSyncDatabase.GetDatabase();
 
+            String str = CblTranslator.QueryEnumeratorToJson(database.CreateAllDocumentsQuery().Run()).ToString();
             // Gets the document form the local database
             Document document = database.GetExistingDocument(docidParameterValue);            
 
@@ -326,7 +327,7 @@ namespace Convertigo.SDK.FullSync
             CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
             Database database = fullSyncDatabase.GetDatabase();
 
-            
+            /*
             // !!! TMP !!!
             if (parameters.ContainsKey("count"))
             {
@@ -335,7 +336,7 @@ namespace Convertigo.SDK.FullSync
                 return json;
             }
             // !!! TMP !!!
-
+            */
 
             // Creates the fullSync query and add parameters to it
             Query query = database.CreateAllDocumentsQuery();
@@ -355,7 +356,12 @@ namespace Convertigo.SDK.FullSync
                 }
             }
             */
-            return result;
+
+            JObject obj = CblTranslator.QueryEnumeratorToJson(result);
+            obj["total_rows"] = database.DocumentCount;
+
+
+            return obj;
         }
 
         //*** GetView ***//
@@ -408,9 +414,9 @@ namespace Convertigo.SDK.FullSync
 
         public override Object HandleReplicatePullRequest(String fullSyncDatabaseName, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
         {
-            CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
             try
             {
+                CblDatabase fullSyncDatabase = this.GetOrCreateFullSyncDatabase(fullSyncDatabaseName);
                 fullSyncDatabase.StartPullReplication(parameters, c8oResponseListener);
             }
             catch (Exception e)
@@ -473,15 +479,15 @@ namespace Convertigo.SDK.FullSync
                     return existingFullSyncDatabase;
                 }
             }*/
-            CblDatabase existingFullSyncDatabase = this.FindDatabase(databaseName);
+            CblDatabase existingFullSyncDatabase = this.FindDatabase(databaseName + localSuffix);
             if (existingFullSyncDatabase != null)
             {
                 return existingFullSyncDatabase;
             }
 
             // Creates a new database
-            CblDatabase fullSyncDatabase = new CblDatabase(this.manager, databaseName, this.fullSyncDatabaseUrlBase, this.c8o);
-            // this.fullSyncDatabases.Add(fullSyncDatabase);
+            CblDatabase fullSyncDatabase = new CblDatabase(this.manager, databaseName, this.fullSyncDatabaseUrlBase, this.c8o, localSuffix);
+            this.fullSyncDatabases.Add(fullSyncDatabase);
             return fullSyncDatabase;
         }
 

@@ -4,7 +4,6 @@ using System.Linq;
 
 using Foundation;
 using UIKit;
-using Convertigo.SDK.FullSync;
 
 namespace Sample04XamarinForms.iOS
 {
@@ -15,7 +14,6 @@ namespace Sample04XamarinForms.iOS
         {
             // if you want to use a different Application Delegate class from "AppDelegate"
             // you can specify it here.
-            FullSyncMobile.Init();
             UIApplication.Main(args, null, "AppDelegate");
         }
     }

@@ -6,6 +6,7 @@ using Foundation;
 using UIKit;
 using C8oBigFileTransfer;
 using System.IO;
+using Convertigo.SDK.FullSync;
 
 namespace Sample04XamarinForms.iOS
 {
@@ -25,6 +26,9 @@ namespace Sample04XamarinForms.iOS
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             global::Xamarin.Forms.Forms.Init();
+
+            FullSyncMobile.Init();
+
             FileManager fileManager = new FileManager((path) =>
             {
                 // String myDocsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);

@@ -182,6 +182,15 @@ namespace C8oBigFileTransfer
                         String status;
                         if (C8oUtils.TryGetValueAndCheckType<String>(jsonResponse, "status", out status))
                         {
+                            /*
+                            int current = jsonResponse["current"].Value<int>();
+                            if (current != downloadStatus.Current)
+                            {
+                                downloadStatus.State = DownloadStatus.StateReplicate;
+                                downloadStatus.Current = current;
+                                Notify(downloadStatus);
+                            }
+                            */
                             // Checks the replication status
                             lock (locker)
                             {
@@ -211,6 +220,7 @@ namespace C8oBigFileTransfer
                     // Waits the end of the replication if it is not finished
                     while (!locker[0])
                     {
+                        
                         try
                         {
                             JObject all = await c8o.CallJsonAsync("fs://.all", allOptions);
@@ -225,9 +235,11 @@ namespace C8oBigFileTransfer
                         {
                             Debug(e.ToString());
                         }
+                        
                         lock (locker)
                         {
-                            Monitor.Wait(locker, 500);
+                           Monitor.Wait(locker, 500);
+                           // Monitor.Wait(locker);
                         }
                     }
 

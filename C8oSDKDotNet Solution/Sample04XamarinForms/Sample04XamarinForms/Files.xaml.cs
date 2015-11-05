@@ -30,7 +30,7 @@ namespace Sample04XamarinForms
 
             public override String ToString()
             {
-                return name + " [" + size + "] " + progress;
+                return name + " " + (progress.Length > 0 ? progress : "[" + size + "]");
             }
 
         }
@@ -95,7 +95,7 @@ namespace Sample04XamarinForms
                                     file.uuid = downloadStatus.Uuid;
                                     files.Remove(item);
                                     FilesList.ItemsSource = null;
-                                    FilesList.ItemsSource = progressFiles;
+                                    FilesList.ItemsSource = files;
                                     break;
                                 }
                             }
@@ -106,7 +106,7 @@ namespace Sample04XamarinForms
                             file.progress = "";
                             files.Add(file);
                             FilesList.ItemsSource = null;
-                            FilesList.ItemsSource = progressFiles;
+                            FilesList.ItemsSource = files;
                         }
                         else
                         {
@@ -174,7 +174,8 @@ namespace Sample04XamarinForms
                 if (uuid != null)
                 {
                     file.uuid = uuid.ToString();
-                    await app.bigFileTransfer.AddFile(file.uuid, "/sdcard/BigFileDemo/" + file.uuid + "_" + param["filename"]);
+                    String path = Device.OS == TargetPlatform.Android ? "/sdcard/Download/" : "/tmp/";
+                    await app.bigFileTransfer.AddFile(file.uuid, path + file.uuid + "_" + param["filename"]);
                 }
             }));
         }
