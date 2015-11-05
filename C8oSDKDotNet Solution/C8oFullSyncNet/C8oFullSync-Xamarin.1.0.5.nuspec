@@ -25,6 +25,6 @@
     </metadata>
     <files>
         <file src="..\C8oFullSyncNetAndroid\bin\Release\C8oFullSyncNetAndroid.dll" target="lib\MonoAndroid\C8oFullSyncNetAndroid.dll" />
-        <file src="..\C8oFullSyncNetiOS\bin\iPhone\Release\C8oFullSyncNetiOS.dll"  target="lib\MonoTouch\C8oFullSyncNetiOS.dll" />
+        <file src="..\C8oFullSyncNetiOS\bin\iPhone\Release\C8oFullSyncNetiOS.dll"  target="lib\Xamarin.iOS10\C8oFullSyncNetiOS.dll" />
     </files>
 </package>
