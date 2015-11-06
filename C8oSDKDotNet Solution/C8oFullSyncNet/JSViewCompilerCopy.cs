@@ -9,6 +9,7 @@ using System.Collections;
 using Couchbase.Lite.Views;
 
 using Couchbase.Lite;
+using Newtonsoft.Json;
 
 namespace Convertigo.SDK.FullSync
 {
@@ -22,6 +23,8 @@ namespace Convertigo.SDK.FullSync
 
         #region IViewCompiler
 
+        public delegate void LogDelegate(String msg);
+
         public MapDelegate CompileMap(string source, string language)
         {
             if (!language.Equals("javascript"))
@@ -32,10 +35,15 @@ namespace Convertigo.SDK.FullSync
             source = source.Replace("function", "function _f1");
 
             return (doc, emit) =>
-            {
-                var engine = new Engine();//.SetValue("log", new Action<object>((line) => Log.I("JSViewCompiler", line.ToString())));
+            {                
+                var engine = new Engine();
                 engine.SetValue("emit", emit);
-                engine.Execute(source).Invoke("_f1", doc);
+                engine.SetValue("log", new LogDelegate((msg) =>
+                {
+                    // TODO: handle log
+                }));
+                source += "\n_f1(" + JsonConvert.SerializeObject(doc) + ");";
+                engine.Execute(source);
             };
         }
 
