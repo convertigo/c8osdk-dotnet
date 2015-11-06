@@ -175,6 +175,8 @@ namespace C8oBigFileTransfer
                 {
                     Boolean[] locker = new Boolean[] { false };
 
+                    await c8o.CallJsonAsync("fs://.create");
+
                     c8o.Call("fs://.replicate_pull", null, new C8oJsonResponseListener((jsonResponse, requestParameters) =>
                     {
                         Debug("Replicate:\n" + jsonResponse.ToString());
@@ -237,7 +239,6 @@ namespace C8oBigFileTransfer
                         lock (locker)
                         {
                            Monitor.Wait(locker, 500);
-                           // Monitor.Wait(locker);
                         }
                     }
 

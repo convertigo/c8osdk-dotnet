@@ -9,6 +9,7 @@ using Convertigo.SDK.Utils;
 using Convertigo.SDK.FullSync.Enums;
 using System.Net;
 using Convertigo.SDK.Exceptions;
+using System.Threading.Tasks;
 
 namespace Convertigo.SDK.FullSync
 {
@@ -26,7 +27,7 @@ namespace Convertigo.SDK.FullSync
         //*** Attributes ***//
 
         private String localDatabaseName;
-        private Database database;
+        private Database database = null;
         private FullSyncReplication pullFullSyncReplication;
         private FullSyncReplication pushFullSyncReplication;
 
@@ -46,19 +47,24 @@ namespace Convertigo.SDK.FullSync
             C8oSettings c8oSettings = c8o.c8oSettings;
             try
             {
-                this.database = manager.GetDatabase(localDatabaseName);
-                if (this.database == null)
+                database = manager.GetDatabase(localDatabaseName);
+                for (int i = 0; i < 6 && database == null; i++)
                 {
-                    this.database = manager.GetDatabase(localDatabaseName);
-                    if (this.database == null)
-                    {
-                        this.database = manager.GetDatabase(localDatabaseName);
-                    }
+                    Task.Delay(500).Wait();
+                    database = manager.GetDatabase(localDatabaseName);
+                }
+                if (database == null)
+                {
+                    throw new C8oException("Cannot get the local database: " + localDatabaseName);
                 }
             }
             catch (Exception e)
             {
-                throw new C8oException(C8oExceptionMessage.ToDo(), e);
+                if (!(e is C8oException))
+                {
+                    e = new C8oException(C8oExceptionMessage.ToDo(), e);
+                }
+                throw e;
             }
 
             // The "/" at the end is important
