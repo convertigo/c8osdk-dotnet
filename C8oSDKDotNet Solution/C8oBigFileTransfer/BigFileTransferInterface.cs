@@ -182,15 +182,6 @@ namespace C8oBigFileTransfer
                         String status;
                         if (C8oUtils.TryGetValueAndCheckType<String>(jsonResponse, "status", out status))
                         {
-                            /*
-                            int current = jsonResponse["current"].Value<int>();
-                            if (current != downloadStatus.Current)
-                            {
-                                downloadStatus.State = DownloadStatus.StateReplicate;
-                                downloadStatus.Current = current;
-                                Notify(downloadStatus);
-                            }
-                            */
                             // Checks the replication status
                             lock (locker)
                             {
@@ -215,7 +206,10 @@ namespace C8oBigFileTransfer
                     downloadStatus.State = DownloadStatus.StateReplicate;
                     Notify(downloadStatus);
 
-                    Dictionary<String, Object> allOptions = new Dictionary<String, Object> { {"limit", "0"} };
+                    Dictionary<String, Object> allOptions = new Dictionary<String, Object> {
+                        { "startkey", '"' + downloadStatus.Uuid + "_\"" },
+                        { "endkey", '"' + downloadStatus.Uuid + "__\"" }
+                    };
 
                     // Waits the end of the replication if it is not finished
                     while (!locker[0])
@@ -224,11 +218,15 @@ namespace C8oBigFileTransfer
                         try
                         {
                             JObject all = await c8o.CallJsonAsync("fs://.all", allOptions);
-                            int current = Math.Max(all["total_rows"].Value<int>() - 2, 0);
-                            if (current != downloadStatus.Current)
+                            JToken rows = all["rows"];
+                            if (rows != null)
                             {
-                                downloadStatus.Current = current;
-                                Notify(downloadStatus);
+                                int current = (rows as JArray).Count;
+                                if (current != downloadStatus.Current)
+                                {
+                                    downloadStatus.Current = current;
+                                    Notify(downloadStatus);
+                                }
                             }
                         }
                         catch (Exception e)
