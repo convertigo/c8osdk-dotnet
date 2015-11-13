@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>C8oSDK-PCL</id>
+        <version>1.0.1</version>
+        <title>Convertigo PCL Client SDK</title>
+        <authors>julesg</authors>
+        <owners>Convertigo</owners>
+        <projectUrl>http://www.convertigo.com/convertigo-sdk</projectUrl>
+        <iconUrl>https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSJO-7NGkftreSyo2gVhcO_anvu4FUQ61NVv98py4sNNm0KuckKPQ</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>This package contains everything you need to acces the Convertigo Mobile Backend as Service (MBaaS) for basic operations such as  executing backend services and retreiving data in your mobile applications.</description>
+        <summary>Convertigo MBaaS PCL Client Library</summary>
+        <releaseNotes>Release Notes...</releaseNotes>
+        <copyright>Convertigo</copyright>
+        <language>en-US</language>
+        <tags>Convertigo, MBaaS, MADP, Mobile, Windows Phone, Xamarin.</tags>
+        <dependencies>
+            <dependency id="UnicodeNormalization" version="1.0.1" />
+            <dependency id="Newtonsoft.Json" version="6.0.6" />
+            <dependency id="Microsoft.Net.Http" version="2.2.29" />
+            <dependency id="Microsoft.Bcl.Build" version="1.0.21" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="bin\Release\C8oSDKPCL.dll" target="lib\C8oSDKPCL.dll" />
+        <file src="tools\install.ps1" target="tools\install.ps1" />
+    </files>
+</package>
