@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>C8oFullSync-Xamarin</id>
+        <version>1.0.5</version>
+        <title>Convertigo Client SDK FullSync extentions</title>
+        <authors>julesg</authors>
+        <owners>Convertigo</owners>
+        <projectUrl>http://www.convertigo.com/convertigo-sdk</projectUrl>
+        <iconUrl>https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSJO-7NGkftreSyo2gVhcO_anvu4FUQ61NVv98py4sNNm0KuckKPQ</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>This package contains everything you need to access the Convertigo Mobile Backend as Service (MBaaS) for extended operations such as using the FullSync technology providing offline data and backend synchronization to enterprise applications for your Xamarin mobile Apps.</description>
+        <summary>Convertigo MBaaS Extended Client Library for FullSync</summary>
+        <copyright>Convertigo</copyright>
+        <language>en-US</language>
+        <tags>Convertigo, MBaaS, MADP, Mobile, Windows Phone, Xamarin, NoSQL, CouchDB, CouchBase Lite</tags>
+        <dependencies>
+            <dependency id="Newtonsoft.Json" version="6.0.6" />
+            <dependency id="UnicodeNormalization" version="1.0.1" />
+            <dependency id="Microsoft.Net.Http" version="2.2.29" />
+            <dependency id="Couchbase.Lite" version="1.1.1.1" />
+            <dependency id="C8oSDK-PCL" version="1.0.1" />
+            <dependency id="Jint" version="2.5.0" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="..\C8oFullSyncNetAndroid\bin\Release\C8oFullSyncNetAndroid.dll" target="lib\MonoAndroid\C8oFullSyncNetAndroid.dll" />
+        <file src="..\C8oFullSyncNetiOS\bin\iPhone\Release\C8oFullSyncNetiOS.dll"  target="lib\Xamarin.iOS10\C8oFullSyncNetiOS.dll" />
+    </files>
+</package>
