@@ -776,6 +776,7 @@ C8oSDKDotNetSamples/C8oBigFileTransfer/FileManager.cs -text
 C8oSDKDotNetSamples/C8oBigFileTransfer/Properties/AssemblyInfo.cs -text
 C8oSDKDotNetSamples/C8oBigFileTransfer/app.config -text
 C8oSDKDotNetSamples/C8oBigFileTransfer/packages.config -text
+C8oSDKDotNetSamples/C8oSDKDotNetSamples.sln -text
 C8oSDKDotNetSamples/Sample04Wpf.Win/App.config -text
 C8oSDKDotNetSamples/Sample04Wpf.Win/App.xaml -text
 C8oSDKDotNetSamples/Sample04Wpf.Win/App.xaml.cs -text
@@ -827,6 +828,7 @@ C8oSDKDotNetSamples/Sample04XamarinForms/Sample04XamarinForms.iOS/Resources/Icon
 C8oSDKDotNetSamples/Sample04XamarinForms/Sample04XamarinForms.iOS/Resources/Icon-Small@3x.png -text
 C8oSDKDotNetSamples/Sample04XamarinForms/Sample04XamarinForms.iOS/Resources/LaunchScreen.storyboard -text
 C8oSDKDotNetSamples/Sample04XamarinForms/Sample04XamarinForms.iOS/Sample04XamarinForms.iOS.csproj -text
+C8oSDKDotNetSamples/Sample04XamarinForms/Sample04XamarinForms.iOS/app.config -text
 C8oSDKDotNetSamples/Sample04XamarinForms/Sample04XamarinForms.iOS/iTunesArtwork -text
 C8oSDKDotNetSamples/Sample04XamarinForms/Sample04XamarinForms.iOS/iTunesArtwork@2x -text
 C8oSDKDotNetSamples/Sample04XamarinForms/Sample04XamarinForms.iOS/packages.config -text
