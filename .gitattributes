@@ -769,6 +769,13 @@ C8oSDKDotNet/C8oSDKPCL/VoidResponse.cs -text
 C8oSDKDotNet/C8oSDKPCL/app.config -text
 C8oSDKDotNet/C8oSDKPCL/packages.config -text
 C8oSDKDotNet/C8oSDKPCL/tools/install.ps1 -text
+C8oSDKDotNetSamples/C8oBigFileTransfer/BigFileTransferInterface.cs -text
+C8oSDKDotNetSamples/C8oBigFileTransfer/C8oBigFileTransfer.csproj -text
+C8oSDKDotNetSamples/C8oBigFileTransfer/DownloadStatus.cs -text
+C8oSDKDotNetSamples/C8oBigFileTransfer/FileManager.cs -text
+C8oSDKDotNetSamples/C8oBigFileTransfer/Properties/AssemblyInfo.cs -text
+C8oSDKDotNetSamples/C8oBigFileTransfer/app.config -text
+C8oSDKDotNetSamples/C8oBigFileTransfer/packages.config -text
 C8oSDKDotNetSamples/Sample04Wpf.Win/App.config -text
 C8oSDKDotNetSamples/Sample04Wpf.Win/App.xaml -text
 C8oSDKDotNetSamples/Sample04Wpf.Win/App.xaml.cs -text
