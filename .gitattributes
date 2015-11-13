@@ -727,6 +727,14 @@ C8oSDKDotNet/C8oFullSyncNet/CblTranslator.cs -text
 C8oSDKDotNet/C8oFullSyncNet/FullSyncMobile.cs -text
 C8oSDKDotNet/C8oFullSyncNet/FullSyncResponses.cs -text
 C8oSDKDotNet/C8oFullSyncNet/JSViewCompilerCopy.cs -text
+C8oSDKDotNet/C8oFullSyncNetAndroid/C8oFullSyncMobileExtension.cs -text
+C8oSDKDotNet/C8oFullSyncNetAndroid/C8oFullSyncNetAndroid.csproj -text
+C8oSDKDotNet/C8oFullSyncNetAndroid/Properties/AssemblyInfo.cs -text
+C8oSDKDotNet/C8oFullSyncNetAndroid/Resources/AboutResources.txt -text
+C8oSDKDotNet/C8oFullSyncNetAndroid/Resources/Resource.Designer.cs -text
+C8oSDKDotNet/C8oFullSyncNetAndroid/Resources/Values/Strings.xml -text
+C8oSDKDotNet/C8oFullSyncNetAndroid/app.config -text
+C8oSDKDotNet/C8oFullSyncNetAndroid/packages.config -text
 C8oSDKDotNet/C8oSDKPCL/C8o.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oEnum.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oExceptionListener.cs -text
