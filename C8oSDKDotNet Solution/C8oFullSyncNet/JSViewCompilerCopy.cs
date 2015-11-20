@@ -35,15 +35,15 @@ namespace Convertigo.SDK.FullSync
             source = source.Replace("function", "function _f1");
 
             return (doc, emit) =>
-            {                
+            {
                 var engine = new Engine();
-                engine.SetValue("emit", emit);
                 engine.SetValue("log", new LogDelegate((msg) =>
                 {
                     // TODO: handle log
                 }));
-                source += "\n_f1(" + JsonConvert.SerializeObject(doc) + ");";
+                engine.SetValue("emit", emit);
                 engine.Execute(source);
+                engine.Execute("_f1(" + JsonConvert.SerializeObject(doc) + ")");
             };
         }
 
@@ -60,33 +60,17 @@ namespace Convertigo.SDK.FullSync
             }
 
             source = source.Replace("function", "function _f2");
-            var engine = new Engine().Execute(source);//.SetValue("log", new Action<object>((line) => Log.I("JSViewCompiler", line.ToString())));
 
             return (keys, values, rereduce) =>
             {
-                var jsKeys = ToJSArray(keys, engine);
-                var jsVals = ToJSArray(values, engine);
-
-                var result = engine.Invoke("_f2", jsKeys, jsVals, rereduce);
-                return result.ToObject();
+                var engine = new Engine();
+                engine.SetValue("log", new LogDelegate((msg) =>
+                {
+                    // TODO: handle log
+                }));
+                engine.Execute(source);
+                return engine.Execute("_f2(" + JsonConvert.SerializeObject(keys) + ", " + JsonConvert.SerializeObject(values) + ", " + (rereduce ? "true" : "false") + ")").GetCompletionValue().ToObject();
             };
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        //Arrays cannot simply be passed into the Javascript engine, they must be allocated
-        //according to Javascript rules
-        private static ArrayInstance ToJSArray(IEnumerable list, Engine engine)
-        {
-            List<JsValue> wrappedVals = new List<JsValue>();
-            foreach (object x in list)
-            {
-                wrappedVals.Add(JsValue.FromObject(engine, x));
-            }
-
-            return (ArrayInstance)engine.Array.Construct(wrappedVals.ToArray());
         }
 
         #endregion
