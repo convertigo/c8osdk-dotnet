@@ -110,6 +110,10 @@ C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/Properties/AssemblyInfo.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/VoidResponse.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/packages.config -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/tools/install.ps1 -text
+C8oSDKDotNet[!!-~]Solution/ClassLibrary1/C8oFullSyncNetWPF.csproj -text
+C8oSDKDotNet[!!-~]Solution/ClassLibrary1/Properties/AssemblyInfo.cs -text
+C8oSDKDotNet[!!-~]Solution/ClassLibrary1/app.config -text
+C8oSDKDotNet[!!-~]Solution/ClassLibrary1/packages.config -text
 C8oSDKDotNet[!!-~]Solution/MobileFormsDemo/MobileFormsDemo.Droid/Assets/AboutAssets.txt -text
 C8oSDKDotNet[!!-~]Solution/MobileFormsDemo/MobileFormsDemo.Droid/MainActivity.cs -text
 C8oSDKDotNet[!!-~]Solution/MobileFormsDemo/MobileFormsDemo.Droid/MobileFormsDemo.Droid.csproj -text
