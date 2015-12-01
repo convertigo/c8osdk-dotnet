@@ -730,15 +730,6 @@ C8oSDKDotNet/C8oFullSyncCbl/C8oFullSyncNet.projitems -text
 C8oSDKDotNet/C8oFullSyncCbl/C8oResponseCblListener.cs -text
 C8oSDKDotNet/C8oFullSyncCbl/FullSyncResponses.cs -text
 C8oSDKDotNet/C8oFullSyncCbl/JSViewCompilerCopy.cs -text
-C8oSDKDotNet/C8oFullSyncNet/C8oCblResponseListener.cs -text
-C8oSDKDotNet/C8oFullSyncNet/C8oFullSync-Xamarin.1.0.5.nuspec -text
-C8oSDKDotNet/C8oFullSyncNet/C8oFullSyncNet.projitems -text
-C8oSDKDotNet/C8oFullSyncNet/C8oFullSyncNet.shproj -text
-C8oSDKDotNet/C8oFullSyncNet/CblDatabase.cs -text
-C8oSDKDotNet/C8oFullSyncNet/CblEnum.cs -text
-C8oSDKDotNet/C8oFullSyncNet/CblTranslator.cs -text
-C8oSDKDotNet/C8oFullSyncNet/FullSyncResponses.cs -text
-C8oSDKDotNet/C8oFullSyncNet/JSViewCompilerCopy.cs -text
 C8oSDKDotNet/C8oFullSyncNetAndroid/C8oFullSyncMobileExtension.cs -text
 C8oSDKDotNet/C8oFullSyncNetAndroid/C8oFullSyncNetAndroid.csproj -text
 C8oSDKDotNet/C8oFullSyncNetAndroid/Properties/AssemblyInfo.cs -text
