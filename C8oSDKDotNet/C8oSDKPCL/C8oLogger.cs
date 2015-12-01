@@ -3,8 +3,7 @@ using System.Net;
 using System.Windows;
 using System.Windows.Input;
 using System.Diagnostics;
-using Convertigo.SDK.Listeners;
-using Convertigo.SDK.Http;
+using Convertigo.SDK;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
@@ -16,7 +15,7 @@ using Convertigo.SDK.Exceptions;
 
 namespace Convertigo.SDK
 {
-    public class C8oLogger
+    internal class C8oLogger
     {
 
         //*** Constants ***//
@@ -72,41 +71,33 @@ namespace Convertigo.SDK
         /// </summary>
         private DateTime startTimeRemoteLog;
         /// <summary>
-        /// Indicates if exceptions thrown when sending logs are handled by the C8oResponseListener.
-        /// </summary>
-        private Boolean handleExceptionsOnLog;
-        /// <summary>
-        /// 
-        /// </summary>
-        private C8oExceptionListener c8oExceptionListener;
-        /// <summary>
         /// Used to run HTTP requests.
         /// </summary>
-        private HttpInterface httpInterface;
+        private C8oHttpInterface httpInterface;
         private String deviceUuid;
+        private C8o c8o;
 
-        public C8oLogger(C8oExceptionListener defaultC8oExceptionListener, C8oSettings c8oSettings)
+        public C8oLogger(C8o c8o)
         {
-            this.c8oExceptionListener = defaultC8oExceptionListener;
-            this.handleExceptionsOnLog = false;
+            this.c8o = c8o;
 
             // Remote log
-            this.isLogRemote = false;
-            this.remoteLogs = new Queue<C8oLog>();
-            this.alreadyRemoteLogging = new Boolean[] { false };
-            this.remoteLogLevel = C8oLogLevel.NULL;
+            isLogRemote = false;
+            remoteLogs = new Queue<C8oLog>();
+            alreadyRemoteLogging = new Boolean[] { false };
+            remoteLogLevel = C8oLogLevel.NULL;
 
-            DateTime currentTime = DateTime.Now;
-            this.startTimeRemoteLog = currentTime;
-            this.uidRemoteLogs = C8oTranslator.DoubleToHexString(C8oUtils.GetUnixEpochTime(currentTime));
+            var currentTime = DateTime.Now;
+            startTimeRemoteLog = currentTime;
+            uidRemoteLogs = C8oTranslator.DoubleToHexString(C8oUtils.GetUnixEpochTime(currentTime));
         }
 
-        private Boolean IsLoggableRemote(C8oLogLevel logLevel)
+        private bool IsLoggableRemote(C8oLogLevel logLevel)
         {
-            return this.isLogRemote && logLevel.priority >= this.remoteLogLevel.priority;
+            return isLogRemote && logLevel.priority >= this.remoteLogLevel.priority;
         }
 
-        private Boolean IsLoggableConsole(C8oLogLevel logLevel)
+        private bool IsLoggableConsole(C8oLogLevel logLevel)
         {
             return true;
         }
@@ -115,7 +106,7 @@ namespace Convertigo.SDK
 
         public void Log(C8oLogLevel logLevel, String message)
         {
-            this.Log(logLevel, message, this.IsLoggableConsole(logLevel), this.IsLoggableRemote(logLevel));
+            Log(logLevel, message, this.IsLoggableConsole(logLevel), this.IsLoggableRemote(logLevel));
         }
 
         public void Log(C8oLogLevel logLevel, String message, Boolean isLoggableConsole, Boolean isLoggableRemote)
@@ -127,9 +118,9 @@ namespace Convertigo.SDK
 
             if (isLoggableRemote)
             {
-                String time = (DateTime.Now.Subtract(this.startTimeRemoteLog)).TotalSeconds + "";
-                this.remoteLogs.Enqueue(new C8oLog(time, logLevel, message));
-                this.LogRemote();
+                string time = (DateTime.Now.Subtract(this.startTimeRemoteLog)).TotalSeconds + "";
+                remoteLogs.Enqueue(new C8oLog(time, logLevel, message));
+                LogRemote();
             }
         }
 
@@ -143,14 +134,14 @@ namespace Convertigo.SDK
         {
             Task.Run(async () =>
             {
-                Boolean canLog = false;
-                lock (this.alreadyRemoteLogging)
+                bool canLog = false;
+                lock (alreadyRemoteLogging)
                 {
                     // If there is no another thread already logging AND there is at least one log
-                    canLog = !this.alreadyRemoteLogging[0] && (this.remoteLogs.Count > 0);
+                    canLog = !alreadyRemoteLogging[0] && (remoteLogs.Count > 0);
                     if (canLog)
                     {
-                        this.alreadyRemoteLogging[0] = true;
+                        alreadyRemoteLogging[0] = true;
                     }
                 }
 
@@ -159,59 +150,58 @@ namespace Convertigo.SDK
                     // Take logs in the queue and add it to a json array
                     int count = 0;
                     int listSize = this.remoteLogs.Count;
-                    JArray logsArray = new JArray();
-                    while (count < listSize && count < C8oLogger.REMOTE_LOG_LIMIT)
+                    var logsArray = new JArray();
+                    while (count < listSize && count < REMOTE_LOG_LIMIT)
                     {
                         C8oLog c8oLog = this.remoteLogs.Dequeue();
-                        JObject jsonLog = new JObject();
-                        jsonLog.Add(C8oLogger.JSON_KEY_TIME, c8oLog.time);
-                        jsonLog.Add(C8oLogger.JSON_KEY_LEVEL, c8oLog.logLevel.name);
-                        jsonLog.Add(C8oLogger.JSON_KEY_MESSAGE, c8oLog.message);
+                        var jsonLog = new JObject();
+                        jsonLog.Add(JSON_KEY_TIME, c8oLog.time);
+                        jsonLog.Add(JSON_KEY_LEVEL, c8oLog.logLevel.name);
+                        jsonLog.Add(JSON_KEY_MESSAGE, c8oLog.message);
                         logsArray.Add(jsonLog);
                         count++;
                     }
 
                     // Initializes request paramters
-                    Dictionary<String, Object> parameters = new Dictionary<String, Object>();
-                    parameters.Add(C8oLogger.JSON_KEY_LOGS, JsonConvert.SerializeObject(logsArray));
-                    parameters.Add(C8oLogger.JSON_KEY_ENV, "{\"uid\":\"" + this.uidRemoteLogs + "\"}");
-                    parameters.Add(C8o.ENGINE_PARAMETER_DEVICE_UUID, this.deviceUuid);
+                    var parameters = new Dictionary<string, object>();
+                    parameters[JSON_KEY_LOGS] = JsonConvert.SerializeObject(logsArray);
+                    parameters[JSON_KEY_ENV] = "{\"uid\":\"" + this.uidRemoteLogs + "\"}";
+                    parameters[C8o.ENGINE_PARAMETER_DEVICE_UUID] = this.deviceUuid;
 
                     JObject jsonResponse;
                     try
                     {
-                       //  WebResponse webResponse = await HttpInterface.HandleRequest(this.remoteLogUrl, parameters);
-                        WebResponse webResponse = await this.httpInterface.HandleRequest(this.remoteLogUrl, parameters);
-                        Stream streamResponse = webResponse.GetResponseStream();
+                        var webResponse = await httpInterface.HandleRequest(remoteLogUrl, parameters);
+                        var streamResponse = webResponse.GetResponseStream();
                         jsonResponse = C8oTranslator.StreamToJson(streamResponse);
                     }
                     catch (Exception e)
                     {
-                        this.isLogRemote = false;
-                        if (this.handleExceptionsOnLog)
+                        isLogRemote = false;
+                        if (c8o.LogOnFail != null)
                         {
-                            this.c8oExceptionListener.OnException(new C8oException(C8oExceptionMessage.ToDo(), e), null);
+                            c8o.LogOnFail(new C8oException(C8oExceptionMessage.ToDo(), e), null);
                         }
                         return;
                     }
 
-                    JToken logLevelResponse = jsonResponse.GetValue(C8oLogger.JSON_KEY_REMOTE_LOG_LEVEL);
+                    var logLevelResponse = jsonResponse.GetValue(C8oLogger.JSON_KEY_REMOTE_LOG_LEVEL);
                     if (logLevelResponse != null)
                     {
-                        String logLevelResponseStr = (String)logLevelResponse;
-                        C8oLogLevel c8oLogLevel = C8oLogLevel.GetC8oLogLevel(logLevelResponseStr);
+                        string logLevelResponseStr = (String)logLevelResponse;
+                        var c8oLogLevel = C8oLogLevel.GetC8oLogLevel(logLevelResponseStr);
                         if (c8oLogLevel != null)
                         {
-                            this.remoteLogLevel = c8oLogLevel;
+                            remoteLogLevel = c8oLogLevel;
                         }
-                        this.LogRemote();
+                        LogRemote();
                     }
                 }
             }).ContinueWith((completedTask) => 
             {
-                lock (this.alreadyRemoteLogging)
+                lock (alreadyRemoteLogging)
                 {
-                    this.alreadyRemoteLogging[0] = false;
+                    alreadyRemoteLogging[0] = false;
                 }
             });
         }
@@ -225,14 +215,16 @@ namespace Convertigo.SDK
         /// <param name="parameters">Array containing method parameters</param>
         public void LogMethodCall(String methodName, params Object[] parameters)
         {
-            Boolean isLoggableConsole = this.IsLoggableConsole(C8oLogLevel.DEBUG);
-            Boolean isLoggableRemote = this.IsLoggableRemote(C8oLogLevel.DEBUG);
+            bool isLoggableConsole = IsLoggableConsole(C8oLogLevel.DEBUG);
+            bool isLoggableRemote = IsLoggableRemote(C8oLogLevel.DEBUG);
+
             if (isLoggableConsole || isLoggableRemote)
             {
-                String methodCallLogMessage = "Method call : " + methodName;
+                string methodCallLogMessage = "Method call : " + methodName;
 
                 isLoggableConsole = this.IsLoggableConsole(C8oLogLevel.TRACE);
                 isLoggableRemote = this.IsLoggableRemote(C8oLogLevel.TRACE);
+
                 if (isLoggableConsole || isLoggableRemote)
                 {
                     methodCallLogMessage += ", Parameters : [";
@@ -258,18 +250,18 @@ namespace Convertigo.SDK
         /// </summary>
         /// <param name="url">The c8o call URL</param>
         /// <param name="parameters">c8o call parameters</param>
-        public void LogC8oCall(String url, Dictionary<String, String> parameters)
+        public void LogC8oCall(string url, IDictionary<string, object> parameters)
         {
-            Boolean isLoggableConsole = this.IsLoggableConsole(C8oLogLevel.DEBUG);
-            Boolean isLoggableRemote = this.IsLoggableRemote(C8oLogLevel.DEBUG);
+            bool isLoggableConsole = IsLoggableConsole(C8oLogLevel.DEBUG);
+            bool isLoggableRemote = IsLoggableRemote(C8oLogLevel.DEBUG);
 
             if (isLoggableConsole || isLoggableRemote)
             {
-                String c8oCallLogMessage = "C8o call :" +
+                string c8oCallLogMessage = "C8o call :" +
                     " URL=" + url + ", " +
                     " Parameters=" + parameters;
 
-                this.Log(C8oLogLevel.DEBUG, c8oCallLogMessage, isLoggableConsole, isLoggableRemote);
+                Log(C8oLogLevel.DEBUG, c8oCallLogMessage, isLoggableConsole, isLoggableRemote);
             }
         }
 
@@ -279,9 +271,9 @@ namespace Convertigo.SDK
         /// <param name="response"></param>
         /// <param name="url"></param>
         /// <param name="parameters"></param>
-        public void LogC8oCallXMLResponse(XDocument response, String url, Dictionary<String, String> parameters)
+        public void LogC8oCallXMLResponse(XDocument response, string url, IDictionary<string, object> parameters)
         {
-            this.LogC8oCallResponse(C8oTranslator.XmlToString(response), "XML", url, parameters);
+            LogC8oCallResponse(C8oTranslator.XmlToString(response), "XML", url, parameters);
         }
 
         /// <summary>
@@ -290,12 +282,12 @@ namespace Convertigo.SDK
         /// <param name="response"></param>
         /// <param name="url"></param>
         /// <param name="parameters"></param>
-        public void LogC8oCallJSONResponse(JObject response, String url, Dictionary<String, String> parameters)
+        public void LogC8oCallJSONResponse(JObject response, string url, IDictionary<string, object> parameters)
         {
-            this.LogC8oCallResponse(C8oTranslator.JsonToString(response), "JSON", url, parameters);
+            LogC8oCallResponse(C8oTranslator.JsonToString(response), "JSON", url, parameters);
         }
 
-        private void LogC8oCallResponse(String responseStr, String responseType, String url, Dictionary<String, String> parameters)
+        private void LogC8oCallResponse(string responseStr, string responseType, string url, IDictionary<string, object> parameters)
         {
             Boolean isLoggableConsole = this.IsLoggableConsole(C8oLogLevel.TRACE);
             Boolean isLoggableRemote = this.IsLoggableRemote(C8oLogLevel.TRACE);
@@ -311,7 +303,7 @@ namespace Convertigo.SDK
             }
         }
 
-        public void SetRemoteLogParameters(HttpInterface httpInterface, Boolean isLogRemote, String urlBase, String deviceUuid)
+        public void SetRemoteLogParameters(C8oHttpInterface httpInterface, bool isLogRemote, string urlBase, string deviceUuid)
         {
             this.httpInterface = httpInterface;
             this.isLogRemote = isLogRemote;

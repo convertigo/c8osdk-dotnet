@@ -39,9 +39,9 @@ namespace Convertigo.SDK.Utils
         /// <param name="name"></param>
         /// <param name="useName"></param>
         /// <returns></returns>
-        public static KeyValuePair<String, Object> GetParameter(IDictionary<String, Object> parameters, String name, Boolean useName = false)
+        public static KeyValuePair<string, object> GetParameter(IDictionary<string, object> parameters, string name, bool useName = false)
         {
-            foreach (KeyValuePair<String, Object> parameter in parameters)
+            foreach (KeyValuePair<string, object> parameter in parameters)
             {
                 String parameterName = parameter.Key;
                 if (name.Equals(parameterName) || (useName && name.Equals(C8oUtils.USE_PARAMETER_IDENTIFIER + parameterName)))
@@ -49,7 +49,17 @@ namespace Convertigo.SDK.Utils
                     return parameter;
                 }
             }
-            return new KeyValuePair<String, Object>(null, null);
+            return new KeyValuePair<string, object>(null, null);
+        }
+
+        public static object GetParameterObjectValue(IDictionary<string, object> parameters, String name, Boolean useName = false)
+        {
+            KeyValuePair<string, object> parameter = GetParameter(parameters, name, useName);
+            if (parameter.Key != null)
+            {
+                return parameter.Value;
+            }
+            return null;
         }
 
         /// <summary>
@@ -60,9 +70,9 @@ namespace Convertigo.SDK.Utils
         /// <param name="name"></param>
         /// <param name="useName"></param>
         /// <returns></returns>
-        public static String GetParameterStringValue(IDictionary<String, Object> parameters, String name, Boolean useName = false)
+        public static string GetParameterStringValue(IDictionary<string, object> parameters, string name, bool useName = false)
         {
-            KeyValuePair<String, Object> parameter = C8oUtils.GetParameter(parameters, name, useName);
+            var parameter = C8oUtils.GetParameter(parameters, name, useName);
             if (parameter.Key != null)
             {
                 return "" + parameter.Value;
@@ -70,9 +80,9 @@ namespace Convertigo.SDK.Utils
             return null;
         }
 
-        public static String PeekParameterStringValue(IDictionary<String, Object> parameters, String name, Boolean exceptionIfMissing = false)
+        public static string PeekParameterStringValue(IDictionary<string, object> parameters, string name, bool exceptionIfMissing = false)
         {
-            String value = GetParameterStringValue(parameters, name, false);
+            string value = GetParameterStringValue(parameters, name, false);
             if (value == null)
             {
                 if (exceptionIfMissing)
@@ -87,9 +97,9 @@ namespace Convertigo.SDK.Utils
             return value;
         }
 
-        public static Object GetParameterJsonValue(IDictionary<String, Object> parameters, String name, Boolean useName = false) 
+        public static object GetParameterJsonValue(IDictionary<string, object> parameters, string name, bool useName = false) 
         {
-		    KeyValuePair<String, Object> parameter = C8oUtils.GetParameter(parameters, name, useName);
+		    var parameter = C8oUtils.GetParameter(parameters, name, useName);
             if (parameter.Key != null)
             {
                 return C8oUtils.GetParameterJsonValue(parameter);
@@ -97,7 +107,7 @@ namespace Convertigo.SDK.Utils
 		    return null;
 	    }
 
-        public static Object GetParameterJsonValue(KeyValuePair<String, Object> parameter)
+        public static Object GetParameterJsonValue(KeyValuePair<string, object> parameter)
         {
             if (parameter.Value is String)
             {
@@ -113,9 +123,9 @@ namespace Convertigo.SDK.Utils
             return parameter.Value;
         }
 
-        public static Boolean TryGetParameterObjectValue<T>(IDictionary<String, Object> parameters, String name, out T value, Boolean useName = false, T defaultValue = default(T))
+        public static Boolean TryGetParameterObjectValue<T>(IDictionary<string, object> parameters, String name, out T value, Boolean useName = false, T defaultValue = default(T))
         {
-            KeyValuePair<String, Object> parameter = C8oUtils.GetParameter(parameters, name, useName);
+            KeyValuePair<string, object> parameter = C8oUtils.GetParameter(parameters, name, useName);
             if (parameter.Key != null && parameter.Value != null)
             {
                 if (parameter.Value is String && typeof(T) != typeof(String))
@@ -156,14 +166,14 @@ namespace Convertigo.SDK.Utils
             return (long) timeSpan.TotalMilliseconds;
         }
 
-        //public static T GetParameterAndCheckType<T>(IDictionary<String, Object> parameters, String name, T defaultValue = default(T))
+        //public static T GetParameterAndCheckType<T>(IDictionary<string, object> parameters, String name, T defaultValue = default(T))
         //{
         //    // KeyValuePair<SC8oUtils.GetParameter(parameters, name);
 
         //    return defaultValue;
         //}
 
-        //public static T GetValueAndCheckType<T>(JObject jObject, String key, T defaultValue = default(T))
+        //public static T GetValueAndCheckType<T>(Dictionary<string, object> jObject, String key, T defaultValue = default(T))
         //{
         //    JToken value;
         //    if (jObject.TryGetValue(key, out value))
@@ -180,7 +190,7 @@ namespace Convertigo.SDK.Utils
         //    return defaultValue;
         //}
 
-        public static Boolean TryGetValueAndCheckType<T>(JObject jObject, String key, out T value)
+        public static bool TryGetValueAndCheckType<T>(JObject jObject, string key, out T value)
         {
             JToken foundValue;
             if (jObject.TryGetValue(key, out foundValue))
@@ -200,15 +210,15 @@ namespace Convertigo.SDK.Utils
             return false;
         }
 
-        public static String IdentifyC8oCallRequest(IDictionary<String, Object> parameters, ResponseType responseType)
+        public static string IdentifyC8oCallRequest(IDictionary<string, object> parameters, string responseType)
         {
             JObject json = new JObject();
-            foreach (KeyValuePair<String, Object> parameter in parameters)
+            foreach (KeyValuePair<string, object> parameter in parameters)
             {
                 JValue value = new JValue(parameter.Value);
                 json.Add(parameter.Key, value);
             }
-            return responseType.Value + json.ToString();
+            return responseType + json.ToString();
         }
 
         public static String UrlDecode(String str)

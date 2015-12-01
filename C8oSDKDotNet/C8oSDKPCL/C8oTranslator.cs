@@ -31,11 +31,11 @@ namespace Convertigo.SDK
             // Translates the JSON object depending to its type
             if (json is JObject)
             {
-                JObject jsonObject = (JObject)json;
+                var jsonObject = json as JObject;
                 // Gets all the elements of the JSON object and sorts them
-                String[] keys = new String[jsonObject.Count];
+                string[] keys = new String[jsonObject.Count];
                 int index = 0;
-                foreach (KeyValuePair<String, JToken> jsonChild in jsonObject)
+                foreach (var jsonChild in jsonObject)
                 {
                     keys[index] = jsonChild.Key;
                     index++;
@@ -43,27 +43,27 @@ namespace Convertigo.SDK
                 Array.Sort(keys);
 
                 // Translates each elements of the JSON object
-                foreach (String key in keys)
+                foreach (var key in keys)
                 {
-                    JToken keyValue = jsonObject.GetValue(key);
+                    var keyValue = jsonObject.GetValue(key);
                     JsonKeyToXml(key, keyValue, parentElement);
                 }
             }
             else if (json is JArray)
             {
-                JArray jsonArray = (JArray)json;
+                var  jsonArray = json as JArray;
                 // Translates each items of the JSON array
-                foreach (JToken jsonItem in jsonArray)
+                foreach (var jsonItem in jsonArray)
                 {
                     // Create the XML element
-                    XElement item = new XElement(XML_KEY_ITEM);
+                    var item = new XElement(XML_KEY_ITEM);
                     parentElement.Add(item);
                     JsonToXml(jsonItem, item);
                 }
             }
             else if (json is JValue)
             {
-                JValue jsonValue = (JValue) json;
+                var jsonValue = (JValue) json;
                 parentElement.Value = jsonValue.Value.ToString();
             }
         }
@@ -93,8 +93,8 @@ namespace Convertigo.SDK
             else
             {
                 // Creates the XML child element with its normalized name
-                String normalizedKey = jsonKey.Normalize();
-                XElement childElement = new XElement(normalizedKey);
+                string normalizedKey = jsonKey.Normalize();
+                var childElement = new XElement(normalizedKey);
                 parentElement.Add(childElement);
 
                 // Translates the JSON value
@@ -104,17 +104,17 @@ namespace Convertigo.SDK
 
         //*** XML / JSON / Stream to String ***//
 
-        public static String XmlToString(XDocument xmlDocument)
+        public static string XmlToString(XDocument xmlDocument)
         {
             return xmlDocument.ToString();
         }
 
-        public static String JsonToString(JObject jsonObject)
+        public static string JsonToString(JObject jsonObject)
         {
             return jsonObject.ToString();
         }
 
-        public static String StreamToString(Stream stream)
+        public static string StreamToString(Stream stream)
         {
             //try
             //{
@@ -135,8 +135,8 @@ namespace Convertigo.SDK
         public static JObject StreamToJson(Stream stream)
         {
             // Converts the Stream to String then String to JObject
-            String jsonString = StreamToString(stream);
-            JObject json = (JObject) StringToJson(jsonString); // JObject.Parse(jsonString);
+            string jsonString = StreamToString(stream);
+            var json = StringToJson(jsonString) as JObject;
             return json;
         }
 
@@ -230,12 +230,12 @@ namespace Convertigo.SDK
             return bytes;
         }
 
-        public static JObject DictionaryToJson(IDictionary<String, Object> dict)
+        public static JObject DictionaryToJson(IDictionary<string, object> dict)
         {
-            JObject json = new JObject();
-            foreach (KeyValuePair<String, Object> item in dict)
+            var json = new JObject();
+            foreach (KeyValuePair<string, object> item in dict)
             {
-                JValue value = new JValue(item.Value);
+                var value = new JValue(item.Value);
                 json.Add(item.Key, value);
             }
             return json;
