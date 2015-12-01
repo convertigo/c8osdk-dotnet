@@ -447,14 +447,14 @@ namespace Convertigo.SDK
             return new FullSyncDefaultResponse(true);
         }
 
-        public async override Task<object> HandleDestroyDatabaseRequest(string databaseName)
+        public override Task<object> HandleDestroyDatabaseRequest(string databaseName)
         {
             var db = manager.GetDatabase(databaseName + localSuffix);
             if (db != null)
             {
                 manager.ForgetDatabase(db);
             }
-            return new FullSyncDefaultResponse(true);
+            return Task.FromResult<object>(new FullSyncDefaultResponse(true));
         }
 
         //*** JavaScript View ***//
