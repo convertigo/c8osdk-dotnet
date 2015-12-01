@@ -730,14 +730,6 @@ C8oSDKDotNet/C8oFullSyncCbl/C8oFullSyncNet.projitems -text
 C8oSDKDotNet/C8oFullSyncCbl/C8oResponseCblListener.cs -text
 C8oSDKDotNet/C8oFullSyncCbl/FullSyncResponses.cs -text
 C8oSDKDotNet/C8oFullSyncCbl/JSViewCompilerCopy.cs -text
-C8oSDKDotNet/C8oFullSyncNetAndroid/C8oFullSyncMobileExtension.cs -text
-C8oSDKDotNet/C8oFullSyncNetAndroid/C8oFullSyncNetAndroid.csproj -text
-C8oSDKDotNet/C8oFullSyncNetAndroid/Properties/AssemblyInfo.cs -text
-C8oSDKDotNet/C8oFullSyncNetAndroid/Resources/AboutResources.txt -text
-C8oSDKDotNet/C8oFullSyncNetAndroid/Resources/Resource.Designer.cs -text
-C8oSDKDotNet/C8oFullSyncNetAndroid/Resources/Values/Strings.xml -text
-C8oSDKDotNet/C8oFullSyncNetAndroid/app.config -text
-C8oSDKDotNet/C8oFullSyncNetAndroid/packages.config -text
 C8oSDKDotNet/C8oFullSyncNetiOS/C8oFullSyncNetiOS.csproj -text
 C8oSDKDotNet/C8oFullSyncNetiOS/Properties/AssemblyInfo.cs -text
 C8oSDKDotNet/C8oFullSyncNetiOS/app.config -text
