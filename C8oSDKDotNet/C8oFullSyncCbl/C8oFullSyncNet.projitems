@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>863ce965-5c79-48f0-9e97-1aadc3241a87</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>C8oFullSyncNet</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)C8oResponseCblListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oFullSyncDatabase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oFullSyncCblEnum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oFullSyncCbl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FullSyncResponses.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oFullSyncCblTranslator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)JSViewCompilerCopy.cs" />
+  </ItemGroup>
+</Project>

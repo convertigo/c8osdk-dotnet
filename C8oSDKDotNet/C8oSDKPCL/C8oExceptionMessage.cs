@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Convertigo.SDK.Listeners;
+using Convertigo.SDK;
 using Convertigo.SDK.Utils;
 
 namespace Convertigo.SDK.Exceptions
@@ -203,7 +203,7 @@ namespace Convertigo.SDK.Exceptions
             return "Unable to translate the string '" + str + "' to a JSON value"; 
         }
 
-        public static String GetParameterJsonValue(KeyValuePair<String, Object> parameter)
+        public static String GetParameterJsonValue(KeyValuePair<string, object> parameter)
         {
             return "Unable to translate the string value '" + parameter.Value + "' of the key + '" + parameter.Key + "' to a JSON value";
         }
@@ -267,7 +267,7 @@ namespace Convertigo.SDK.Exceptions
             return "Unable to use fullSync because it was not activated at the initialization";
         }
 
-        //public static String fullSyncPutProperties(Map<String, Object> properties)
+        //public static String fullSyncPutProperties(Map<string, object> properties)
         //{
         //    return "Unable to put the following properties in the fullSync Document : " + properties;
         //}

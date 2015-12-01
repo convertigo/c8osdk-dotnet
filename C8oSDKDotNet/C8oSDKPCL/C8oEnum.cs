@@ -7,51 +7,6 @@ using System.Threading.Tasks;
 
 namespace Convertigo.SDK.C8oEnum
 {
-    public class ResponseType
-    {
-        public static ResponseType XML = new ResponseType("pxml");
-        public static ResponseType JSON = new ResponseType("json");
-
-        private String value;
-
-        public String Value {
-            get
-            {
-                return this.value;
-            }
-        }
-
-        public static ResponseType[] Values
-        {
-            get
-            {
-                return new ResponseType[] { XML, JSON };
-            }
-        }
-
-        private ResponseType(String value)
-        {
-            this.value = value;
-        }
-
-
-        public static Boolean TryGetResponseType(String value, out ResponseType responseType) 
-        {
-            foreach (ResponseType rt in ResponseType.Values)
-            {
-                if (rt.Value.Equals(value))
-                {
-                    responseType = rt;
-                    return true;
-                }
-            }
-            responseType = null;
-            return false;
-        }
-
-    }
-
-
     internal class LocalCachePolicy
     {
         public static LocalCachePolicy PRIORITY_SERVER = new LocalCachePolicy("priority-server", () =>

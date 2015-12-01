@@ -5,92 +5,41 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using Convertigo.SDK.FullSync;
-using Newtonsoft.Json; 
+using Newtonsoft.Json;
 
 namespace Convertigo.SDK
 {
-    public class C8oSettings
+    public class C8oSettings : C8oBase
     {
-
-        //*** HTTP ***//
-
-        /// <summary>
-        /// The connection timeout to Convertigo in milliseconds. A value of zero means the timeout is not used
-        /// </summary>
-        internal int timeout;
-        /// <summary>
-        /// Indicate if https calls trust all certificates or not
-        /// </summary>
-        internal bool trustAllCetificates;
-        /// <summary>
-        /// Cookies to send to the Convertigo server.
-        /// </summary>
-        internal CookieCollection cookies;
-
-        //*** Log ***//
-
-        /// <summary>
-        /// Indicate if logs are sent to the Convertigo server.
-        /// Default is true.
-        /// </summary>
-        internal Boolean isLogRemote;
-        internal Boolean handleExceptionsOnLog;
-
-        //*** FullSync ***//
-
-        internal String defaultFullSyncDatabaseName;
-        internal String authenticationCookieValue;
-
-        internal String fullSyncServerUrl;
-        internal String fullSyncUsername;
-        internal String fullSyncPassword;
-        internal String fullSyncLocalSuffix;
-
-        //*** Properties ***//
-
-        public String AuthenticationCookieValue
-        {
-            get
-            {
-                return this.authenticationCookieValue;
-            }
-        }
-
-        //*** Constructor ***//
-
         public C8oSettings()
         {
-            //*** HTTP ***//
-            this.timeout = -1;
-            this.trustAllCetificates = false;
-            this.cookies = null;
-            //*** Log ***//
-            this.isLogRemote = true;
-            this.handleExceptionsOnLog = false;
-            //*** FullSync ***//
-            this.defaultFullSyncDatabaseName = null;
-            this.authenticationCookieValue = null;
-            this.fullSyncServerUrl = "http://localhost:5984";
-            this.fullSyncUsername = null;
-            this.fullSyncPassword = null;
-            this.fullSyncLocalSuffix = null;
+
         }
 
-        public override string ToString() 
-        { 
-            String returnString = this.GetType().ToString() + "[";
-
-            returnString += "timeout = " + timeout + ", " +
-				    "trustAllCetificates = " + trustAllCetificates + 
-                    "]";
-
-            return returnString;
+        public C8oSettings(C8oSettings c8oSettings)
+        {
+            Copy(c8oSettings);
         }
 
-        //*** Getter / Setter ***//
+        public C8oSettings Clone()
+        {
+            return new C8oSettings(this);
+        }
 
-        //*** HTTP ***//
+        public C8oSettings SetUiDispatcher(Action<Action> uiDispatcher)
+        {
+            this.uiDispatcher = uiDispatcher;
+            return this;
+        }
 
+        /// <summary>
+        /// Sets the connection timeout to Convertigo in milliseconds. A value of zero means the timeout is not used.
+        /// Default is <c>0</c>.
+        /// </summary>
+        /// <param name="timeout">
+        /// The timeout.
+        /// </param>
+        /// <returns>The current <c>C8oSettings</c>, for chaining.</returns>
         public C8oSettings SetTimeout(int timeout)
         {
             if (timeout <= 0)
@@ -101,13 +50,31 @@ namespace Convertigo.SDK
             return this;
         }
 
+        /// <summary>
+        /// Gets a value indicating whether https calls trust all certificates or not.
+        /// Default is <c>false</c>.
+        /// </summary>
+        /// <param name="trustAllCetificates">
+        ///   <c>true</c> if https calls trust all certificates; otherwise, <c>false</c>.
+        /// </param>
+        /// <returns>The current <c>C8oSettings</c>, for chaining.</returns>
         public C8oSettings SetTrustAllCertificates(bool trustAllCetificates)
         {
             this.trustAllCetificates = trustAllCetificates;
             return this;
         }
 
-        public C8oSettings AddCookie(String name, String value)
+        /// <summary>
+        /// Add a new cookie to the initial cookies send to the Convertigo server.
+        /// </summary>
+        /// <param name="name">
+        /// The name of the new cookie.
+        /// </param>
+        /// <param name="value">
+        /// The value of the new cookie.
+        /// </param>
+        /// <returns>The current <c>C8oSettings</c>, for chaining.</returns>
+        public C8oSettings AddCookie(string name, string value)
         {
             if (this.cookies == null)
             {
@@ -120,70 +87,53 @@ namespace Convertigo.SDK
 
         //*** Log ***//
 
-        public C8oSettings SetIsLogRemote(Boolean isLogRemote)
+        public C8oSettings SetIsLogRemote(bool logRemote)
         {
-            this.isLogRemote = isLogRemote;
+            this.logRemote = logRemote;
             return this;
         }
 
-        public C8oSettings SetHandleExceptionsOnLog(Boolean handleExceptionsOnLog)
+        public C8oSettings SetLogOnFail(C8oOnFail logOnFail)
         {
-            this.handleExceptionsOnLog = handleExceptionsOnLog;
+            this.logOnFail = logOnFail;
             return this;
         }
         //*** FullSync ***//
 
-        public C8oSettings SetDefaultFullSyncDatabaseName(String defaultFullSyncDatabaseName)
+        public C8oSettings SetDefaultDatabaseName(string defaultDatabaseName)
         {
-            this.defaultFullSyncDatabaseName = defaultFullSyncDatabaseName;
+            this.defaultDatabaseName = defaultDatabaseName;
             return this;
         }
 
-        public C8oSettings SetAuthenticationCookieValue(String authenticationCookieValue)
+        public C8oSettings SetAuthenticationCookieValue(string authenticationCookieValue)
         {
             this.authenticationCookieValue = authenticationCookieValue;
             return this;
         }
 
-        public C8oSettings SetFullSyncServerUrl(String fullSyncServerUrl)
+        public C8oSettings SetFullSyncServerUrl(string fullSyncServerUrl)
         {
             this.fullSyncServerUrl = fullSyncServerUrl;
             return this;
         }
 
-        public C8oSettings SetFullSyncUsername(String fullSyncUsername)
+        public C8oSettings SetFullSyncUsername(string fullSyncUsername)
         {
             this.fullSyncUsername = fullSyncUsername;
             return this;
         }
 
-        public C8oSettings SetFullSyncPassword(String fullSyncPassword)
+        public C8oSettings SetFullSyncPassword(string fullSyncPassword)
         {
             this.fullSyncPassword = fullSyncPassword;
             return this;
         }
 
-        public C8oSettings SetFullSyncLocalSuffix(String fullSyncLocalSuffix)
+        public C8oSettings SetFullSyncLocalSuffix(string fullSyncLocalSuffix)
         {
             this.fullSyncLocalSuffix = fullSyncLocalSuffix;
             return this;
-        }
-
-        public C8oSettings Clone()
-        {
-            C8oSettings clone = new C8oSettings();
-            clone.timeout = timeout;
-            clone.trustAllCetificates = trustAllCetificates;
-            clone.cookies = cookies;
-            clone.isLogRemote = isLogRemote;
-            clone.handleExceptionsOnLog = handleExceptionsOnLog;
-            clone.defaultFullSyncDatabaseName = defaultFullSyncDatabaseName;
-            clone.authenticationCookieValue = authenticationCookieValue;
-            clone.fullSyncServerUrl = fullSyncServerUrl;
-            clone.fullSyncUsername = fullSyncUsername;
-            clone.fullSyncPassword = fullSyncPassword;
-            clone.fullSyncLocalSuffix = fullSyncLocalSuffix;
-            return clone;
         }
     }
 }
