@@ -1,5 +1,5 @@
 ﻿using Convertigo.SDK;
-using Convertigo.SDK.Listeners;
+using Convertigo.SDK;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -34,7 +34,7 @@ namespace C8oBigFileTransfer
             this.c8oSettings = c8oSettings.Clone();
             this.fileManager = fileManager;
 
-            c8oTask = new C8o(endpoint, c8oSettings.Clone().SetDefaultFullSyncDatabaseName(taskDb));
+            c8oTask = new C8o(endpoint, c8oSettings.Clone().SetDefaultDatabaseName(taskDb));
 
         }
 
@@ -60,14 +60,14 @@ namespace C8oBigFileTransfer
                         try
                         {
                             param["skip"] = skip;
-                            JObject res = await c8oTask.CallJsonAsync("fs://.all", param);
+                            JObject res = await c8oTask.CallJson("fs://.all", param).Async();
 
                             if ((res["rows"] as JArray).Count > 0)
                             {
                                 JObject task = res["rows"][0]["doc"] as JObject;
                                 if (task == null)
                                 {
-                                    task = await c8oTask.CallJsonAsync("fs://.get", new Dictionary<String, Object>{{"docid", res["rows"][0]["id"].ToString()}});
+                                    task = await c8oTask.CallJson("fs://.get", new Dictionary<String, Object>{{"docid", res["rows"][0]["id"].ToString()}}).Async();
                                 }
                                 String uuid = task["_id"].ToString();
 
@@ -112,7 +112,7 @@ namespace C8oBigFileTransfer
         {
             if (!tasksDbCreated)
             {
-                await c8oTask.CallJsonAsync("fs://.create");
+                await c8oTask.CallJson("fs://.create").Async();
                 tasksDbCreated = true;
             }
         }
@@ -121,14 +121,14 @@ namespace C8oBigFileTransfer
         {
             await CheckTaskDb();
 
-            JObject res = await c8oTask.CallJsonAsync("fs://.post", new Dictionary<String, Object>
+            JObject res = await c8oTask.CallJson("fs://.post", new Dictionary<String, Object>
             {
                 {"_id", uuid},
                 {"filePath", filePath},
                 {"replicated", false},
                 {"assembled", false},
                 {"remoteDeleted", false}
-            });
+            }).Async();
 
             lock (this)
             {
@@ -148,7 +148,7 @@ namespace C8oBigFileTransfer
                 //
                 if (!task["replicated"].Value<bool>() || !task["remoteDeleted"].Value<bool>())
                 {
-                    JObject json = await c8o.CallJsonAsync(".SelectUuid", new Dictionary<String, Object> { { "uuid", downloadStatus.Uuid } });
+                    JObject json = await c8o.CallJson(".SelectUuid", new Dictionary<String, Object> { { "uuid", downloadStatus.Uuid } }).Async();
 
                     Debug("SelectUuid:\n" + json.ToString());
 
@@ -175,9 +175,9 @@ namespace C8oBigFileTransfer
                 {
                     Boolean[] locker = new Boolean[] { false };
 
-                    await c8o.CallJsonAsync("fs://.create");
+                    await c8o.CallJson("fs://.create").Async();
 
-                    c8o.Call("fs://.replicate_pull", null, new C8oJsonResponseListener((jsonResponse, requestParameters) =>
+                    c8o.Call("fs://.replicate_pull", null, new C8oResponseJsonListener((jsonResponse, requestParameters) =>
                     {
                         Debug("Replicate:\n" + jsonResponse.ToString());
 
@@ -219,7 +219,7 @@ namespace C8oBigFileTransfer
                         
                         try
                         {
-                            JObject all = await c8o.CallJsonAsync("fs://.all", allOptions);
+                            JObject all = await c8o.CallJson("fs://.all", allOptions).Async();
                             JToken rows = all["rows"];
                             if (rows != null)
                             {
@@ -247,11 +247,11 @@ namespace C8oBigFileTransfer
                         throw new Exception("replication not completed");
                     }
 
-                    JObject res = await c8oTask.CallJsonAsync("fs://.post", new Dictionary<String, Object> {
+                    JObject res = await c8oTask.CallJson("fs://.post", new Dictionary<String, Object> {
                         {"_use_policy", FullSyncPolicy.MERGE.value},
                         {"_id", task["_id"].Value<String>()},
                         {"replicated", task["replicated"] = true}
-                    });
+                    }).Async();
                     Debug("replicated true:\n" + res.ToString());
                 }
 
@@ -267,21 +267,21 @@ namespace C8oBigFileTransfer
 
                     for (int i = 0; i < downloadStatus.Total; i++)
                     {
-                        JObject meta = await c8o.CallJsonAsync("fs://.get", new Dictionary<String, Object> { { "docid", downloadStatus.Uuid + "_" + i } });
+                        JObject meta = await c8o.CallJson("fs://.get", new Dictionary<String, Object> { { "docid", downloadStatus.Uuid + "_" + i } }).Async();
                         Debug(meta.ToString());
 
                         AppendChunk(createdFileStream, meta.SelectToken("_attachments.chunk.content_url").ToString());
                     }
                     createdFileStream.Dispose();
 
-                    JObject res = await c8o.CallJsonAsync("fs://.destroy");
+                    JObject res = await c8o.CallJson("fs://.destroy").Async();
                     Debug("destroy local true:\n" + res.ToString());
 
-                    res = await c8oTask.CallJsonAsync("fs://.post", new Dictionary<String, Object> {
+                    res = await c8oTask.CallJson("fs://.post", new Dictionary<String, Object> {
                         {"_use_policy", FullSyncPolicy.MERGE.value},
                         {"_id", task["_id"].Value<String>()},
                         {"assembled", task["assembled"] = true}
-                    });
+                    }).Async();
                     Debug("assembled true:\n" + res.ToString());
                 }
 
@@ -290,20 +290,20 @@ namespace C8oBigFileTransfer
                     downloadStatus.State = DownloadStatus.StateCleaning;
                     Notify(downloadStatus);
 
-                    JObject res = await c8o.CallJsonAsync(".DeleteUuid", new Dictionary<String, Object> { { "uuid", downloadStatus.Uuid } });
+                    JObject res = await c8o.CallJson(".DeleteUuid", new Dictionary<String, Object> { { "uuid", downloadStatus.Uuid } }).Async();
                     Debug("deleteUuid:\n" + res.ToString());
 
-                    res = await c8oTask.CallJsonAsync("fs://.post", new Dictionary<String, Object> {
+                    res = await c8oTask.CallJson("fs://.post", new Dictionary<String, Object> {
                         {"_use_policy", FullSyncPolicy.MERGE.value},
                         {"_id", task["_id"].Value<String>()},
                         {"remoteDeleted", task["remoteDeleted"] = true}
-                    });
+                    }).Async();
                     Debug("remoteDeleted true:\n" + res.ToString());
                 }
 
                 if (task["replicated"].Value<bool>() && task["assembled"].Value<bool>() && task["remoteDeleted"].Value<bool>())
                 {
-                    JObject res = await c8oTask.CallJsonAsync("fs://.delete", new Dictionary<String, Object> { { "docid", downloadStatus.Uuid } });
+                    JObject res = await c8oTask.CallJson("fs://.delete", new Dictionary<String, Object> { { "docid", downloadStatus.Uuid } }).Async();
                     Debug("local delete:\n" + res.ToString());
 
                     downloadStatus.State = DownloadStatus.StateFinished;

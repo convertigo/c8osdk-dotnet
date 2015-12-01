@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Convertigo.SDK.Listeners;
+using Convertigo.SDK;
 using C8oBigFileTransfer;
 
 namespace Sample04Wpf.Win
@@ -52,7 +52,7 @@ namespace Sample04Wpf.Win
             
             this.app = app;
 
-            app.c8o.Call(".Files", null, new C8oXmlResponseListener((filesResponse, param) =>
+            app.c8o.Call(".Files", null, new C8oResponseXmlListener((filesResponse, param) =>
             {
                 String xml = filesResponse.ToString();
                 IEnumerable<XElement> files = filesResponse.XPathSelectElements("/document/directory/file");
@@ -132,7 +132,7 @@ namespace Sample04Wpf.Win
             app.c8o.Call(".RequestFile", new Dictionary<String, Object>
             {
                 {"filename", file.name}
-            }, new C8oXmlResponseListener(async (xmlResponse, param) =>
+            }, new C8oResponseXmlListener(async (xmlResponse, param) =>
             {
                 String xml = xmlResponse.ToString();
                 XElement uuid = xmlResponse.XPathSelectElement("/document/uuid");

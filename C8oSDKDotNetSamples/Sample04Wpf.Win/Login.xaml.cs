@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Convertigo.SDK;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,11 +36,11 @@ namespace Sample04Wpf.Win
         {
             String username = UsernameField.Text;
 
-            XDocument loginResponse = await app.c8o.CallXmlAsync(".Login", new Dictionary<String, Object>
+            XDocument loginResponse = await app.c8o.CallXml(".Login", new Dictionary<String, Object>
             {
                 {"username", username},
                 {"password", PasswordField.Password}
-            });
+            }).Async();
 
             app.OutputArea.Text = loginResponse.ToString();
 

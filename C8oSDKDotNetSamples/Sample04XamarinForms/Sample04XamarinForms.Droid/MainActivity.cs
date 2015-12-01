@@ -8,7 +8,7 @@ using Android.Widget;
 using Android.OS;
 using C8oBigFileTransfer;
 using System.IO;
-using Convertigo.SDK.FullSync;
+using Convertigo.SDK;
 
 namespace Sample04XamarinForms.Droid
 {
@@ -21,7 +21,7 @@ namespace Sample04XamarinForms.Droid
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
 
-            FullSyncMobile.Init();
+            C8oPlatform.Init();
             LoadApplication(new App(new FileManager((path) =>
             {
                 FileStream fileStream = File.Create(path);

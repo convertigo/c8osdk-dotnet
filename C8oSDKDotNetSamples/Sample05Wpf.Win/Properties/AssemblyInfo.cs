@@ -7,11 +7,11 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Sample04Wpf.Win")]
+[assembly: AssemblyTitle("Sample05Wpf.Win")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Sample04Wpf.Win")]
+[assembly: AssemblyProduct("Sample05Wpf.Win")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -26,7 +26,7 @@ using System.Windows;
 //inside a <PropertyGroup>.  For example, if you are using US english
 //in your source files, set the <UICulture> to en-US.  Then uncomment
 //the NeutralResourceLanguage attribute below.  Update the "en-US" in
-//the line below to matches the UICulture setting in the project file.
+//the line below to match the UICulture setting in the project file.
 
 //[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.Satellite)]
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Convertigo.SDK.Listeners;
+using Convertigo.SDK;
 using C8oBigFileTransfer;
 
 using Xamarin.Forms;
@@ -48,7 +48,7 @@ namespace Sample04XamarinForms
             FilesList.ItemsSource = files;
             FilesListProgress.ItemsSource = progressFiles;
 
-            app.c8o.Call(".Files", null, new C8oJsonResponseListener((filesResponse, param) =>
+            app.c8o.Call(".Files", null, new C8oResponseJsonListener((filesResponse, param) =>
             {
                 Debug.WriteLine(filesResponse.ToString());
                 
@@ -149,7 +149,7 @@ namespace Sample04XamarinForms
             app.c8o.Call(".RequestFile", new Dictionary<String, Object>
             {
                 {"filename", file.name}
-            }, new C8oJsonResponseListener(async (jsonResponse, param) =>
+            }, new C8oResponseJsonListener(async (jsonResponse, param) =>
             {
                 Debug.WriteLine(jsonResponse.ToString());
 

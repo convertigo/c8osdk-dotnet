@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Xamarin.Forms;
 using Newtonsoft.Json.Linq;
+using Convertigo.SDK;
 
 namespace Sample04XamarinForms
 {
@@ -25,11 +26,10 @@ namespace Sample04XamarinForms
         {
             String username = UsernameField.Text;
 
-            JObject loginResponse = await app.c8o.CallJsonAsync(".Login", new Dictionary<String, Object>
-            {
-                {"username", username},
-                {"password", PasswordField.Text}
-            });
+            JObject loginResponse = await app.c8o.CallJson(".Login", 
+                "username", username,
+                "password", PasswordField.Text
+            ).Async();
 
             Debug.WriteLine(loginResponse.ToString());
             

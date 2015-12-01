@@ -25,7 +25,7 @@ namespace Sample04XamarinForms
             c8o = new C8o(c8oEndpoint + "BigFileTransferSample");
 
             bigFileTransfer = new BigFileTransferInterface(c8oEndpoint + "lib_BigFileTransfer", new C8oSettings()
-                .SetDefaultFullSyncDatabaseName("bigfiletransfer")
+                .SetDefaultDatabaseName("bigfiletransfer")
                 .SetFullSyncUsername("admin")
                 .SetFullSyncPassword("admin")
             , fileManager);

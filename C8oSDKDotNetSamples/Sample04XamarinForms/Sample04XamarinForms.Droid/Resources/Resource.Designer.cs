@@ -26,9 +26,9 @@ namespace Sample04XamarinForms.Droid
 		
 		public static void UpdateIdValues()
 		{
-			global::C8oFullSyncNetAndroid.Resource.String.ApplicationName = global::Sample04XamarinForms.Droid.Resource.String.ApplicationName;
-			global::C8oFullSyncNetAndroid.Resource.String.Hello = global::Sample04XamarinForms.Droid.Resource.String.Hello;
-			global::C8oFullSyncNetAndroid.Resource.String.library_name = global::Sample04XamarinForms.Droid.Resource.String.library_name;
+			global::C8oSDKDotNet.Android.Resource.String.ApplicationName = global::Sample04XamarinForms.Droid.Resource.String.ApplicationName;
+			global::C8oSDKDotNet.Android.Resource.String.Hello = global::Sample04XamarinForms.Droid.Resource.String.Hello;
+			global::C8oSDKDotNet.Android.Resource.String.library_name = global::Sample04XamarinForms.Droid.Resource.String.library_name;
 			global::Xamarin.Forms.Platform.Resource.Animation.abc_fade_in = global::Sample04XamarinForms.Droid.Resource.Animation.abc_fade_in;
 			global::Xamarin.Forms.Platform.Resource.Animation.abc_fade_out = global::Sample04XamarinForms.Droid.Resource.Animation.abc_fade_out;
 			global::Xamarin.Forms.Platform.Resource.Animation.abc_grow_fade_in_from_bottom = global::Sample04XamarinForms.Droid.Resource.Animation.abc_grow_fade_in_from_bottom;

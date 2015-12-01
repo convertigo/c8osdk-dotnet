@@ -1,11 +1,12 @@
 ﻿using C8oBigFileTransfer;
 using Convertigo.SDK;
-using Convertigo.SDK.Listeners;
+using Convertigo.SDK;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,15 +30,15 @@ namespace Sample04Wpf.Win
         internal C8o c8o;
         internal BigFileTransferInterface bigFileTransfer;
 
-        private C8oJsonResponseListener jsonListener;
+        private C8oResponseJsonListener jsonListener;
 
         public MainWindow()
         {
             InitializeComponent();
-
+            int cl = ServicePointManager.DefaultConnectionLimit = 10;
             ContentArea.Content = new Login(this);
 
-            jsonListener = new C8oJsonResponseListener((jsonResponse, parameters) =>
+            jsonListener = new C8oResponseJsonListener((jsonResponse, parameters) =>
             {
                 Dispatcher.Invoke(() =>
                 {
@@ -45,14 +46,14 @@ namespace Sample04Wpf.Win
                 });
             });
 
-            // String c8oEndpoint = "http://tonus.twinsoft.fr:18080/convertigo/projects/";
-            String c8oEndpoint = "http://nicolasa.convertigo.net/cems/projects/";
+            String c8oEndpoint = "http://tonus.twinsoft.fr:18080/convertigo/projects/";
+            // String c8oEndpoint = "http://nicolasa.convertigo.net/cems/projects/";
             // String c8oEndpoint = "http://devus.twinsoft.fr:18080/convertigo/projects/";
 
             c8o = new C8o(c8oEndpoint + "BigFileTransferSample");
            
             bigFileTransfer = new BigFileTransferInterface(c8oEndpoint + "lib_BigFileTransfer", new C8oSettings()
-                .SetDefaultFullSyncDatabaseName("bigfiletransfer")
+                .SetDefaultDatabaseName("bigfiletransfer")
                 .SetFullSyncUsername("admin")
                 .SetFullSyncPassword("admin")
             , new FileManager((path) =>

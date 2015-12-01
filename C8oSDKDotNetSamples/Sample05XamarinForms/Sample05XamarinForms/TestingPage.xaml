@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Sample05XamarinForms.TestingPage">
+  <ScrollView Orientation="Vertical">
+    <StackLayout Orientation="Vertical" Spacing="5">
+      <Label Text="Test C8O" XAlign="Center" FontAttributes="Bold" FontSize="18"/>
+      <Button Text="Test01" Clicked="OnTest01"/>
+      <Button Text="Test02" Clicked="OnTest02"/>
+      <Button Text="Test03" Clicked="OnTest03"/>
+      <Editor x:Name="Output" Text="Init..." HeightRequest="3000"/>
+    </StackLayout>
+  </ScrollView>
+</ContentPage>
