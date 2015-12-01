@@ -11,136 +11,119 @@ using Convertigo.SDK.Exceptions;
 using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
-using Convertigo.SDK.Listeners;
+using Convertigo.SDK;
 
 namespace Convertigo.SDK
 {
-    public class FullSyncHttp : FullSyncInterface
+    internal class C8oFullSyncHttp : C8oFullSync
     {
-        private static Regex reContentType = new Regex("(.*?)\\s*;\\s*charset=(.*?)\\s*", RegexOptions.IgnoreCase);
-        private static Regex reFsUse = new Regex("^(?:_use_(.*)$|__)");
-        private String serverUrl;
-        private C8o c8o;
-        private String authBasicHeader;
+        private static readonly Regex RE_CONTENT_TYPE = new Regex("(.*?)\\s*;\\s*charset=(.*?)\\s*", RegexOptions.IgnoreCase);
+        private static readonly Regex RE_FS_USE = new Regex("^(?:_use_(.*)$|__)");
 
-        public FullSyncHttp(String serverUrl, String username = null, String password = null)
+        private string serverUrl;
+        private string authBasicHeader;
+
+        public C8oFullSyncHttp(string serverUrl, string username = null, string password = null)
         {
             this.serverUrl = serverUrl;
 
-            if (username != null && !String.IsNullOrWhiteSpace(username) && password != null && !String.IsNullOrWhiteSpace(password))
+            if (username != null && !string.IsNullOrWhiteSpace(username) && password != null && !string.IsNullOrWhiteSpace(password))
             {
                 authBasicHeader = "Basic " + Convert.ToBase64String(Encoding.UTF8.GetBytes(username + ":" + password));
             }
         }
 
-        public override void Init(C8o c8o, C8oSettings c8oSettings, String endpointFirstPart)
+        public override void Init(C8o c8o)
         {
-            base.Init(c8o, c8oSettings, endpointFirstPart);
-            
-            this.c8o = c8o;
+            base.Init(c8o);
         }
 
-        public override void HandleFullSyncResponse(Object response, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
+        public async override Task<object> HandleGetDocumentRequest(string fullSyncDatatbaseName, string docid, IDictionary<string, object> parameters = null)
         {
-            if (response is JObject)
-            {
-                JObject json = response as JObject;
-                if (c8oResponseListener is C8oJsonResponseListener)
-                {
-                    (c8oResponseListener as C8oJsonResponseListener).OnJsonResponse(json, parameters);
-                }
-                else if (c8oResponseListener is C8oXmlResponseListener)
-                {
-                    (c8oResponseListener as C8oXmlResponseListener).OnXmlResponse(FullSyncTranslator.FullSyncJsonToXml(json), parameters);
-                }
-                else
-                {
-                    throw new ArgumentException(C8oExceptionMessage.UnknownType("c8oResponseListener", c8oResponseListener));
-                }
-            }
-        }
+            string uri = HandleQuery(GetDocumentUrl(fullSyncDatatbaseName, docid), parameters);
 
-        public override Object HandleGetDocumentRequest(String fullSyncDatatbaseName, String docidParameterValue, Dictionary<String, Object> parameters = null)
-        {
-            String uri = HandleQuery(GetDocumentUrl(fullSyncDatatbaseName, docidParameterValue), parameters);
-
-            HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
+            var request = HttpWebRequest.CreateHttp(uri);
             request.Method = "GET";
 
-            JObject document = Execute(request);
-            JObject attachmentsProperty = document[FullSyncInterface.FULL_SYNC__ATTACHMENTS] as JObject;
+            var document = await Execute(request);
+            var attachmentsProperty = document[FULL_SYNC__ATTACHMENTS] as JObject;
             
             if (attachmentsProperty != null)
             {
-                foreach (KeyValuePair<String, JToken> iAttachment in attachmentsProperty)
+                foreach (KeyValuePair<string, JToken> iAttachment in attachmentsProperty)
                 {
-                    JObject attachment = iAttachment.Value as JObject;
-                    attachment["content_url"] = GetDocumentAttachmentUrl(fullSyncDatatbaseName, docidParameterValue, iAttachment.Key);
+                    var attachment = iAttachment.Value as JObject;
+                    attachment["content_url"] = GetDocumentAttachmentUrl(fullSyncDatatbaseName, docid, iAttachment.Key);
                 }
             }
 
             return document;
         }
-        
-        public Object HandleGetDocumentAttachment(String fullSyncDatatbaseName, String docidParameterValue, String attachmentName)
+
+        public override object HandleFullSyncResponse(object response, C8oResponseListener listener)
         {
-            String uri = GetDocumentUrl(fullSyncDatatbaseName, docidParameterValue) + "/" + attachmentName;
+            return base.HandleFullSyncResponse(response, listener);
+        }
+
+        public async Task<object> HandleGetDocumentAttachment(string fullSyncDatatbaseName, string docidParameterValue, string attachmentName)
+        {
+            string uri = GetDocumentUrl(fullSyncDatatbaseName, docidParameterValue) + "/" + attachmentName;
 
             HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
             request.Method = "GET";
             request.Accept = "application/octet-stream";
 
-            return Execute(request);
+            return await Execute(request);
         }
 
-        public override Object HandleDeleteDocumentRequest(String fullSyncDatatbaseName, String docidParameterValue, Dictionary<String, Object> parameters)
+        public async override Task<object> HandleDeleteDocumentRequest(string fullSyncDatatbaseName, string docid, IDictionary<string, object> parameters)
         {
-            parameters = HandleRev(fullSyncDatatbaseName, docidParameterValue, parameters);
+            parameters = await HandleRev(fullSyncDatatbaseName, docid, parameters);
 
-            String uri = HandleQuery(GetDocumentUrl(fullSyncDatatbaseName, docidParameterValue), parameters);
+            string uri = HandleQuery(GetDocumentUrl(fullSyncDatatbaseName, docid), parameters);
 
             HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
             request.Method = "DELETE";
 
-            return Execute(request);
+            return await Execute(request);
         }
 
-        public override Object HandlePostDocumentRequest(String fullSyncDatatbaseName, FullSyncPolicy fullSyncPolicy, Dictionary<String, Object> parameters)
+        public async override Task<object> HandlePostDocumentRequest(string fullSyncDatatbaseName, FullSyncPolicy fullSyncPolicy, IDictionary<string, object> parameters)
         {
-            Dictionary<String, Object> options = new Dictionary<String, Object>();
+            var options = new Dictionary<string, object>();
 
-            foreach (String key in parameters.Keys.ToList())
+            foreach (var parameter in parameters)
             {
-                Match isUse = reFsUse.Match(key);
+                var isUse = RE_FS_USE.Match(parameter.Key);
                 if (isUse.Success)
                 {
                     if (isUse.Groups[1].Success)
                     {
-                        options[isUse.Groups[1].Value] = parameters[key];
+                        options[isUse.Groups[1].Value] = parameter.Value;
                     }
-                    parameters.Remove(key);
+                    parameters.Remove(parameter.Key);
                 }
             }
 
-            String uri = HandleQuery(GetDatabaseUrl(fullSyncDatatbaseName), options);
+            string uri = HandleQuery(GetDatabaseUrl(fullSyncDatatbaseName), options);
 
-            HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
+            var request = HttpWebRequest.CreateHttp(uri);
             request.Method = "POST";
 
             // Gets the subkey separator parameter
-            String subkeySeparatorParameterValue = C8oUtils.PeekParameterStringValue(parameters, FullSyncPostDocumentParameter.SUBKEY_SEPARATOR.name, false);
+            string subkeySeparatorParameterValue = C8oUtils.PeekParameterStringValue(parameters, FullSyncPostDocumentParameter.SUBKEY_SEPARATOR.name, false);
 
             if (subkeySeparatorParameterValue == null)
             {
                 subkeySeparatorParameterValue = ".";
             }
 
-            JObject postData = new JObject();
+            var postData = new JObject();
 
-            foreach (KeyValuePair<String, Object> kvp in parameters)
+            foreach (KeyValuePair<string, object> kvp in parameters)
             {
-                JObject obj = postData;
-                String key = kvp.Key;
+                var obj = postData;
+                string key = kvp.Key;
                 String[] paths = key.Split(subkeySeparatorParameterValue.ToCharArray());
 
                 if (paths.Length > 1)
@@ -148,7 +131,7 @@ namespace Convertigo.SDK
 
                     for (int i = 0; i < paths.Length - 1; i++)
                     {
-                        String path = paths[i];
+                        string path = paths[i];
                         if (obj[path] is JObject)
                         {
                             obj = obj[path] as JObject;
@@ -164,12 +147,12 @@ namespace Convertigo.SDK
                 obj[key] = JToken.FromObject(kvp.Value);
             }
 
-            postData = ApplyPolicy(fullSyncDatatbaseName, postData, fullSyncPolicy);
+            postData = await ApplyPolicy(fullSyncDatatbaseName, postData, fullSyncPolicy);
             
-            return Execute(request, postData);
+            return await Execute(request, postData);
         }
 
-        private JObject ApplyPolicy(String fullSyncDatatbaseName, JObject document, FullSyncPolicy fullSyncPolicy)
+        private async Task<JObject> ApplyPolicy(string fullSyncDatatbaseName, JObject document, FullSyncPolicy fullSyncPolicy)
         {
             if (fullSyncPolicy == FullSyncPolicy.NONE)
             {
@@ -182,13 +165,13 @@ namespace Convertigo.SDK
             }
             else
             {
-                String docid = document["_id"].ToString();
+                string docid = document["_id"].ToString();
 
                 if (docid != null)
                 {
                     if (fullSyncPolicy == FullSyncPolicy.OVERRIDE)
                     {
-                        String rev = GetDocumentRev(fullSyncDatatbaseName, docid);
+                        string rev = await GetDocumentRev(fullSyncDatatbaseName, docid);
 
                         if (rev != null)
                         {
@@ -197,7 +180,7 @@ namespace Convertigo.SDK
                     }
                     else if (fullSyncPolicy == FullSyncPolicy.MERGE)
                     {
-                        JObject dbDocument = HandleGetDocumentRequest(fullSyncDatatbaseName, docid) as JObject;
+                        var dbDocument = await HandleGetDocumentRequest(fullSyncDatatbaseName, docid) as JObject;
 
                         if (dbDocument["_id"] != null)
                         {
@@ -216,11 +199,11 @@ namespace Convertigo.SDK
 
         private void Merge(JObject jsonTarget, JObject jsonSource)
         {
-            foreach (KeyValuePair<String, JToken> kvp in jsonSource)
+            foreach (var kvp in jsonSource)
             {
                 try
                 {
-                    JToken targetValue = jsonTarget[kvp.Key];
+                    var targetValue = jsonTarget[kvp.Key];
                     if (targetValue != null)
                     {
                         if (targetValue is JObject && kvp.Value is JObject)
@@ -260,7 +243,8 @@ namespace Convertigo.SDK
 				    JToken targetValue = targetSize > i ? targetArray[i] : null;
 				    JToken sourceValue = sourceArray[i];
 				    if (sourceValue != null && targetValue != null) {
-					    if (targetValue is JObject && sourceValue is JObject) {
+                        if (targetValue is JObject && sourceValue is JObject)
+                        {
                             Merge(targetValue as JObject, sourceValue as JObject);
 					    }
 					    if (targetValue is JArray && sourceValue is JArray) {
@@ -280,51 +264,51 @@ namespace Convertigo.SDK
 		    }
         }
 
-        public override Object HandleAllDocumentsRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters)
+        public async override Task<object> HandleAllDocumentsRequest(string fullSyncDatatbaseName, IDictionary<string, object> parameters)
         {
-            String uri = HandleQuery(GetDocumentUrl(fullSyncDatatbaseName, "_all_docs"), parameters);
+            string uri = HandleQuery(GetDocumentUrl(fullSyncDatatbaseName, "_all_docs"), parameters);
 
             HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
             request.Method = "GET";
 
-            return Execute(request);
+            return await Execute(request);
         }
 
-        public override Object HandleGetViewRequest(String fullSyncDatatbaseName, String ddocParameterValue, String viewParameterValue, Dictionary<String, Object> parameters)
+        public async override Task<object> HandleGetViewRequest(string fullSyncDatatbaseName, string ddoc, string view, IDictionary<string, object> parameters)
         {
-            String uri = HandleQuery(GetDocumentUrl(fullSyncDatatbaseName, "_design/" + ddocParameterValue) + "/_view/" + viewParameterValue, parameters);
+            string uri = HandleQuery(GetDocumentUrl(fullSyncDatatbaseName, "_design/" + ddoc) + "/_view/" + view, parameters);
 
             HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
             request.Method = "GET";
 
-            return Execute(request);
+            return await Execute(request);
         }
 
-        public override Object HandleSyncRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
+        public async override Task<object> HandleSyncRequest(string fullSyncDatatbaseName, IDictionary<string, object> parameters, C8oResponseListener c8oResponseListener)
         {
             Task.Run(() =>
             {
                 HandleReplicatePushRequest(fullSyncDatatbaseName, parameters, c8oResponseListener);
             });
-            return HandleReplicatePullRequest(fullSyncDatatbaseName, parameters, c8oResponseListener);
+            return await HandleReplicatePullRequest(fullSyncDatatbaseName, parameters, c8oResponseListener);
         }
 
-        public override Object HandleReplicatePullRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
+        public async override Task<object> HandleReplicatePullRequest(string fullSyncDatatbaseName, IDictionary<string, object> parameters, C8oResponseListener c8oResponseListener)
         {
-            return postReplicate(fullSyncDatatbaseName, parameters, c8oResponseListener, true);
+            return await postReplicate(fullSyncDatatbaseName, parameters, c8oResponseListener, true);
         }
 
-        public override Object HandleReplicatePushRequest(String fullSyncDatatbaseName, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener)
+        public async override Task<object> HandleReplicatePushRequest(string fullSyncDatatbaseName, IDictionary<string, object> parameters, C8oResponseListener c8oResponseListener)
         {
-            return postReplicate(fullSyncDatatbaseName, parameters, c8oResponseListener, false);
+            return await postReplicate(fullSyncDatatbaseName, parameters, c8oResponseListener, false);
         }
 
-        private Object postReplicate(String fullSyncDatatbaseName, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListener, bool isPull)
+        private async Task<object> postReplicate(string fullSyncDatatbaseName, IDictionary<string, object> parameters, C8oResponseListener c8oResponseListener, bool isPull)
         {
             bool createTarget = true;
             bool continuous = false;
             bool cancel = false;
-
+            /* TODO
             if (parameters.ContainsKey("create_target"))
             {
                 createTarget = parameters["create_target"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
@@ -339,20 +323,20 @@ namespace Convertigo.SDK
             {
                 continuous = parameters["cancel"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
             }
-
+            */
             JToken local = fullSyncDatatbaseName + localSuffix;
-            JObject remote = new JObject();
+            var remote = new JObject();
 
-            remote["url"] = c8o.GetEndpointPart(1) + "/fullsync" + '/' + fullSyncDatatbaseName + '/';
+            remote["url"] = fullSyncDatabaseUrlBase + fullSyncDatatbaseName + '/';
 
-            CookieCollection cookies = c8o.GetCookies();
+            var cookies = c8o.CookieStore;
 
             if (cookies.Count > 0)
             {
-                JObject headers = new JObject();
-                StringBuilder cookieHeader = new StringBuilder();
+                var headers = new JObject();
+                var cookieHeader = new StringBuilder();
 
-                foreach (Cookie cookie in c8o.GetCookies())
+                foreach (Cookie cookie in cookies.GetCookies(new Uri(c8o.EndpointConvertigo)))
                 {
                     cookieHeader.Append(cookie.Name).Append("=").Append(cookie.Value).Append("; ");
                 }
@@ -363,13 +347,13 @@ namespace Convertigo.SDK
                 remote["headers"] = headers;
             }
             
-            HttpWebRequest request = HttpWebRequest.CreateHttp(serverUrl + "/_replicate");
+            var request = HttpWebRequest.CreateHttp(serverUrl + "/_replicate");
             request.Method = "POST";
 
-            JObject json = new JObject();
+            var json = new JObject();
 
-            String sourceId = (isPull ? remote["url"] : local).ToString();
-            String targetId = (isPull ? local : remote["url"]).ToString();
+            string sourceId = (isPull ? remote["url"] : local).ToString();
+            string targetId = (isPull ? local : remote["url"]).ToString();
 
             json["source"] = isPull ? remote : local;
             json["target"] = isPull ? local : remote;
@@ -377,7 +361,7 @@ namespace Convertigo.SDK
             json["continuous"] = false;
             json["cancel"] = true;
             
-            JObject response = Execute(request, json);
+            var response = await Execute(request, json);
             c8o.Log(C8oLogLevel.WARN, "CANCEL REPLICATE:\n" + response.ToString());
 
             if (cancel)
@@ -392,7 +376,7 @@ namespace Convertigo.SDK
 
             response = null;
 
-            JObject progress = new JObject();
+            var progress = new JObject();
             progress["direction"] = isPull ? "pull" : "push";
             progress["ok"] = true;
             progress["status"] = "Active";
@@ -410,10 +394,10 @@ namespace Convertigo.SDK
                         break;
                     }
 
-                    HttpWebRequest req = HttpWebRequest.CreateHttp(serverUrl + "/_active_tasks");
+                    var req = HttpWebRequest.CreateHttp(serverUrl + "/_active_tasks");
                     req.Method = "GET";
 
-                    JObject res = Execute(req);
+                    var res = await Execute(req);
 
                     if (response != null)
                     {
@@ -440,14 +424,14 @@ namespace Convertigo.SDK
                         progress["current"] = task["revisions_checked"];
                         progress["taskInfo"] = task.ToString();
 
-                        HandleFullSyncResponse(progress, parameters, c8oResponseListener);
+                        HandleFullSyncResponse(progress, c8oResponseListener);
 
                         c8o.Log(C8oLogLevel.WARN, progress.ToString());
                     }
                 }
             });
 
-            response = Execute(request, json);
+            response = await Execute(request, json);
             response.Remove("_c8oMeta");
 
             progress["total"] = response["source_last_seq"];
@@ -464,10 +448,10 @@ namespace Convertigo.SDK
                 request = HttpWebRequest.CreateHttp(serverUrl + "/_replicate");
                 request.Method = "POST";
 
-                response = Execute(request, json);
+                response = await Execute(request, json);
                 c8o.Log(C8oLogLevel.WARN, response.ToString());
                 /*
-                String localId = response["_local_id"].ToString();
+                string localId = response["_local_id"].ToString();
                 localId = localId.Substring(0, localId.IndexOf('+'));
 
                 for (int i = 0; i < 1000; i++)
@@ -486,54 +470,54 @@ namespace Convertigo.SDK
                 progress["status"] = "Stopped";
             }
 
-            HandleFullSyncResponse(progress, parameters, c8oResponseListener);
+            HandleFullSyncResponse(progress, c8oResponseListener);
 
             return VoidResponse.GetInstance();
         }
 
-        public override Object HandleResetDatabaseRequest(String fullSyncDatatbaseName)
+        public async override Task<object> HandleResetDatabaseRequest(string fullSyncDatatbaseName)
         {
-            String uri = GetDatabaseUrl(fullSyncDatatbaseName);
+            string uri = GetDatabaseUrl(fullSyncDatatbaseName);
 
             HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
             request.Method = "DELETE";
 
-            Execute(request);
+            await Execute(request);
 
             request = HttpWebRequest.CreateHttp(uri);
             request.Method = "PUT";
 
-            return Execute(request);
+            return await Execute(request);
         }
 
-        public override Object HandleCreateDatabaseRequest(String fullSyncDatatbaseName)
+        public async override Task<object> HandleCreateDatabaseRequest(string fullSyncDatatbaseName)
         {
-            String uri = GetDatabaseUrl(fullSyncDatatbaseName);
+            string uri = GetDatabaseUrl(fullSyncDatatbaseName);
 
             HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
             request.Method = "PUT";
 
-            return Execute(request);
+            return await Execute(request);
         }
 
-        public override Object HandleDestroyDatabaseRequest(String fullSyncDatatbaseName)
+        public async override Task<object> HandleDestroyDatabaseRequest(string fullSyncDatatbaseName)
         {
-            String uri = GetDatabaseUrl(fullSyncDatatbaseName);
+            string uri = GetDatabaseUrl(fullSyncDatatbaseName);
 
             HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
             request.Method = "DELETE";
 
-            return Execute(request);
+            return await Execute(request);
         }
 
-        public override LocalCacheResponse GetResponseFromLocalCache(String c8oCallRequestIdentifier)
+        public override Task<C8oLocalCacheResponse> GetResponseFromLocalCache(string c8oCallRequestIdentifier)
         {
             return null;
         }
 
-        //public override Object GetResponseFromLocalCache(String c8oCallRequestIdentifier)
+        //public override Object GetResponseFromLocalCache(string c8oCallRequestIdentifier)
         //{
-        //    JObject localCacheDocument = HandleGetDocumentRequest(C8o.LOCAL_CACHE_DATABASE_NAME, c8oCallRequestIdentifier) as JObject;
+        //    Dictionary<string, object> localCacheDocument = HandleGetDocumentRequest(C8o.LOCAL_CACHE_DATABASE_NAME, c8oCallRequestIdentifier) as Dictionary<string, object>;
 
         //    if (localCacheDocument == null)
         //    {
@@ -541,8 +525,8 @@ namespace Convertigo.SDK
         //    }
 
 
-        //    String responseString = "" + localCacheDocument[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE];
-        //    String responseTypeString = "" + localCacheDocument[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE];
+        //    string responsestring = "" + localCacheDocument[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE];
+        //    string responseTypestring = "" + localCacheDocument[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE];
         //    Object expirationDate = localCacheDocument[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE];
 
         //    long expirationDateLong;
@@ -578,46 +562,46 @@ namespace Convertigo.SDK
         //    }
         //}
 
-        public override void SaveResponseToLocalCache(String c8oCallRequestIdentifier, LocalCacheResponse localCacheResponse)
+        public override async Task SaveResponseToLocalCache(string c8oCallRequestIdentifier, C8oLocalCacheResponse localCacheResponse)
         {
         }
 
-        //public override void SaveResponseToLocalCache(String c8oCallRequestIdentifier, String responseString, String responseType, int timeToLive)
+        //public override void SaveResponseToLocalCache(string c8oCallRequestIdentifier, string responseString, string responseType, int localCacheTimeToLive)
         //{
-        //    Dictionary<String, Object> properties = new Dictionary<String, Object>();
+        //    Dictionary<string, object> properties = new Dictionary<string, object>();
         //    properties[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE] = responseString;
         //    properties[C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE_TYPE] = responseType;
 
-        //    if (timeToLive != null)
+        //    if (localCacheTimeToLive != null)
         //    {
-        //        long expirationDate = (long) C8oUtils.GetUnixEpochTime(DateTime.Now) + timeToLive;
+        //        long expirationDate = (long) C8oUtils.GetUnixEpochTime(DateTime.Now) + localCacheTimeToLive;
         //        properties[C8o.LOCAL_CACHE_DOCUMENT_KEY_EXPIRATION_DATE] = expirationDate;
         //    }
 
         //    handlePostDocumentRequest(C8o.LOCAL_CACHE_DATABASE_NAME, FullSyncPolicy.OVERRIDE, properties);
         //}
 
-        private Dictionary<String, Object> HandleRev(String fullSyncDatatbaseName, String docid, Dictionary<String, Object> parameters)
+        private async Task<IDictionary<string, object>> HandleRev(string fullSyncDatatbaseName, string docid, IDictionary<string, object> parameters)
         {
-            String rev = C8oUtils.GetParameterStringValue(parameters, FullSyncDeleteDocumentParameter.REV.name, false);
-            if (rev == null)
+            KeyValuePair<string, object> parameter = C8oUtils.GetParameter(parameters, FullSyncDeleteDocumentParameter.REV.name, false);
+            if (parameter.Key == null)
             {
-                rev = GetDocumentRev(fullSyncDatatbaseName, docid);
+                string rev = await GetDocumentRev(fullSyncDatatbaseName, docid);
                 if (rev != null)
                 {
-                    parameters[FullSyncDeleteDocumentParameter.REV.name] = GetDocumentRev(fullSyncDatatbaseName, docid);
+                    // parameters[FullSyncDeleteDocumentParameter.REV.name] = GetDocumentRev(fullSyncDatatbaseName, docid); // TODO
                 }
             }
             return parameters;
         }
 
-        private String GetDocumentRev(String fullSyncDatatbaseName, String docid)
+        private async Task<string> GetDocumentRev(string fullSyncDatatbaseName, string docid)
         {
-            JObject head = HeadDocument(fullSyncDatatbaseName, docid);
-            String rev = null;
+            var head = await HeadDocument(fullSyncDatatbaseName, docid);
+            string rev = null;
             try
             {
-                JObject _c8oMeta = head["_c8oMeta"] as JObject;
+                var _c8oMeta = head["_c8oMeta"] as JObject;
                 if ("success" == _c8oMeta["status"].ToString())
                 {
                     rev = (_c8oMeta["headers"] as JObject)["ETag"].ToString();
@@ -632,17 +616,17 @@ namespace Convertigo.SDK
             return rev;
         }
 
-        private JObject HeadDocument(string fullSyncDatatbaseName, string docid)
+        private async Task<JObject> HeadDocument(string fullSyncDatatbaseName, string docid)
         {
-            String uri = GetDocumentUrl(fullSyncDatatbaseName, docid);
+            string uri = GetDocumentUrl(fullSyncDatatbaseName, docid);
 
-            HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
+            var request = HttpWebRequest.CreateHttp(uri);
             request.Method = "HEAD";
 
-            return Execute(request);
+            return await Execute(request);
         }
 
-        private String GetDatabaseUrl(String db)
+        private string GetDatabaseUrl(string db)
         {
 		    if (String.IsNullOrWhiteSpace(db))
             {
@@ -654,7 +638,7 @@ namespace Convertigo.SDK
 		    return serverUrl + '/' + db + localSuffix;
 	    }
 	
-	    private String GetDocumentUrl(String db, String docid)
+	    private string GetDocumentUrl(string db, string docid)
         {
             if (String.IsNullOrWhiteSpace(docid))
             {
@@ -668,7 +652,7 @@ namespace Convertigo.SDK
 		    return GetDatabaseUrl(db) + '/' + docid;
 	    }
 
-        private String GetDocumentAttachmentUrl(String db, String docid, String attName)
+        private string GetDocumentAttachmentUrl(string db, string docid, string attName)
         {
             if (String.IsNullOrWhiteSpace(attName))
             {
@@ -678,13 +662,13 @@ namespace Convertigo.SDK
             return GetDocumentUrl(db, docid) + '/' + attName;
         }
 
-        private String HandleQuery(String url, Dictionary<String, Object> query)
+        private string HandleQuery(string url, IDictionary<string, object> query)
         {
 		    StringBuilder uri = new StringBuilder(url);
 		    if (query != null && query.Count > 0)
             {
                 uri.Append("?");
-                foreach (KeyValuePair<String, Object> kvp in query)
+                foreach (KeyValuePair<string, object> kvp in query)
                 {
                     uri.Append(WebUtility.UrlEncode(kvp.Key)).Append("=").Append(WebUtility.UrlEncode(kvp.Value.ToString())).Append("&");
                 }
@@ -693,7 +677,7 @@ namespace Convertigo.SDK
 		    return uri.ToString();
 	    }
 
-        private JObject Execute(HttpWebRequest request, JObject document = null)
+        private async Task<JObject> Execute(HttpWebRequest request, JObject document = null)
         {
             if (request.Accept == null)
             {
@@ -709,23 +693,29 @@ namespace Convertigo.SDK
             {
                 request.ContentType = "application/json";
 
-                Stream postStream = Task<Stream>.Factory.FromAsync(request.BeginGetRequestStream, request.EndGetRequestStream, request).Result;
+                using (var postStream = Task<Stream>.Factory.FromAsync(request.BeginGetRequestStream, request.EndGetRequestStream, request).Result)
+                {
 
-                // postData = "__connector=HTTP_connector&__transaction=transac1&testVariable=TEST 01";
-                byte[] byteArray = Encoding.UTF8.GetBytes(document.ToString());
-                // Add the post data to the web request
-                
-                postStream.Write(byteArray, 0, byteArray.Length);
+                    // postData = "__connector=HTTP_connector&__transaction=transac1&testVariable=TEST 01";
+                    byte[] byteArray = Encoding.UTF8.GetBytes(document.ToString());
+                    // Add the post data to the web request
+
+                    postStream.Write(byteArray, 0, byteArray.Length);
+                }
             }
 
             HttpWebResponse response;
             try
             {
-                response = Task<WebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request).Result as HttpWebResponse;
+                response = await Task<WebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request) as HttpWebResponse;
             }
             catch (WebException e)
             {
                 response = e.Response as HttpWebResponse;
+                if (response == null)
+                {
+                    throw new C8oHttpException(C8oExceptionMessage.RunHttpRequest(), e);
+                }
             }
             catch (Exception e)
             {
@@ -739,10 +729,10 @@ namespace Convertigo.SDK
                 }
             }
 
-            Match matchContentType = reContentType.Match(response.ContentType);
+            var matchContentType = RE_CONTENT_TYPE.Match(response.ContentType);
 
-            String contentType;
-            String charset;
+            string contentType;
+            string charset;
             if (matchContentType.Success)
             {
                 contentType = matchContentType.Groups[1].Value;
@@ -760,7 +750,7 @@ namespace Convertigo.SDK
             {
                 
                 StreamReader streamReader = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding(charset));
-                String entityContent = streamReader.ReadToEnd();
+                string entityContent = streamReader.ReadToEnd();
                 try
                 {
                     json = JObject.Parse(entityContent);
@@ -785,7 +775,7 @@ namespace Convertigo.SDK
                 if (response.ContentType.StartsWith("text/"))
                 {
                     StreamReader streamReader = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding(charset));
-                    String entityContent = streamReader.ReadToEnd();
+                    string entityContent = streamReader.ReadToEnd();
                     json["data"] = entityContent;
                 }
                 else
@@ -799,12 +789,12 @@ namespace Convertigo.SDK
                 json = new JObject();
             }
 
-            JObject c8oMeta = new JObject();
+            var c8oMeta = new JObject();
 			
 			int code = (int) response.StatusCode;
 			c8oMeta["statusCode"] = code;
 			
-			String status =
+			string status =
 					code < 100 ? "unknown" :
 					code < 200 ? "informational" :
 					code < 300 ? "success" :
@@ -814,10 +804,10 @@ namespace Convertigo.SDK
 			c8oMeta["status"] = status;
 			
 			c8oMeta["reasonPhrase"] = response.StatusDescription;
-			
-			JObject headers = new JObject();
 
-            foreach (String name in response.Headers.AllKeys)
+            var headers = new JObject();
+
+            foreach (string name in response.Headers.AllKeys)
             {
                 headers[name] = response.Headers[name];
             }

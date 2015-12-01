@@ -1,4 +1,4 @@
-﻿using Convertigo.SDK.Listeners;
+﻿using Convertigo.SDK;
 using Convertigo.SDK.Utils;
 using System;
 using System.Collections.Generic;
@@ -15,86 +15,86 @@ namespace Convertigo.SDK.FullSync.Enums
     /// </summary>
     public class FullSyncRequestable
     {
-        public static readonly FullSyncRequestable GET = new FullSyncRequestable("get", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
+        public static readonly FullSyncRequestable GET = new FullSyncRequestable("get", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
-            String docidParameterValue = C8oUtils.PeekParameterStringValue(parameters, FullSyncGetDocumentParameter.DOCID.name, true);
-            return fullSyncInterface.HandleGetDocumentRequest(fullSyncDatabase, docidParameterValue, parameters);
+            string docid = C8oUtils.PeekParameterStringValue(parameters, FullSyncGetDocumentParameter.DOCID.name, true);
+            return c8oFullSync.HandleGetDocumentRequest(databaseName, docid, parameters);
         });
 
-        public static readonly FullSyncRequestable DELETE = new FullSyncRequestable("delete", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
+        public static readonly FullSyncRequestable DELETE = new FullSyncRequestable("delete", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
-            String docidParameterValue = C8oUtils.PeekParameterStringValue(parameters, FullSyncGetDocumentParameter.DOCID.name, true);
-            return fullSyncInterface.HandleDeleteDocumentRequest(fullSyncDatabase, docidParameterValue, parameters);
+            string docid = C8oUtils.PeekParameterStringValue(parameters, FullSyncGetDocumentParameter.DOCID.name, true);
+            return c8oFullSync.HandleDeleteDocumentRequest(databaseName, docid, parameters);
         });
 
-        public static readonly FullSyncRequestable POST = new FullSyncRequestable("post", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
+        public static readonly FullSyncRequestable POST = new FullSyncRequestable("post", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
             // Gets the policy parameter
-            String fullSyncPolicyParameter = C8oUtils.PeekParameterStringValue(parameters, FullSyncPostDocumentParameter.POLICY.name, false);
+            string fullSyncPolicyParameter = C8oUtils.PeekParameterStringValue(parameters, FullSyncPostDocumentParameter.POLICY.name, false);
 
             // Finds the policy corresponding to the parameter value if it exists
             FullSyncPolicy fullSyncPolicy = FullSyncPolicy.GetFullSyncPolicy(fullSyncPolicyParameter);
 
-            return fullSyncInterface.HandlePostDocumentRequest(fullSyncDatabase, fullSyncPolicy, parameters);
+            return c8oFullSync.HandlePostDocumentRequest(databaseName, fullSyncPolicy, parameters);
         });
 
-        public static readonly FullSyncRequestable ALL = new FullSyncRequestable("all", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
+        public static readonly FullSyncRequestable ALL = new FullSyncRequestable("all", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
-            return fullSyncInterface.HandleAllDocumentsRequest(fullSyncDatabase, parameters);
+            return c8oFullSync.HandleAllDocumentsRequest(databaseName, parameters);
         });
 
-        public static readonly FullSyncRequestable VIEW = new FullSyncRequestable("view", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
+        public static readonly FullSyncRequestable VIEW = new FullSyncRequestable("view", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
             // Gets the design doc parameter value
-            String ddocParameterValue = C8oUtils.PeekParameterStringValue(parameters, FullSyncGetViewParameter.DDOC.name, false);
+            string ddoc = C8oUtils.PeekParameterStringValue(parameters, FullSyncGetViewParameter.DDOC.name, false);
             // Gets the view name parameter value
-            String viewParameterValue = C8oUtils.PeekParameterStringValue(parameters, FullSyncGetViewParameter.VIEW.name, false);
+            string view = C8oUtils.PeekParameterStringValue(parameters, FullSyncGetViewParameter.VIEW.name, false);
 
-            return fullSyncInterface.HandleGetViewRequest(fullSyncDatabase, ddocParameterValue, viewParameterValue, parameters);
+            return c8oFullSync.HandleGetViewRequest(databaseName, ddoc, view, parameters);
         });
 
-        public static readonly FullSyncRequestable SYNC = new FullSyncRequestable("sync", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
+        public static readonly FullSyncRequestable SYNC = new FullSyncRequestable("sync", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
-            return fullSyncInterface.HandleSyncRequest(fullSyncDatabase, parameters, c8oResponseListener);
+            return c8oFullSync.HandleSyncRequest(databaseName, parameters, c8oResponseListener);
         });
 
-        public static readonly FullSyncRequestable REPLICATE_PULL = new FullSyncRequestable("replicate_pull", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
+        public static readonly FullSyncRequestable REPLICATE_PULL = new FullSyncRequestable("replicate_pull", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
-            return fullSyncInterface.HandleReplicatePullRequest(fullSyncDatabase, parameters, c8oResponseListener);
+            return c8oFullSync.HandleReplicatePullRequest(databaseName, parameters, c8oResponseListener);
         });
 
-        public static readonly FullSyncRequestable REPLICATE_PUSH = new FullSyncRequestable("replicate_push", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
+        public static readonly FullSyncRequestable REPLICATE_PUSH = new FullSyncRequestable("replicate_push", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
-            return fullSyncInterface.HandleReplicatePushRequest(fullSyncDatabase, parameters, c8oResponseListener);
+            return c8oFullSync.HandleReplicatePushRequest(databaseName, parameters, c8oResponseListener);
         });
 
-        public static readonly FullSyncRequestable RESET = new FullSyncRequestable("reset", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
+        public static readonly FullSyncRequestable RESET = new FullSyncRequestable("reset", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
-            return fullSyncInterface.HandleResetDatabaseRequest(fullSyncDatabase);
+            return c8oFullSync.HandleResetDatabaseRequest(databaseName);
         });
 
-        public static readonly FullSyncRequestable CREATE = new FullSyncRequestable("create", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
+        public static readonly FullSyncRequestable CREATE = new FullSyncRequestable("create", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
-            return fullSyncInterface.HandleCreateDatabaseRequest(fullSyncDatabase);
+            return c8oFullSync.HandleCreateDatabaseRequest(databaseName);
         });
 
-        public static readonly FullSyncRequestable DESTROY = new FullSyncRequestable("destroy", (fullSyncInterface, fullSyncDatabase, parameters, c8oResponseListener) =>
+        public static readonly FullSyncRequestable DESTROY = new FullSyncRequestable("destroy", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
-            return fullSyncInterface.HandleDestroyDatabaseRequest(fullSyncDatabase);
+            return c8oFullSync.HandleDestroyDatabaseRequest(databaseName);
         });
 
-        public readonly String value;
-        private readonly Func<FullSyncInterface, String, Dictionary<String, Object>, C8oResponseListener, Object> handleFullSyncrequestOp;
+        public readonly string value;
+        private readonly Func<C8oFullSync, string, IDictionary<string, object>, C8oResponseListener, Task<object>> handleFullSyncrequestOp;
 
-        private FullSyncRequestable(String value, Func<FullSyncInterface, String, Dictionary<String, Object>, C8oResponseListener, Object> handleFullSyncrequestOp)
+        private FullSyncRequestable(string value, Func<C8oFullSync, string, IDictionary<string, object>, C8oResponseListener, Task<object>> handleFullSyncrequestOp)
         {
             this.value = value;
             this.handleFullSyncrequestOp = handleFullSyncrequestOp;
         }
 
-        internal Object HandleFullSyncRequest(FullSyncInterface fullSyncInterface, String fullSyncDatabaseName, Dictionary<String, Object> parameters, C8oResponseListener c8oResponseListner)
+        internal async Task<object> HandleFullSyncRequest(C8oFullSync c8oFullSync, String databaseNameName, IDictionary<string, object> parameters, C8oResponseListener c8oResponseListner)
         {
-            return this.handleFullSyncrequestOp(fullSyncInterface, fullSyncDatabaseName, parameters, c8oResponseListner);
+            return await handleFullSyncrequestOp(c8oFullSync, databaseNameName, parameters, c8oResponseListner);
         }
 
         internal static FullSyncRequestable GetFullSyncRequestable(String value)
@@ -123,20 +123,20 @@ namespace Convertigo.SDK.FullSync.Enums
     /// </summary>
     public class FullSyncRequestParameter
     {
-        public static readonly FullSyncRequestParameter DESCENDING = new FullSyncRequestParameter("descending", typeof(Boolean));
-        public static readonly FullSyncRequestParameter ENDKEY = new FullSyncRequestParameter("endkey", typeof(Object));
-        public static readonly FullSyncRequestParameter ENDKEY_DOCID = new FullSyncRequestParameter("endkey_docid", typeof(String));
+        public static readonly FullSyncRequestParameter DESCENDING = new FullSyncRequestParameter("descending", typeof(bool));
+        public static readonly FullSyncRequestParameter ENDKEY = new FullSyncRequestParameter("endkey", typeof(object));
+        public static readonly FullSyncRequestParameter ENDKEY_DOCID = new FullSyncRequestParameter("endkey_docid", typeof(string));
         public static readonly FullSyncRequestParameter GROUP_LEVEL = new FullSyncRequestParameter("group_level", typeof(int));
-        public static readonly FullSyncRequestParameter INCLUDE_DELETED = new FullSyncRequestParameter("include_deleted", typeof(Boolean));
-        public static readonly FullSyncRequestParameter INDEX_UPDATE_MODE = new FullSyncRequestParameter("index_update_mode", typeof(String));
-        public static readonly FullSyncRequestParameter KEYS = new FullSyncRequestParameter("keys", typeof(IEnumerable<Object>));
+        public static readonly FullSyncRequestParameter INCLUDE_DELETED = new FullSyncRequestParameter("include_deleted", typeof(bool));
+        public static readonly FullSyncRequestParameter INDEX_UPDATE_MODE = new FullSyncRequestParameter("index_update_mode", typeof(string));
+        public static readonly FullSyncRequestParameter KEYS = new FullSyncRequestParameter("keys", typeof(IEnumerable<object>));
         public static readonly FullSyncRequestParameter LIMIT = new FullSyncRequestParameter("limit", typeof(int));
-        public static readonly FullSyncRequestParameter INCLUDE_DOCS = new FullSyncRequestParameter("include_docs", typeof(Boolean));
-        public static readonly FullSyncRequestParameter MAP_ONLY = new FullSyncRequestParameter("map_only", typeof(Boolean));
-        public static readonly FullSyncRequestParameter PREFETCH = new FullSyncRequestParameter("prefetch", typeof(Boolean));
+        public static readonly FullSyncRequestParameter INCLUDE_DOCS = new FullSyncRequestParameter("include_docs", typeof(bool));
+        public static readonly FullSyncRequestParameter MAP_ONLY = new FullSyncRequestParameter("map_only", typeof(bool));
+        public static readonly FullSyncRequestParameter PREFETCH = new FullSyncRequestParameter("prefetch", typeof(bool));
         public static readonly FullSyncRequestParameter SKIP = new FullSyncRequestParameter("skip", typeof(int));
-        public static readonly FullSyncRequestParameter STARTKEY = new FullSyncRequestParameter("startkey", typeof(Object));
-        public static readonly FullSyncRequestParameter STARTKEY_DOCID = new FullSyncRequestParameter("startkey_docid", typeof(String));
+        public static readonly FullSyncRequestParameter STARTKEY = new FullSyncRequestParameter("startkey", typeof(object));
+        public static readonly FullSyncRequestParameter STARTKEY_DOCID = new FullSyncRequestParameter("startkey_docid", typeof(string));
 
         public readonly String name;
         public readonly Type type;

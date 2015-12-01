@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace Convertigo.SDK
 {
-    public class FullSyncTranslator
+    public class C8oFullSyncTranslator
     {
         public static readonly String FULL_SYNC_RESPONSE_KEY_COUNT = "count";
         public static readonly String FULL_SYNC_RESPONSE_KEY_ROWS = "rows";
@@ -26,11 +26,11 @@ namespace Convertigo.SDK
 
         public static XDocument FullSyncJsonToXml(JObject json)
         {
-            XDocument xmlDocument = new XDocument();
+            var xmlDocument = new XDocument();
             // Create the root element node
-            XElement rootElement = new XElement(XML_KEY_DOCUMENT);
+            var rootElement = new XElement(XML_KEY_DOCUMENT);
             xmlDocument.Add(rootElement);
-            XElement couchdb_output = new XElement(XML_KEY_COUCHDB_OUTPUT);
+            var couchdb_output = new XElement(XML_KEY_COUCHDB_OUTPUT);
 
             // Translates the JSON document
              C8oTranslator.JsonToXml(json, couchdb_output);
@@ -38,24 +38,24 @@ namespace Convertigo.SDK
             return xmlDocument;
         }
 
-        public static JObject DictionaryToJson(IDictionary<String, Object> dictionary)
+        public static JObject DictionaryToJson(IDictionary<string, object> dictionary)
         {
 
-            String jsonStr = JsonConvert.SerializeObject(dictionary);
-            JObject json = JObject.Parse(jsonStr);
+            string jsonStr = JsonConvert.SerializeObject(dictionary);
+            var json = JObject.Parse(jsonStr);
             return json;
         }
 
-        public static String DictionaryToString(IDictionary<String, Object> dict)
+        public static String DictionaryToString(IDictionary<string, object> dict)
         {
             String str = "{ ";
 
-            foreach (KeyValuePair<String, Object> item in dict)
+            foreach (KeyValuePair<string, object> item in dict)
             {
                 String valueStr;
-                if (item.Value is IDictionary<String, Object>)
+                if (item.Value is IDictionary<string, object>)
                 {
-                    valueStr = DictionaryToString(item.Value as IDictionary<String, Object>);
+                    valueStr = DictionaryToString(item.Value as IDictionary<string, object>);
                 }
                 else if (item.Value is IList<Object>)
                 {
@@ -80,10 +80,10 @@ namespace Convertigo.SDK
             return str;
         }
 
-        public static String ListToString(IList<Object> list)
+        public static string ListToString(IList<object> list)
         {
-            String str = "[";
-            foreach (Object item in list)
+            string str = "[";
+            foreach (object item in list)
             {
                 str = str + item.ToString() + ", ";
             }
