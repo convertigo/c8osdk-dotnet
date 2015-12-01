@@ -11,31 +11,17 @@ namespace Convertigo.SDK.Utils
 {
     public class FullSyncUtils
     {
-        /// <summary>
-        /// Checks if request parameters correspond to a fullSync request.
-        /// </summary>
-        /// <returns></returns>
-        public static Boolean IsFullSyncRequest(Dictionary<String, Object> requestParameters)
-        {
-            // Check if there is one parameter named "__project" and if its value starts with "fs://"
-            String parameterValue = C8oUtils.GetParameterStringValue(requestParameters, C8o.ENGINE_PARAMETER_PROJECT, false);
-            if (parameterValue != null)
-            {
-                return parameterValue.StartsWith(FullSyncInterface.FULL_SYNC_PROJECT);
-            }
-            return false;
-        }
-
+        
         //*** Post merge ***//
 
-        public static void MergeProperties(IDictionary<String, Object> newProperties, IDictionary<String, Object> oldProperties)
+        public static void MergeProperties(IDictionary<string, object> newProperties, IDictionary<string, object> oldProperties)
         {
             // Iterates on each old properties
-            IEnumerator<KeyValuePair<String, Object>> oldPropertiesEnumerator = oldProperties.GetEnumerator();
+            IEnumerator<KeyValuePair<string, object>> oldPropertiesEnumerator = oldProperties.GetEnumerator();
             while (oldPropertiesEnumerator.MoveNext())
             {
                 // Gets old document key and value
-                KeyValuePair<String, Object> oldProperty = oldPropertiesEnumerator.Current;
+                KeyValuePair<string, object> oldProperty = oldPropertiesEnumerator.Current;
                 String oldPropertyKey = oldProperty.Key;
                 Object oldPropertyValue = oldProperty.Value;
 
@@ -43,9 +29,9 @@ namespace Convertigo.SDK.Utils
                 Object newPropertyValue;
                 if (newProperties.TryGetValue(oldPropertyKey, out newPropertyValue))
                 {
-                    if (newPropertyValue is JObject && oldPropertyValue is JObject)
+                    if (newPropertyValue is Dictionary<string, object> && oldPropertyValue is Dictionary<string, object>)
                     {
-                        FullSyncUtils.MergeProperties(newPropertyValue as JObject, oldPropertyValue as JObject);
+                        FullSyncUtils.MergeProperties(newPropertyValue as Dictionary<string, object>, oldPropertyValue as Dictionary<string, object>);
                     }
                     else if (newPropertyValue is JArray && oldPropertyValue is JArray)
                     {
@@ -68,12 +54,12 @@ namespace Convertigo.SDK.Utils
         private static void MergeProperties(JObject newProperties, JObject oldProperties)
         {
             // Iterates on each old properties
-            IEnumerable<JProperty> oldPropertiesEnumerable = oldProperties.Properties();
-            foreach (JProperty oldProperty in oldPropertiesEnumerable)
+            var oldPropertiesEnumerable = oldProperties.Properties();
+            foreach (var oldProperty in oldPropertiesEnumerable)
             {
                 // Gets old document key and value
-                String oldPropertyKey = oldProperty.Name;
-                JToken oldPropertyValue = oldProperty.Value;
+                string oldPropertyKey = oldProperty.Name;
+                var oldPropertyValue = oldProperty.Value;
 
                 // Checks if there is a new value to merge with the old one (if the new document contains the same key)
                 JToken newPropertyValue;
