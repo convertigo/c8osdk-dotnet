@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 
 namespace Convertigo.SDK
 {
-    public class C8oPromise<T> : C8oPromiseSync<T>
+    public class C8oPromise<T> : C8oPromiseFailSync<T>
     {
         private C8o c8o;
         private readonly List<KeyValuePair<C8oOnResponse<T>, bool>> c8oOnResponses = new List<KeyValuePair<C8oOnResponse<T>, bool>>();
+        private KeyValuePair<C8oOnProgress, bool> c8oProgress;
         private KeyValuePair<C8oOnFail, bool> c8oFail;
         private readonly object syncMutex = new object();
 
@@ -41,9 +42,21 @@ namespace Convertigo.SDK
             return this;
         }
 
+        public C8oPromiseFailSync<T> Progress(C8oOnProgress c8oOnProgress)
+        {
+            c8oProgress = new KeyValuePair<C8oOnProgress, bool>(c8oOnProgress, false);
+            return this;
+        }
+
+        public C8oPromiseFailSync<T> ProgressUI(C8oOnProgress c8oOnProgress)
+        {
+            c8oProgress = new KeyValuePair<C8oOnProgress, bool>(c8oOnProgress, true);
+            return this;
+        }
+
         public C8oPromiseSync<T> Fail(C8oOnFail c8oOnFail)
         {
-            this.c8oFail = new KeyValuePair<C8oOnFail, bool>(c8oOnFail, false);
+            c8oFail = new KeyValuePair<C8oOnFail, bool>(c8oOnFail, false);
             return this;
         }
 
@@ -144,6 +157,10 @@ namespace Convertigo.SDK
                             {
                                 promise[0].c8oFail = c8oFail;
                             }
+                            if (promise[0].c8oProgress.Equals(default(KeyValuePair<C8oOnProgress, bool>)))
+                            {
+                                promise[0].c8oProgress = c8oProgress;
+                            }
                             promise[0].Then((resp, param) =>
                             {
                                 OnResponse(resp, param);
@@ -160,6 +177,14 @@ namespace Convertigo.SDK
             catch (Exception exception)
             {
                 OnFailure(exception, parameters);
+            }
+        }
+
+        internal void OnProgress(C8oProgress progress)
+        {
+            if (!c8oProgress.Equals(default(KeyValuePair<C8oOnProgress, bool>)))
+            {
+                c8oProgress.Key.Invoke(progress);
             }
         }
 

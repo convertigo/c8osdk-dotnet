@@ -47,6 +47,8 @@
     <Compile Include="C8oEnum.cs" />
     <Compile Include="C8oExceptionListener.cs" />
     <Compile Include="C8oExceptionMessage.cs" />
+    <Compile Include="C8oProgress.cs" />
+    <Compile Include="C8oPromiseFailSync.cs" />
     <Compile Include="C8oResponseJsonListener.cs" />
     <Compile Include="C8oLogger.cs" />
     <Compile Include="C8oPromise.cs" />

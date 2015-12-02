@@ -51,6 +51,7 @@ namespace Convertigo.SDK
         public static readonly string ENGINE_PARAMETER_ENCODED = "__encoded";
         public static readonly string ENGINE_PARAMETER_LOCAL_CACHE = "__localCache";
         public static readonly string ENGINE_PARAMETER_DEVICE_UUID = "__uuid";
+        public static readonly string ENGINE_PARAMETER_PROGRESS = "__progress";
 
         //*** Local cache keys ***//
 
@@ -242,7 +243,24 @@ namespace Convertigo.SDK
 
             Call(requestable, parameters, new C8oResponseJsonListener((response, data) =>
             {
-                promise.OnResponse(response, data);
+                if (data.ContainsKey(ENGINE_PARAMETER_PROGRESS))
+                {
+                    C8oProgress progress = data[ENGINE_PARAMETER_PROGRESS] as C8oProgress;
+                    promise.OnProgress(progress);
+
+                    if (progress.Stopped)
+                    {
+                        data.Remove(ENGINE_PARAMETER_PROGRESS);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                if (response != null)
+                {
+                    promise.OnResponse(response, data);
+                }
             }), new C8oExceptionListener((exception, data) =>
             {
                 promise.OnFailure(exception, data);
@@ -262,7 +280,14 @@ namespace Convertigo.SDK
 
             Call(requestable, parameters, new C8oResponseXmlListener((response, data) =>
             {
-                promise.OnResponse(response, data);
+                if (data.ContainsKey(ENGINE_PARAMETER_PROGRESS))
+                {
+                    promise.OnProgress(data[ENGINE_PARAMETER_PROGRESS] as C8oProgress);
+                }
+                else
+                {
+                    promise.OnResponse(response, data);
+                }
             }), new C8oExceptionListener((exception, data) =>
             {
                 promise.OnFailure(exception, data);

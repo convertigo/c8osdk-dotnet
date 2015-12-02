@@ -760,7 +760,9 @@ C8oSDKDotNet/C8oSDKPCL/C8oHttpInterface.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oLocalCacheResponse.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oLogger.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oNetPclSDK.csproj.user -text
+C8oSDKDotNet/C8oSDKPCL/C8oProgress.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oPromise.cs -text
+C8oSDKDotNet/C8oSDKPCL/C8oPromiseFailSync.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oPromiseSync.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oResponseJsonListener.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oResponseListener.cs -text
