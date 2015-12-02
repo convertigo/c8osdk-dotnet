@@ -48,6 +48,14 @@
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="C8oFullSyncNetAndroid, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\C8oFullSync-Xamarin.1.0.5\lib\MonoAndroid\C8oFullSyncNetAndroid.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="C8oSDKPCL, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\C8oSDK-PCL.1.0.1\lib\C8oSDKPCL.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Connectivity.Plugin, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xam.Plugin.Connectivity.1.0.4\lib\MonoAndroid10\Connectivity.Plugin.dll</HintPath>
       <Private>True</Private>
