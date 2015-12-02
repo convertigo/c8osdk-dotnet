@@ -17,6 +17,7 @@ using System.IO;
 using Convertigo.SDK.FullSync.Responses;
 using Convertigo.SDK.C8oEnum;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Convertigo.SDK
 {
@@ -452,6 +453,7 @@ namespace Convertigo.SDK
             var db = manager.GetDatabase(databaseName + localSuffix);
             if (db != null)
             {
+                db.Delete();
                 manager.ForgetDatabase(db);
             }
             return Task.FromResult<object>(new FullSyncDefaultResponse(true));
