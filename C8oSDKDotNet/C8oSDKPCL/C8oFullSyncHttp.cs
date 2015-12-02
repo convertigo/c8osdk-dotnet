@@ -20,6 +20,7 @@ namespace Convertigo.SDK
         private static readonly Regex RE_CONTENT_TYPE = new Regex("(.*?)\\s*;\\s*charset=(.*?)\\s*", RegexOptions.IgnoreCase);
         private static readonly Regex RE_FS_USE = new Regex("^(?:_use_(.*)$|__)");
 
+        private IDictionary<string, bool> databases = new Dictionary<string, bool>();
         private string serverUrl;
         private string authBasicHeader;
 
@@ -38,8 +39,23 @@ namespace Convertigo.SDK
             base.Init(c8o);
         }
 
+        private async Task CheckDatabase(string db)
+        {
+            if (!databases.ContainsKey(db))
+            {
+                await HandleCreateDatabaseRequest(db);
+                databases[db] = true;
+            }
+        }
+
+        public override object HandleFullSyncResponse(object response, C8oResponseListener listener)
+        {
+            return base.HandleFullSyncResponse(response, listener);
+        }
+
         public async override Task<object> HandleGetDocumentRequest(string fullSyncDatatbaseName, string docid, IDictionary<string, object> parameters = null)
         {
+            await CheckDatabase(fullSyncDatatbaseName);
             string uri = HandleQuery(GetDocumentUrl(fullSyncDatatbaseName, docid), parameters);
 
             var request = HttpWebRequest.CreateHttp(uri);
@@ -60,13 +76,9 @@ namespace Convertigo.SDK
             return document;
         }
 
-        public override object HandleFullSyncResponse(object response, C8oResponseListener listener)
-        {
-            return base.HandleFullSyncResponse(response, listener);
-        }
-
         public async Task<object> HandleGetDocumentAttachment(string fullSyncDatatbaseName, string docidParameterValue, string attachmentName)
         {
+            await CheckDatabase(fullSyncDatatbaseName);
             string uri = GetDocumentUrl(fullSyncDatatbaseName, docidParameterValue) + "/" + attachmentName;
 
             HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
@@ -78,6 +90,7 @@ namespace Convertigo.SDK
 
         public async override Task<object> HandleDeleteDocumentRequest(string fullSyncDatatbaseName, string docid, IDictionary<string, object> parameters)
         {
+            await CheckDatabase(fullSyncDatatbaseName);
             parameters = await HandleRev(fullSyncDatatbaseName, docid, parameters);
 
             string uri = HandleQuery(GetDocumentUrl(fullSyncDatatbaseName, docid), parameters);
@@ -90,6 +103,7 @@ namespace Convertigo.SDK
 
         public async override Task<object> HandlePostDocumentRequest(string fullSyncDatatbaseName, FullSyncPolicy fullSyncPolicy, IDictionary<string, object> parameters)
         {
+            await CheckDatabase(fullSyncDatatbaseName);
             var options = new Dictionary<string, object>();
 
             foreach (var parameter in parameters)
@@ -152,120 +166,9 @@ namespace Convertigo.SDK
             return await Execute(request, postData);
         }
 
-        private async Task<JObject> ApplyPolicy(string fullSyncDatatbaseName, JObject document, FullSyncPolicy fullSyncPolicy)
-        {
-            if (fullSyncPolicy == FullSyncPolicy.NONE)
-            {
-
-            }
-            else if (fullSyncPolicy == FullSyncPolicy.CREATE)
-            {
-                document.Remove("_id");
-                document.Remove("_rev");
-            }
-            else
-            {
-                string docid = document["_id"].ToString();
-
-                if (docid != null)
-                {
-                    if (fullSyncPolicy == FullSyncPolicy.OVERRIDE)
-                    {
-                        string rev = await GetDocumentRev(fullSyncDatatbaseName, docid);
-
-                        if (rev != null)
-                        {
-                            document["_rev"] = rev;
-                        }
-                    }
-                    else if (fullSyncPolicy == FullSyncPolicy.MERGE)
-                    {
-                        var dbDocument = await HandleGetDocumentRequest(fullSyncDatatbaseName, docid) as JObject;
-
-                        if (dbDocument["_id"] != null)
-                        {
-                            document.Remove("_rev");
-                            Merge(dbDocument, document);
-                            document = dbDocument;
-                        }
-                    }
-                }
-            }
-
-            document.Remove("_c8oMeta");
-
-            return document;
-        }
-
-        private void Merge(JObject jsonTarget, JObject jsonSource)
-        {
-            foreach (var kvp in jsonSource)
-            {
-                try
-                {
-                    var targetValue = jsonTarget[kvp.Key];
-                    if (targetValue != null)
-                    {
-                        if (targetValue is JObject && kvp.Value is JObject)
-                        {
-                            Merge(targetValue as JObject, kvp.Value as JObject);
-                        }
-                        else if (targetValue is JArray && kvp.Value is JArray)
-                        {
-                            Merge(targetValue as JArray, kvp.Value as JArray);
-                        }
-                        else
-                        {
-                            jsonTarget[kvp.Key] = kvp.Value;
-                        }
-                    }
-                    else
-                    {
-                        jsonTarget[kvp.Key] = kvp.Value;
-                    }
-                }
-                catch (Exception e)
-                {
-                    //TODO: handle
-                }
-            }
-        }
-
-        private void Merge(JArray targetArray, JArray sourceArray)
-        {
-		    int targetSize = targetArray.Count;
-		    int sourceSize = sourceArray.Count;
-		
-		    for (int i = 0; i < sourceSize; i++)
-            {
-			    try
-                {
-				    JToken targetValue = targetSize > i ? targetArray[i] : null;
-				    JToken sourceValue = sourceArray[i];
-				    if (sourceValue != null && targetValue != null) {
-                        if (targetValue is JObject && sourceValue is JObject)
-                        {
-                            Merge(targetValue as JObject, sourceValue as JObject);
-					    }
-					    if (targetValue is JArray && sourceValue is JArray) {
-                            Merge(targetValue as JArray, sourceValue as JArray);
-					    }
-					    else {
-						    targetArray[i] = sourceValue;
-					    }
-				    }
-				    else if (sourceValue != null && targetValue == null) {
-					    targetArray.Add(sourceValue);
-				    }
-			    } catch (Exception e) {
-				    //TODO: handle
-				
-			    }
-		    }
-        }
-
         public async override Task<object> HandleAllDocumentsRequest(string fullSyncDatatbaseName, IDictionary<string, object> parameters)
         {
+            await CheckDatabase(fullSyncDatatbaseName);
             string uri = HandleQuery(GetDocumentUrl(fullSyncDatatbaseName, "_all_docs"), parameters);
 
             HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
@@ -276,6 +179,7 @@ namespace Convertigo.SDK
 
         public async override Task<object> HandleGetViewRequest(string fullSyncDatatbaseName, string ddoc, string view, IDictionary<string, object> parameters)
         {
+            await CheckDatabase(fullSyncDatatbaseName);
             string uri = HandleQuery(GetDocumentUrl(fullSyncDatatbaseName, "_design/" + ddoc) + "/_view/" + view, parameters);
 
             HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
@@ -286,6 +190,7 @@ namespace Convertigo.SDK
 
         public async override Task<object> HandleSyncRequest(string fullSyncDatatbaseName, IDictionary<string, object> parameters, C8oResponseListener c8oResponseListener)
         {
+            await CheckDatabase(fullSyncDatatbaseName);
             Task.Run(() =>
             {
                 HandleReplicatePushRequest(fullSyncDatatbaseName, parameters, c8oResponseListener);
@@ -295,11 +200,13 @@ namespace Convertigo.SDK
 
         public async override Task<object> HandleReplicatePullRequest(string fullSyncDatatbaseName, IDictionary<string, object> parameters, C8oResponseListener c8oResponseListener)
         {
+            await CheckDatabase(fullSyncDatatbaseName);
             return await postReplicate(fullSyncDatatbaseName, parameters, c8oResponseListener, true);
         }
 
         public async override Task<object> HandleReplicatePushRequest(string fullSyncDatatbaseName, IDictionary<string, object> parameters, C8oResponseListener c8oResponseListener)
         {
+            await CheckDatabase(fullSyncDatatbaseName);
             return await postReplicate(fullSyncDatatbaseName, parameters, c8oResponseListener, false);
         }
 
@@ -479,25 +386,30 @@ namespace Convertigo.SDK
         {
             string uri = GetDatabaseUrl(fullSyncDatatbaseName);
 
-            HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
+            var request = HttpWebRequest.CreateHttp(uri);
             request.Method = "DELETE";
 
+            databases.Remove(fullSyncDatatbaseName);
             await Execute(request);
 
             request = HttpWebRequest.CreateHttp(uri);
             request.Method = "PUT";
 
-            return await Execute(request);
+            var ret = await Execute(request);
+            databases[fullSyncDatatbaseName] = true;
+            return ret;
         }
 
         public async override Task<object> HandleCreateDatabaseRequest(string fullSyncDatatbaseName)
         {
             string uri = GetDatabaseUrl(fullSyncDatatbaseName);
 
-            HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
+            var request = HttpWebRequest.CreateHttp(uri);
             request.Method = "PUT";
 
-            return await Execute(request);
+            var ret = await Execute(request);
+            databases[fullSyncDatatbaseName] = true;
+            return ret;
         }
 
         public async override Task<object> HandleDestroyDatabaseRequest(string fullSyncDatatbaseName)
@@ -507,6 +419,7 @@ namespace Convertigo.SDK
             HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
             request.Method = "DELETE";
 
+            databases.Remove(fullSyncDatatbaseName);
             return await Execute(request);
         }
 
@@ -583,13 +496,13 @@ namespace Convertigo.SDK
 
         private async Task<IDictionary<string, object>> HandleRev(string fullSyncDatatbaseName, string docid, IDictionary<string, object> parameters)
         {
-            KeyValuePair<string, object> parameter = C8oUtils.GetParameter(parameters, FullSyncDeleteDocumentParameter.REV.name, false);
+            var parameter = C8oUtils.GetParameter(parameters, FullSyncDeleteDocumentParameter.REV.name, false);
             if (parameter.Key == null)
             {
                 string rev = await GetDocumentRev(fullSyncDatatbaseName, docid);
                 if (rev != null)
                 {
-                    // parameters[FullSyncDeleteDocumentParameter.REV.name] = GetDocumentRev(fullSyncDatatbaseName, docid); // TODO
+                    parameters[FullSyncDeleteDocumentParameter.REV.name] = rev;
                 }
             }
             return parameters;
@@ -675,7 +588,124 @@ namespace Convertigo.SDK
                 uri.Remove(uri.Length - 1, 1);
 		    }
 		    return uri.ToString();
-	    }
+        }
+        private async Task<JObject> ApplyPolicy(string fullSyncDatatbaseName, JObject document, FullSyncPolicy fullSyncPolicy)
+        {
+            if (fullSyncPolicy == FullSyncPolicy.NONE)
+            {
+
+            }
+            else if (fullSyncPolicy == FullSyncPolicy.CREATE)
+            {
+                document.Remove("_id");
+                document.Remove("_rev");
+            }
+            else
+            {
+                string docid = document["_id"].ToString();
+
+                if (docid != null)
+                {
+                    if (fullSyncPolicy == FullSyncPolicy.OVERRIDE)
+                    {
+                        string rev = await GetDocumentRev(fullSyncDatatbaseName, docid);
+
+                        if (rev != null)
+                        {
+                            document["_rev"] = rev;
+                        }
+                    }
+                    else if (fullSyncPolicy == FullSyncPolicy.MERGE)
+                    {
+                        var dbDocument = await HandleGetDocumentRequest(fullSyncDatatbaseName, docid) as JObject;
+
+                        if (dbDocument["_id"] != null)
+                        {
+                            document.Remove("_rev");
+                            Merge(dbDocument, document);
+                            document = dbDocument;
+                        }
+                    }
+                }
+            }
+
+            document.Remove("_c8oMeta");
+
+            return document;
+        }
+
+        private void Merge(JObject jsonTarget, JObject jsonSource)
+        {
+            foreach (var kvp in jsonSource)
+            {
+                try
+                {
+                    var targetValue = jsonTarget[kvp.Key];
+                    if (targetValue != null)
+                    {
+                        if (targetValue is JObject && kvp.Value is JObject)
+                        {
+                            Merge(targetValue as JObject, kvp.Value as JObject);
+                        }
+                        else if (targetValue is JArray && kvp.Value is JArray)
+                        {
+                            Merge(targetValue as JArray, kvp.Value as JArray);
+                        }
+                        else
+                        {
+                            jsonTarget[kvp.Key] = kvp.Value;
+                        }
+                    }
+                    else
+                    {
+                        jsonTarget[kvp.Key] = kvp.Value;
+                    }
+                }
+                catch (Exception e)
+                {
+                    //TODO: handle
+                }
+            }
+        }
+
+        private void Merge(JArray targetArray, JArray sourceArray)
+        {
+            int targetSize = targetArray.Count;
+            int sourceSize = sourceArray.Count;
+
+            for (int i = 0; i < sourceSize; i++)
+            {
+                try
+                {
+                    JToken targetValue = targetSize > i ? targetArray[i] : null;
+                    JToken sourceValue = sourceArray[i];
+                    if (sourceValue != null && targetValue != null)
+                    {
+                        if (targetValue is JObject && sourceValue is JObject)
+                        {
+                            Merge(targetValue as JObject, sourceValue as JObject);
+                        }
+                        if (targetValue is JArray && sourceValue is JArray)
+                        {
+                            Merge(targetValue as JArray, sourceValue as JArray);
+                        }
+                        else
+                        {
+                            targetArray[i] = sourceValue;
+                        }
+                    }
+                    else if (sourceValue != null && targetValue == null)
+                    {
+                        targetArray.Add(sourceValue);
+                    }
+                }
+                catch (Exception e)
+                {
+                    //TODO: handle
+
+                }
+            }
+        }
 
         private async Task<JObject> Execute(HttpWebRequest request, JObject document = null)
         {
