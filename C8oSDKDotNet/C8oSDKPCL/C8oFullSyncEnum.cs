@@ -1,9 +1,12 @@
 ﻿using Convertigo.SDK;
 using Convertigo.SDK.Utils;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Convertigo.SDK.FullSync.Enums
@@ -60,7 +63,34 @@ namespace Convertigo.SDK.FullSync.Enums
 
         public static readonly FullSyncRequestable REPLICATE_PULL = new FullSyncRequestable("replicate_pull", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
-            return c8oFullSync.HandleReplicatePullRequest(databaseName, parameters, c8oResponseListener);
+            var mutex = new object();
+            lock (mutex)
+            {
+                c8oFullSync.HandleReplicatePullRequest(databaseName, parameters, new C8oResponseJsonListener((json, param) =>
+                {
+                    lock (mutex)
+                    {
+                        var progress = new C8oProgress(json);
+                        param[C8o.ENGINE_PARAMETER_PROGRESS] = progress;
+
+                        if (progress.Stopped)
+                        {
+                            Monitor.Pulse(mutex);
+                        }
+
+                        if (c8oResponseListener is C8oResponseJsonListener)
+                        {
+                            (c8oResponseListener as C8oResponseJsonListener).OnJsonResponse(null, param);
+                        }
+                        else if (c8oResponseListener is C8oResponseXmlListener)
+                        {
+                            (c8oResponseListener as C8oResponseXmlListener).OnXmlResponse(null, param);
+                        }
+                    }
+                }));
+                Monitor.Wait(mutex);
+                return Task.FromResult<object>(new JObject() { { "ok", "true" } });
+            }
         });
 
         public static readonly FullSyncRequestable REPLICATE_PUSH = new FullSyncRequestable("replicate_push", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>

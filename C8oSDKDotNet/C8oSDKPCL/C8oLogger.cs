@@ -99,7 +99,7 @@ namespace Convertigo.SDK
 
         private bool IsLoggableConsole(C8oLogLevel logLevel)
         {
-            return true;
+            return false;
         }
 
         //*** Basics log ***//

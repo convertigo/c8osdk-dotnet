@@ -15,7 +15,7 @@ namespace Convertigo.SDK
 
         public C8oResponseJsonListener(Action<JObject, IDictionary<string, object>> onJsonResponse)
         {
-            this.OnJsonResponse = onJsonResponse;
+            OnJsonResponse = onJsonResponse;
         }
         /*
         public String OnStreamResponse(Stream streamResponse, IDictionary<string, object> parameters, bool localCacheEnabled)
