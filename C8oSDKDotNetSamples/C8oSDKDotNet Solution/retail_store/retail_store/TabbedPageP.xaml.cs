@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using Xamarin.Forms;
+
+namespace retail_store
+{
+    public partial class TabbedPageP : TabbedPage
+    {
+        public TabbedPageP()
+        {
+            InitializeComponent();
+            Products pr = new Products() { Title = "Products" };
+            NavigationPage np = new NavigationPage(new Category()) { Title = "Category" };
+            Cart b = new Cart() { Title = "Cart" };
+            np.BackgroundColor = Color.FromHex("#FFFFFF");
+            this.Children.Add(pr);
+            this.Children.Add(np);
+            this.Children.Add(b);
+
+        }
+    }
+}

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ApplicationName">Sample01Android</string>
+    <string name="buttonText">Send</string>
+</resources>

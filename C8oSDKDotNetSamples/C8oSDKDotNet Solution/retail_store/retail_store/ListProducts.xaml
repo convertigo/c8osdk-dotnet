@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="retail_store.ListProducts">
+  
+  <Grid BackgroundColor="#FFFFFF">
+
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="10"/>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+    <StackLayout Grid.Row="0" Grid.Column="0">
+      <Image Source="retail_logo.png"/>
+    </StackLayout>
+
+    
+    <StackLayout Grid.Row="1" Grid.Column="0" BackgroundColor="#262261" >
+      <Label x:Name="labe" Text="{Binding ListName}"/>
+    </StackLayout>
+
+    <StackLayout  Grid.Row="2" Grid.Column="0">
+      <SearchBar x:Name="SearchFor" Placeholder="Search for" Text="{Binding Path=SearchText}" TextChanged="OnValueChanged" SearchButtonPressed="OnSearch"/>
+    </StackLayout>
+
+    <StackLayout  Grid.Row="3" Grid.Column="0">
+      <ListView x:Name="listView" ItemTapped="OnItemTapped" RowHeight="50">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ViewCell>
+              <Grid>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="*"></RowDefinition>
+                  <RowDefinition Height="*"></RowDefinition>
+                  <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*"></ColumnDefinition>
+                  <ColumnDefinition Width="*"></ColumnDefinition>
+                  <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <StackLayout Orientation="Vertical" Grid.RowSpan="3" Grid.Column="0">
+                  <StackLayout Orientation="Horizontal">
+                    <Image Source="{Binding Picture}" Grid.Column="0"/>
+                  </StackLayout>
+                </StackLayout>
+                <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="1">
+                  <StackLayout Orientation="Horizontal">
+                    <Label Text="{Binding Name}" TextColor="#f35e20" FontSize="10"/>
+                  </StackLayout>
+                </StackLayout>
+                <StackLayout Orientation="Vertical" Grid.Row="1" Grid.Column="1">
+                  <StackLayout Orientation="Horizontal">
+                    <Label Text="{Binding Label}" TextColor="#503026" FontSize="10"/>
+                  </StackLayout>
+                </StackLayout>
+                <StackLayout Orientation="Vertical" Grid.Row="2" Grid.Column="1">
+                  <StackLayout Orientation="Horizontal">
+                    <Label Text="{Binding PriceS}" TextColor="#503026" FontSize="10"/>
+                  </StackLayout>
+                </StackLayout>
+                <StackLayout Orientation="Vertical" Grid.RowSpan="3" Grid.Column="2">
+                  <StackLayout Orientation="Horizontal">
+                    <Image x:Name="imgM" Source="btMoins.png" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                      <Image.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTapGestureRecognizerTappedM"/>
+                      </Image.GestureRecognizers>
+                    </Image>
+                    <Label Text="{Binding Number}"/>
+                    <Image x:Name="imgP" Source="btPlus.png" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                      <Image.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTapGestureRecognizerTappedP"/>
+                      </Image.GestureRecognizers>
+                    </Image>
+                  </StackLayout>
+                </StackLayout>
+              </Grid>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </StackLayout>
+  </Grid>
+  
+</ContentPage>

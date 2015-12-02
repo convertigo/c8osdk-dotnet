@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Sample04XamarinForms.Files">
+  <ScrollView Orientation="Vertical">
+    <StackLayout Orientation="Vertical" Spacing="5">
+      <Label Text="Files" XAlign="Center" FontAttributes="Bold" FontSize="22"/>
+      <ListView x:Name="FilesList"/>
+      <Button x:Name="Download" Text="Download" Clicked="DownloadButtonClick"/>
+      <Label Text="In Progress" XAlign="Center" FontAttributes="Bold" FontSize="22"/>
+      <ListView x:Name="FilesListProgress"/>
+    </StackLayout>
+  </ScrollView>
+</ContentPage>

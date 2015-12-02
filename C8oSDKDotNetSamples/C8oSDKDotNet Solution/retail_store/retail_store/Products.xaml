@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="retail_store.Products">
+
+  <Grid BackgroundColor="#FFFFFF">
+    
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="*" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+    
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+    
+    <Image Source="retail_logo.png" VerticalOptions="Start" Grid.Row="0" Grid.ColumnSpan="5" />
+    
+    <StackLayout Grid.Row="1" Grid.ColumnSpan="5" BackgroundColor="#262261">
+      <Label  Text="Products Research" VerticalOptions="Start" HorizontalOptions="Center" TextColor="#FFFFFF"/>
+      <SearchBar VerticalOptions="Start" Text="{Binding search}"/>
+    </StackLayout>
+    
+    <StackLayout Grid.Row="2" Grid.Column="1">
+      <Image x:Name="imgN" Source="nouv.jpg" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Image>
+      <Label Text="Novelty"  HorizontalOptions="Center" FontSize="13" TextColor="#262261"/>
+    </StackLayout>
+
+    <StackLayout Grid.Row="2" Grid.Column="3">
+      <Image x:Name="imgP" Source="prod.jpg" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Image>
+      <Label Text="Promotions"  HorizontalOptions="Center" FontSize="13" TextColor="#262261"/>
+    </StackLayout>
+
+    <StackLayout Grid.Row="3" Grid.ColumnSpan="3" Grid.Column="1" VerticalOptions="Start">
+      <Image Source="freshness.jpg"/>
+    </StackLayout>
+
+    <StackLayout Grid.Row="4" Grid.ColumnSpan="5" VerticalOptions="Start">
+      <Label Text="Retail Store"  HorizontalOptions="Center" FontSize="15" TextColor="#262261"/>
+    </StackLayout>
+    
+    <StackLayout Grid.Row="4" Grid.ColumnSpan="5" VerticalOptions="Center">
+      <Label Text="Guaranteed freshness"  HorizontalOptions="Center" FontSize="15" TextColor="#262261"/>
+    </StackLayout>
+
+  </Grid>
+  
+</ContentPage>

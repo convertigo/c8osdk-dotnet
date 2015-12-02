@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="retail_store.LoadingPage">
+
+  <Grid BackgroundColor="#FFFFFF">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="10"/>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+    <StackLayout Grid.Row="0" Grid.ColumnSpan="7">
+      <Image Source="retail_logo.png"/>
+    </StackLayout>
+    
+    <StackLayout Grid.Row="1" Grid.ColumnSpan="7" BackgroundColor="#262261" />
+    
+    <StackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="7">
+      <Label Text ="Hello !" TextColor="#262261"  FontSize="15" HorizontalOptions="Center"/>
+      <Label Text="You will be able to collect your order from Friday, November 6"  FontSize="14" TextColor="#262261" HorizontalOptions="Center"></Label>
+    </StackLayout>
+
+    <StackLayout  Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="7" HorizontalOptions="Center">
+      <ActivityIndicator Color="Red" IsRunning="true" Grid.Row="2"/>
+      <Label Text="Loading please wait...." TextColor="#262261"  FontSize="15" ></Label>
+
+    </StackLayout>
+    <StackLayout Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="7">
+      <Label  x:Name="current" Text="70%" TextColor="#262261"  FontSize="15" HorizontalOptions="Center"></Label>
+      <ProgressBar  x:Name="progressB" Progress="0.7" ></ProgressBar>
+    </StackLayout>
+    <StackLayout Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="7" HorizontalOptions="Center" VerticalOptions="End">
+      <Label Text="Enjoy your shopping !" TextColor="#262261"  FontSize="15"></Label>
+    </StackLayout>
+
+    
+  </Grid>
+
+
+</ContentPage>
