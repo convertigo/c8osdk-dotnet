@@ -89,5 +89,43 @@ namespace Sample05XamarinForms
                 Output.Text += "\n========== fail ==\n" + e;
             });
         }
+
+        private void OnTest04(object sender, EventArgs args)
+        {
+            Output.Text = "Test04\n";
+            Output.Text += "========== auth ==\n";
+            c8o.CallJson(".Auth", "user", "Test04").ThenUI((json, parameters) =>
+            {
+                Output.Text += json.ToString();
+                Output.Text += "\n========== destroy ==\n";
+                return c8o.CallJson("fs://.destroy");
+            }).ThenUI((json, parameters) =>
+            {
+                Output.Text += json.ToString();
+                Output.Text += "\n========== all ==\n";
+                return c8o.CallJson("fs://.all");
+            }).ThenUI((json, parameters) =>
+            {
+                Output.Text += json["total_rows"].ToString();
+                Output.Text += "\n========== replicate_pull ==\n";
+                return c8o.CallJson("fs://.replicate_pull");
+            }).ThenUI((json, parameters) =>
+            {
+                Output.Text += json.ToString();
+                Output.Text += "\n========== all ==\n";
+                return c8o.CallJson("fs://.all");
+            }).ThenUI((json, parameters) =>
+            {
+                Output.Text += json["total_rows"].ToString();
+                Output.Text += "\n==========\n";
+                return null;
+            }).Progress(progress =>
+            {
+                Output.Text += ".";
+            }).FailUI((e, parameters) =>
+            {
+                Output.Text += "\n========== fail ==\n" + e;
+            });
+        }
 	}
 }

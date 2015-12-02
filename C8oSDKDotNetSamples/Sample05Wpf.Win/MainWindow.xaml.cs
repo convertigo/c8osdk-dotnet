@@ -103,5 +103,39 @@ namespace Sample05Wpf.Win
                 Output.Text += "\n========== fail ==\n" + e;
             });
         }
+
+        private void OnTest04(object sender, EventArgs args)
+        {
+            Output.Text = "Test04\n";
+            Output.Text += "========== create ==\n";
+            c8o.CallJson("fs://.create").ThenUI((json, parameters) =>
+            {
+                Output.Text += json.ToString();
+                Output.Text += "\n========== post ==\n";
+                return c8o.CallJson("fs://.post",
+                    "test", "ok"
+                );
+            }).ThenUI((json, parameters) =>
+            {
+                Output.Text += json.ToString();
+                Output.Text += "\n========== get ==\n";
+                string id = json.SelectToken("id").ToString();
+                return c8o.CallJson("fs://.get", "docid", id);
+            }).ThenUI((json, parameters) =>
+            {
+                Output.Text += json.ToString();
+                Output.Text += "\n========== delete ==\n";
+                string id = json.SelectToken("_id").ToString();
+                return c8o.CallJson("fs://.delete", "docid", id);
+            }).ThenUI((json, parameters) =>
+            {
+                Output.Text += json.ToString();
+                Output.Text += "\n==========\n";
+                return null;
+            }).FailUI((e, parameters) =>
+            {
+                Output.Text += "\n========== fail ==\n" + e;
+            });
+        }
     }
 }

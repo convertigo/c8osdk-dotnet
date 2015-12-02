@@ -8,6 +8,7 @@
       <Button Text="Test01" Clicked="OnTest01"/>
       <Button Text="Test02" Clicked="OnTest02"/>
       <Button Text="Test03" Clicked="OnTest03"/>
+      <Button Text="Test04" Clicked="OnTest04"/>
       <Editor x:Name="Output" Text="Init..." HeightRequest="3000"/>
     </StackLayout>
   </ScrollView>
