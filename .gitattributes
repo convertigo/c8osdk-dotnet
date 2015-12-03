@@ -721,6 +721,7 @@ C8oSDKDotNet[!!-~]Solution/packages/Xamarin.Forms.1.3.1.6296/lib/portable-win+ne
 C8oSDKDotNet[!!-~]Solution/packages/Xamarin.Forms.1.3.1.6296/lib/portable-win+net45+wp80+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Xamarin.Forms.Xaml.dll -text
 C8oSDKDotNet[!!-~]Solution/packages/Xamarin.Forms.1.3.1.6296/lib/portable-win+net45+wp80+MonoAndroid10+MonoTouch10+Xamarin.iOS10/Xamarin.Forms.Xaml.xml -text
 C8oSDKDotNet[!!-~]Solution/packages/repositories.config -text
+C8oSDKDotNet/.project -text svneol=unset#text/plain
 C8oSDKDotNet/C8oFullSyncCbl/C8oFullSyncCbl.cs -text
 C8oSDKDotNet/C8oFullSyncCbl/C8oFullSyncCbl.shproj -text
 C8oSDKDotNet/C8oFullSyncCbl/C8oFullSyncCblEnum.cs -text
