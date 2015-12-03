@@ -10,6 +10,7 @@ using Convertigo.SDK.FullSync.Enums;
 using System.Net;
 using Convertigo.SDK.Exceptions;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Convertigo.SDK.FullSync
 {
@@ -27,15 +28,18 @@ namespace Convertigo.SDK.FullSync
         //*** Attributes ***//
 
         private string databaseName;
+        private Uri c8oFullSyncDatabaseUrl;
         private Database database = null;
-        private FullSyncReplication pullFullSyncReplication;
-        private FullSyncReplication pushFullSyncReplication;
+        private FullSyncReplication pullFullSyncReplication = new FullSyncReplication(true);
+        private FullSyncReplication pushFullSyncReplication = new FullSyncReplication(false);
+
+
 
         public C8oFullSyncDatabase(C8o c8o, Manager manager, string databaseName, string fullSyncDatabases, string localSuffix)
         {
             this.c8o = c8o;
 
-            string C8oFullSyncDatabaseUrl = fullSyncDatabases + databaseName + "/";
+            c8oFullSyncDatabaseUrl = new Uri(fullSyncDatabases + databaseName + "/");
 
             this.databaseName = (databaseName += localSuffix);
 
@@ -61,12 +65,7 @@ namespace Convertigo.SDK.FullSync
                 throw e;
             }
 
-            // The "/" at the end is important
-            Uri C8oFullSyncDatabaseUri = new Uri(C8oFullSyncDatabaseUrl);
-
-            Replication pullReplication = database.CreatePullReplication(C8oFullSyncDatabaseUri);
-            Replication pushReplication = database.CreatePushReplication(C8oFullSyncDatabaseUri);
-
+            /*
             // ??? Does surely something but do not know what, it is optional so it is still here ???
             String authenticationCookieValue = c8o.AuthenticationCookieValue;
             if (authenticationCookieValue != null)
@@ -80,9 +79,31 @@ namespace Convertigo.SDK.FullSync
                 pullReplication.SetCookie(C8oFullSyncDatabase.AUTHENTICATION_COOKIE_NAME, authenticationCookieValue, "/", expirationDate, isSecure, httpOnly);
                 pushReplication.SetCookie(C8oFullSyncDatabase.AUTHENTICATION_COOKIE_NAME, authenticationCookieValue, "/", expirationDate, isSecure, httpOnly);
             }
+            */
+        }
 
-            pullFullSyncReplication = new FullSyncReplication(pullReplication);
-            pushFullSyncReplication = new FullSyncReplication(pushReplication);
+        private Replication getReplication(FullSyncReplication fsReplication)
+        {
+            if (fsReplication.replication != null)
+            {
+                fsReplication.replication.Stop();
+                if (fsReplication.changeListener != null)
+                {
+                    fsReplication.replication.Changed -= fsReplication.changeListener;
+                }
+            }
+            var replication = fsReplication.replication = fsReplication.pull ?
+                database.CreatePullReplication(c8oFullSyncDatabaseUrl) :
+                database.CreatePushReplication(c8oFullSyncDatabaseUrl);
+
+            // Cookies
+            var cookies = c8o.CookieStore.GetCookies(new Uri(c8o.Endpoint));
+            foreach (Cookie cookie in cookies)
+            {
+                replication.SetCookie(cookie.Name, cookie.Value, cookie.Path, cookie.Expires, cookie.Secure, false);
+            }
+
+            return replication;
         }
 
         //*** Replication ***//
@@ -105,18 +126,33 @@ namespace Convertigo.SDK.FullSync
 
         private void StartReplication(FullSyncReplication fullSyncReplication, IDictionary<string, object> parameters, C8oResponseListener c8oResponseListener)
         {
-            int TMP = this.database.DocumentCount;
-            IEnumerable<Replication> reps = database.AllReplications;
+            bool continuous = false;
+            bool cancel = false;
 
-            //lock (fullSyncReplication.replication)
-            //{
-                //Replication replication = fullSyncReplication.replication;
-                // Cancel the replication if it is already running
-                if (fullSyncReplication.replication.IsRunning)
-                {
-                    fullSyncReplication.replication.Stop();
-                }
+            if (parameters.ContainsKey("continuous"))
+            {
+                continuous = parameters["continuous"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
+            }
+
+            if (parameters.ContainsKey("cancel"))
+            {
+                cancel = parameters["cancel"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
+            }
+
+            var rep = getReplication(fullSyncReplication);
+
+            // Cancel the replication if it is already running
+            if (rep != null)
+            {
+                rep.Stop();
+            }
+
+            if (cancel)
+            {
+                return;
+            }
  
+            /*
                 // Handles parameters
                 foreach (FullSyncReplicationParameter fullSyncReplicateDatabaseParameter in FullSyncReplicationParameter.Values()) 
                 {
@@ -138,78 +174,58 @@ namespace Convertigo.SDK.FullSync
                         }
                     }
                 }
+            */
+            
+            var param = new Dictionary<string, object>(parameters);
+            var progress = new C8oProgress();
+            progress.raw = rep;
+            progress.pull = rep.IsPull;
+            param[C8o.ENGINE_PARAMETER_PROGRESS] = progress;
 
-                // Cookies
-                var cookies = c8o.CookieStore.GetCookies(new Uri(c8o.Endpoint));
-                foreach (Cookie cookie in cookies)
+            var mutex = new object();
+
+            rep.Changed +=
+                fullSyncReplication.changeListener =
+                new EventHandler<ReplicationChangeEventArgs>((source, changeEvt) =>
                 {
-                    fullSyncReplication.replication.SetCookie(cookie.Name, cookie.Value, cookie.Path, cookie.Expires, cookie.Secure, false);
-                }
-
-                // Removes the current change listener
-                if (fullSyncReplication.changeListener != null)
-                {
-                    fullSyncReplication.replication.Changed -= fullSyncReplication.changeListener;
-                }
-                // Replaces the change listener by a new one according to the C8oResponseListener type
-                fullSyncReplication.changeListener = null;
-                if (c8oResponseListener != null)
-                {
-                    //Type c8oResponseListenerType = listener.GetType();
-                    if (c8oResponseListener is C8oResponseCblListener)
+                    Task.Run(() =>
                     {
-                        fullSyncReplication.changeListener = new EventHandler<ReplicationChangeEventArgs>((source, replicationChangeEventArgs) =>
+                        progress.total = rep.ChangesCount;
+                        progress.current = rep.CompletedChangesCount;
+                        progress.taskInfo = C8oFullSyncTranslator.DictionaryToString(rep.ActiveTaskInfo);
+                        progress.status = "" + rep.Status;
+                        progress.finished = !rep.IsRunning;
+
+                        if (progress.finished)
                         {
-                            ((C8oResponseCblListener)c8oResponseListener).OnReplicationChangeEventResponse(replicationChangeEventArgs, parameters);
-                        });
-                    }
-                    else if (c8oResponseListener is C8oResponseJsonListener)
-                    {
-                        fullSyncReplication.changeListener = new EventHandler<ReplicationChangeEventArgs>((source, replicationChangeEventArgs) =>
+                            lock (mutex)
+                            {
+                                Monitor.Pulse(mutex);
+                            }
+                        }
+
+                        if (c8oResponseListener != null && c8oResponseListener is C8oResponseProgressListener)
                         {
-                            ((C8oResponseJsonListener)c8oResponseListener).OnJsonResponse(C8oFullSyncCblTranslator.ReplicationChangeEventArgsToJson(replicationChangeEventArgs), parameters);
-                        });
-                    }
-                    else if (c8oResponseListener is C8oResponseXmlListener)
-                    {
+                            (c8oResponseListener as C8oResponseProgressListener).OnProgressResponse(progress, param);
+                        }
+                    });
+                });
 
-                        fullSyncReplication.changeListener = new EventHandler<ReplicationChangeEventArgs>((source, replicationChangeEventArgs) =>
-                        {
-                            ((C8oResponseXmlListener)c8oResponseListener).OnXmlResponse(C8oFullSyncCblTranslator.ReplicationChangeEventArgsToXml(replicationChangeEventArgs), parameters);
-                        });
-                    }
-                    // else error ?
-                    if (fullSyncReplication.changeListener != null)
-                    {
-                        fullSyncReplication.replication.Changed += fullSyncReplication.changeListener;
-                    }
-                }
-
-                // Finally starts the replication
-                fullSyncReplication.replication.Start();
-                // fullSyncReplication.replication.Restart();
-            //}
-        }
-
-        /// <summary>
-        /// Stops and destroys pull and push replications.
-        /// </summary>
-        public void DestroyReplications()
-        {
-            DestroyReplication(pullFullSyncReplication);
-            pullFullSyncReplication = null;
-            DestroyReplication(pushFullSyncReplication);
-            pushFullSyncReplication = null;
-        }
-
-        private static void DestroyReplication(FullSyncReplication fullSyncReplication)
-        {
-            if (fullSyncReplication.replication != null)
+            lock (mutex)
             {
-                fullSyncReplication.replication.Stop();
-                fullSyncReplication.replication.DeleteCookie(C8oFullSyncDatabase.AUTHENTICATION_COOKIE_NAME);
-                fullSyncReplication.replication = null;
+                // Finally starts the replication
+                rep.Start();
+                Monitor.Wait(mutex);
+                rep.Stop();
             }
+            
+            if (continuous)
+            {
+                rep = getReplication(fullSyncReplication);
+                rep.Continuous = true;
+                rep.Start();
+            }
+            
         }
 
         //*** Getter / Setter ***//
@@ -232,11 +248,11 @@ namespace Convertigo.SDK.FullSync
     {
         public Replication replication;
         public EventHandler<ReplicationChangeEventArgs> changeListener;
+        public bool pull;
 
-        public FullSyncReplication(Replication replication)
+        public FullSyncReplication(bool pull)
         {
-            this.replication = replication;
-            changeListener = null;
+            this.pull = pull;
         }
     }
 }
