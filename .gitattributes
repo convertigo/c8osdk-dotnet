@@ -934,7 +934,10 @@ C8oSDKDotNetSamples/Sample05XamarinForms/Sample05XamarinForms/TestingPage.xaml -
 C8oSDKDotNetSamples/Sample05XamarinForms/Sample05XamarinForms/TestingPage.xaml.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/Assets/AboutAssets.txt -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/MainActivity.cs -text
+C8oSDKDotNetSamples/retail_store/retail_store.Droid/MainApplication.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/PluginsHelp/ConnectivityReadme.txt -text
+C8oSDKDotNetSamples/retail_store/retail_store.Droid/PluginsHelp/CrossActivityReadme.txt -text
+C8oSDKDotNetSamples/retail_store/retail_store.Droid/PluginsHelp/PermissionsReadme.txt -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/Properties/AndroidManifest.xml -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/Properties/AssemblyInfo.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/Resources/AboutResources.txt -text
