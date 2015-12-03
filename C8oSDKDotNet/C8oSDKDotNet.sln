@@ -5,13 +5,6 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKPCL", "C8oSDKPCL\C8oSDKPCL.csproj", "{1764723D-85B1-4FDE-ACCF-88BB7A3B62A8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C8748B23-08B2-4A62-855E-70435D46AAEC}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "C8oFullSyncCbl", "C8oFullSyncCbl\C8oFullSyncCbl.shproj", "{863CE965-5C79-48F0-9E97-1AADC3241A87}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKDotNet.Android", "C8oSDKDotNet.Android\C8oSDKDotNet.Android.csproj", "{4F9BA553-8252-412D-98C8-C113CC009F82}"
