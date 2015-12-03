@@ -184,7 +184,37 @@ namespace Convertigo.SDK
         {
             if (!c8oProgress.Equals(default(KeyValuePair<C8oOnProgress, bool>)))
             {
-                c8oProgress.Key.Invoke(progress);
+                if (c8oProgress.Value)
+                {
+                    var locker = new object();
+                    lock (locker)
+                    {
+                        c8o.RunUI(() =>
+                        {
+                            lock (locker)
+                            {
+                                try
+                                {
+                                    c8oProgress.Key.Invoke(progress);
+                                }
+                                catch (Exception e)
+                                {
+                                    OnFailure(e, new Dictionary<string, object>() { { C8o.ENGINE_PARAMETER_PROGRESS, progress } });
+                                }
+                                finally
+                                {
+                                    Monitor.Pulse(locker);
+                                }
+                            }
+                        });
+
+                        Monitor.Wait(locker);
+                    }
+                }
+                else
+                {
+                    c8oProgress.Key.Invoke(progress);
+                }
             }
         }
 

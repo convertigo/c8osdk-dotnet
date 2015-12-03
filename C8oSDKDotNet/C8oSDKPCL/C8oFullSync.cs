@@ -16,6 +16,7 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("C8oSDKDotNet.Android")]
 [assembly: InternalsVisibleTo("C8oSDKDotNet.iOS")]
+[assembly: InternalsVisibleTo("C8oSDKDotNet.Windows")]
 
 namespace Convertigo.SDK
 {

@@ -54,6 +54,7 @@
     <Compile Include="C8oPromise.cs" />
     <Compile Include="C8oPromiseSync.cs" />
     <Compile Include="C8oResponseListener.cs" />
+    <Compile Include="C8oResponseProgressListener.cs" />
     <Compile Include="C8oSettings.cs" />
     <Compile Include="C8oTranslator.cs" />
     <Compile Include="C8oUtils.cs" />
