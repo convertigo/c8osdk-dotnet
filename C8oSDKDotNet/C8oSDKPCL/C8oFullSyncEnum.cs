@@ -58,7 +58,43 @@ namespace Convertigo.SDK.FullSync.Enums
 
         public static readonly FullSyncRequestable SYNC = new FullSyncRequestable("sync", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
-            return c8oFullSync.HandleSyncRequest(databaseName, parameters, c8oResponseListener);
+            var mutex = new object();
+            bool pullFinished = false;
+            bool pushFinished = false;
+            lock (mutex)
+            {
+                c8oFullSync.HandleSyncRequest(databaseName, parameters, new C8oResponseProgressListener((progress, param) =>
+                {
+                    if (progress.Pull && progress.Finished)
+                    {
+                        pullFinished = true;
+                    }
+
+                    if (progress.Push && progress.Finished)
+                    {
+                        pushFinished = true;
+                    }
+
+                    if (pullFinished && pushFinished)
+                    {
+                        lock (mutex)
+                        {
+                            Monitor.Pulse(mutex);
+                        }
+                    }
+
+                    if (c8oResponseListener is C8oResponseJsonListener)
+                    {
+                        (c8oResponseListener as C8oResponseJsonListener).OnJsonResponse(null, param);
+                    }
+                    else if (c8oResponseListener is C8oResponseXmlListener)
+                    {
+                        (c8oResponseListener as C8oResponseXmlListener).OnXmlResponse(null, param);
+                    }
+                }));
+                Monitor.Wait(mutex);
+                return Task.FromResult<object>(new JObject() { { "ok", "true" } });
+            }
         });
 
         public static readonly FullSyncRequestable REPLICATE_PULL = new FullSyncRequestable("replicate_pull", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
@@ -66,26 +102,23 @@ namespace Convertigo.SDK.FullSync.Enums
             var mutex = new object();
             lock (mutex)
             {
-                c8oFullSync.HandleReplicatePullRequest(databaseName, parameters, new C8oResponseJsonListener((json, param) =>
+                c8oFullSync.HandleReplicatePullRequest(databaseName, parameters, new C8oResponseProgressListener((progress, param) =>
                 {
-                    lock (mutex)
+                    if (progress.Finished)
                     {
-                        var progress = new C8oProgress(json);
-                        param[C8o.ENGINE_PARAMETER_PROGRESS] = progress;
-
-                        if (progress.Stopped)
+                        lock (mutex)
                         {
                             Monitor.Pulse(mutex);
                         }
+                    }
 
-                        if (c8oResponseListener is C8oResponseJsonListener)
-                        {
-                            (c8oResponseListener as C8oResponseJsonListener).OnJsonResponse(null, param);
-                        }
-                        else if (c8oResponseListener is C8oResponseXmlListener)
-                        {
-                            (c8oResponseListener as C8oResponseXmlListener).OnXmlResponse(null, param);
-                        }
+                    if (c8oResponseListener is C8oResponseJsonListener)
+                    {
+                        (c8oResponseListener as C8oResponseJsonListener).OnJsonResponse(null, param);
+                    }
+                    else if (c8oResponseListener is C8oResponseXmlListener)
+                    {
+                        (c8oResponseListener as C8oResponseXmlListener).OnXmlResponse(null, param);
                     }
                 }));
                 Monitor.Wait(mutex);
@@ -95,7 +128,31 @@ namespace Convertigo.SDK.FullSync.Enums
 
         public static readonly FullSyncRequestable REPLICATE_PUSH = new FullSyncRequestable("replicate_push", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
-            return c8oFullSync.HandleReplicatePushRequest(databaseName, parameters, c8oResponseListener);
+            var mutex = new object();
+            lock (mutex)
+            {
+                c8oFullSync.HandleReplicatePushRequest(databaseName, parameters, new C8oResponseProgressListener((progress, param) =>
+                {
+                    if (progress.Finished)
+                    {
+                        lock (mutex)
+                        {
+                            Monitor.Pulse(mutex);
+                        }
+                    }
+
+                    if (c8oResponseListener is C8oResponseJsonListener)
+                    {
+                        (c8oResponseListener as C8oResponseJsonListener).OnJsonResponse(null, param);
+                    }
+                    else if (c8oResponseListener is C8oResponseXmlListener)
+                    {
+                        (c8oResponseListener as C8oResponseXmlListener).OnXmlResponse(null, param);
+                    }
+                }));
+                Monitor.Wait(mutex);
+                return Task.FromResult<object>(new JObject() { { "ok", "true" } });
+            }
         });
 
         public static readonly FullSyncRequestable RESET = new FullSyncRequestable("reset", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
@@ -263,14 +320,14 @@ namespace Convertigo.SDK.FullSync.Enums
     /// </summary>
     public class FullSyncReplicationParameter
     {
-        public static readonly FullSyncReplicationParameter CANCEL = new FullSyncReplicationParameter("cancel", typeof(Object));
+        public static readonly FullSyncReplicationParameter CANCEL = new FullSyncReplicationParameter("cancel", typeof(object));
         public static readonly FullSyncReplicationParameter LIVE = new FullSyncReplicationParameter("live", typeof(Boolean));
         public static readonly FullSyncReplicationParameter DOCIDS = new FullSyncReplicationParameter("docids", typeof(IEnumerable<String>));
 
-        public readonly String name;
+        public readonly string name;
         public readonly Type type;
 
-        private FullSyncReplicationParameter(String name, Type type) 
+        private FullSyncReplicationParameter(string name, Type type) 
         {
             this.name = name;
             this.type = type;

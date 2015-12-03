@@ -243,21 +243,12 @@ namespace Convertigo.SDK
 
             Call(requestable, parameters, new C8oResponseJsonListener((response, data) =>
             {
-                if (data.ContainsKey(ENGINE_PARAMETER_PROGRESS))
+                if (response == null && data.ContainsKey(ENGINE_PARAMETER_PROGRESS))
                 {
                     C8oProgress progress = data[ENGINE_PARAMETER_PROGRESS] as C8oProgress;
                     promise.OnProgress(progress);
-
-                    if (progress.Stopped)
-                    {
-                        data.Remove(ENGINE_PARAMETER_PROGRESS);
-                    }
-                    else
-                    {
-                        return;
-                    }
                 }
-                if (response != null)
+                else
                 {
                     promise.OnResponse(response, data);
                 }

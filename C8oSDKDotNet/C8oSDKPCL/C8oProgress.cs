@@ -9,19 +9,21 @@ namespace Convertigo.SDK
 {
     public class C8oProgress
     {
-        private long current;
-        private long total;
-        private string direction;
-        private string taskInfo;
-        private string status;
+        internal bool finished;
+        internal bool pull;
+        internal long current;
+        internal long total;
+        internal string taskInfo;
+        internal string status;
+        internal object raw;
 
-        internal C8oProgress(JObject json)
+        internal C8oProgress()
         {
-            current = json["current"].Value<long>();
-            total = json["total"].Value<long>();
-            direction = json["direction"].Value<string>();
-            taskInfo = json["taskInfo"].Value<string>();
-            status = json["status"].Value<string>();
+        }
+
+        public override string ToString()
+        {
+            return "" + current + "/" + total + " (" + (finished ? "done" : "running") + ")";
         }
 
         public long Current
@@ -44,7 +46,9 @@ namespace Convertigo.SDK
         {
             get
             {
-                return direction;
+                return pull ?
+                C8oFullSyncTranslator.FULL_SYNC_RESPONSE_VALUE_DIRECTION_PULL :
+                C8oFullSyncTranslator.FULL_SYNC_RESPONSE_VALUE_DIRECTION_PUSH;
             }
         }
 
@@ -64,11 +68,35 @@ namespace Convertigo.SDK
             }
         }
 
-        public bool Stopped
+        public bool Finished
         {
             get
             {
-                return "Stopped".Equals(status);
+                return finished;
+            }
+        }
+
+        public bool Pull
+        {
+            get
+            {
+                return pull;
+            }
+        }
+
+        public bool Push
+        {
+            get
+            {
+                return !pull;
+            }
+        }
+
+        public object Raw
+        {
+            get
+            {
+                return raw;
             }
         }
     }

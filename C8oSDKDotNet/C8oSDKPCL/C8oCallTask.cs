@@ -33,7 +33,7 @@ namespace Convertigo.SDK
 
         public void Execute()
         {
-            new TaskFactory().StartNew(DoInBackground, TaskCreationOptions.LongRunning);
+            Task.Run((Action) DoInBackground);
         }
 
         async private void DoInBackground()

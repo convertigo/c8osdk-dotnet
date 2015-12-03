@@ -766,6 +766,7 @@ C8oSDKDotNet/C8oSDKPCL/C8oPromiseFailSync.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oPromiseSync.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oResponseJsonListener.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oResponseListener.cs -text
+C8oSDKDotNet/C8oSDKPCL/C8oResponseProgressListener.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oResponseXmlListener.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oSDK-PCL.1.0.1.nuspec -text
 C8oSDKDotNet/C8oSDKPCL/C8oSDKPCL.csproj -text
