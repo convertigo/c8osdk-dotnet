@@ -44,13 +44,17 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sample05XamarinForms", "Sam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample05Wpf.Win", "Sample05Wpf.Win\Sample05Wpf.Win.csproj", "{FE33AEF2-2A2E-48FC-AD4B-D9D6B04E8C0E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKDotNet.Windows", "..\C8oSDKDotNet\C8oSDKDotNet.Windows\C8oSDKDotNet.Windows.csproj", "{FAD46F42-E48D-45D3-BA42-A27298F0B63B}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\C8oSDKDotNet\C8oPlatforms\C8oPlatforms.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
+		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
 		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{863ce965-5c79-48f0-9e97-1aadc3241a87}*SharedItemsImports = 13
-		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{9d58d300-2dad-488d-bef1-6f591cf3e401}*SharedItemsImports = 4
 		..\C8oSDKDotNet\C8oPlatforms\C8oPlatforms.projitems*{9d58d300-2dad-488d-bef1-6f591cf3e401}*SharedItemsImports = 4
-		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{4f9ba553-8252-412d-98c8-c113cc009f82}*SharedItemsImports = 4
+		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{9d58d300-2dad-488d-bef1-6f591cf3e401}*SharedItemsImports = 4
 		..\C8oSDKDotNet\C8oPlatforms\C8oPlatforms.projitems*{4f9ba553-8252-412d-98c8-c113cc009f82}*SharedItemsImports = 4
+		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{4f9ba553-8252-412d-98c8-c113cc009f82}*SharedItemsImports = 4
 		Sample05XamarinForms\Sample05XamarinForms\Sample05XamarinForms.projitems*{02bb11bd-bbf8-4438-9813-a6871f8351f3}*SharedItemsImports = 13
 		Sample05XamarinForms\Sample05XamarinForms\Sample05XamarinForms.projitems*{e4964171-7e88-4e81-b063-d1c0eabd9141}*SharedItemsImports = 4
 		..\C8oSDKDotNet\C8oPlatforms\C8oPlatforms.projitems*{bdf9111d-f09a-4213-9721-114434ca73b6}*SharedItemsImports = 13
@@ -470,6 +474,30 @@ Global
 		{FE33AEF2-2A2E-48FC-AD4B-D9D6B04E8C0E}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{FE33AEF2-2A2E-48FC-AD4B-D9D6B04E8C0E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{FE33AEF2-2A2E-48FC-AD4B-D9D6B04E8C0E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Ad-Hoc|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Ad-Hoc|Mixed Platforms.Build.0 = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.AppStore|Any CPU.Build.0 = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.AppStore|iPhone.ActiveCfg = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.AppStore|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.AppStore|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.AppStore|Mixed Platforms.Build.0 = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

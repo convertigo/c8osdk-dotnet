@@ -1,6 +1,7 @@
 ﻿using Convertigo.SDK;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +27,8 @@ namespace Sample05Wpf.Win
         public MainWindow()
         {
             InitializeComponent();
+
+            C8oPlatform.Init();
 
             c8o = new C8o("http://tonus.twinsoft.fr:18080/convertigo/projects/Sample05",
                 new C8oSettings().SetUiDispatcher(code =>
@@ -107,30 +110,53 @@ namespace Sample05Wpf.Win
         private void OnTest04(object sender, EventArgs args)
         {
             Output.Text = "Test04\n";
-            Output.Text += "========== create ==\n";
-            c8o.CallJson("fs://.create").ThenUI((json, parameters) =>
+            Output.Text += "========== auth ==\n";
+            c8o.CallJson(".Auth", "user", "Test04").ThenUI((json, parameters) =>
+            {
+                Output.Text += json.ToString();
+                Output.Text += "\n========== destroy ==\n";
+                return c8o.CallJson("fs://.destroy");
+            }).ThenUI((json, parameters) =>
             {
                 Output.Text += json.ToString();
                 Output.Text += "\n========== post ==\n";
-                return c8o.CallJson("fs://.post",
-                    "test", "ok"
-                );
+                return c8o.CallJson("fs://.post", "_id", "00", "good", true);
             }).ThenUI((json, parameters) =>
             {
                 Output.Text += json.ToString();
-                Output.Text += "\n========== get ==\n";
-                string id = json.SelectToken("id").ToString();
-                return c8o.CallJson("fs://.get", "docid", id);
+                Output.Text += "\n========== all ==\n";
+                return c8o.CallJson("fs://.all");
+            }).ThenUI((json, parameters) =>
+            {
+                Output.Text += json["total_rows"].ToString();
+                Output.Text += "\n========== sync ==\n";
+                return c8o.CallJson("fs://.sync", "continuous", true);
             }).ThenUI((json, parameters) =>
             {
                 Output.Text += json.ToString();
-                Output.Text += "\n========== delete ==\n";
-                string id = json.SelectToken("_id").ToString();
-                return c8o.CallJson("fs://.delete", "docid", id);
+                Output.Text += "\n========== all ==\n";
+                return c8o.CallJson("fs://.all");
             }).ThenUI((json, parameters) =>
             {
-                Output.Text += json.ToString();
+                Output.Text += json["total_rows"].ToString();
                 Output.Text += "\n==========\n";
+                return null;
+            }).Progress(progress =>
+            {
+                Debug.WriteLine("" + progress);
+            }).FailUI((e, parameters) =>
+            {
+                Output.Text += "\n========== fail ==\n" + e;
+            });
+        }
+
+        private void OnTest05(object sender, EventArgs args)
+        {
+            Output.Text = "Test05\n";
+            Output.Text += "========== get 1 ==\n";
+            c8o.CallJson("fs://.get", "docid", "1").ThenUI((json, parameters) =>
+            {
+                Output.Text += json.ToString();
                 return null;
             }).FailUI((e, parameters) =>
             {

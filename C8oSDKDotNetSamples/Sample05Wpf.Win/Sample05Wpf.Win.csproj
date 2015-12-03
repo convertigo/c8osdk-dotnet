@@ -101,6 +101,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\C8oSDKDotNet\C8oSDKDotNet.Windows\C8oSDKDotNet.Windows.csproj">
+      <Project>{fad46f42-e48d-45d3-ba42-a27298f0b63b}</Project>
+      <Name>C8oSDKDotNet.Windows</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\C8oSDKDotNet\C8oSDKPCL\C8oSDKPCL.csproj">
       <Project>{1764723d-85b1-4fde-accf-88bb7a3b62a8}</Project>
       <Name>C8oSDKPCL</Name>
