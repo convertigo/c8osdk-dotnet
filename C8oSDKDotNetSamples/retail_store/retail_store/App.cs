@@ -9,7 +9,7 @@ using Convertigo.SDK.FullSync;
 using Convertigo.SDK.Listeners;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
-using Connectivity.Plugin;
+using Plugin.Connectivity;
 
 
 namespace retail_store
@@ -22,6 +22,7 @@ namespace retail_store
         public static Dictionary<String, Object> models;
         public static CartViewModel cvm;
         public Boolean connectivity;
+        public bool exec;
         
 
 
@@ -76,7 +77,7 @@ namespace retail_store
 
     protected override async void OnStart()
         {
-            
+            exec = true;
             // Handle when your app starts
             if (connectivity)
             {
@@ -93,7 +94,13 @@ namespace retail_store
                 myC8o.Call("fs://.sync", null,
                     new C8oJsonResponseListener((jsonResponse, parameters) =>
                     {
-
+                        if(jsonResponse["status"].ToString() == "Stopped")
+                        {
+                            if (exec == true)
+                            {
+                                Cart();
+                            }
+                        }
 
                     }),
                     new C8oExceptionListener((exception, parameters) =>
@@ -101,26 +108,10 @@ namespace retail_store
                         Debug.WriteLine("Exeption : [ToString] = " + exception.ToString() + "Fin du [ToString]");
                     })
                 );
+
                 
-
-                /*JObject jObjCart;
-                jObjCart = await myC8oCart.CallJsonAsync(".Connect");
-                //Downloading designdoc from cartdb for fs://cartdb
-
-                myC8oCart.Call("fs://.sync",
-                    new Dictionary<string, object> {
-                    { "live", "true" },
-                    },
-                    new C8oJsonResponseListener((jsonResponse, parameters) => {
-                        Debug.WriteLine(jsonResponse.ToString());
-                        
-                    }),
-                    new C8oExceptionListener((exception, parameters) =>
-                    {
-                        Debug.WriteLine("Exeption : [ToString] = " + exception.ToString() + "Fin du [ToString]");
-                    })
-                );*/
-                await MainPage.Navigation.PopModalAsync();
+                
+                
             }
         }
 
@@ -132,6 +123,34 @@ namespace retail_store
         protected override void OnResume()
         {
             // Handle when your app resumes
+        }
+
+        private async void Cart()
+        {
+            exec = false;
+            JObject jObjCart;
+            jObjCart = await myC8oCart.CallJsonAsync(".Connect");
+            //Downloading designdoc from cartdb for fs://cartdb
+
+            myC8oCart.Call("fs://.sync",
+                new Dictionary<string, object> {
+                    { "live", "true" },
+                },
+                new C8oJsonResponseListener((jsonResponse, parameters) =>
+                {
+                    //Debug.WriteLine(jsonResponse.ToString());
+                    App.cvm.GetRealPrice();
+                    App.cvm.GetReducePrice();
+
+                }),
+                new C8oExceptionListener((exception, parameters) =>
+                {
+                    Debug.WriteLine("Exeption : [ToString] = " + exception.ToString() + "Fin du [ToString]");
+                })
+            );
+            await MainPage.Navigation.PopModalAsync();
+
+          
         }
 
         

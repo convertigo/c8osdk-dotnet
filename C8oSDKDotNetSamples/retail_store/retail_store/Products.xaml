@@ -24,8 +24,11 @@
     
     <StackLayout Grid.Row="1" Grid.ColumnSpan="5" BackgroundColor="#262261">
       <Label  Text="Products Research" VerticalOptions="Start" HorizontalOptions="Center" TextColor="#FFFFFF"/>
-      <SearchBar VerticalOptions="Start" Text="{Binding search}"/>
+      
+      <SearchBar x:Name="SearchFor" Placeholder="search for" Text="{Binding Path=SearchText}"  SearchButtonPressed="OnSearch" VerticalOptions="Start"/>
     </StackLayout>
+
+    
     
     <StackLayout Grid.Row="2" Grid.Column="1">
       <Image x:Name="imgN" Source="nouv.jpg" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Image>

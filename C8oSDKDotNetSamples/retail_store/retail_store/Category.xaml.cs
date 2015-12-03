@@ -18,15 +18,34 @@ namespace retail_store
         private string categor;
         private Boolean isProduct;
         private String view;
+        private string categor2;
+        private string leaf;
+        private string leaf2;
+        private Boolean isSearch;
 
         //Constructor by default here category is set to "Menu" it's the root category of our Design document.
         //isProduct is also set to false by default because our first root menu is not a product. 
-        public Category(string category = "Menu", Boolean isProduct = false)
+        public Category(string category = "Menu",  Boolean isProduct = false, string category2 = "Menu", string view= "children_byFather", Boolean isSearch = false)
         {
             InitializeComponent();
             this.Categor = category;
+            this.Categor2 = category2;
             this.isProduct = isProduct;
-            this.view = "children_byFather";
+            this.view = view;
+            IsSearch = isSearch;
+
+            if (!isSearch)
+            {
+                this.Categor2 = category;
+                this.Leaf = "";
+                this.Leaf2 = "{}";
+            }
+            else
+            {
+                this.Leaf = "'true'";
+                this.Leaf2 = "'true'";
+                IsProduct = true;
+            }
             
         }
 
@@ -58,19 +77,78 @@ namespace retail_store
             }
         }
 
+        public string Categor2
+        {
+            get
+            {
+                return categor2;
+            }
+
+            set
+            {
+                categor2 = value;
+            }
+        }
+
+        public string Leaf
+        {
+            get
+            {
+                return leaf;
+            }
+
+            set
+            {
+                leaf = value;
+            }
+        }
+
+        public string Leaf2
+        {
+            get
+            {
+                return leaf2;
+            }
+
+            set
+            {
+                leaf2 = value;
+            }
+        }
+
+        public bool IsSearch
+        {
+            get
+            {
+                return isSearch;
+            }
+
+            set
+            {
+                isSearch = value;
+            }
+        }
+
         async void OnItemTapped(object sender, ItemTappedEventArgs e)
         {
-            //If the item is not product we push async a new category view
-            if (IsProduct == false)
-            {
-                Categ categ = (Categ)e.Item;
-                await Navigation.PushAsync(new Category(categ.LevelId, categ.Leaf), true);
-            }
-            //If the item is a product we push async a new detail view
-            else
+            if (IsSearch)
             {
                 Prod prod = (Prod)e.Item;
                 await Navigation.PushAsync(new Detail(prod), true);
+            }
+            else
+            {             //If the item is not product we push async a new category view
+                if (IsProduct == false)
+                {
+                    Categ categ = (Categ)e.Item;
+                    await Navigation.PushAsync(new Category(categ.LevelId, categ.Leaf), true);
+                }
+                //If the item is a product we push async a new detail view
+                else
+                {
+                    Prod prod = (Prod)e.Item;
+                    await Navigation.PushAsync(new Detail(prod), true);
+                }
             }
             
         }
@@ -83,8 +161,8 @@ namespace retail_store
                 {
                     {"ddoc", "design"},
                     {"view", view},
-                    {"startkey" , "['42','"+Categor+"']"},
-                    {"endkey", "['42','"+Categor+"',{}]"},
+                    {"startkey" , "['42','"+Categor+"',"+Leaf+"]"},
+                    {"endkey", "['42','"+Categor2+"',"+Leaf2+"]"},
                     {"limit", 20},
                     {"skip", 0}
 

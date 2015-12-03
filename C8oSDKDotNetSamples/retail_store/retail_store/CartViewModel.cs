@@ -169,6 +169,7 @@ namespace retail_store
                         App.myC8oCart.Log(C8oLogLevel.DEBUG, jsonResponse.ToString());
                         Debug.WriteLine(jsonResponse.ToString());
                         
+
                     }),
                     new C8oExceptionListener((exception, parameters) =>
                     {
@@ -228,6 +229,7 @@ namespace retail_store
                 {
                     App.myC8oCart.Log(C8oLogLevel.DEBUG, jsonResponse.ToString());
                     Debug.WriteLine(jsonResponse.ToString());
+                    
 
                 }),
                 new C8oExceptionListener((exception, parameters) =>
@@ -295,10 +297,12 @@ namespace retail_store
 
         public void GetRealPrice()
         {
-            App.myC8oCart.Call("fs://.all",
+            App.myC8oCart.Call("fs://.view",
                new Dictionary<string, object>
                {
-                    //{"docid", "CartPrice"}
+                    
+                    {"ddoc", "design"},
+                    {"view", "CartPrice"}
                },
                new C8oJsonResponseListener((jsonResponse, parameters) =>
                {/*
@@ -313,8 +317,8 @@ namespace retail_store
                    Boolean flag = false;
                    foreach(JObject jo in (JArray)jsonResponse["rows"])
                    {
-                       this.Reduce[0].Discount = (((double)jo["CartPrice"]["discount"])).ToString();
-                       this.Reduce[0].NewPrice = ((string)jo["CartPrice"]["newPrice"]).ToString();
+                       this.Reduce[0].Discount = (((string)jo["value"]["discount"])).ToString();
+                       this.Reduce[0].NewPrice = ((string)jo["value"]["newPrice"]).ToString();
                        flag = true;
                    }
                    if (!flag)

@@ -46,7 +46,7 @@ namespace retail_store
         protected override void OnAppearing()
         {
             App.cvm.GetReducePrice();
-            App.cvm.GetRealPrice();
+            
         }
 
         void tapImage_Tapped(object sender, EventArgs e)
@@ -67,7 +67,7 @@ namespace retail_store
             }
 
             App.cvm.GetReducePrice();
-            App.cvm.GetRealPrice();
+            
 
         }
         public void sal(object sender, EventArgs e)
