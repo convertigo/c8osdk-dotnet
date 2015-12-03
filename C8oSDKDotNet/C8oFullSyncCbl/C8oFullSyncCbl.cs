@@ -433,13 +433,8 @@ namespace Convertigo.SDK
 
         public async override Task<object> HandleResetDatabaseRequest(string databaseName)
         {
-            var fullSyncDatabase = await GetOrCreateFullSyncDatabase(databaseName);
-            if (fullSyncDatabase != null)
-            {
-                fullSyncDatabase.Database.Delete();
-                fullSyncDatabases.Remove(fullSyncDatabase.DatabaseName);
-            }
-		    return new FullSyncDefaultResponse(true);
+            await HandleDestroyDatabaseRequest(databaseName);
+            return await HandleCreateDatabaseRequest(databaseName);
 	    }
 
         public async override Task<object> HandleCreateDatabaseRequest(string databaseName)
@@ -450,6 +445,12 @@ namespace Convertigo.SDK
 
         public override Task<object> HandleDestroyDatabaseRequest(string databaseName)
         {
+            string localDatabaseName = databaseName + localSuffix;
+            if (fullSyncDatabases.ContainsKey(localDatabaseName))
+            {
+                fullSyncDatabases.Remove(localDatabaseName);
+            }
+
             var db = manager.GetDatabase(databaseName + localSuffix);
             if (db != null)
             {
