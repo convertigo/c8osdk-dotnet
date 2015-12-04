@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample04Wpf.Win", "Sample04Wpf.Win\Sample04Wpf.Win.csproj", "{DBB00C2F-E30D-45EE-BDF1-6A36C4C6BA83}"
 EndProject
@@ -10,13 +10,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample04XamarinForms.Droid", "Sample04XamarinForms\Sample04XamarinForms.Droid\Sample04XamarinForms.Droid.csproj", "{07FDF6CC-F803-41C9-A841-BBEE47FD259D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample04XamarinForms.iOS", "Sample04XamarinForms\Sample04XamarinForms.iOS\Sample04XamarinForms.iOS.csproj", "{E7738BD5-11A7-461B-AB6E-4A7906B5ADA9}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{7DAFD0C2-8F6C-4A21-AA7A-C05466F2F30C}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKPCL", "..\C8oSDKDotNet\C8oSDKPCL\C8oSDKPCL.csproj", "{1764723D-85B1-4FDE-ACCF-88BB7A3B62A8}"
 EndProject
@@ -27,8 +20,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobileFormsDemo.Droid", "MobileFormsDemo\MobileFormsDemo.Droid\MobileFormsDemo.Droid.csproj", "{C9DA5847-9AAB-46A7-A99D-37F3AD84D814}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MobileFormsDemo.iOS", "MobileFormsDemo\MobileFormsDemo.iOS\MobileFormsDemo.iOS.csproj", "{CFAD8D21-3FDC-4364-BBC1-832CA098A794}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox", "Sandbox\Sandbox.csproj", "{E212307D-FB4A-4025-9FF1-8E9308687953}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "C8oPlatform", "..\C8oSDKDotNet\C8oPlatforms\C8oPlatform.shproj", "{BDF9111D-F09A-4213-9721-114434CA73B6}"
 EndProject
@@ -46,22 +37,27 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample05Wpf.Win", "Sample05
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKDotNet.Windows", "..\C8oSDKDotNet\C8oSDKDotNet.Windows\C8oSDKDotNet.Windows.csproj", "{FAD46F42-E48D-45D3-BA42-A27298F0B63B}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sample05Shared", "Sample05Shared\Sample05Shared.shproj", "{E18E0AAB-5CE8-4DD8-91DE-AFD1CEF64181}"
+EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\C8oSDKDotNet\C8oPlatforms\C8oPlatforms.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
-		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
-		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{863ce965-5c79-48f0-9e97-1aadc3241a87}*SharedItemsImports = 13
-		..\C8oSDKDotNet\C8oPlatforms\C8oPlatforms.projitems*{9d58d300-2dad-488d-bef1-6f591cf3e401}*SharedItemsImports = 4
-		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{9d58d300-2dad-488d-bef1-6f591cf3e401}*SharedItemsImports = 4
-		..\C8oSDKDotNet\C8oPlatforms\C8oPlatforms.projitems*{4f9ba553-8252-412d-98c8-c113cc009f82}*SharedItemsImports = 4
-		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{4f9ba553-8252-412d-98c8-c113cc009f82}*SharedItemsImports = 4
-		Sample05XamarinForms\Sample05XamarinForms\Sample05XamarinForms.projitems*{02bb11bd-bbf8-4438-9813-a6871f8351f3}*SharedItemsImports = 13
-		Sample05XamarinForms\Sample05XamarinForms\Sample05XamarinForms.projitems*{e4964171-7e88-4e81-b063-d1c0eabd9141}*SharedItemsImports = 4
-		..\C8oSDKDotNet\C8oPlatforms\C8oPlatforms.projitems*{bdf9111d-f09a-4213-9721-114434ca73b6}*SharedItemsImports = 13
-	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
 		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
+		..\C8oSDKDotNet\C8oPlatforms\C8oPlatforms.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
+		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{863ce965-5c79-48f0-9e97-1aadc3241a87}*SharedItemsImports = 13
+		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{9d58d300-2dad-488d-bef1-6f591cf3e401}*SharedItemsImports = 4
+		..\C8oSDKDotNet\C8oPlatforms\C8oPlatforms.projitems*{9d58d300-2dad-488d-bef1-6f591cf3e401}*SharedItemsImports = 4
+		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{4f9ba553-8252-412d-98c8-c113cc009f82}*SharedItemsImports = 4
+		..\C8oSDKDotNet\C8oPlatforms\C8oPlatforms.projitems*{4f9ba553-8252-412d-98c8-c113cc009f82}*SharedItemsImports = 4
+		Sample05Shared\Sample05Shared.projitems*{fe33aef2-2a2e-48fc-ad4b-d9d6b04e8c0e}*SharedItemsImports = 4
+		Sample05Shared\Sample05Shared.projitems*{e18e0aab-5ce8-4dd8-91de-afd1cef64181}*SharedItemsImports = 13
+		Sample05XamarinForms\Sample05XamarinForms\Sample05XamarinForms.projitems*{02bb11bd-bbf8-4438-9813-a6871f8351f3}*SharedItemsImports = 13
+		Sample05Shared\Sample05Shared.projitems*{e4964171-7e88-4e81-b063-d1c0eabd9141}*SharedItemsImports = 4
+		Sample05XamarinForms\Sample05XamarinForms\Sample05XamarinForms.projitems*{e4964171-7e88-4e81-b063-d1c0eabd9141}*SharedItemsImports = 4
+		..\C8oSDKDotNet\C8oPlatforms\C8oPlatforms.projitems*{bdf9111d-f09a-4213-9721-114434ca73b6}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
@@ -346,30 +342,6 @@ Global
 		{CFAD8D21-3FDC-4364-BBC1-832CA098A794}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{CFAD8D21-3FDC-4364-BBC1-832CA098A794}.Release|Mixed Platforms.ActiveCfg = Release|iPhone
 		{CFAD8D21-3FDC-4364-BBC1-832CA098A794}.Release|Mixed Platforms.Build.0 = Release|iPhone
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Ad-Hoc|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Ad-Hoc|Mixed Platforms.Build.0 = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.AppStore|Any CPU.Build.0 = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.AppStore|iPhone.ActiveCfg = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.AppStore|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.AppStore|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.AppStore|Mixed Platforms.Build.0 = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{E212307D-FB4A-4025-9FF1-8E9308687953}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{4F9BA553-8252-412D-98C8-C113CC009F82}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
 		{4F9BA553-8252-412D-98C8-C113CC009F82}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
 		{4F9BA553-8252-412D-98C8-C113CC009F82}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
