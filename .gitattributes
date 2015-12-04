@@ -107,7 +107,6 @@ C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/LocalCacheResponse.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/Properties/AssemblyInfo.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/VoidResponse.cs -text
 C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/packages.config -text
-C8oSDKDotNet[!!-~]Solution/C8oSDKPCL/tools/install.ps1 -text
 C8oSDKDotNet[!!-~]Solution/ClassLibrary1/C8oFullSyncNetWPF.csproj -text
 C8oSDKDotNet[!!-~]Solution/ClassLibrary1/Properties/AssemblyInfo.cs -text
 C8oSDKDotNet[!!-~]Solution/ClassLibrary1/app.config -text
@@ -788,6 +787,7 @@ C8oSDKDotNet/C8oSDKPCL/VoidResponse.cs -text
 C8oSDKDotNet/C8oSDKPCL/app.config -text
 C8oSDKDotNet/C8oSDKPCL/packages.config -text
 C8oSDKDotNet/C8oSDKPCL/tools/install.ps1 -text
+C8oSDKDotNet/tools/install.ps1 -text
 C8oSDKDotNetSamples/C8oBigFileTransfer/BigFileTransferInterface.cs -text
 C8oSDKDotNetSamples/C8oBigFileTransfer/C8oBigFileTransfer.csproj -text
 C8oSDKDotNetSamples/C8oBigFileTransfer/DownloadStatus.cs -text
