@@ -62,7 +62,7 @@ namespace Convertigo.SDK
 
         public C8oPromiseSync<T> FailUI(C8oOnFail c8oOnFail)
         {
-            this.c8oFail = new KeyValuePair<C8oOnFail, bool>(c8oOnFail, true);
+            c8oFail = new KeyValuePair<C8oOnFail, bool>(c8oOnFail, true);
             return this;
         }
 

@@ -241,20 +241,19 @@ namespace Convertigo.SDK
         {
             var promise = new C8oPromise<JObject>(this);
 
-            Call(requestable, parameters, new C8oResponseJsonListener((response, data) =>
+            Call(requestable, parameters, new C8oResponseJsonListener((response, requestParameters) =>
             {
-                if (response == null && data.ContainsKey(ENGINE_PARAMETER_PROGRESS))
+                if (response == null && requestParameters.ContainsKey(ENGINE_PARAMETER_PROGRESS))
                 {
-                    C8oProgress progress = data[ENGINE_PARAMETER_PROGRESS] as C8oProgress;
-                    promise.OnProgress(progress);
+                    promise.OnProgress(requestParameters[ENGINE_PARAMETER_PROGRESS] as C8oProgress);
                 }
                 else
                 {
-                    promise.OnResponse(response, data);
+                    promise.OnResponse(response, requestParameters);
                 }
-            }), new C8oExceptionListener((exception, data) =>
+            }), new C8oExceptionListener((exception, requestParameters) =>
             {
-                promise.OnFailure(exception, data);
+                promise.OnFailure(exception, requestParameters);
             }));
 
             return promise;
@@ -269,19 +268,19 @@ namespace Convertigo.SDK
         {
             var promise = new C8oPromise<XDocument>(this);
 
-            Call(requestable, parameters, new C8oResponseXmlListener((response, data) =>
+            Call(requestable, parameters, new C8oResponseXmlListener((response, requestParameters) =>
             {
-                if (data.ContainsKey(ENGINE_PARAMETER_PROGRESS))
+                if (response == null && requestParameters.ContainsKey(ENGINE_PARAMETER_PROGRESS))
                 {
-                    promise.OnProgress(data[ENGINE_PARAMETER_PROGRESS] as C8oProgress);
+                    promise.OnProgress(requestParameters[ENGINE_PARAMETER_PROGRESS] as C8oProgress);
                 }
                 else
                 {
-                    promise.OnResponse(response, data);
+                    promise.OnResponse(response, requestParameters);
                 }
-            }), new C8oExceptionListener((exception, data) =>
+            }), new C8oExceptionListener((exception, requestParameters) =>
             {
-                promise.OnFailure(exception, data);
+                promise.OnFailure(exception, requestParameters);
             }));
 
             return promise;

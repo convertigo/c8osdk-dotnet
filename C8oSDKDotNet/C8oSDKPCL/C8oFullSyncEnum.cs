@@ -93,7 +93,7 @@ namespace Convertigo.SDK.FullSync.Enums
                     }
                 }));
                 Monitor.Wait(mutex);
-                return Task.FromResult<object>(new JObject() { { "ok", "true" } });
+                return Task.FromResult<object>(new JObject() { { "ok", true } });
             }
         });
 
@@ -122,7 +122,7 @@ namespace Convertigo.SDK.FullSync.Enums
                     }
                 }));
                 Monitor.Wait(mutex);
-                return Task.FromResult<object>(new JObject() { { "ok", "true" } });
+                return Task.FromResult<object>(new JObject() { { "ok", true } });
             }
         });
 
@@ -151,7 +151,7 @@ namespace Convertigo.SDK.FullSync.Enums
                     }
                 }));
                 Monitor.Wait(mutex);
-                return Task.FromResult<object>(new JObject() { { "ok", "true" } });
+                return Task.FromResult<object>(new JObject() { { "ok", true } });
             }
         });
 
