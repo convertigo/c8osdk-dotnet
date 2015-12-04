@@ -729,6 +729,7 @@ C8oSDKDotNet/C8oFullSyncCbl/C8oFullSyncNet.projitems -text
 C8oSDKDotNet/C8oFullSyncCbl/C8oResponseCblListener.cs -text
 C8oSDKDotNet/C8oFullSyncCbl/FullSyncResponses.cs -text
 C8oSDKDotNet/C8oFullSyncCbl/JSViewCompilerCopy.cs -text
+C8oSDKDotNet/C8oFullSyncExtensions.nuspec -text
 C8oSDKDotNet/C8oPlatforms/C8oPlatform.cs -text
 C8oSDKDotNet/C8oPlatforms/C8oPlatform.shproj -text
 C8oSDKDotNet/C8oPlatforms/C8oPlatforms.projitems -text
