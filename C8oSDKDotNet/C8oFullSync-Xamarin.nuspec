@@ -1,10 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>C8oFullSync-Xamarin</id>
-        <version>1.0.5</version>
-        <title>Convertigo Client SDK FullSync extentions</title>
-        <authors>julesg</authors>
+        <version>2.0.0</version>
+        <title>Convertigo Client SDK FullSync extensions</title>
+        <authors>julesg@convertigo.com</authors>
         <owners>Convertigo</owners>
         <projectUrl>http://www.convertigo.com/convertigo-sdk</projectUrl>
         <iconUrl>https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSJO-7NGkftreSyo2gVhcO_anvu4FUQ61NVv98py4sNNm0KuckKPQ</iconUrl>
@@ -18,13 +18,14 @@
             <dependency id="Newtonsoft.Json" version="6.0.6" />
             <dependency id="UnicodeNormalization" version="1.0.1" />
             <dependency id="Microsoft.Net.Http" version="2.2.29" />
-            <dependency id="Couchbase.Lite" version="1.1.1.1" />
+            <dependency id="Couchbase.Lite" version="1.1.2.0" />
             <dependency id="C8oSDK-PCL" version="1.0.1" />
             <dependency id="Jint" version="2.5.0" />
         </dependencies>
     </metadata>
     <files>
-        <file src="..\C8oFullSyncNetAndroid\bin\Release\C8oFullSyncNetAndroid.dll" target="lib\MonoAndroid\C8oFullSyncNetAndroid.dll" />
-        <file src="..\C8oFullSyncNetiOS\bin\iPhone\Release\C8oFullSyncNetiOS.dll"  target="lib\Xamarin.iOS10\C8oFullSyncNetiOS.dll" />
+        <file src="C8oSDKDotNet.Android\bin\Release\C8oSDKDotNet.Android.dll"         target="lib\MonoAndroid\C8oSDKDotNet.Android.dll" />
+        <file src="C8oSDKDotNet.iOS\bin\iPhone\Release\C8oSDKDotNet.iOS.dll"          target="lib\Xamarin.iOS10\C8oSDKDotNet.iOS.dll" />
+        <file src="C8oSDKDotNet.Windows\bin\Release\C8oSDKDotNet.Windows.dll"         target="lib\Xamarin.net45\C8oSDKDotNet.Windows.dll" />
     </files>
 </package>

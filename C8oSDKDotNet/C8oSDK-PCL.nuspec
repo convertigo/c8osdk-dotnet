@@ -1,10 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>C8oSDK-PCL</id>
-        <version>1.0.1</version>
+        <version>2.0.0</version>
         <title>Convertigo PCL Client SDK</title>
-        <authors>julesg</authors>
+        <authors>julesg@convertigo.com</authors>
         <owners>Convertigo</owners>
         <projectUrl>http://www.convertigo.com/convertigo-sdk</projectUrl>
         <iconUrl>https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSJO-7NGkftreSyo2gVhcO_anvu4FUQ61NVv98py4sNNm0KuckKPQ</iconUrl>
@@ -23,7 +23,7 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="bin\Release\C8oSDKPCL.dll" target="lib\C8oSDKPCL.dll" />
+        <file src="C8oSDKPCL\bin\Release\C8oSDKPCL.dll" target="lib\C8oSDKPCL.dll" />
         <file src="tools\install.ps1" target="tools\install.ps1" />
     </files>
 </package>
