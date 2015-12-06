@@ -1,1 +1,1 @@
-# convertigo details
+# Convertigo MBaaS SDK details
