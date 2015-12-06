@@ -1,6 +1,6 @@
 %YAML 1.2
 ---
-summary: TEST
+summary: Integrate your Xamarin Apps with Convertigo MBaaS
 getting-started: GettingStarted.md
 details: Details.md
 screenshots: 
@@ -12,6 +12,7 @@ icons:
 publisher: Convertigo SA
 name: convertigo-mbaas
 id: convertigo-mbaas
+
 samples: 
   iOS Sample: ../../../C8oSDKDotNet.sln
   Android Sample: ../../../C8oSDKDotNet.sln
