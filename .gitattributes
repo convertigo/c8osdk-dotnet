@@ -788,13 +788,10 @@ C8oSDKDotNet/C8oSDKPCL/VoidResponse.cs -text
 C8oSDKDotNet/C8oSDKPCL/app.config -text
 C8oSDKDotNet/C8oSDKPCL/packages.config -text
 C8oSDKDotNet/C8oSDKPCL/tools/install.ps1 -text
-C8oSDKDotNet/tools/convertigo/component/Copy[!!-~]of[!!-~]component.yaml -text
 C8oSDKDotNet/tools/convertigo/component/Details.md -text
 C8oSDKDotNet/tools/convertigo/component/GettingStarted.md -text
 C8oSDKDotNet/tools/convertigo/component/License.md -text
 C8oSDKDotNet/tools/convertigo/component/component.yaml -text
-C8oSDKDotNet/tools/convertigo/component/convertigo-2.0.xam -text
-C8oSDKDotNet/tools/convertigo/component/convertigo-2.0.xam.zip -text
 C8oSDKDotNet/tools/convertigo/component/convertigo_128x128.png -text
 C8oSDKDotNet/tools/convertigo/component/convertigo_512x512.png -text
 C8oSDKDotNet/tools/convertigo/component/screenshots/screenshot1.png -text
