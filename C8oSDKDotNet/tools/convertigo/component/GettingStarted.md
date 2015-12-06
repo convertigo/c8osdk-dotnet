@@ -22,3 +22,9 @@ As the project is specified in the end point we just have to call the service of
 
 
 CallJSON is asynchronous and returns a **promise** object you can use the **Sync()** method to wait for the server response. Response is a JObject containing a the server data.
+
+## Full Convertigo SDK Documentation ##
+You can get all the details SDK documentations here:
+
+[http://www.convertigo.com/document/next/7-4-0/reference-manual/convertigo-sdk/](http://www.convertigo.com/document/next/7-4-0/reference-manual/convertigo-sdk/ "SDK Documentation")
+
