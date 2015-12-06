@@ -1,0 +1,31 @@
+%YAML 1.2
+---
+summary: TEST
+getting-started: GettingStarted.md
+details: Details.md
+screenshots: 
+  - screenshots/screenshot1.png
+license: License.md
+icons: 
+  - convertigo_128x128.png
+  - convertigo_512x512.png
+publisher: Convertigo SA
+name: convertigo-mbaas-sdk
+id: convertigo
+samples: 
+  iOS Sample: ../../../C8oSDKDotNet.sln
+publisher-url: http://www.convertigo.com
+libraries: 
+  ios: 
+  - ../../../C8oSDKDotNet.iOS/bin/iPhone/Release/C8oSDKDotNet.iOS.dll
+  - ../../../C8oSDKPCL/bin/Release/C8oSDKPCL.dll
+  android:
+  - ../../../C8oSDKDotNet.Android/bin/Release/C8oSDKDotNet.Android.dll
+  - ../../../C8oSDKPCL/bin/Release/C8oSDKPCL.dll
+packages:
+  "":
+  - Newtonsoft.Json, Version=7.0.1  
+  - Couchbase.Lite, Version=1.1.2.0  
+  - UnicodeNormalization, Version=1.0.1  
+version: "2.0"
+...

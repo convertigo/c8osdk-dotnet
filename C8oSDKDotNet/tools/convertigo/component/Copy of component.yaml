@@ -1,0 +1,46 @@
+%YAML 1.2
+---
+summary: TEST
+getting-started: GettingStarted.md
+details: Details.md
+screenshots: 
+  - screenshots/screenshot1.png
+license: License.md
+icons: 
+  - convertigo_128x128.png
+  - convertigo_512x512.png
+publisher: Convertigo SA
+name: convertigo-mbaas-sdk
+id: convertigo
+samples: 
+  iOS Sample: ../../../C8oSDKDotNet.sln
+publisher-url: http://www.convertigo.com
+libraries: 
+  ios: 
+  - ../../../C8oSDKDotNet.iOS/bin/iPhone/Release/C8oSDKDotNet.iOS.dll
+  - ../../../C8oSDKDotNet.iOS/bin/iPhone/Release/C8oSDKPCL.dll
+  - ../../../C8oSDKDotNet.iOS/bin/iPhone/Release/Couchbase.Lite.dll
+  - ../../../C8oSDKDotNet.iOS/bin/iPhone/Release/ICSharpCode.SharpZipLib.Portable.dll
+  - ../../../C8oSDKDotNet.iOS/bin/iPhone/Release/Jint.dll
+  - ../../../C8oSDKDotNet.iOS/bin/iPhone/Release/Newtonsoft.Json.dll
+  - ../../../C8oSDKDotNet.iOS/bin/iPhone/Release/SQLitePCL.raw.dll
+  - ../../../C8oSDKDotNet.iOS/bin/iPhone/Release/SQLitePCL.ugly.dll
+  - ../../../C8oSDKDotNet.iOS/bin/iPhone/Release/Stateless.dll
+  - ../../../C8oSDKDotNet.iOS/bin/iPhone/Release/System.Net.Http.Extensions.dll
+  - ../../../C8oSDKDotNet.iOS/bin/iPhone/Release/System.Net.Http.Primitives.dll
+  - ../../../C8oSDKDotNet.iOS/bin/iPhone/Release/UnicodeNormalization.dll
+  android:
+  - ../../../C8oSDKDotNet.Android/bin/Release/C8oSDKDotNet.Android.dll
+  - ../../../C8oSDKDotNet.Android/bin/Release/C8oSDKPCL.dll
+  - ../../../C8oSDKDotNet.Android/bin/Release/Couchbase.Lite.dll
+  - ../../../C8oSDKDotNet.Android/bin/Release/ICSharpCode.SharpZipLib.Portable.dll
+  - ../../../C8oSDKDotNet.Android/bin/Release/Jint.dll
+  - ../../../C8oSDKDotNet.Android/bin/Release/Newtonsoft.Json.dll
+  - ../../../C8oSDKDotNet.Android/bin/Release/SQLitePCL.raw.dll
+  - ../../../C8oSDKDotNet.Android/bin/Release/SQLitePCL.ugly.dll
+  - ../../../C8oSDKDotNet.Android/bin/Release/Stateless.dll
+  - ../../../C8oSDKDotNet.Android/bin/Release/System.Net.Http.Extensions.dll
+  - ../../../C8oSDKDotNet.Android/bin/Release/System.Net.Http.Primitives.dll
+  - ../../../C8oSDKDotNet.Android/bin/Release/UnicodeNormalization.dll
+version: "1"
+...
