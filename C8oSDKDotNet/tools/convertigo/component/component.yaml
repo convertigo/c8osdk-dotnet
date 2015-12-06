@@ -10,10 +10,11 @@ icons:
   - convertigo_128x128.png
   - convertigo_512x512.png
 publisher: Convertigo SA
-name: convertigo-mbaas-sdk
-id: convertigo
+name: convertigo-mbaas
+id: convertigo-mbaas
 samples: 
   iOS Sample: ../../../C8oSDKDotNet.sln
+  Android Sample: ../../../C8oSDKDotNet.sln
 publisher-url: http://www.convertigo.com
 libraries: 
   ios: 
@@ -26,6 +27,7 @@ packages:
   "":
   - Newtonsoft.Json, Version=7.0.1  
   - Couchbase.Lite, Version=1.1.2.0  
-  - UnicodeNormalization, Version=1.0.1  
+  - UnicodeNormalization, Version=1.0.1
+  - Jint, Version=2.7.1   
 version: "2.0"
 ...
