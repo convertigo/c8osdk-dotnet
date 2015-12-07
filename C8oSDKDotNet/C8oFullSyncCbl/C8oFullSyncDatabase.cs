@@ -151,36 +151,11 @@ namespace Convertigo.SDK.FullSync
             {
                 return;
             }
- 
-            /*
-                // Handles parameters
-                foreach (FullSyncReplicationParameter fullSyncReplicateDatabaseParameter in FullSyncReplicationParameter.Values()) 
-                {
-                    string parameterValue = C8oUtils.GetParameterStringValue(parameters, fullSyncReplicateDatabaseParameter.name, false);
-                    if (parameterValue != null)
-                    {
-                        // Cancel the replication
-                        if (fullSyncReplicateDatabaseParameter == FullSyncReplicationParameter.CANCEL && parameterValue.Equals("true"))
-                        {
-                            return;
-                        }
-                        try
-                        {
-                            C8oFullSyncCblEnum.SetReplication(fullSyncReplicateDatabaseParameter, fullSyncReplication.replication, parameterValue);
-                        }
-                        catch (Exception e)
-                        {
-                            throw new C8oException(C8oExceptionMessage.ToDo(), e);
-                        }
-                    }
-                }
-            */
             
             var param = new Dictionary<string, object>(parameters);
             var progress = new C8oProgress();
-            progress.raw = rep;
-            progress.pull = rep.IsPull;
-            param[C8o.ENGINE_PARAMETER_PROGRESS] = progress;
+            progress.Raw = rep;
+            progress.Pull = rep.IsPull;
 
             var mutex = new object();
 
@@ -188,27 +163,35 @@ namespace Convertigo.SDK.FullSync
                 fullSyncReplication.changeListener =
                 new EventHandler<ReplicationChangeEventArgs>((source, changeEvt) =>
                 {
-                    Task.Run(() =>
-                    {
-                        progress.total = rep.ChangesCount;
-                        progress.current = rep.CompletedChangesCount;
-                        progress.taskInfo = C8oFullSyncTranslator.DictionaryToString(rep.ActiveTaskInfo);
-                        progress.status = "" + rep.Status;
-                        progress.finished = !rep.IsRunning;
+                    progress.Total = rep.ChangesCount;
+                    progress.Current = rep.CompletedChangesCount;
+                    progress.TaskInfo = C8oFullSyncTranslator.DictionaryToString(rep.ActiveTaskInfo);
+                    progress.Status = "" + rep.Status;
+                    progress.Finished = !rep.IsRunning;
 
-                        if (progress.finished)
+                    if (progress.Finished)
+                    {
+                        lock (mutex)
                         {
-                            lock (mutex)
-                            {
-                                Monitor.Pulse(mutex);
-                            }
+                            Monitor.Pulse(mutex);
                         }
+                    }
+
+                    if (progress.Changed)
+                    {
+                        var newProgress = progress;
+                        progress = new C8oProgress(progress);
 
                         if (c8oResponseListener != null && c8oResponseListener is C8oResponseProgressListener)
                         {
-                            (c8oResponseListener as C8oResponseProgressListener).OnProgressResponse(progress, param);
+                            Task.Run(() =>
+                            {
+                                param[C8o.ENGINE_PARAMETER_PROGRESS] = newProgress;
+                                (c8oResponseListener as C8oResponseProgressListener).OnProgressResponse(newProgress, param);
+                            });
                         }
-                    });
+                    }
+
                 });
 
             lock (mutex)
@@ -221,11 +204,36 @@ namespace Convertigo.SDK.FullSync
             
             if (continuous)
             {
+                long lastCurrent = progress.Current;
                 rep = getReplication(fullSyncReplication);
-                rep.Continuous = true;
+                progress.Raw = rep;
+                rep.Continuous = progress.Continuous = true;
+                rep.Changed +=
+                    fullSyncReplication.changeListener =
+                    new EventHandler<ReplicationChangeEventArgs>((source, changeEvt) =>
+                    {
+                        progress.Total = rep.ChangesCount;
+                        progress.Current = rep.CompletedChangesCount;
+                        progress.TaskInfo = C8oFullSyncTranslator.DictionaryToString(rep.ActiveTaskInfo);
+                        progress.Status = "" + rep.Status;
+
+                        if (progress.Current > lastCurrent && progress.Changed)
+                        {
+                            var newProgress = progress;
+                            progress = new C8oProgress(progress);
+
+                            if (c8oResponseListener != null && c8oResponseListener is C8oResponseProgressListener)
+                            {
+                                Task.Run(() =>
+                                {
+                                    param[C8o.ENGINE_PARAMETER_PROGRESS] = newProgress;
+                                    (c8oResponseListener as C8oResponseProgressListener).OnProgressResponse(progress, param);
+                                });
+                            }
+                        }
+                    });
                 rep.Start();
             }
-            
         }
 
         //*** Getter / Setter ***//
