@@ -102,6 +102,19 @@ namespace Convertigo.SDK
 
         //*** Constructors ***//
 
+        /// <summary>
+        /// This is the base object representing a Convertigo Server end point. This object should be instanciated
+        /// when the apps starts and be accessible from any class of the app. Although this is not common , you may have
+        /// several C8o objects instanciated in your app.    
+        /// </summary>
+        /// <param name="endpoint">The End point url to you convertigo server. Can be :
+        ///     - http(s)://your_server_address/convertigo/projects/your_project_name (if using an on premises server)
+        ///     - http(s)://your_cloud_server.convertigo.net/cems/projects/your_project_name (if using a Convertigo cloud server)
+        /// </param>
+        /// <param name="c8oSettings">
+        /// A C8oSettings object describing the endpoint configuration parameters such as authorizations credentials,
+        /// cookies, client certificates and various other settings.
+        /// </param>
         public C8o(string endpoint, C8oSettings c8oSettings = null)
         {
             // Checks the URL validity
