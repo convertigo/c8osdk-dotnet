@@ -8,6 +8,26 @@ using System.Threading.Tasks;
 
 namespace Convertigo.SDK
 {
+    /// <summary>
+    /// A Promise object for Convertigo SDK calls. CallJSON or CallXML will return a C8oPromis object you can use to chain several calls. a typical use would be :
+    /// <code>
+    ///    myC8o.CallJson (".sequ1", "shopCode", "42")
+    ///     .Then((response, parameters) => {					
+    ///        return(myC8o.CallJson (".sequ2"));						
+    ///     }).Then((response, parameters) => {					
+    ///        return(myC8o.CallJson (".sequ3"));						
+    ///     }).ThenUI((response, parameters) => {					
+    ///        // Do some stuff on the UI Thread.
+    ///        return null;						
+    ///     }).Fail((response, parameters) => {
+    ///        // Do some stuff is a call fails 
+    ///     });
+    ///    
+    /// </code>
+    /// This code will call sequ1 then when this call has finished will call sequ2 and again in the same way sequ3. When sequ3 is finished, 
+    /// we can update the UI using data from the response object as the thread will automatically run in the UI thread. If something fails, we 
+    /// will be called in the Fail() function and we will be able to handle the error.
+    /// </summary>
     public class C8oPromise<T> : C8oPromiseFailSync<T>
     {
         private C8o c8o;
@@ -24,6 +44,11 @@ namespace Convertigo.SDK
             this.c8o = c8o;
         }
 
+        /// <summary>
+        /// Will be executed in a worker thread when a response is returned by the Server.
+        /// </summary>
+        /// <param name="c8oOnResponse">A C8oOnResponse lambda function</param>
+        /// <returns>the same C8oPromise object to chain for other calls</returns>
         public C8oPromise<T> Then(C8oOnResponse<T> c8oOnResponse)
         {
             lock (c8oOnResponses)
@@ -33,6 +58,11 @@ namespace Convertigo.SDK
             return this;
         }
 
+        /// <summary>
+        /// Will be executed in a UI thread when a response is returned by the Server.
+        /// </summary>
+        /// <param name="c8oOnResponse">A C8oOnResponse lambda function</param>
+        /// <returns>the same C8oPromise object to chain for other calls</returns>
         public C8oPromise<T> ThenUI(C8oOnResponse<T> c8oOnResponse)
         {
             lock (c8oOnResponses)
@@ -42,30 +72,59 @@ namespace Convertigo.SDK
             return this;
         }
 
+        /// <summary>
+        /// Will be executed in a worker thread when synchronizing data. This gives the opportunity to handle a FullSync
+        /// progression. The lambda function will receive a C8oOnProgress object describing the replication status.
+        /// </summary>
+        /// <param name="C8oOnProgress">A C8oOnProgress lambda function</param>
+        /// <returns>C8oPromiseFailSync object to chain for other calls</returns>
         public C8oPromiseFailSync<T> Progress(C8oOnProgress c8oOnProgress)
         {
             c8oProgress = new KeyValuePair<C8oOnProgress, bool>(c8oOnProgress, false);
             return this;
         }
 
+        /// <summary>
+        /// Will be executed in a UI thread when synchronizing data. This gives the opportunity to handle a FullSync
+        /// progression. The lambda function will receive a C8oOnProgress object describing the replication status.
+        /// </summary>
+        /// <param name="C8oOnProgress">A C8oOnProgress lambda function</param>
+        /// <returns>C8oPromiseFailSync object to chain for other calls</returns>
         public C8oPromiseFailSync<T> ProgressUI(C8oOnProgress c8oOnProgress)
         {
             c8oProgress = new KeyValuePair<C8oOnProgress, bool>(c8oOnProgress, true);
             return this;
         }
 
+        /// <summary>
+        /// Will be executed in a worker thread when an error is returned by the Server. This will give you
+        /// the opportunity to handle the error.
+        /// </summary>
+        /// <param name="C8oOnFail">A C8oOnFail lambda function</param>
+        /// <returns>the same C8oPromise object to chain for other calls</returns>
         public C8oPromiseSync<T> Fail(C8oOnFail c8oOnFail)
         {
             c8oFail = new KeyValuePair<C8oOnFail, bool>(c8oOnFail, false);
             return this;
         }
 
+        /// <summary>
+        /// Will be executed in a UIr thread when an error is returned by the Server. This will give you
+        /// the opportunity to handle the error and update the UI if needed.
+        /// </summary>
+        /// <param name="C8oOnFail">A C8oOnFail lambda function</param>
+        /// <returns>the same C8oPromise object to chain for other calls</returns>
         public C8oPromiseSync<T> FailUI(C8oOnFail c8oOnFail)
         {
             c8oFail = new KeyValuePair<C8oOnFail, bool>(c8oOnFail, true);
             return this;
         }
 
+        /// <summary>
+        /// Will wait for a server response blocking the current thread. Using Sync is not recomended unless you explicitly want to block
+        /// the call thread.
+        /// </summary>
+        /// <returns>The data from the last call</returns>
         public T Sync()
         {
             lock (syncMutex)
@@ -90,6 +149,16 @@ namespace Convertigo.SDK
             return lastResult;
         }
 
+        /// <summary>
+        /// Will wait asynchronously for a server response while not blocking the current thread. This is the recomended way to wait for a server response with the
+        /// await operator.
+        /// </summary>
+        /// <sample>
+        ///     <code>
+        ///         JObject data = await myC8o.CallJSON(".mysequence").Async();
+        ///     </code>
+        /// </sample>
+        /// <returns>The data from the last call</returns>
         public Task<T> Async()
         {
             TaskCompletionSource<T> task = new TaskCompletionSource<T>();
