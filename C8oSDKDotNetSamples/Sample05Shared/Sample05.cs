@@ -95,6 +95,7 @@ namespace Sample05Shared
 
         public void OnTest04(object sender, EventArgs args)
         {
+            long cpt = 0;
             Output.Text = "Test04\n";
             Output.Text += "========== auth ==\n";
             c8o.CallJson(".Auth", "user", "Test04").ThenUI((json, parameters) =>
@@ -129,7 +130,7 @@ namespace Sample05Shared
                 return null;
             }).Progress(progress =>
             {
-                Debug.WriteLine("" + progress);
+                Debug.WriteLine("" + cpt++ + " " + progress);
             }).FailUI((e, parameters) =>
             {
                 Output.Text += "\n========== fail ==\n" + e;
