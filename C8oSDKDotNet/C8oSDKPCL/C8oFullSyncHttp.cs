@@ -285,10 +285,9 @@ namespace Convertigo.SDK
 
             var param = new Dictionary<string, object>(parameters);
             var progress = new C8oProgress();
-            progress.pull = isPull;
-            progress.status = "Active";
-            progress.finished = false;
-            param[C8o.ENGINE_PARAMETER_PROGRESS] = progress;
+            progress.Pull = isPull;
+            progress.Status = "Active";
+            progress.Finished = false;
 
 
             Task.Run(async () =>
@@ -330,17 +329,24 @@ namespace Convertigo.SDK
                     {
                         checkPoint_Interval = (long) task["checkpoint_interval"].ToObject(typeof(long));
 
-                        progress.raw = task;
-                        progress.total = task["source_seq"].Value<long>();
-                        progress.current = task["revisions_checked"].Value<long>();
-                        progress.taskInfo = task.ToString();
-
-                        if (c8oResponseListener != null && c8oResponseListener is C8oResponseProgressListener)
-                        {
-                            (c8oResponseListener as C8oResponseProgressListener).OnProgressResponse(progress, param);
-                        }
+                        progress.Raw = task;
+                        progress.Total = task["source_seq"].Value<long>();
+                        progress.Current = task["revisions_checked"].Value<long>();
+                        progress.TaskInfo = task.ToString();
 
                         c8o.Log(C8oLogLevel.WARN, progress.ToString());
+
+                        if (progress.Changed)
+                        {
+                            var newProgress = progress;
+                            progress = new C8oProgress(progress);
+
+                            if (c8oResponseListener != null && c8oResponseListener is C8oResponseProgressListener)
+                            {
+                                param[C8o.ENGINE_PARAMETER_PROGRESS] = newProgress;
+                                (c8oResponseListener as C8oResponseProgressListener).OnProgressResponse(progress, param);
+                            }
+                        }
                     }
                 }
             }).GetAwaiter();
@@ -348,11 +354,11 @@ namespace Convertigo.SDK
             response = await Execute(request, json);
             response.Remove("_c8oMeta");
 
-            progress.total = response["source_last_seq"].Value<long>();
-            progress.current = response["source_last_seq"].Value<long>();
-            progress.taskInfo = response.ToString();
-            progress.status = "Stopped";
-            progress.finished = true;
+            progress.Total = response["source_last_seq"].Value<long>();
+            progress.Current = response["source_last_seq"].Value<long>();
+            progress.TaskInfo = response.ToString();
+            progress.Status = "Stopped";
+            progress.Finished = true;
 
             if (c8oResponseListener != null && c8oResponseListener is C8oResponseProgressListener)
             {
@@ -361,7 +367,7 @@ namespace Convertigo.SDK
 
             if (continuous)
             {
-                progress.status = "Idle";
+                progress.Status = "Idle";
                 json["continuous"] = true;
 
                 request = HttpWebRequest.CreateHttp(serverUrl + "/_replicate");

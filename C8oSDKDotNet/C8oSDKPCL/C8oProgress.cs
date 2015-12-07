@@ -9,21 +9,107 @@ namespace Convertigo.SDK
 {
     public class C8oProgress
     {
-        internal bool finished;
-        internal bool pull;
-        internal long current;
-        internal long total;
-        internal string taskInfo;
-        internal string status;
-        internal object raw;
+        private bool changed = false;
+        private bool continuous = false;
+        private bool finished = false;
+        private bool pull = true;
+        private long current = -1;
+        private long total = -1;
+        private string status = "";
+        private string taskInfo = "";
+        private object raw;
 
         internal C8oProgress()
         {
         }
 
+        internal C8oProgress(C8oProgress progress)
+        {
+            continuous = progress.continuous;
+            finished = progress.finished;
+            pull = progress.pull;
+            current = progress.current;
+            total = progress.total;
+            status = progress.status;
+            taskInfo = progress.taskInfo;
+            raw = progress.raw;
+    }
+
+        internal bool Changed
+        {
+            get
+            {
+                return changed;
+            }
+
+            set
+            {
+                changed = value;
+            }
+        }
+
         public override string ToString()
         {
-            return "" + current + "/" + total + " (" + (finished ? "done" : "running") + ")";
+            return Direction + ": " + current + "/" + total + " (" + (finished ? (continuous ? "live" : "done") : "running") + ")";
+        }
+        
+        public bool Continuous
+        {
+            get
+            {
+                return continuous;
+            }
+
+            internal set
+            {
+                if (value != continuous)
+                {
+                    changed = true;
+                    continuous = value;
+                }
+            }
+        }
+
+        public bool Finished
+        {
+            get
+            {
+                return finished;
+            }
+
+            internal set
+            {
+                if (value != finished)
+                {
+                    changed = true;
+                    finished = value;
+                }
+            }
+        }
+
+        public bool Pull
+        {
+            get
+            {
+                return pull;
+            }
+
+            internal set
+            {
+                if (value != pull)
+                {
+                    changed = true;
+                    pull = value;
+                }
+            }
+        }
+
+        public bool Push
+        {
+            get
+            {
+                return !pull;
+            }
         }
 
         public long Current
@@ -32,6 +118,15 @@ namespace Convertigo.SDK
             {
                 return current;
             }
+
+            internal set
+            {
+                if (value != current)
+                {
+                    changed = true;
+                    current = value;
+                }
+            }
         }
         
         public long Total
@@ -39,6 +134,15 @@ namespace Convertigo.SDK
             get
             {
                 return total;
+            }
+
+            internal set
+            {
+                if (value != total)
+                {
+                    changed = true;
+                    total = value;
+                }
             }
         }
 
@@ -52,43 +156,37 @@ namespace Convertigo.SDK
             }
         }
 
-        public string TaskInfo
-        {
-            get
-            {
-                return taskInfo;
-            }
-        }
-
         public string Status
         {
             get
             {
                 return status;
             }
-        }
 
-        public bool Finished
-        {
-            get
+            internal set
             {
-                return finished;
+                if (!value.Equals(status))
+                {
+                    changed = true;
+                    status = value;
+                }
             }
         }
 
-        public bool Pull
+        public string TaskInfo
         {
             get
             {
-                return pull;
+                return taskInfo;
             }
-        }
 
-        public bool Push
-        {
-            get
+            internal set
             {
-                return !pull;
+                if (!value.Equals(taskInfo))
+                {
+                    changed = true;
+                    taskInfo = value;
+                }
             }
         }
 
@@ -97,6 +195,15 @@ namespace Convertigo.SDK
             get
             {
                 return raw;
+            }
+
+            internal set
+            {
+                if (value != raw)
+                {
+                    changed = true;
+                    raw = value;
+                }
             }
         }
     }
