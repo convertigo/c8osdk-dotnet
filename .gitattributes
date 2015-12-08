@@ -742,6 +742,7 @@ C8oSDKDotNet/C8oSDKDotNet.Android/Resources/Resource.Designer.cs -text
 C8oSDKDotNet/C8oSDKDotNet.Android/Resources/Values/Strings.xml -text
 C8oSDKDotNet/C8oSDKDotNet.Android/app.config -text
 C8oSDKDotNet/C8oSDKDotNet.Android/packages.config -text
+C8oSDKDotNet/C8oSDKDotNet.Windows/C8oPlatform.cs -text
 C8oSDKDotNet/C8oSDKDotNet.Windows/C8oSDKDotNet.Windows.csproj -text
 C8oSDKDotNet/C8oSDKDotNet.Windows/Properties/AssemblyInfo.cs -text
 C8oSDKDotNet/C8oSDKDotNet.Windows/app.config -text
