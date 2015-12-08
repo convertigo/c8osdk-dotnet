@@ -1,7 +1,5 @@
 ﻿using Convertigo.SDK;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Sample05Shared
@@ -12,15 +10,15 @@ namespace Sample05Shared
         CrossOuput Output;
         CrossDebug Debug;
 
-        public Sample05(Action<Action> uiDispatcher, Action<string> output, Action<string> debug)
+        public Sample05(Action<string> output, Action<string> debug)
         {
+            C8oPlatform.Init();
+
             Output = new CrossOuput(output);
             Debug = new CrossDebug(debug);
 
-            C8oPlatform.Init();
-
             c8o = new C8o("http://tonus.twinsoft.fr:18080/convertigo/projects/Sample05",
-                new C8oSettings().SetUiDispatcher(uiDispatcher).SetFullSyncUsername("admin")
+                new C8oSettings().SetFullSyncUsername("admin")
                 .SetFullSyncPassword("admin")
                 .SetDefaultDatabaseName("sample05")
             );

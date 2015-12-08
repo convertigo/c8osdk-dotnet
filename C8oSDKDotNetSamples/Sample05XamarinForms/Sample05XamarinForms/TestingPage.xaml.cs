@@ -1,15 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
-using Sample05Shared;
+﻿using Sample05Shared;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Sample05XamarinForms
 {
-	public partial class TestingPage : ContentPage
+    public partial class TestingPage : ContentPage
 	{
         Sample05 common;
 
@@ -18,12 +13,11 @@ namespace Sample05XamarinForms
 			InitializeComponent();
 
             common = new Sample05(
-                Device.BeginInvokeOnMainThread,
-                (output) =>
+                output =>
                 {
                     Output.Text = output;
                 },
-                (debug) =>
+                debug =>
                 {
                     System.Diagnostics.Debug.WriteLine(debug);
                 }
