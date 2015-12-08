@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net;
-using Convertigo.SDK.FullSync;
-using Newtonsoft.Json;
+﻿using System.Net;
 
 namespace Convertigo.SDK
 {
@@ -24,12 +17,6 @@ namespace Convertigo.SDK
         public C8oSettings Clone()
         {
             return new C8oSettings(this);
-        }
-
-        public C8oSettings SetUiDispatcher(Action<Action> uiDispatcher)
-        {
-            this.uiDispatcher = uiDispatcher;
-            return this;
         }
 
         /// <summary>

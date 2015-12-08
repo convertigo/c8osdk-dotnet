@@ -1,23 +1,13 @@
-﻿using System;
+﻿using Convertigo.SDK.Exceptions;
+using Convertigo.SDK.Utils;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Convertigo.SDK;
-using System.Net.Http;
-using Newtonsoft.Json.Linq;
-using System.Windows;
-using System.Text.RegularExpressions;
-using Convertigo.SDK.Exceptions;
-using System.Xml.Linq;
-using System.IO;
 using System.Net;
-using System.Threading;
-using System.Diagnostics;
-using Convertigo.SDK.Utils;
-using Convertigo.SDK.FullSync;
-using Convertigo.SDK.C8oEnum;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 // TODO
 // doc
@@ -70,7 +60,8 @@ namespace Convertigo.SDK
         public static readonly string RESPONSE_TYPE_JSON = "json";
 
         //*** Static configuration ***//
-        public static Type C8oFullSyncUsed;
+        internal static Action<Action> UiDispatcher;
+        internal static Type C8oFullSyncUsed;
 
         //*** Attributes ***//
 

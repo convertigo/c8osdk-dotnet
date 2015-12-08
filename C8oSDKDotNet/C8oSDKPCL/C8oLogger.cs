@@ -1,17 +1,12 @@
-﻿using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Input;
-using System.Diagnostics;
-using Convertigo.SDK;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
+﻿using Convertigo.SDK.Exceptions;
 using Convertigo.SDK.Utils;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Xml.Linq;
-using System.IO;
-using Convertigo.SDK.Exceptions;
 
 namespace Convertigo.SDK
 {
@@ -99,7 +94,7 @@ namespace Convertigo.SDK
 
         private bool IsLoggableConsole(C8oLogLevel logLevel)
         {
-            return false;
+            return true;
         }
 
         //*** Basics log ***//

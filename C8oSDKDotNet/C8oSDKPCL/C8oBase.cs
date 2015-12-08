@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
 
 namespace Convertigo.SDK
 {
     public class C8oBase
     {
-        protected Action<Action> uiDispatcher = null;
         //*** HTTP ***//
 
         protected int timeout = -1;
@@ -32,11 +26,6 @@ namespace Convertigo.SDK
         protected string fullSyncPassword = null;
 
         //*** Getter ***//
-
-        public Action<Action> UiDispatcher
-        {
-            get { return uiDispatcher; }
-        }
 
         /// <summary>
         /// Gets the connection timeout to Convertigo in milliseconds. A value of zero means the timeout is not used.
@@ -122,8 +111,6 @@ namespace Convertigo.SDK
 
         protected void Copy(C8oBase c8oBase)
         {
-            uiDispatcher = c8oBase.uiDispatcher;
-
             //*** HTTP ***//
 
             timeout = c8oBase.timeout;
