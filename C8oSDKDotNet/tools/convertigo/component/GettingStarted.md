@@ -15,6 +15,34 @@
 
 You will be ready now to start Xamarin client side programming :
 
+## Initialize the SDK ##
+Before using any SDK function you need to initialize the SDK. Although all other code calling the SDK can be used in a shared project the initialisation code must be done in an Android or iOS project. The best place to initialize the SDK in in the:
+
+- For Android in the MainActivity.cs:
+
+		protected override void OnCreate (Bundle bundle)
+		{
+			base.OnCreate (bundle);
+			global::Xamarin.Forms.Forms.Init (this, bundle);
+			// Initialize the SDK Here.
+			C8oPlatform.Init();
+
+			LoadApplication (new App ());
+		}
+
+- for iOS in the AppDelegate.cs
+
+		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
+		{
+			global::Xamarin.Forms.Forms.Init ();
+			LoadApplication (new AppTestSDK.App ());
+			// Initialize the SDK Here.
+			C8oPlatform.Init();
+
+			return base.FinishedLaunching (app, options);
+		}
+
+
 
 ## Create a Convertigo End Point: ##
 In Xamarin Studio or Visual Studio 2015, Use this to create a **C8o** end point Object (C8o stands for "Convertigo") in your app:
