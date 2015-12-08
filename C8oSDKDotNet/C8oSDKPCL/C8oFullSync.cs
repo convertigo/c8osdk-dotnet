@@ -1,22 +1,11 @@
 ﻿using Convertigo.SDK.Exceptions;
 using Convertigo.SDK.FullSync.Enums;
-using Convertigo.SDK;
 using Convertigo.SDK.Utils;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("C8oSDKDotNet.Android")]
-[assembly: InternalsVisibleTo("C8oSDKDotNet.iOS")]
-[assembly: InternalsVisibleTo("C8oSDKDotNet.Windows")]
 
 namespace Convertigo.SDK
 {

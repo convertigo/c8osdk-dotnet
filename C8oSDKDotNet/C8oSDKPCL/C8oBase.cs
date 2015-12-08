@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 
 namespace Convertigo.SDK
 {
@@ -26,6 +27,8 @@ namespace Convertigo.SDK
         protected string fullSyncPassword = null;
 
         //*** Getter ***//
+
+        protected Action<Action> uiDispatcher = null;
 
         /// <summary>
         /// Gets the connection timeout to Convertigo in milliseconds. A value of zero means the timeout is not used.
@@ -108,6 +111,11 @@ namespace Convertigo.SDK
         {
             get { return fullSyncPassword; }
         }
+        
+        public Action<Action> UiDispatcher
+        {
+            get { return uiDispatcher; }
+        }
 
         protected void Copy(C8oBase c8oBase)
         {
@@ -139,6 +147,8 @@ namespace Convertigo.SDK
             fullSyncServerUrl = c8oBase.fullSyncServerUrl;
             fullSyncUsername = c8oBase.fullSyncUsername;
             fullSyncPassword = c8oBase.fullSyncPassword;
+
+            uiDispatcher = c8oBase.uiDispatcher;
         }
     }
 }

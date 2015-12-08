@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 
 namespace Convertigo.SDK
 {
@@ -120,6 +121,12 @@ namespace Convertigo.SDK
         public C8oSettings SetFullSyncLocalSuffix(string fullSyncLocalSuffix)
         {
             this.fullSyncLocalSuffix = fullSyncLocalSuffix;
+            return this;
+        }
+
+        public C8oSettings SetUiDispatcher(Action<Action> uiDispatcher)
+        {
+            this.uiDispatcher = uiDispatcher;
             return this;
         }
     }

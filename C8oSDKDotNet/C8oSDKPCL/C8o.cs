@@ -60,8 +60,9 @@ namespace Convertigo.SDK
         public static readonly string RESPONSE_TYPE_JSON = "json";
 
         //*** Static configuration ***//
-        internal static Action<Action> UiDispatcher;
         internal static Type C8oFullSyncUsed;
+        internal static Action<Action> defaultUiDispatcher;
+        internal static string deviceUUID;
 
         //*** Attributes ***//
 
@@ -74,7 +75,6 @@ namespace Convertigo.SDK
         private string endpointHost;
         private string endpointPort;
 
-        private string deviceUUID;
 
         /// <summary>
         /// Used to run HTTP requests.
@@ -133,10 +133,15 @@ namespace Convertigo.SDK
                 Copy(c8oSettings);
             }
 
+            if (uiDispatcher == null)
+            {
+                uiDispatcher = defaultUiDispatcher;
+            }
+
             httpInterface = new C8oHttpInterface(this);
 
             c8oLogger = new C8oLogger(this);
-            c8oLogger.SetRemoteLogParameters(httpInterface, LogRemote, endpointConvertigo, deviceUUID);
+            c8oLogger.SetRemoteLogParameters(httpInterface, LogRemote, endpointConvertigo, DeviceUUID);
 
             c8oLogger.LogMethodCall("C8o", this);
 
