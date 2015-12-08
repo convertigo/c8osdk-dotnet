@@ -28,3 +28,7 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("2.0.0.0")]
 [assembly: AssemblyFileVersion("2.0.0.0")]
+
+[assembly: InternalsVisibleTo("C8oSDKDotNet.Android")]
+[assembly: InternalsVisibleTo("C8oSDKDotNet.iOS")]
+[assembly: InternalsVisibleTo("C8oSDKDotNet.Windows")]
