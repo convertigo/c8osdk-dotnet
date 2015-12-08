@@ -1,18 +1,7 @@
-﻿using Convertigo.SDK;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
@@ -34,17 +23,16 @@ namespace Sample04Wpf.Win
 
         async private void LoginButtonClick(object sender, RoutedEventArgs e)
         {
-            String username = UsernameField.Text;
+            string username = UsernameField.Text;
 
-            XDocument loginResponse = await app.c8o.CallXml(".Login", new Dictionary<String, Object>
-            {
-                {"username", username},
-                {"password", PasswordField.Password}
-            }).Async();
+            var loginResponse = await app.c8o.CallXml(".Login",
+                "username", username,
+               "password", PasswordField.Password
+            ).Async();
 
             app.OutputArea.Text = loginResponse.ToString();
 
-            XElement authenticated = loginResponse.XPathSelectElement("/document/authenticated");
+            var authenticated = loginResponse.XPathSelectElement("/document/authenticated");
             if (authenticated != null && authenticated.Value.Equals(username))
             {
                 app.ContentArea.Content = new Files(app);

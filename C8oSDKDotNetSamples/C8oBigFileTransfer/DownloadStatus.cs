@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace C8oBigFileTransfer
+﻿namespace C8oBigFileTransfer
 {
     public class DownloadStatus
     {
@@ -17,9 +11,9 @@ namespace C8oBigFileTransfer
         
         public class DownloadState
         {
-            String toString;
+            string toString;
 
-            internal DownloadState(String toString)
+            internal DownloadState(string toString)
             {
                 this.toString = toString;
             }
@@ -44,9 +38,9 @@ namespace C8oBigFileTransfer
             }
         }
 
-        private String uuid;
+        private string uuid;
 
-        public String Uuid
+        public string Uuid
         {
             get
             {
@@ -54,9 +48,9 @@ namespace C8oBigFileTransfer
             }
         }
 
-        private String filepath;
+        private string filepath;
 
-        public String Filepath
+        public string Filepath
         {
             get
             {
@@ -97,11 +91,11 @@ namespace C8oBigFileTransfer
             }
         }
 
-        internal DownloadStatus(String uuid, String filepath)
+        internal DownloadStatus(string uuid, string filepath)
         {
             this.uuid = uuid;
             this.filepath = filepath;
-            this.total = int.Parse(uuid.Substring(uuid.LastIndexOf('-') + 1));
+            total = int.Parse(uuid.Substring(uuid.LastIndexOf('-') + 1));
         }
     }
 }

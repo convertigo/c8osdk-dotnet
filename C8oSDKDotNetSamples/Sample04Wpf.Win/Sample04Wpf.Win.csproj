@@ -126,6 +126,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\C8oSDKDotNet\C8oSDKDotNet.Windows\C8oSDKDotNet.Windows.csproj">
+      <Project>{fad46f42-e48d-45d3-ba42-a27298f0b63b}</Project>
+      <Name>C8oSDKDotNet.Windows</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </ProjectReference>
     <ProjectReference Include="..\C8oBigFileTransfer\C8oBigFileTransfer.csproj">
       <Project>{96165803-8e2d-48bd-b8d8-e43749927600}</Project>
       <Name>C8oBigFileTransfer</Name>

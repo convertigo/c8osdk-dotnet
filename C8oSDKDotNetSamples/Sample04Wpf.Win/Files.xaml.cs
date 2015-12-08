@@ -26,18 +26,18 @@ namespace Sample04Wpf.Win
     {
         class File
         {
-            internal String name;
-            String size;
-            internal String progress = "";
-            internal String uuid;
+            internal string name;
+            string size;
+            internal string progress = "";
+            internal string uuid;
 
-            internal File(String name, String size)
+            internal File(string name, string size)
             {
                 this.name = name;
                 this.size = size;
             }
 
-            public override String ToString()
+            public override string ToString()
             {
                 return name + " [" + size + "] " + progress;
             }
@@ -52,27 +52,28 @@ namespace Sample04Wpf.Win
             
             this.app = app;
 
-            app.c8o.Call(".Files", null, new C8oResponseXmlListener((filesResponse, param) =>
+            app.c8o.CallXml(".Files").Then((doc, param) =>
             {
-                String xml = filesResponse.ToString();
-                IEnumerable<XElement> files = filesResponse.XPathSelectElements("/document/directory/file");
+                string xml = doc.ToString();
+                var files = doc.XPathSelectElements("/document/directory/file");
 
-                Dispatcher.Invoke(() =>
+                app.c8o.RunUI(() =>
                 {
                     app.OutputArea.Text = xml;
 
-                    foreach (XElement file in files)
+                    foreach (var file in files)
                     {
                         FilesList.Items.Add(new File(file.Value, file.Attribute("size").Value));
                     }
 
                     FilesList.SelectedIndex = 0;
                 });
-            }));
+                return null;
+            });
 
-            app.bigFileTransfer.RaiseDownloadStatus += (Object sender, DownloadStatus downloadStatus) =>
+            app.bigFileTransfer.RaiseDownloadStatus += (sender, downloadStatus) =>
             {
-                Dispatcher.Invoke(() =>
+                app.c8o.RunUI(() =>
                 {
                     File file = null;
 
@@ -120,41 +121,36 @@ namespace Sample04Wpf.Win
             app.bigFileTransfer.Start();
         }
 
-        private void Download_Click(object sender, RoutedEventArgs e)
+        private async void Download_Click(object sender, RoutedEventArgs e)
         {
-            File file = FilesList.SelectedItem as File;
+            var file = FilesList.SelectedItem as File;
 
             file.progress = "preparing";
 
             FilesList.Items.Remove(file);
             FilesListProgress.Items.Add(file);
 
-            app.c8o.Call(".RequestFile", new Dictionary<String, Object>
+            var doc = await app.c8o.CallXml(".RequestFile",
+                "filename", file.name
+            ).Async();
+            
+            string xml = doc.ToString();
+            var uuid = doc.XPathSelectElement("/document/uuid");
+
+            app.OutputArea.Text = xml;
+            if (uuid == null)
             {
-                {"filename", file.name}
-            }, new C8oResponseXmlListener(async (xmlResponse, param) =>
+                file.progress = "error";
+
+                FilesListProgress.Items.Remove(file);
+                FilesList.Items.Add(file);
+            }
+
+            if (uuid != null)
             {
-                String xml = xmlResponse.ToString();
-                XElement uuid = xmlResponse.XPathSelectElement("/document/uuid");
-
-                Dispatcher.Invoke(() =>
-                {
-                    app.OutputArea.Text = xml;
-                    if (uuid == null)
-                    {
-                        file.progress = "error";
-
-                        FilesListProgress.Items.Remove(file);
-                        FilesList.Items.Add(file);
-                    }
-                });
-
-                if (uuid != null)
-                {
-                    file.uuid = uuid.Value;
-                    await app.bigFileTransfer.AddFile(file.uuid, "D:\\TMP\\" + file.uuid + "_" + param["filename"]);
-                }
-            }));
+                file.uuid = uuid.Value;
+                await app.bigFileTransfer.AddFile(file.uuid, "D:\\TMP\\" + file.uuid + "_" + file.name);
+            }
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace C8oBigFileTransfer
 {
@@ -21,7 +19,5 @@ namespace C8oBigFileTransfer
             this.CreateFile = CreateFile;
             this.OpenFile = OpenFile;
         }
-
-
     }
 }
