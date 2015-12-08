@@ -8,7 +8,7 @@ namespace Convertigo.SDK
         {
             Handler mainLooperHandler = new Handler(Looper.MainLooper);
 
-            C8o.UiDispatcher = code =>
+            C8o.defaultUiDispatcher = code =>
             {
                 if (Looper.MyLooper() == Looper.MainLooper)
                 {
@@ -18,6 +18,9 @@ namespace Convertigo.SDK
                     mainLooperHandler.Post(code);
                 }
             };
+
+            C8o.deviceUUID = Android.OS.Build.Serial;
+
             C8oFullSyncCbl.Init();
         }
     }
