@@ -7,7 +7,7 @@ namespace Convertigo.SDK
         static public void Init()
         {
             var dispatcher = Application.Current.MainWindow.Dispatcher;
-            C8o.UiDispatcher = code =>
+            C8o.defaultUiDispatcher = code =>
             {
                 dispatcher.BeginInvoke(code);
             };
