@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -82,6 +82,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="C8oPlatform.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -100,7 +101,6 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\C8oFullSyncNet\C8oFullSyncNet.projitems" Label="Shared" Condition="Exists('..\C8oFullSyncNet\C8oFullSyncNet.projitems')" />
-  <Import Project="..\C8oPlatforms\C8oPlatforms.projitems" Label="Shared" Condition="Exists('..\C8oPlatforms\C8oPlatforms.projitems')" />
   <Import Project="..\C8oFullSyncCbl\C8oFullSyncNet.projitems" Label="Shared" Condition="Exists('..\C8oFullSyncCbl\C8oFullSyncNet.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
