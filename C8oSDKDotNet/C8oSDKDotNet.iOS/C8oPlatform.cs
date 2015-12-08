@@ -6,7 +6,7 @@ namespace Convertigo.SDK
     {
         static public void Init()
         {
-            C8o.UiDispatcher = new NSObject().BeginInvokeOnMainThread;
+            C8o.defaultUiDispatcher = new NSObject().BeginInvokeOnMainThread;
             C8oFullSyncCbl.Init();
         }
     }
