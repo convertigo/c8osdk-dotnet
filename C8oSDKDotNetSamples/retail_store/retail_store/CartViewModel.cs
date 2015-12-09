@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using Newtonsoft.Json.Linq;
-using Convertigo.SDK.Listeners;
+////using Convertigo.SDK.Listeners;
 using Convertigo.SDK;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -152,56 +152,33 @@ namespace retail_store
             
         }
 
-
         public void deleteCart(Boolean all=false)
         {
             if (all)
             {
                 foreach (ProdStock p in ProductStock)
                 {
-                    App.myC8oCart.Call("fs://.delete", new Dictionary<string, object>
-                    {
-                        {"docid", p.Id }
-                    }
-                    ,
-                    new C8oJsonResponseListener((jsonResponse, parameters) =>
-                    {
-                        App.myC8oCart.Log(C8oLogLevel.DEBUG, jsonResponse.ToString());
-                        Debug.WriteLine(jsonResponse.ToString());
-                        
-
-                    }),
-                    new C8oExceptionListener((exception, parameters) =>
-                    {
-                        Debug.WriteLine("Exeption : [ToString] = " + exception.ToString() + "Fin du [ToString]");
-
-                    })
-                    );
-                    
+                    App.myC8oCart.CallJson(
+                        "fs://.delete",
+                        "docid", p.Id)
+                        .Fail((e, q) =>
+                        {
+                            // Handle errors..
+                        })
+                    .Async();   
                 }
-                //ObservableCollection<ProdStock> data = new ObservableCollection<ProdStock>();
                 ProductStock.Clear();
             }
             else
             {
-                App.myC8oCart.Call("fs://.delete", new Dictionary<string, object>
-                {
-                    {"docid", productToInsert.Id }
-
-                }
-                    ,
-                    new C8oJsonResponseListener((jsonResponse, parameters) =>
+                App.myC8oCart.CallJson(
+                    "fs://.delete",
+                    "docid", productToInsert.Id)
+                    .Fail((e, q) =>
                     {
-                        App.myC8oCart.Log(C8oLogLevel.DEBUG, jsonResponse.ToString());
-                        Debug.WriteLine(jsonResponse.ToString());
-
-                    }),
-                    new C8oExceptionListener((exception, parameters) =>
-                    {
-                        Debug.WriteLine("Exeption : [ToString] = " + exception.ToString() + "Fin du [ToString]");
-
+                    // Handle errors..
                     })
-                );
+                    .Async();
             }
         }
 
@@ -213,56 +190,39 @@ namespace retail_store
             if (productToInsert != null)
             {
                 //Then we can insert data into FS://CARTDB thanks to c8o object
-                App.myC8oCart.Call("fs://.post", new Dictionary<string, object>
-                {
-                    {"_id", productToInsert.Id },
-                    {"name", productToInsert.Name},
-                    {"imageUrl", productToInsert.ImageUrl},
-                    {"count", productToInsert.Count},
-                    {"priceOfUnit",productToInsert.PriceOfUnit },
-                    {"sku", productToInsert.Sku },
-                    {"shopcode",productToInsert.Shopcode },
-                    {"fatherId",productToInsert.FatherId }
-                }
-                ,
-                new C8oJsonResponseListener((jsonResponse, parameters) =>
-                {
-                    App.myC8oCart.Log(C8oLogLevel.DEBUG, jsonResponse.ToString());
-                    Debug.WriteLine(jsonResponse.ToString());
-                    
-
-                }),
-                new C8oExceptionListener((exception, parameters) =>
-                {
-                    Debug.WriteLine("Exeption : [ToString] = " + exception.ToString() + "Fin du [ToString]");
-
-                })
-            );
-
+                App.myC8oCart.CallJson(
+                        "fs://.post",
+                        "_id", productToInsert.Id ,
+                        "name", productToInsert.Name,
+                        "imageUrl", productToInsert.ImageUrl,
+                        "count", productToInsert.Count,
+                        "priceOfUnit",productToInsert.PriceOfUnit,
+                        "sku", productToInsert.Sku,
+                        "shopcode",productToInsert.Shopcode,
+                        "fatherId",productToInsert.FatherId)
+                        .Fail((e, q) =>
+                        {
+                            // Handle errors..
+                        })
+                    .Async();
             }
             
         }
 
-        public void GetReducePrice()
+        public async void GetReducePrice()
         {
-            App.myC8oCart.Call("fs://.view",
-               new Dictionary<string, object>
-               {
-                    {"ddoc", "design"},
-                    {"view", "reduceTot"},
-                    {"reduce", true}
-               },
-               new C8oJsonResponseListener((jsonResponse, parameters) =>
-               {
-                   Debug.WriteLine(jsonResponse.ToString());
-                   SetReduce(jsonResponse);
-               }),
+            JObject data = await App.myC8oCart.CallJson(
+                    "fs://.view",
+                    "ddoc", "design",
+                    "view", "reduceTot",
+                    "reduce", true)
+                    .Fail((e, p) =>
+                    {
+                        // Handle errors..
+                    })
+                    .Async();
 
-               new C8oExceptionListener((exception, parameters) =>
-               {
-                   Debug.WriteLine("Exeption : [ToString] = " + exception.ToString() + "Fin du [ToString]");
-               })
-           );
+            SetReduce(data);
         }
 
         public void SetReduce(JObject jsRep)
@@ -295,44 +255,36 @@ namespace retail_store
 
         }
 
-        public void GetRealPrice()
+        public async void GetRealPrice()
         {
-            App.myC8oCart.Call("fs://.view",
-               new Dictionary<string, object>
-               {
-                    
-                    {"ddoc", "design"},
-                    {"view", "CartPrice"}
-               },
-               new C8oJsonResponseListener((jsonResponse, parameters) =>
-               {/*
-                   this.Reduce[0].NewPrice = ((JObject)jsonResponse).GetValue("CartPrice.newPrice").ToString();
-                   this.Reduce[0].Discount = ((JObject)jsonResponse).GetValue("CartPrice.discount").ToString();
-                   
-                   
-                   if (((JObject)jsonResponse).GetValue("_id").ToString() == "CartPrice")
-                   {
-                       string a = "25";
-                   }*/
-                   Boolean flag = false;
-                   foreach(JObject jo in (JArray)jsonResponse["rows"])
-                   {
-                       this.Reduce[0].Discount = (((string)jo["value"]["discount"])).ToString();
-                       this.Reduce[0].NewPrice = ((string)jo["value"]["newPrice"]).ToString();
-                       flag = true;
-                   }
-                   if (!flag)
-                   {
-                       this.Reduce[0].Discount = "0";
-                       this.Reduce[0].NewPrice = "0";
-                   }
-               }),
 
-               new C8oExceptionListener((exception, parameters) =>
-               {
-                   Debug.WriteLine("Exeption : [ToString] = " + exception.ToString() + "Fin du [ToString]");
-               })
-           );
+            JObject data = await App.myC8oCart.CallJson(
+                    "fs://.view",
+                    "ddoc", "design",
+                    "view", "CartPrice")
+                    .Fail((e, p) =>
+                    {
+                        // Handle errors..
+                    })
+                    .Async();
+            SetRealPrice(data);
+        }
+
+        public void SetRealPrice(JObject jsonResponse)
+        {    
+             Boolean flag = false;
+             foreach(JObject jo in (JArray)jsonResponse["rows"])
+             {
+                 this.Reduce[0].Discount = (((string)jo["value"]["discount"])).ToString();
+                 this.Reduce[0].NewPrice = ((string)jo["value"]["newPrice"]).ToString();
+                 flag = true;
+             }
+             if (!flag)
+             {
+                 this.Reduce[0].Discount = "0";
+                 this.Reduce[0].NewPrice = "0";
+             }
+               
         }
 
     }

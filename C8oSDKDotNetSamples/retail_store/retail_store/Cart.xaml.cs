@@ -1,11 +1,12 @@
 ﻿using Convertigo.SDK;
-using Convertigo.SDK.Listeners;
+////using Convertigo.SDK.Listeners;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 using Xamarin.Forms;
 
@@ -22,31 +23,30 @@ namespace retail_store
             labRePr.BindingContext = (ReduceTot)App.cvm.Reduce[0];
             labReNewP.BindingContext = (ReduceTot)App.cvm.Reduce[0];
             labReDis.BindingContext = (ReduceTot)App.cvm.Reduce[0];
-            App.myC8o.Call("fs://cartdb.view",
-                new Dictionary<string, object>
-                {
-                    {"ddoc", "design"},
-                    {"view", "view"}
 
-                },
-                new C8oJsonResponseListener((jsonResponse, parameters) =>
-                {
-                    App.cvm.PopulateData(jsonResponse, true);
-                    listView.ItemsSource = App.cvm.ProductStock;
+            
+            GetView();
 
-                }),
-
-                new C8oExceptionListener((exception, parameters) =>
-                {
-                    Debug.WriteLine("Exeption : [ToString] = " + exception.ToString() + "Fin du [ToString]");
-                })
-            );
         }
+        public async void GetView()
+        {
+            JObject data = await App.myC8o.CallJson(
+                "fs://.view",
+                "ddoc", "design",
+                "view", "view")
+                .Fail((e, p) =>
+                {
+                    // Handle errors..
+                })
+                .Async();
+            App.cvm.PopulateData(data, true);
+            listView.ItemsSource = App.cvm.ProductStock;
+        }
+
 
         protected override void OnAppearing()
         {
             App.cvm.GetReducePrice();
-            
         }
 
         void tapImage_Tapped(object sender, EventArgs e)
@@ -73,7 +73,6 @@ namespace retail_store
         public void sal(object sender, EventArgs e)
         {
             App.cvm.deleteCart(true);
-            //App.cvm.GetReducePrice();
         }
 
 

@@ -23,7 +23,8 @@ namespace retail_store.iOS
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-            FullSyncMobile.Init();
+            
+           
             global::Xamarin.Forms.Forms.Init();
             LoadApplication(new App());
             

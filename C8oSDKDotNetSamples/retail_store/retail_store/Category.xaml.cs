@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Convertigo.SDK;
-using Convertigo.SDK.Listeners;
+//using Convertigo.SDK.Listeners;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 
@@ -153,36 +153,27 @@ namespace retail_store
             
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             //Here we call, thanks to myC8o object, a new view on our local base with specified parameters.
-            App.myC8o.Call("fs://.view",
-                new Dictionary<string, object>
-                {
-                    {"ddoc", "design"},
-                    {"view", view},
-                    {"startkey" , "['42','"+Categor+"',"+Leaf+"]"},
-                    {"endkey", "['42','"+Categor2+"',"+Leaf2+"]"},
-                    {"limit", 20},
-                    {"skip", 0}
+            JObject data = await App.myC8oCart.CallJson(
+                    "fs://.view",
+                    "ddoc", "design",
+                    "view", view,
+                    "startkey", "['42','" + Categor + "'," + Leaf + "]",
+                    "endkey", "['42','" + Categor2 + "'," + Leaf2 + "]",
+                    "limit", 20,
+                    "skip", 0)
+                    .Fail((e, p) =>
+                    {
+                        // Handle errors..
+                    })
+                    .Async();
 
-                },
-                new C8oJsonResponseListener((jsonResponse, parameters) =>
-                {
-                    Debug.WriteLine(jsonResponse.ToString());
-                    App.myC8o.Log(C8oLogLevel.DEBUG, jsonResponse.ToString());
-                    Object model;
-                    App.models.TryGetValue("CategoryViewModel", out model);
-                    Model a = (Model)model;
-                    a.PopulateData(jsonResponse, IsProduct);
-
-                }),
-
-                new C8oExceptionListener((exception, parameters) =>
-                {
-                    Debug.WriteLine("Exeption : [ToString] = " + exception.ToString() + "Fin du [ToString]");
-                })
-            );
+            Object model;
+            App.models.TryGetValue("CategoryViewModel", out model);
+            Model a = (Model)model;
+            a.PopulateData(data, IsProduct);
 
         }
         

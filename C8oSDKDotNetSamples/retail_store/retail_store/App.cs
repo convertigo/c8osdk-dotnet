@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Xamarin.Forms;
 using Convertigo.SDK;
-using Convertigo.SDK.FullSync;
-using Convertigo.SDK.Listeners;
-using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using Plugin.Connectivity;
+using Newtonsoft.Json.Linq;
 
 
 namespace retail_store
@@ -21,97 +16,111 @@ namespace retail_store
         public static C8o myC8oCart;
         public static Dictionary<String, Object> models;
         public static CartViewModel cvm;
+        //instanciate not static objects accessible from the whole solution. 
         public Boolean connectivity;
         public bool exec;
         
 
-
         public App()
         {
-            connectivity = CrossConnectivity.Current.IsConnected;
-            CrossConnectivity.Current.ConnectivityChanged += (sender, args) =>
-            {
-                Debug.WriteLine("Connectivity Changed", "IsConnected: " + args.IsConnected.ToString(), "OK");
-                connectivity = args.IsConnected;
-                if (connectivity)
-                {
-                    OnStart();
-                }
-                
-            };
-            
-
-            //instanciate C8o Objects with attributes
+            //instanciate C8o Object with attributes
             myC8o = new C8o("http://192.168.100.86:18080/convertigo/projects/sampleMobileRetailStore",
                     new C8oSettings().
                     SetTimeout(10000).
                     SetTrustAllCertificates(true).
-                    SetDefaultFullSyncDatabaseName("retaildb").
+                    SetDefaultDatabaseName("retaildb").
                     SetIsLogRemote(true)
-                    
-                   
                 );
 
-            //instanciate C8o Objects with attributes
+            //instanciate C8o Object for our cart with attributes
             myC8oCart = new C8o("http://192.168.100.86:18080/convertigo/projects/sampleMobileRetailStore",
                     new C8oSettings().
                     SetTimeout(10000).
                     SetTrustAllCertificates(true).
-                    SetDefaultFullSyncDatabaseName("cartdb").
+                    SetDefaultDatabaseName("cartdb").
                     SetIsLogRemote(true)
-
-
                 );
 
-
+            //instanciate dictionnary
             models = new Dictionary<string, object>();
             cvm = new CartViewModel();
             
-            // Set the MainPage
-            //It is a tabbedPage from wich we will be able to navigate into the whole application. 
+            /* Set the MainPage
+            It is a tabbedPage from wich we will be able to navigate into the whole application.*/
             MainPage = new TabbedPageP();
-            
         }
 
         
 
     protected override async void OnStart()
         {
-            exec = true;
             // Handle when your app starts
-            if (connectivity)
+
+            //instanciate a new JObject data that will recieve json from our C8o objects
+            JObject data;
+
+            //CallJson Method is called thanks to C8o Object 
+            data = await myC8o.CallJson(
+                "select_shop",          //We give him parameters as the name of the sequence that we calls
+                "shopCode", "42")       //And the parameters for the sequence    
+                .Fail((e, p) => 
+                {
+                    //Handle errors..
+                })
+                .Async();               //Async Call
+
+            //if data return "42" for selectshop then..
+            if ((String) data["document"]["selectShop"] == "42")
             {
-
-                JObject jObj;
-                jObj = await myC8o.CallJsonAsync(".select_shop",
-                    new Dictionary<string, object> {
-                    { "shopCode", "42" },
-                    }
-                );
-
-
+                //Open the modal page in order to give the state of the waiting
                 await MainPage.Navigation.PushModalAsync(new LoadingPage());
-                myC8o.Call("fs://.sync", null,
-                    new C8oJsonResponseListener((jsonResponse, parameters) =>
-                    {
-                        if(jsonResponse["status"].ToString() == "Stopped")
-                        {
-                            if (exec == true)
-                            {
-                                Cart();
-                            }
-                        }
 
-                    }),
-                    new C8oExceptionListener((exception, parameters) =>
+                //CallJson Method is called thanks to C8o Object 
+                data = await myC8o.CallJson(
+                    "fs://.sync")           //We give him parameters as the name of the FULLSYNC connector that we calls
+                    .Progress(progress => 
                     {
-                        Debug.WriteLine("Exeption : [ToString] = " + exception.ToString() + "Fin du [ToString]");
+                        var complete = progress.Current / progress.Total * 100; //We are able to obtain the progress of the task
                     })
-                );
+                    .Fail((e, p) =>
+                    {
+                        //Handle errors..
+                    })
+                    .Async();
+                //Close the modal page that give us the progress...
+               await MainPage.Navigation.PopModalAsync();
+            }
 
-                
-                
-                
+            //CallJson Method is called thanks to C8o Object    
+            JObject dataCart = await myC8oCart.CallJson(
+                ".Connect")         //We give him parameters as the name of the FULLSYNC connector that we calls
+                .Fail((e, p) =>
+                {
+                    //Handle errors...
+                })
+                .Async();
+
+            //CallJson Method is called thanks to C8o Object 
+            data = await myC8o.CallJson(
+                    "fs://.sync",                   //We give him parameters as the name of the FULLSYNC connector that we calls
+                    "live", "true")                 //And the live sync
+                    .Progress(progress =>
+                    {
+                        //We are able to obtain the progress of the task
+                        var complete = progress.Current / progress.Total * 100;
+
+                        //And test for example if the task is done
+                        if (progress.Finished)
+                        {
+                            App.cvm.GetRealPrice();
+                            App.cvm.GetReducePrice();
+                            MainPage.Navigation.PopModalAsync();
+                        }
+                            
+                    })
+                    .Async();
+
+
             }
         }
 
@@ -123,34 +132,6 @@ namespace retail_store
         protected override void OnResume()
         {
             // Handle when your app resumes
-        }
-
-        private async void Cart()
-        {
-            exec = false;
-            JObject jObjCart;
-            jObjCart = await myC8oCart.CallJsonAsync(".Connect");
-            //Downloading designdoc from cartdb for fs://cartdb
-
-            myC8oCart.Call("fs://.sync",
-                new Dictionary<string, object> {
-                    { "live", "true" },
-                },
-                new C8oJsonResponseListener((jsonResponse, parameters) =>
-                {
-                    //Debug.WriteLine(jsonResponse.ToString());
-                    App.cvm.GetRealPrice();
-                    App.cvm.GetReducePrice();
-
-                }),
-                new C8oExceptionListener((exception, parameters) =>
-                {
-                    Debug.WriteLine("Exeption : [ToString] = " + exception.ToString() + "Fin du [ToString]");
-                })
-            );
-            await MainPage.Navigation.PopModalAsync();
-
-          
         }
 
         

@@ -20,8 +20,6 @@ namespace retail_store
             this.Children.Add(pr);
             this.Children.Add(np);
             this.Children.Add(b);
-           
-
         }
     }
 }
