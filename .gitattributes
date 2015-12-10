@@ -751,6 +751,7 @@ C8oSDKDotNet/C8oSDKDotNet.Windows/packages.config -text
 C8oSDKDotNet/C8oSDKDotNet.iOS/C8oPlatform.cs -text
 C8oSDKDotNet/C8oSDKDotNet.iOS/C8oSDKDotNet.iOS.csproj -text
 C8oSDKDotNet/C8oSDKDotNet.iOS/Properties/AssemblyInfo.cs -text
+C8oSDKDotNet/C8oSDKDotNet.iOS/Ref.cs -text
 C8oSDKDotNet/C8oSDKDotNet.iOS/app.config -text
 C8oSDKDotNet/C8oSDKDotNet.iOS/packages.config -text
 C8oSDKDotNet/C8oSDKDotNet.sln -text
