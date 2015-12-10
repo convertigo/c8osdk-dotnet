@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Xml.Linq;
 using System.Xml.XPath;
 
 namespace Sample04Wpf.Win

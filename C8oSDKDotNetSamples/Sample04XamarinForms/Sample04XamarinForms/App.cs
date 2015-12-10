@@ -1,9 +1,6 @@
 ﻿using C8oBigFileTransfer;
 using Convertigo.SDK;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Xamarin.Forms;
 
 namespace Sample04XamarinForms

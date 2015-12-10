@@ -5,10 +5,10 @@
   <ScrollView Orientation="Vertical">
     <StackLayout Orientation="Vertical" Spacing="5">
       <Label Text="Files" XAlign="Center" FontAttributes="Bold" FontSize="22"/>
-      <ListView x:Name="FilesList"/>
-      <Button x:Name="Download" Text="Download" Clicked="DownloadButtonClick"/>
+      <ListView Name="FilesList"/>
+      <Button Name="Download" Text="Download" Clicked="DownloadButtonClick"/>
       <Label Text="In Progress" XAlign="Center" FontAttributes="Bold" FontSize="22"/>
-      <ListView x:Name="FilesListProgress"/>
+      <ListView Name="FilesListProgress"/>
     </StackLayout>
   </ScrollView>
 </ContentPage>

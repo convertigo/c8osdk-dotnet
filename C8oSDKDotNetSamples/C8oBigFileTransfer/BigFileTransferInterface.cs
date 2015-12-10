@@ -318,6 +318,17 @@ namespace C8oBigFileTransfer
 
         private static string UrlToPath(string url)
         {
+            // Lesson learnt - always check for a valid URI
+            try
+            {
+                Uri uri = new Uri(url);
+                url = uri.LocalPath;
+            }
+            catch
+            {
+                // not uri format
+            }
+            /*
             // Checks if the URL is valid
             string fileProtocol = "file://";
             if (url.Length > fileProtocol.Length && url.StartsWith(fileProtocol))
@@ -325,6 +336,7 @@ namespace C8oBigFileTransfer
                 // Finds the file path
                 url = url.Substring(fileProtocol.Length);
             }
+            */
             // URL decode the string
             url = Uri.UnescapeDataString(url);
             return url;

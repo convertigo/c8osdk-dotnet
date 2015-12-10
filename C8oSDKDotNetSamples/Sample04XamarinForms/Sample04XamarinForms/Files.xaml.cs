@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using Convertigo.SDK;
-using C8oBigFileTransfer;
-
-using Xamarin.Forms;
-using System.Diagnostics;
+﻿using C8oBigFileTransfer;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using Xamarin.Forms;
 
 namespace Sample04XamarinForms
 {
@@ -17,18 +11,18 @@ namespace Sample04XamarinForms
     {
         class File
         {
-            internal String name;
-            String size;
-            internal String progress = "";
-            internal String uuid;
+            internal string name;
+            string size;
+            internal string progress = "";
+            internal string uuid;
 
-            internal File(String name, String size)
+            internal File(string name, string size)
             {
                 this.name = name;
                 this.size = size;
             }
 
-            public override String ToString()
+            public override string ToString()
             {
                 return name + " " + (progress.Length > 0 ? progress : "[" + size + "]");
             }
@@ -48,16 +42,16 @@ namespace Sample04XamarinForms
             FilesList.ItemsSource = files;
             FilesListProgress.ItemsSource = progressFiles;
 
-            app.c8o.Call(".Files", null, new C8oResponseJsonListener((filesResponse, param) =>
+            app.c8o.CallJson(".Files").Then((response, param) =>
             {
-                Debug.WriteLine(filesResponse.ToString());
+                Debug.WriteLine(response.ToString());
                 
-                foreach (var file in filesResponse.SelectTokens("document.directory.file[*]"))
+                foreach (var file in response.SelectTokens("document.directory.file[*]"))
                 {
                     files.Add(new File(file["text"].ToString(), file.SelectToken("attr.size").ToString()));
                 }
                 
-                Device.BeginInvokeOnMainThread(() =>
+                app.c8o.RunUI(() =>
                 {
                     FilesList.ItemsSource = null;
                     FilesList.ItemsSource = files;
@@ -67,9 +61,9 @@ namespace Sample04XamarinForms
                     }
                 });
 
-                app.bigFileTransfer.RaiseDownloadStatus += (Object sender, DownloadStatus downloadStatus) =>
+                app.bigFileTransfer.RaiseDownloadStatus += (sender, downloadStatus) =>
                 {
-                    Device.BeginInvokeOnMainThread(() =>
+                    app.c8o.RunUI(() =>
                     {
                         File file = null;
 
@@ -121,12 +115,13 @@ namespace Sample04XamarinForms
                         }
                     });
                 };
-
                 app.bigFileTransfer.Start();
-            }));
+
+                return null;
+            });
         }
 
-        private void DownloadButtonClick(Object sender, EventArgs args)
+        private async void DownloadButtonClick(Object sender, EventArgs args)
         {
             File file = FilesList.SelectedItem as File;
 
@@ -134,7 +129,7 @@ namespace Sample04XamarinForms
 
             files.Remove(file);
             progressFiles.Add(file);
-            Device.BeginInvokeOnMainThread(() =>
+            app.c8o.RunUI(() =>
             {
                 FilesList.ItemsSource = null;
                 FilesList.ItemsSource = files;
@@ -146,38 +141,29 @@ namespace Sample04XamarinForms
                 FilesListProgress.ItemsSource = progressFiles;
             });
 
-            app.c8o.Call(".RequestFile", new Dictionary<String, Object>
+            var json = await app.c8o.Call(".RequestFile", "filename", file.name);
+            Debug.WriteLine(json.ToString());
+
+            JToken uuid = json.SelectToken("document.uuid");
+            if (uuid == null)
             {
-                {"filename", file.name}
-            }, new C8oResponseJsonListener(async (jsonResponse, param) =>
+                file.progress = "error";
+
+                FilesList.ItemsSource = null;
+                FilesList.ItemsSource = files;
+                FilesListProgress.ItemsSource = null;
+                FilesListProgress.ItemsSource = progressFiles;
+
+                progressFiles.Remove(file);
+                files.Add(file);
+            }
+
+            if (uuid != null)
             {
-                Debug.WriteLine(jsonResponse.ToString());
-
-                JToken uuid = jsonResponse.SelectToken("document.uuid");
-   
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    if (uuid == null)
-                    {
-                        file.progress = "error";
-
-                        FilesList.ItemsSource = null;
-                        FilesList.ItemsSource = files;
-                        FilesListProgress.ItemsSource = null;
-                        FilesListProgress.ItemsSource = progressFiles;
-
-                        progressFiles.Remove(file);
-                        files.Add(file);
-                    }
-                });
-
-                if (uuid != null)
-                {
-                    file.uuid = uuid.ToString();
-                    String path = Device.OS == TargetPlatform.Android ? "/sdcard/Download/" : "/tmp/";
-                    await app.bigFileTransfer.AddFile(file.uuid, path + file.uuid + "_" + param["filename"]);
-                }
-            }));
+                file.uuid = uuid.ToString();
+                string path = Device.OS == TargetPlatform.Android ? "/sdcard/Download/" : "/tmp/";
+                await app.bigFileTransfer.AddFile(file.uuid, path + file.uuid + "_" + file.name);
+            }
         }
     }
 }

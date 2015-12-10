@@ -131,10 +131,6 @@
       <Name>C8oSDKDotNet.Windows</Name>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </ProjectReference>
-    <ProjectReference Include="..\C8oBigFileTransfer\C8oBigFileTransfer.csproj">
-      <Project>{96165803-8e2d-48bd-b8d8-e43749927600}</Project>
-      <Name>C8oBigFileTransfer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\C8oSDKDotNet\C8oSDKPCL\C8oSDKPCL.csproj">
       <Project>{1764723d-85b1-4fde-accf-88bb7a3b62a8}</Project>
       <Name>C8oSDKPCL</Name>

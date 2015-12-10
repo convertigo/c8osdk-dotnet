@@ -1,21 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Convertigo.SDK;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Xml.Linq;
 using System.Xml.XPath;
-using Convertigo.SDK;
-using C8oBigFileTransfer;
 
 namespace Sample04Wpf.Win
 {
@@ -71,7 +57,7 @@ namespace Sample04Wpf.Win
                 return null;
             });
 
-            app.bigFileTransfer.RaiseDownloadStatus += (sender, downloadStatus) =>
+            app.fileTransfer.RaiseTransferStatus += (sender, transferStatus) =>
             {
                 app.c8o.RunUI(() =>
                 {
@@ -79,7 +65,7 @@ namespace Sample04Wpf.Win
 
                     foreach (File item in FilesListProgress.Items)
                     {
-                        if (downloadStatus.Uuid == item.uuid)
+                        if (transferStatus.Uuid == item.uuid)
                         {
                             file = item;
                             FilesListProgress.Items.Remove(item);
@@ -91,34 +77,34 @@ namespace Sample04Wpf.Win
                     {
                         foreach (File item in FilesList.Items)
                         {
-                            if (downloadStatus.Filepath.EndsWith(item.name))
+                            if (transferStatus.Filepath.EndsWith(item.name))
                             {
                                 file = item;
-                                file.uuid = downloadStatus.Uuid;
+                                file.uuid = transferStatus.Uuid;
                                 FilesList.Items.Remove(item);
                                 break;
                             }
                         }
                     }
 
-                    if (downloadStatus.State == DownloadStatus.StateFinished)
+                    if (transferStatus.State == C8oFileTransferStatus.StateFinished)
                     {
                         file.progress = "";
                         FilesList.Items.Add(file);
                     }
                     else
                     {
-                        file.progress = downloadStatus.State.ToString();
-                        if (downloadStatus.State == DownloadStatus.StateReplicate)
+                        file.progress = transferStatus.State.ToString();
+                        if (transferStatus.State == C8oFileTransferStatus.StateReplicate)
                         {
-                            file.progress += " " + downloadStatus.Current + "/" + downloadStatus.Total + " (" + downloadStatus.Progress + ")";
+                            file.progress += " " + transferStatus.Current + "/" + transferStatus.Total + " (" + transferStatus.Progress + ")";
                         }
                         FilesListProgress.Items.Add(file);
                     }
                 });
             };
 
-            app.bigFileTransfer.Start();
+            app.fileTransfer.Start();
         }
 
         private async void Download_Click(object sender, RoutedEventArgs e)
@@ -149,7 +135,7 @@ namespace Sample04Wpf.Win
             if (uuid != null)
             {
                 file.uuid = uuid.Value;
-                await app.bigFileTransfer.AddFile(file.uuid, "D:\\TMP\\" + file.uuid + "_" + file.name);
+                await app.fileTransfer.DownloadFile(file.uuid, "D:\\TMP\\" + file.uuid + "_" + file.name);
             }
         }
     }

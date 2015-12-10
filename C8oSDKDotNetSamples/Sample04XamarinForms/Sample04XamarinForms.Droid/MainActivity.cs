@@ -1,14 +1,10 @@
-﻿using System;
-
+﻿
 using Android.App;
 using Android.Content.PM;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Android.OS;
 using C8oBigFileTransfer;
-using System.IO;
 using Convertigo.SDK;
+using System.IO;
 
 namespace Sample04XamarinForms.Droid
 {
