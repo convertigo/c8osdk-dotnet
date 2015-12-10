@@ -746,6 +746,7 @@ C8oSDKDotNet/C8oSDKDotNet.Android/packages.config -text
 C8oSDKDotNet/C8oSDKDotNet.Windows/C8oPlatform.cs -text
 C8oSDKDotNet/C8oSDKDotNet.Windows/C8oSDKDotNet.Windows.csproj -text
 C8oSDKDotNet/C8oSDKDotNet.Windows/Properties/AssemblyInfo.cs -text
+C8oSDKDotNet/C8oSDKDotNet.Windows/Ref.cs -text
 C8oSDKDotNet/C8oSDKDotNet.Windows/app.config -text
 C8oSDKDotNet/C8oSDKDotNet.Windows/packages.config -text
 C8oSDKDotNet/C8oSDKDotNet.iOS/C8oPlatform.cs -text
