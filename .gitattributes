@@ -737,6 +737,7 @@ C8oSDKDotNet/C8oSDK-PCL.nuspec -text
 C8oSDKDotNet/C8oSDKDotNet.Android/C8oPlatform.cs -text
 C8oSDKDotNet/C8oSDKDotNet.Android/C8oSDKDotNet.Android.csproj -text
 C8oSDKDotNet/C8oSDKDotNet.Android/Properties/AssemblyInfo.cs -text
+C8oSDKDotNet/C8oSDKDotNet.Android/Ref.cs -text
 C8oSDKDotNet/C8oSDKDotNet.Android/Resources/AboutResources.txt -text
 C8oSDKDotNet/C8oSDKDotNet.Android/Resources/Resource.Designer.cs -text
 C8oSDKDotNet/C8oSDKDotNet.Android/Resources/Values/Strings.xml -text
