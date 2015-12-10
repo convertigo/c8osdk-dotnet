@@ -1,10 +1,6 @@
-﻿using System;
+﻿using Convertigo.SDK.Utils;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Convertigo.SDK;
-using Convertigo.SDK.Utils;
 
 namespace Convertigo.SDK.Exceptions
 {

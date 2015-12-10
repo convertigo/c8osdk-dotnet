@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using Convertigo.SDK.Exceptions;
+﻿using Convertigo.SDK.Exceptions;
 using Newtonsoft.Json.Linq;
-using Convertigo.SDK.C8oEnum;
+using System;
+using System.Collections.Generic;
 
 namespace Convertigo.SDK.Utils
 {

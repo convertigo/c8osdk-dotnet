@@ -1,10 +1,5 @@
-﻿using Convertigo.SDK.C8oEnum;
-using Convertigo.SDK.Utils;
+﻿using Convertigo.SDK.Utils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Convertigo.SDK
 {
