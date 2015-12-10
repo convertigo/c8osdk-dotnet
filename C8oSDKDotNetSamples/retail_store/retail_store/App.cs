@@ -61,16 +61,16 @@ namespace retail_store
 
             //CallJson Method is called thanks to C8o Object 
             data = await myC8o.CallJson(
-                "select_shop",          //We give him parameters as the name of the sequence that we calls
+                ".select_shop",          //We give him parameters as the name of the sequence that we calls
                 "shopCode", "42")       //And the parameters for the sequence    
                 .Fail((e, p) => 
                 {
-                    //Handle errors..
+                    Debug.WriteLine("LAA"+e);//Handle errors..
                 })
                 .Async();               //Async Call
 
-            //if data return "42" for selectshop then..
-            if ((String) data["document"]["selectShop"] == "42")
+            // if data return "42" for selectshop then..
+            if (data["document"]["shopCode"].ToString() == "42")
             {
                 //Open the modal page in order to give the state of the waiting
                 await MainPage.Navigation.PushModalAsync(new LoadingPage());
@@ -80,11 +80,11 @@ namespace retail_store
                     "fs://.sync")           //We give him parameters as the name of the FULLSYNC connector that we calls
                     .Progress(progress => 
                     {
-                        var complete = progress.Current / progress.Total * 100; //We are able to obtain the progress of the task
+                        Debug.WriteLine(""+progress.Current +"/"+ progress.Total); //We are able to obtain the progress of the task
                     })
                     .Fail((e, p) =>
                     {
-                        //Handle errors..
+                        Debug.WriteLine("LAA" + e);//Handle errors..
                     })
                     .Async();
                 //Close the modal page that give us the progress...
@@ -96,7 +96,7 @@ namespace retail_store
                 ".Connect")         //We give him parameters as the name of the FULLSYNC connector that we calls
                 .Fail((e, p) =>
                 {
-                    //Handle errors...
+                    Debug.WriteLine("LAA" + e);//Handle errors...
                 })
                 .Async();
 
@@ -118,10 +118,14 @@ namespace retail_store
                         }
                             
                     })
+                    .Fail((e,p) =>
+                    {
+                        Debug.WriteLine("LAA" + e);
+                    })
                     .Async();
 
 
-            }
+            
         }
 
         protected override void OnSleep()

@@ -24,12 +24,14 @@ namespace retail_store
             labReNewP.BindingContext = (ReduceTot)App.cvm.Reduce[0];
             labReDis.BindingContext = (ReduceTot)App.cvm.Reduce[0];
 
-            
-            GetView();
+
+           
+        
 
         }
         public async void GetView()
         {
+            
             JObject data = await App.myC8o.CallJson(
                 "fs://.view",
                 "ddoc", "design",
@@ -41,11 +43,13 @@ namespace retail_store
                 .Async();
             App.cvm.PopulateData(data, true);
             listView.ItemsSource = App.cvm.ProductStock;
+            
         }
 
 
         protected override void OnAppearing()
         {
+            
             App.cvm.GetReducePrice();
         }
 

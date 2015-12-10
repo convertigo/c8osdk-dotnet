@@ -166,7 +166,7 @@ namespace retail_store
                     "skip", 0)
                     .Fail((e, p) =>
                     {
-                        // Handle errors..
+                        Debug.WriteLine("LAA" + e);// Handle errors..
                     })
                     .Async();
 

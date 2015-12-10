@@ -4,7 +4,8 @@ using System.Linq;
 
 using Foundation;
 using UIKit;
-using Convertigo.SDK.FullSync;
+using Convertigo.SDK;
+
 
 namespace retail_store.iOS
 {
@@ -27,7 +28,7 @@ namespace retail_store.iOS
            
             global::Xamarin.Forms.Forms.Init();
             LoadApplication(new App());
-            
+            C8oPlatform.Init();
             return base.FinishedLaunching(app, options);
         }
     }

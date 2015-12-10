@@ -6,7 +6,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
-using Convertigo.SDK.FullSync;
+using Convertigo.SDK;
 
 namespace retail_store.Droid
 {
@@ -18,7 +18,7 @@ namespace retail_store.Droid
             base.OnCreate(bundle);
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
-            FullSyncMobile.Init();
+            C8oPlatform.Init();
             LoadApplication(new App());
         }
     }
