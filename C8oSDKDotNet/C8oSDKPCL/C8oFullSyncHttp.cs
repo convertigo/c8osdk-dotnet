@@ -1,17 +1,14 @@
-﻿using Convertigo.SDK.FullSync;
+﻿using Convertigo.SDK.Exceptions;
+using Convertigo.SDK.FullSync.Enums;
+using Convertigo.SDK.Utils;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net;
-using Convertigo.SDK.Utils;
-using Convertigo.SDK.FullSync.Enums;
-using Convertigo.SDK.Exceptions;
-using Newtonsoft.Json.Linq;
 using System.IO;
+using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
-using Convertigo.SDK;
+using System.Threading.Tasks;
 
 namespace Convertigo.SDK
 {

@@ -10,7 +10,7 @@ namespace Convertigo.SDK
 
         }
 
-        public C8oSettings(C8oSettings c8oSettings)
+        public C8oSettings(C8oBase c8oSettings)
         {
             Copy(c8oSettings);
         }

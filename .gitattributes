@@ -762,6 +762,9 @@ C8oSDKDotNet/C8oSDKPCL/C8oCallTask.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oEnum.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oExceptionListener.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oExceptionMessage.cs -text
+C8oSDKDotNet/C8oSDKPCL/C8oFileManager.cs -text
+C8oSDKDotNet/C8oSDKPCL/C8oFileTransfer.cs -text
+C8oSDKDotNet/C8oSDKPCL/C8oFileTransferStatus.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oFullSync.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oFullSyncEnum.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oFullSyncHttp.cs -text

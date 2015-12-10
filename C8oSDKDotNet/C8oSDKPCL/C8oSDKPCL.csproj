@@ -41,6 +41,7 @@
     <DocumentationFile>bin\Release\C8oSDKPCL.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="C8oFileTransfer.cs" />
     <Compile Include="C8o.cs" />
     <Compile Include="C8oCallTask.cs" />
     <Compile Include="C8oEnum.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="C8oResponseXmlListener.cs" />
     <Compile Include="ConcurrentQueue.cs" />
     <Compile Include="Delegates.cs" />
+    <Compile Include="C8oFileTransferStatus.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="C8oFullSyncEnum.cs" />
     <Compile Include="C8oFullSyncHttp.cs" />
@@ -67,6 +69,7 @@
     <Compile Include="C8oFullSyncTranslator.cs" />
     <Compile Include="C8oFullSyncUtils.cs" />
     <Compile Include="C8oHttpInterface.cs" />
+    <Compile Include="C8oFileManager.cs" />
     <Compile Include="JavaEnumTemplate.cs" />
     <Compile Include="C8oLocalCacheResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
