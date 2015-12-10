@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-using Newtonsoft.Json.Linq;
-using Couchbase.Lite;
-using Newtonsoft.Json;
-using System.Xml.Linq;
 using Convertigo.SDK.FullSync.Responses;
+using Couchbase.Lite;
+using Newtonsoft.Json.Linq;
+using System.Xml.Linq;
 
 namespace Convertigo.SDK.FullSync
 {

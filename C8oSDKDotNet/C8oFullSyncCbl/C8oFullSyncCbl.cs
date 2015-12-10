@@ -1,23 +1,14 @@
+using Convertigo.SDK.Exceptions;
+using Convertigo.SDK.FullSync;
+using Convertigo.SDK.FullSync.Enums;
+using Convertigo.SDK.FullSync.Responses;
+using Convertigo.SDK.Utils;
+using Couchbase.Lite;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Convertigo.SDK.FullSync;
-using Convertigo.SDK;
-using Couchbase.Lite;
-using Convertigo.SDK.Utils;
-using Convertigo.SDK.FullSync.Enums;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json.Linq;
-using Convertigo.SDK.Exceptions;
-using Newtonsoft.Json;
 using System.Reflection;
-using System.IO;
-using Convertigo.SDK.FullSync.Responses;
-using Convertigo.SDK.C8oEnum;
 using System.Threading.Tasks;
-using System.Diagnostics;
 
 namespace Convertigo.SDK
 {

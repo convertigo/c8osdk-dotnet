@@ -1,15 +1,11 @@
-﻿using System;
+﻿using Couchbase.Lite;
 using Jint;
-using System.Linq;
-using Couchbase.Lite.Util;
-using Jint.Native.Array;
 using Jint.Native;
-using System.Collections.Generic;
-using System.Collections;
-using Couchbase.Lite.Views;
-
-using Couchbase.Lite;
+using Jint.Native.Array;
 using Newtonsoft.Json;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Convertigo.SDK.FullSync
 {
