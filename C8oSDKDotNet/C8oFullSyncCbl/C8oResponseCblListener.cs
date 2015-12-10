@@ -1,10 +1,6 @@
+using Couchbase.Lite;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Convertigo.SDK;
-using Couchbase.Lite;
 
 namespace Convertigo.SDK.FullSync
 {

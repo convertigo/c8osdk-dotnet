@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Couchbase.Lite;
-using Convertigo.SDK;
-using Convertigo.SDK.Utils;
-using System.Collections;
 using Convertigo.SDK.Exceptions;
+using Convertigo.SDK.Utils;
+using Couchbase.Lite;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Convertigo.SDK.FullSync.Enums
 {

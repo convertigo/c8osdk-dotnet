@@ -1,27 +1,16 @@
+using Convertigo.SDK.Exceptions;
+using Couchbase.Lite;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Couchbase.Lite;
-using Convertigo.SDK;
-using Convertigo.SDK.Utils;
-using Convertigo.SDK.FullSync.Enums;
 using System.Net;
-using Convertigo.SDK.Exceptions;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Convertigo.SDK.FullSync
 {
     public class C8oFullSyncDatabase
     {
         //*** Constants ***//
-
-        /// <summary>
-        /// The name of the authentication cookie.
-        /// </summary>
-        public static string AUTHENTICATION_COOKIE_NAME = "SyncGatewaySession";
 
         private C8o c8o;
 
@@ -64,22 +53,6 @@ namespace Convertigo.SDK.FullSync
                 }
                 throw e;
             }
-
-            /*
-            // ??? Does surely something but do not know what, it is optional so it is still here ???
-            String authenticationCookieValue = c8o.AuthenticationCookieValue;
-            if (authenticationCookieValue != null)
-            {
-                DateTime expirationDate = DateTime.Now;
-                expirationDate.AddDays(1);
-
-                Boolean isSecure = false;
-                Boolean httpOnly = false;
-
-                pullReplication.SetCookie(C8oFullSyncDatabase.AUTHENTICATION_COOKIE_NAME, authenticationCookieValue, "/", expirationDate, isSecure, httpOnly);
-                pushReplication.SetCookie(C8oFullSyncDatabase.AUTHENTICATION_COOKIE_NAME, authenticationCookieValue, "/", expirationDate, isSecure, httpOnly);
-            }
-            */
         }
 
         private Replication getReplication(FullSyncReplication fsReplication)
