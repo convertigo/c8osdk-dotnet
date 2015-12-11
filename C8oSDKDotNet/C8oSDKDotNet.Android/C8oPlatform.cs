@@ -1,4 +1,5 @@
 ﻿using Android.OS;
+using System;
 using System.IO;
 
 namespace Convertigo.SDK
@@ -29,10 +30,12 @@ namespace Convertigo.SDK
                 FileStream fileStream = File.Open(path, FileMode.Open, FileAccess.Read);
                 return fileStream;
             });
+            
 
             C8o.deviceUUID = Android.OS.Build.Serial;
 
             C8oFullSyncCbl.Init();
+            C8oHttpInterfaceSSL.Init();
         }
     }
 }
