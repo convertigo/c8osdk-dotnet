@@ -48,5 +48,10 @@ namespace retail_store
             
             // ((TabbedPageP)App.MainPage).np
         }
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            NavigationPage.SetHasNavigationBar(this, false);
+        }
     }
 }

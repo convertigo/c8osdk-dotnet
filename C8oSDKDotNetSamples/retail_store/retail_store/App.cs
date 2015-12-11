@@ -19,6 +19,7 @@ namespace retail_store
         //instanciate not static objects accessible from the whole solution. 
         public Boolean connectivity;
         public bool exec;
+        public static LoadingPageModel LoadP;
         
 
         public App()
@@ -44,7 +45,8 @@ namespace retail_store
             //instanciate dictionnary
             models = new Dictionary<string, object>();
             cvm = new CartViewModel();
-            
+            LoadP = new LoadingPageModel();
+
             /* Set the MainPage
             It is a tabbedPage from wich we will be able to navigate into the whole application.*/
             MainPage = new TabbedPageP();
@@ -54,6 +56,7 @@ namespace retail_store
 
     protected override async void OnStart()
         {
+           
             // Handle when your app starts
 
             //instanciate a new JObject data that will recieve json from our C8o objects
@@ -80,6 +83,8 @@ namespace retail_store
                     "fs://.sync")           //We give him parameters as the name of the FULLSYNC connector that we calls
                     .Progress(progress => 
                     {
+                        LoadP.Current = "" + progress.Current;
+                        LoadP.Total= "/ " + progress.Total;
                         Debug.WriteLine(""+progress.Current +"/"+ progress.Total); //We are able to obtain the progress of the task
                     })
                     .Fail((e, p) =>

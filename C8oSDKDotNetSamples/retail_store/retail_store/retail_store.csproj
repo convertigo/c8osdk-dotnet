@@ -52,6 +52,7 @@
     <Compile Include="LoadingPage.xaml.cs">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="LoadingPageModel.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="Model2.cs" />
     <Compile Include="Prod.cs" />

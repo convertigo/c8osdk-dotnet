@@ -13,6 +13,8 @@ namespace retail_store
         public LoadingPage()
         {
             InitializeComponent();
+            current.BindingContext = App.LoadP;
+            tot.BindingContext = App.LoadP;
         }
     }
 }

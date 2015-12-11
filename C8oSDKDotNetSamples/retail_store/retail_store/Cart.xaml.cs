@@ -32,7 +32,7 @@ namespace retail_store
         public async void GetView()
         {
             
-            JObject data = await App.myC8o.CallJson(
+            JObject data = await App.myC8oCart.CallJson(
                 "fs://.view",
                 "ddoc", "design",
                 "view", "view")
@@ -42,7 +42,11 @@ namespace retail_store
                 })
                 .Async();
             App.cvm.PopulateData(data, true);
-            listView.ItemsSource = App.cvm.ProductStock;
+            if (App.cvm.ProductStock != null)
+            {
+                listView.ItemsSource = App.cvm.ProductStock;
+            }
+            
             
         }
 
@@ -51,6 +55,7 @@ namespace retail_store
         {
             
             App.cvm.GetReducePrice();
+            GetView();
         }
 
         void tapImage_Tapped(object sender, EventArgs e)

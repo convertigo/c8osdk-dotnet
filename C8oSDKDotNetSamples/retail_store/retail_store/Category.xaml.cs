@@ -155,8 +155,11 @@ namespace retail_store
 
         protected override async void OnAppearing()
         {
+            base.OnAppearing();
+            NavigationPage.SetHasNavigationBar(this, false);
+
             //Here we call, thanks to myC8o object, a new view on our local base with specified parameters.
-            JObject data = await App.myC8oCart.CallJson(
+            JObject data = await App.myC8o.CallJson(
                     "fs://.view",
                     "ddoc", "design",
                     "view", view,
@@ -177,5 +180,6 @@ namespace retail_store
 
         }
         
+
     }
 }
