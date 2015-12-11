@@ -9,7 +9,7 @@ namespace Convertigo.SDK
 {
     internal class C8oHttpInterface
     {
-        private C8o c8o;
+        protected C8o c8o;
         CookieContainer cookieContainer;
         private int timeout;
 
@@ -27,9 +27,16 @@ namespace Convertigo.SDK
             }
         }
 
+        protected virtual void OnRequestCreate(HttpWebRequest request)
+        {
+
+        }
+
         public async Task<HttpWebResponse> HandleRequest(string url, IDictionary<string, object> parameters)
         {
             var request = (HttpWebRequest) HttpWebRequest.Create(url);
+            OnRequestCreate(request);
+
             request.Method = "POST";
 
             request.CookieContainer = cookieContainer;
