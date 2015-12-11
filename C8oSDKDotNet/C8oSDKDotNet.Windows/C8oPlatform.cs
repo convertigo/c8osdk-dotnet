@@ -25,6 +25,7 @@ namespace Convertigo.SDK
             });
 
             C8oFullSyncCbl.Init();
+            C8oHttpInterfaceSSL.Init();
         }
     }
 }
