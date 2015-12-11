@@ -1126,6 +1126,7 @@ C8oSDKDotNetSamples/retail_store/retail_store/ListProducts.xaml -text
 C8oSDKDotNetSamples/retail_store/retail_store/ListProducts.xaml.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/LoadingPage.xaml -text
 C8oSDKDotNetSamples/retail_store/retail_store/LoadingPage.xaml.cs -text
+C8oSDKDotNetSamples/retail_store/retail_store/LoadingPageModel.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Model.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Model2.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/PluginsHelp/ConnectivityReadme.txt -text
