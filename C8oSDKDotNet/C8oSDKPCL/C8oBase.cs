@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace Convertigo.SDK
@@ -10,6 +11,8 @@ namespace Convertigo.SDK
         protected int timeout = -1;
         protected bool trustAllCetificates = false;
         protected CookieCollection cookies = null;
+        protected Dictionary<byte[], string> clientCertificateBinaries = null;
+        protected Dictionary<string, string> clientCertificateFiles = null;
 
         //*** Log ***//
 
@@ -64,6 +67,16 @@ namespace Convertigo.SDK
         public CookieCollection Cookies
         {
             get { return cookies; }
+        }
+
+        public IReadOnlyDictionary<byte[], string> ClientCertificateBinaries
+        {
+            get { return clientCertificateBinaries; }
+        }
+
+        public IReadOnlyDictionary<string, string> ClientCertificateFiles
+        {
+            get { return clientCertificateFiles; }
         }
 
         /// <summary>
@@ -123,15 +136,45 @@ namespace Convertigo.SDK
 
             timeout = c8oBase.timeout;
             trustAllCetificates = c8oBase.trustAllCetificates;
-            if (cookies == null)
-            {
-                cookies = new CookieCollection();
-            }
+
             if (c8oBase.cookies != null)
             {
+                if (cookies == null)
+                {
+                    cookies = new CookieCollection();
+                }
                 cookies.Add(c8oBase.cookies);
             }
-            
+
+            if (c8oBase.clientCertificateBinaries != null)
+            {
+                if (clientCertificateBinaries == null)
+                {
+                    clientCertificateBinaries = new Dictionary<byte[], string>(c8oBase.clientCertificateBinaries);
+                }
+                else
+                {
+                    foreach (var entry in c8oBase.clientCertificateBinaries)
+                    {
+                        clientCertificateBinaries.Add(entry.Key, entry.Value);
+                    }
+                }
+            }
+
+            if (c8oBase.clientCertificateFiles != null)
+            {
+                if (clientCertificateFiles == null)
+                {
+                    clientCertificateFiles = new Dictionary<string, string>(c8oBase.clientCertificateFiles);
+                }
+                else
+                {
+                    foreach (var entry in c8oBase.clientCertificateFiles)
+                    {
+                        clientCertificateFiles.Add(entry.Key, entry.Value);
+                    }
+                }
+            }
 
             //*** Log ***//
 

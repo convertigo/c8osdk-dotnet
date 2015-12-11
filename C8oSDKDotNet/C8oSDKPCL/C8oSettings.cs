@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace Convertigo.SDK
@@ -52,6 +53,28 @@ namespace Convertigo.SDK
             return this;
         }
 
+        public C8oSettings AddClientCertificate(byte[] certificate, string password)
+        {
+            if (clientCertificateBinaries == null)
+            {
+                clientCertificateBinaries = new Dictionary<byte[], string>();
+            }
+            clientCertificateBinaries.Add(certificate, password);
+
+            return this;
+        }
+
+        public C8oSettings AddClientCertificate(string certificatePath, string password)
+        {
+            if (clientCertificateFiles == null)
+            {
+                clientCertificateFiles = new Dictionary<string, string>();
+            }
+            clientCertificateFiles.Add(certificatePath, password);
+
+            return this;
+        }
+
         /// <summary>
         /// Add a new cookie to the initial cookies send to the Convertigo server.
         /// </summary>
@@ -64,11 +87,11 @@ namespace Convertigo.SDK
         /// <returns>The current <c>C8oSettings</c>, for chaining.</returns>
         public C8oSettings AddCookie(string name, string value)
         {
-            if (this.cookies == null)
+            if (cookies == null)
             {
-                this.cookies = new CookieCollection();
+                cookies = new CookieCollection();
             }
-            this.cookies.Add(new Cookie(name, value));
+            cookies.Add(new Cookie(name, value));
 
             return this;
         }

@@ -60,6 +60,7 @@ namespace Convertigo.SDK
         public static readonly string RESPONSE_TYPE_JSON = "json";
 
         //*** Static configuration ***//
+        internal static Type C8oHttpInterfaceUsed;
         internal static Type C8oFullSyncUsed;
         internal static Action<Action> defaultUiDispatcher;
         internal static string deviceUUID;
@@ -137,8 +138,14 @@ namespace Convertigo.SDK
             {
                 uiDispatcher = defaultUiDispatcher;
             }
-
-            httpInterface = new C8oHttpInterface(this);
+            try
+            {
+                httpInterface = C8oHttpInterfaceUsed.GetTypeInfo().DeclaredConstructors.ElementAt(1).Invoke(new object[] { this }) as C8oHttpInterface;
+            }
+            catch
+            {
+                httpInterface = new C8oHttpInterface(this);
+            }
 
             c8oLogger = new C8oLogger(this);
             c8oLogger.SetRemoteLogParameters(httpInterface, LogRemote, endpointConvertigo, DeviceUUID);
@@ -147,9 +154,9 @@ namespace Convertigo.SDK
 
             try
             {
-                c8oFullSync = C8oFullSyncUsed.GetTypeInfo().DeclaredConstructors.ElementAt(0).Invoke(new Object[0]) as C8oFullSync;
+                c8oFullSync = C8oFullSyncUsed.GetTypeInfo().DeclaredConstructors.ElementAt(0).Invoke(new object[0]) as C8oFullSync;
             }
-            catch (Exception e)
+            catch
             {
                 c8oFullSync = new C8oFullSyncHttp(FullSyncServerUrl, FullSyncUsername, FullSyncPassword);
             }
