@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
+﻿
 using Foundation;
 using UIKit;
-using C8oBigFileTransfer;
-using System.IO;
 
 namespace SampleBigFileTransfer.iOS
 {
-	// The UIApplicationDelegate for the application. This class is responsible for launching the 
-	// User Interface of the application, as well as listening (and optionally responding) to 
-	// application events from iOS.
-	[Register("AppDelegate")]
+    // The UIApplicationDelegate for the application. This class is responsible for launching the 
+    // User Interface of the application, as well as listening (and optionally responding) to 
+    // application events from iOS.
+    [Register("AppDelegate")]
 	public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
 	{
 		//
@@ -26,19 +21,7 @@ namespace SampleBigFileTransfer.iOS
 		{
 			global::Xamarin.Forms.Forms.Init ();
 
-            FileManager fileManager = new FileManager((path) =>
-            {
-                // String myDocsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
-                FileStream fileStream = File.Create(path);
-                return fileStream;
-            }, (path) =>
-            {
-                FileStream fileStream = File.Open(path, FileMode.Open, FileAccess.Read);
-                return fileStream;
-            });
-
-            LoadApplication(new App(fileManager));
+            LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);
         }

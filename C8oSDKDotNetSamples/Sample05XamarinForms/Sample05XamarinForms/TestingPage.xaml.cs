@@ -48,5 +48,40 @@ namespace Sample05XamarinForms
         {
             common.OnTest05(sender, args);
         }
+
+        private void OnTest06(object sender, EventArgs args)
+        {
+            common.OnTest06(sender, args);
+        }
+
+        private void OnTest07(object sender, EventArgs args)
+        {
+            common.OnTest07(sender, args);
+        }
+
+        private void OnTest08(object sender, EventArgs args)
+        {
+            common.OnTest08(sender, args);
+        }
+
+        private void OnTest09(object sender, EventArgs args)
+        {
+            common.OnTest09(sender, args);
+        }
+
+        private void OnTest10(object sender, EventArgs args)
+        {
+            common.OnTest10(sender, args);
+        }
+
+        private void OnTest11(object sender, EventArgs args)
+        {
+            common.OnTest11(sender, args);
+        }
+
+        private void OnTest12(object sender, EventArgs args)
+        {
+            common.OnTest12(sender, args);
+        }
     }
 }

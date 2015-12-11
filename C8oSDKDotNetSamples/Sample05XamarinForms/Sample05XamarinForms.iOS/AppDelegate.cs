@@ -4,6 +4,8 @@ using System.Linq;
 
 using Foundation;
 using UIKit;
+using Sample05Shared;
+using System.IO;
 
 namespace Sample05XamarinForms.iOS
 {
@@ -23,6 +25,9 @@ namespace Sample05XamarinForms.iOS
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
 			global::Xamarin.Forms.Forms.Init ();
+
+            Sample05.cert = File.ReadAllBytes("client.p12");
+
 			LoadApplication (new Sample05XamarinForms.App ());
 
 			return base.FinishedLaunching (app, options);

@@ -6,10 +6,19 @@
     <StackLayout Orientation="Vertical" Spacing="5">
       <Label Text="Test C8O" XAlign="Center" FontAttributes="Bold" FontSize="18"/>
       <Button Text="Test01" Clicked="OnTest01"/>
-      <Button Text="Test02" Clicked="OnTest02"/>
+      <!--<Button Text="Test02" Clicked="OnTest02"/>
       <Button Text="Test03" Clicked="OnTest03"/>
       <Button Text="Test04" Clicked="OnTest04"/>
-      <Button Text="Test05" Clicked="OnTest05"/>
+      <Button Text="Test05" Clicked="OnTest05"/>-->
+      <Button Text="Test06" Clicked="OnTest06"/>
+      <Button Text="Test07" Clicked="OnTest07"/>
+      <Button Text="Test08" Clicked="OnTest08"/>
+      <!--<Button Text="Test09" Clicked="OnTest09"/>
+      <Button Text="Test10" Clicked="OnTest10"/>
+      <Button Text="Test11" Clicked="OnTest11"/>
+      <Button Text="Test12" Clicked="OnTest12"/>
+      <Button Text="Test13" Clicked="OnTest13"/>
+      <Button Text="Test14" Clicked="OnTest14"/>-->
       <Editor x:Name="Output" Text="Init..." HeightRequest="3000"/>
     </StackLayout>
   </ScrollView>

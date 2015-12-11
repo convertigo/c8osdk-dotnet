@@ -933,6 +933,7 @@ C8oSDKDotNetSamples/Sample05Wpf.Win/Properties/Settings.settings -text
 C8oSDKDotNetSamples/Sample05Wpf.Win/Sample05Wpf.Win.csproj -text
 C8oSDKDotNetSamples/Sample05Wpf.Win/packages.config -text
 C8oSDKDotNetSamples/Sample05XamarinForms/Sample05XamarinForms.Droid/Assets/AboutAssets.txt -text
+C8oSDKDotNetSamples/Sample05XamarinForms/Sample05XamarinForms.Droid/Assets/client.p12 -text
 C8oSDKDotNetSamples/Sample05XamarinForms/Sample05XamarinForms.Droid/MainActivity.cs -text
 C8oSDKDotNetSamples/Sample05XamarinForms/Sample05XamarinForms.Droid/Properties/AndroidManifest.xml -text
 C8oSDKDotNetSamples/Sample05XamarinForms/Sample05XamarinForms.Droid/Properties/AssemblyInfo.cs -text
@@ -1000,6 +1001,7 @@ C8oSDKDotNetSamples/Sample05XamarinForms/Sample05XamarinForms.iOS/Resources/Icon
 C8oSDKDotNetSamples/Sample05XamarinForms/Sample05XamarinForms.iOS/Resources/LaunchScreen.storyboard -text
 C8oSDKDotNetSamples/Sample05XamarinForms/Sample05XamarinForms.iOS/Sample05XamarinForms.iOS.csproj -text
 C8oSDKDotNetSamples/Sample05XamarinForms/Sample05XamarinForms.iOS/app.config -text
+C8oSDKDotNetSamples/Sample05XamarinForms/Sample05XamarinForms.iOS/client.p12 -text
 C8oSDKDotNetSamples/Sample05XamarinForms/Sample05XamarinForms.iOS/iTunesArtwork -text
 C8oSDKDotNetSamples/Sample05XamarinForms/Sample05XamarinForms.iOS/iTunesArtwork@2x -text
 C8oSDKDotNetSamples/Sample05XamarinForms/Sample05XamarinForms.iOS/packages.config -text

@@ -1,5 +1,4 @@
-﻿using C8oBigFileTransfer;
-using Newtonsoft.Json.Linq;
+﻿using Convertigo.SDK;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -61,7 +60,7 @@ namespace SampleBigFileTransfer
                     }
                 });
 
-                app.bigFileTransfer.RaiseDownloadStatus += (sender, downloadStatus) =>
+                app.fileTransfer.RaiseTransferStatus += (sender, transferStatus) =>
                 {
                     app.c8o.RunUI(() =>
                     {
@@ -69,7 +68,7 @@ namespace SampleBigFileTransfer
 
                         foreach (File item in progressFiles)
                         {
-                            if (downloadStatus.Uuid == item.uuid)
+                            if (transferStatus.Uuid == item.uuid)
                             {
                                 file = item;
                                 progressFiles.Remove(item);
@@ -83,10 +82,10 @@ namespace SampleBigFileTransfer
                         {
                             foreach (File item in files)
                             {
-                                if (downloadStatus.Filepath.EndsWith(item.name))
+                                if (transferStatus.Filepath.EndsWith(item.name))
                                 {
                                     file = item;
-                                    file.uuid = downloadStatus.Uuid;
+                                    file.uuid = transferStatus.Uuid;
                                     files.Remove(item);
                                     FilesList.ItemsSource = null;
                                     FilesList.ItemsSource = files;
@@ -95,7 +94,7 @@ namespace SampleBigFileTransfer
                             }
                         }
 
-                        if (downloadStatus.State == DownloadStatus.StateFinished)
+                        if (transferStatus.State == C8oFileTransferStatus.StateFinished)
                         {
                             file.progress = "";
                             files.Add(file);
@@ -104,10 +103,10 @@ namespace SampleBigFileTransfer
                         }
                         else
                         {
-                            file.progress = downloadStatus.State.ToString();
-                            if (downloadStatus.State == DownloadStatus.StateReplicate)
+                            file.progress = transferStatus.State.ToString();
+                            if (transferStatus.State == C8oFileTransferStatus.StateReplicate)
                             {
-                                file.progress += " " + downloadStatus.Current + "/" + downloadStatus.Total + " (" + downloadStatus.Progress + ")";
+                                file.progress += " " + transferStatus.Current + "/" + transferStatus.Total + " (" + transferStatus.Progress + ")";
                             }
                             progressFiles.Add(file);
                             FilesListProgress.ItemsSource = null;
@@ -115,7 +114,7 @@ namespace SampleBigFileTransfer
                         }
                     });
                 };
-                app.bigFileTransfer.Start();
+                app.fileTransfer.Start();
 
                 return null;
             });
@@ -162,7 +161,7 @@ namespace SampleBigFileTransfer
             {
                 file.uuid = uuid.ToString();
                 string path = Device.OS == TargetPlatform.Android ? "/sdcard/Download/" : "/tmp/";
-                await app.bigFileTransfer.AddFile(file.uuid, path + file.uuid + "_" + file.name);
+                await app.fileTransfer.DownloadFile(file.uuid, path + file.uuid + "_" + file.name);
             }
         }
     }

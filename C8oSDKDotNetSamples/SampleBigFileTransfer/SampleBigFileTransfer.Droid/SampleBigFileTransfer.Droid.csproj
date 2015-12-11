@@ -138,10 +138,6 @@
       <Project>{1764723d-85b1-4fde-accf-88bb7a3b62a8}</Project>
       <Name>C8oSDKPCL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\C8oBigFileTransfer\C8oBigFileTransfer.csproj">
-      <Project>{96165803-8e2d-48bd-b8d8-e43749927600}</Project>
-      <Name>C8oBigFileTransfer</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="..\SampleBigFileTransfer\SampleBigFileTransfer.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

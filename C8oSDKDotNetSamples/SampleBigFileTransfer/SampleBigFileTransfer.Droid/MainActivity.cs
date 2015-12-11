@@ -2,8 +2,6 @@
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
-using C8oBigFileTransfer;
-using System.IO;
 
 namespace SampleBigFileTransfer.Droid
 {
@@ -16,15 +14,7 @@ namespace SampleBigFileTransfer.Droid
 
 			global::Xamarin.Forms.Forms.Init (this, bundle);
 
-            LoadApplication(new App(new FileManager((path) =>
-            {
-                FileStream fileStream = File.Create(path);
-                return fileStream;
-            }, (path) =>
-            {
-                FileStream fileStream = File.Open(path, FileMode.Open, FileAccess.Read);
-                return fileStream;
-            })));
+            LoadApplication(new App());
         }
 	}
 }

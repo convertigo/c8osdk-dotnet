@@ -1,5 +1,5 @@
-﻿using C8oBigFileTransfer;
-using Convertigo.SDK;
+﻿using Convertigo.SDK;
+using System.Diagnostics;
 using Xamarin.Forms;
 
 namespace SampleBigFileTransfer
@@ -7,26 +7,21 @@ namespace SampleBigFileTransfer
     public class App : Application
 	{
         internal C8o c8o;
-        internal BigFileTransferInterface bigFileTransfer;
+        internal C8oFileTransfer fileTransfer;
 
-        public App(FileManager fileManager)
+        public App()
         {
             C8oPlatform.Init();
             
             // The root page of your application
             MainPage = new Login(this);
+            
+            c8o = new C8o(
+                "http://tonus.twinsoft.fr:18080/convertigo/projects/BigFileTransferSample"
+            //"http://nicolasa.convertigo.net/cems/projects/BigFileTransferSample"
+            );
 
-            // string c8oEndpoint = "http://tonus.twinsoft.fr:18080/convertigo/projects/";
-            string c8oEndpoint = "http://nicolasa.convertigo.net/cems/projects/";
-            // string c8oEndpoint = "http://devus.twinsoft.fr:18080/convertigo/projects/";
-
-            c8o = new C8o(c8oEndpoint + "BigFileTransferSample");
-
-            bigFileTransfer = new BigFileTransferInterface(c8oEndpoint + "lib_BigFileTransfer", new C8oSettings()
-                .SetDefaultDatabaseName("bigfiletransfer")
-                .SetFullSyncUsername("admin")
-                .SetFullSyncPassword("admin")
-            , fileManager);
+            fileTransfer = new C8oFileTransfer(c8o);
         }
 
         protected override void OnStart()
