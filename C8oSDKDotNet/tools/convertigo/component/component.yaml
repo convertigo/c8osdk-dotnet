@@ -14,8 +14,7 @@ name: convertigo-mbaas
 id: convertigo-mbaas
 
 samples: 
-  iOS Sample: ../../../../Build Xamarin retailStore Sample/retailstore.sln
-  Android Sample: ../../../../Build Xamarin retailStore Sample/retailstore.sln
+  Sample: ../../../../Build Xamarin retailStore Sample/retailstore.sln
 
 publisher-url: http://www.convertigo.com
 libraries: 
