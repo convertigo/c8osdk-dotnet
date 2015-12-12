@@ -14,9 +14,8 @@ name: convertigo-mbaas
 id: convertigo-mbaas
 
 samples: 
-  iOS Sample: ../../../C8oSDKDotNet.sln
-  Android Sample: ../../../C8oSDKDotNet.sln
-publisher-url: http://www.convertigo.com
+  iOS Sample: ../../../../Build Xamarin retailStore Sample/retailstore.sln
+  Android Sample: ../../../../Build Xamarin retailStore Sample/retailstore.slnpublisher-url: http://www.convertigo.com
 libraries: 
   ios: 
   - ../../../C8oSDKDotNet.iOS/bin/iPhone/Release/C8oSDKDotNet.iOS.dll
