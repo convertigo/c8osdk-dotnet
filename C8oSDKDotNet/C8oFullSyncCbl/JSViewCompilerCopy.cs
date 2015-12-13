@@ -29,17 +29,22 @@ namespace Convertigo.SDK.FullSync
             }
 
             source = source.Replace("function", "function _f1");
+            var engine = new Engine();
 
             return (doc, emit) =>
             {                
-                var engine = new Engine();
                 engine.SetValue("emit", emit);
                 engine.SetValue("log", new LogDelegate((msg) =>
                 {
                     // TODO: handle log
                 }));
-                source += "\n_f1(" + JsonConvert.SerializeObject(doc) + ");";
-                engine.Execute(source);
+                Object value;
+                doc.TryGetValue("_id", out value);
+
+                // Console.WriteLine("Doc id is :" + value.ToString());
+
+                String tempSource = source + "\n_f1(" + JsonConvert.SerializeObject(doc) + ");";
+                engine.Execute(tempSource);
             };
         }
 
