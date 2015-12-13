@@ -1,6 +1,6 @@
 
 # Getting Started with Convertigo MBaaS SDK
-**Convertigo MBaaS SDK** makes it possible to connect Xamarin Apps to **Convertigo** Back end Services. To get started, first, follow these steps to create a backend service your app will call :
+**Convertigo MBaaS SDK** makes it possible to connect Xamarin Apps to **Convertigo** Back end Services You will then be able to call some backend services and to interact with local NoSQL databases. To get started, first, follow these steps to create a backend service your app will call :
 
 1. Register on Convertigo.com to get your free Convertigo Developper account. This will give you a free trial cloud access, a **PSC** (Personal Server Certificate) to start your Convertigo Studio and a free account on Convertigo support forums: [http://register.convertigo.com](http://register.convertigo.com "Register")
 
@@ -26,7 +26,6 @@ Before using any SDK function you need to initialize the SDK. Although all other
 			global::Xamarin.Forms.Forms.Init (this, bundle);
 			// Initialize the SDK Here.
 			C8oPlatform.Init();
-
 			LoadApplication (new App ());
 		}
 
@@ -38,10 +37,8 @@ Before using any SDK function you need to initialize the SDK. Although all other
 			LoadApplication (new AppTestSDK.App ());
 			// Initialize the SDK Here.
 			C8oPlatform.Init();
-
 			return base.FinishedLaunching (app, options);
 		}
-
 
 
 ## Create a Convertigo End Point: ##
@@ -55,8 +52,9 @@ In Xamarin Studio or Visual Studio 2015, Use this to create a **C8o** end point 
 This will create an End point on on trial Convertigo Cloud (**http://trial.convertigo.net/cems/projects**) and select default project to be the **retailStore** project we deployed previously. 
 
 ## Use it:##
-To call a service in the server just use the **CallJSON** method  passing the reference to the service you want to call. A service reference, also called a "**requestable**" is in this form :
-> **project.service**
+To call a service just use the **CallJSON** method  passing the reference to the service you want to call. A service reference, also called a "**requestable**" is in this form :
+> **project.service** to call a service on the server or
+> **fs://database.verb** to interact with a local NoSQL database.
 
 As the project has been specified in the end point, we just have to call the service of the default project. In this case the **select_shop** service. You can pass any number of key/value pairs to the call . They will be automatically mapped to sequence variables on the server. In this case, the **selectShop** sequence takes a **shopCode** variable we want to set to **42**. 
 
@@ -79,6 +77,30 @@ If you prefer to use the promise chaining mode you can use the promise object in
 		return null;											// last step of the promise chain, return null
 	});
 
+
+## Use FullSync local NoSQL databases ##
+You can use local NoSQL databases and synchronize them with data from the Convertigo MBaaS Server. This is based on Convertigo FullSync technology.
+
+	data = await myC8o.CallJson("fs://retaildb.sync").	// 'fs://' is the FullSync prefix and 'sync' id the synchronize verb 
+														// means: synchronize the 'retaildb' database from the server 
+		ProgressUI(progress => {						// The progress handler will be called during replication
+			// Do my Stuff here							// Each time a NoSQL document is replicated, do whatever is needed
+			.....										// To show a progress indicator with the progress object.
+		}).
+		Async();										// Wait wihtout blocking until all documents are replicated.
+
+Once the database is replicated, you can query the database with views. Views are defined on the MBaaS server. You have to give the name of the design document holding the view and the view name.
+
+	data = await myC8o.CallJson("fs://retaildb.view",	// Use the 'view' verb
+		"ddoc", "design",								// Set the design doc holding the view, here 'design'
+		"view", "children_byFather",					// Set the view name, here 'children_byFather'
+		"startkey", "[\"42\",\"\"]",					// Set the startkey, here a jSON array ["42", ""]
+		"endkey", "[\"42\",\"Z\"]",						// Set the endkey, here a jSON array ["42", "Z"] 
+		"limit", "20",									// Limit the number of rows to 20
+		"skip", "0"										// Start from the first row
+	).Async();											// Wait without blocking the for the query to execute 
+
+This will return in **data** all documents defined by the **children_byFather** view from index **["42", ""]** to **["42", Z"]** with a limit of **20** rows starting from the **first** document.  
 	
 ## Full Convertigo SDK Documentation ##
 You can get all the detailed SDK documentations here:
