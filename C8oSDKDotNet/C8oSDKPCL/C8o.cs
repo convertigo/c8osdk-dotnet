@@ -437,6 +437,12 @@ namespace Convertigo.SDK
             return CallXml(requestable, ToParameters(parameters));
         }
 
+        /// <summary>
+        /// You can use this method to add cookies to the HTTP interface. This can be very useful if you have to use some
+        /// pre-initialized cookies coming from a global SSO Authentication for example.
+        /// </summary>
+        /// <param name="name">The cookie name</param>
+        /// <param name="value">The cookie value</param>
         public void AddCookie(string name, string value)
         {
             httpInterface.AddCookie(name, value);
@@ -456,6 +462,11 @@ namespace Convertigo.SDK
             c8oLogger.Log(c8oLogLevel, message);
         }
 
+        /// <summary>
+        /// An utility method to run a worker thread on UI. This method is Cross-platform and works on all the supported
+        /// platforms (iOS, Android, WPF)
+        /// </summary>
+        /// <param name="code">The code to run on the UI thread</param>
         public void RunUI(Action code)
         {
             if (UiDispatcher != null)
