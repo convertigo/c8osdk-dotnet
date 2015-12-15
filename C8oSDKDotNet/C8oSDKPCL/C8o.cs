@@ -16,9 +16,14 @@ using System.Xml.Linq;
 // exception
 // certificate client et serveur
 
+/// <summary>
+/// This is the namespace for Convertigo SDK
+/// </summary>
 namespace Convertigo.SDK
 {
-
+    /// <summary>
+    /// This base class for Convertigo SDK.  A C8o object represents a Convertigo MBaaS Server endpoint.
+    /// </summary>
     public class C8o : C8oBase
     {
         //*** Regular Expression ***//
