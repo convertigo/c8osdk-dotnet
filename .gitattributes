@@ -798,6 +798,8 @@ C8oSDKDotNet/C8oSDKPCL/VoidResponse.cs -text
 C8oSDKDotNet/C8oSDKPCL/app.config -text
 C8oSDKDotNet/C8oSDKPCL/packages.config -text
 C8oSDKDotNet/C8oSDKPCL/tools/install.ps1 -text
+C8oSDKDotNet/tools/Doxyfile -text
+C8oSDKDotNet/tools/buildxamarincomp.bat -text
 C8oSDKDotNet/tools/convertigo/component/Details.md -text
 C8oSDKDotNet/tools/convertigo/component/GettingStarted.md -text
 C8oSDKDotNet/tools/convertigo/component/License.md -text
