@@ -731,8 +731,8 @@ C8oSDKDotNet/C8oFullSyncCbl/FullSyncResponses.cs -text
 C8oSDKDotNet/C8oFullSyncCbl/JSViewCompilerCopy.cs -text
 C8oSDKDotNet/C8oFullSyncExtensions.nuspec -text
 C8oSDKDotNet/C8oPlatforms/C8oHttpInterfaceSSL.cs -text
-C8oSDKDotNet/C8oPlatforms/C8oPlatform.cs -text
 C8oSDKDotNet/C8oPlatforms/C8oPlatform.shproj -text
+C8oSDKDotNet/C8oPlatforms/C8oPlatformCommon.cs -text
 C8oSDKDotNet/C8oPlatforms/C8oPlatforms.projitems -text
 C8oSDKDotNet/C8oSDK-PCL.nuspec -text
 C8oSDKDotNet/C8oSDKDotNet.Android/C8oPlatform.cs -text
