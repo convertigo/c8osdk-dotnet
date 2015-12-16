@@ -1,4 +1,4 @@
-﻿using Convertigo.SDK.Utils;
+﻿using Convertigo.SDK.Internal;
 using System;
 
 namespace Convertigo.SDK

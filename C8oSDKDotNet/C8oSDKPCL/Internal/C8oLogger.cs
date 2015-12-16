@@ -1,6 +1,4 @@
-﻿using Convertigo.SDK.Exceptions;
-using Convertigo.SDK.Utils;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -8,7 +6,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Convertigo.SDK
+namespace Convertigo.SDK.Internal
 {
     internal class C8oLogger
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Convertigo.SDK
+namespace Convertigo.SDK.Internal
 {
     internal class C8oFileManager
     {

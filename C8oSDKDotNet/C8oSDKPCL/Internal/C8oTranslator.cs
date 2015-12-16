@@ -1,5 +1,4 @@
-﻿using Convertigo.SDK.Exceptions;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -8,9 +7,9 @@ using System.Text;
 using System.Xml.Linq;
 using UnicodeNormalization;
 
-namespace Convertigo.SDK
+namespace Convertigo.SDK.Internal
 {
-    public class C8oTranslator
+    internal class C8oTranslator
     {        
 	    private static String XML_KEY_ITEM = "item";
 	    private static String XML_KEY_OBJECT = "object";

@@ -1,5 +1,4 @@
-﻿using Convertigo.SDK.Exceptions;
-using Convertigo.SDK.Utils;
+﻿using Convertigo.SDK.Internal;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;

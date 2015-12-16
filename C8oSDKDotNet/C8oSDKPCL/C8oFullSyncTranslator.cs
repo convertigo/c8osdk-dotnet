@@ -4,22 +4,22 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 
-namespace Convertigo.SDK
+namespace Convertigo.SDK.Internal
 {
-    public class C8oFullSyncTranslator
+    internal class C8oFullSyncTranslator
     {
-        public static readonly String FULL_SYNC_RESPONSE_KEY_COUNT = "count";
-        public static readonly String FULL_SYNC_RESPONSE_KEY_ROWS = "rows";
-        public static readonly String FULL_SYNC_RESPONSE_KEY_CURRENT = "current";
-        public static readonly String FULL_SYNC_RESPONSE_KEY_DIRECTION = "direction";
-        public static readonly String FULL_SYNC_RESPONSE_KEY_TOTAL = "total";
-        public static readonly String FULL_SYNC_RESPONSE_KEY_OK = "ok";
+        public static readonly string FULL_SYNC_RESPONSE_KEY_COUNT = "count";
+        public static readonly string FULL_SYNC_RESPONSE_KEY_ROWS = "rows";
+        public static readonly string FULL_SYNC_RESPONSE_KEY_CURRENT = "current";
+        public static readonly string FULL_SYNC_RESPONSE_KEY_DIRECTION = "direction";
+        public static readonly string FULL_SYNC_RESPONSE_KEY_TOTAL = "total";
+        public static readonly string FULL_SYNC_RESPONSE_KEY_OK = "ok";
 
-        public static readonly String FULL_SYNC_RESPONSE_VALUE_DIRECTION_PUSH = "push";
-        public static readonly String FULL_SYNC_RESPONSE_VALUE_DIRECTION_PULL = "pull";
+        public static readonly string FULL_SYNC_RESPONSE_VALUE_DIRECTION_PUSH = "push";
+        public static readonly string FULL_SYNC_RESPONSE_VALUE_DIRECTION_PULL = "pull";
 
-        public static readonly String XML_KEY_DOCUMENT = "document";
-        public static readonly String XML_KEY_COUCHDB_OUTPUT = "couchdb_output";
+        public static readonly string XML_KEY_DOCUMENT = "document";
+        public static readonly string XML_KEY_COUCHDB_OUTPUT = "couchdb_output";
 
         public static XDocument FullSyncJsonToXml(JObject json)
         {
@@ -43,13 +43,13 @@ namespace Convertigo.SDK
             return json;
         }
 
-        public static String DictionaryToString(IDictionary<string, object> dict)
+        public static string DictionaryToString(IDictionary<string, object> dict)
         {
-            String str = "{ ";
+            string str = "{ ";
 
             foreach (KeyValuePair<string, object> item in dict)
             {
-                String valueStr;
+                string valueStr;
                 if (item.Value is IDictionary<string, object>)
                 {
                     valueStr = DictionaryToString(item.Value as IDictionary<string, object>);

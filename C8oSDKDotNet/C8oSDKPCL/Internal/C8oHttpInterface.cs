@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Convertigo.SDK
+namespace Convertigo.SDK.Internal
 {
     internal class C8oHttpInterface
     {
@@ -27,7 +27,7 @@ namespace Convertigo.SDK
             }
         }
 
-        protected virtual void OnRequestCreate(HttpWebRequest request)
+        internal virtual void OnRequestCreate(HttpWebRequest request)
         {
 
         }

@@ -1,7 +1,4 @@
-﻿using Convertigo.SDK.Exceptions;
-using Convertigo.SDK.FullSync.Enums;
-using Convertigo.SDK.Utils;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Convertigo.SDK
+namespace Convertigo.SDK.Internal
 {
     internal class C8oFullSyncHttp : C8oFullSync
     {
