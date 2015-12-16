@@ -1,4 +1,3 @@
-using Convertigo.SDK.Exceptions;
 using Couchbase.Lite;
 using System;
 using System.Collections.Generic;
@@ -6,7 +5,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Convertigo.SDK.FullSync
+namespace Convertigo.SDK.Internal
 {
     public class C8oFullSyncDatabase
     {
@@ -55,6 +54,22 @@ namespace Convertigo.SDK.FullSync
             }
         }
 
+        internal static Func<C8o, bool, Database, Uri, Replication> createReplication = (c8o, isPull, database, c8oFullSyncDatabaseUrl) =>
+        {
+            var replication = isPull ?
+                database.CreatePullReplication(c8oFullSyncDatabaseUrl) :
+                database.CreatePushReplication(c8oFullSyncDatabaseUrl);
+
+            // Cookies
+            var cookies = c8o.CookieStore.GetCookies(new Uri(c8o.Endpoint));
+            foreach (Cookie cookie in cookies)
+            {
+                replication.SetCookie(cookie.Name, cookie.Value, cookie.Path, cookie.Expires, cookie.Secure, false);
+            }
+
+            return replication;
+        };
+
         private Replication getReplication(FullSyncReplication fsReplication)
         {
             if (fsReplication.replication != null)
@@ -65,16 +80,7 @@ namespace Convertigo.SDK.FullSync
                     fsReplication.replication.Changed -= fsReplication.changeListener;
                 }
             }
-            var replication = fsReplication.replication = fsReplication.pull ?
-                database.CreatePullReplication(c8oFullSyncDatabaseUrl) :
-                database.CreatePushReplication(c8oFullSyncDatabaseUrl);
-
-            // Cookies
-            var cookies = c8o.CookieStore.GetCookies(new Uri(c8o.Endpoint));
-            foreach (Cookie cookie in cookies)
-            {
-                replication.SetCookie(cookie.Name, cookie.Value, cookie.Path, cookie.Expires, cookie.Secure, false);
-            }
+            var replication = fsReplication.replication = createReplication(c8o, fsReplication.pull, database, c8oFullSyncDatabaseUrl);
 
             return replication;
         }

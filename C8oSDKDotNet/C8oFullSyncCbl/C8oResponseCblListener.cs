@@ -2,9 +2,9 @@ using Couchbase.Lite;
 using System;
 using System.Collections.Generic;
 
-namespace Convertigo.SDK.FullSync
+namespace Convertigo.SDK.Internal
 {
-    public class C8oResponseCblListener : C8oResponseListener
+    internal class C8oResponseCblListener : C8oResponseListener
     {
         /// <summary>
         /// Called back when

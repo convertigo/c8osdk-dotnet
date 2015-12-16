@@ -1,8 +1,3 @@
-using Convertigo.SDK.Exceptions;
-using Convertigo.SDK.FullSync;
-using Convertigo.SDK.FullSync.Enums;
-using Convertigo.SDK.FullSync.Responses;
-using Convertigo.SDK.Utils;
 using Couchbase.Lite;
 using Newtonsoft.Json.Linq;
 using System;
@@ -10,14 +5,11 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Convertigo.SDK
+namespace Convertigo.SDK.Internal
 {
     internal class C8oFullSyncCbl : C8oFullSync
     {
         //*** Constants ***//
-
-        private static readonly string JS_VIEW_COMPILER_TYPE = "Couchbase.Lite.Listener.JSViewCompiler";
-
         private static readonly string ATTACHMENT_INTERNAL_TYPE = "Couchbase.Lite.Internal.AttachmentInternal";
         private static readonly string ATTACHMENT_INTERNAL_PROPERTY_DATABASE = "Database";
         private static readonly string ATTACHMENT_INTERNAL_PROPERTY_CONTENT_URL = "ContentUrl";
@@ -627,7 +619,7 @@ namespace Convertigo.SDK
 
         public static void Init()
         {
-            C8o.C8oFullSyncUsed = Type.GetType("Convertigo.SDK.C8oFullSyncCbl", true);
+            C8o.C8oFullSyncUsed = Type.GetType("Convertigo.SDK.Internal.C8oFullSyncCbl", true);
         }
 
     }

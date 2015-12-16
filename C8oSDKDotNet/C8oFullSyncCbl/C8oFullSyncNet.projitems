@@ -9,7 +9,6 @@
     <Import_RootNamespace>C8oFullSyncNet</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)C8oHttpInterfaceSSL.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)C8oResponseCblListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)C8oFullSyncDatabase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)C8oFullSyncCblEnum.cs" />

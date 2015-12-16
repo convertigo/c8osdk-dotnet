@@ -1,10 +1,8 @@
-
-using Convertigo.SDK.FullSync.Responses;
 using Couchbase.Lite;
 using Newtonsoft.Json.Linq;
 using System.Xml.Linq;
 
-namespace Convertigo.SDK.FullSync
+namespace Convertigo.SDK.Internal
 {
     /// <summary>
     /// Provides static functions to translate fullSync responses to JSON or XML.
