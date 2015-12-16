@@ -119,6 +119,7 @@ namespace retail_store
 
                 if (pStock.Sku == Product.Sku)
                 {
+                    flag = true;
                     productToInsert = pStock;
                     if (plus)
                     {
@@ -131,10 +132,11 @@ namespace retail_store
                         {
                             del = true;
                             ProductStock.Remove(productToInsert);
+                            
                         }
                     }
-                    deleteCart();
-                    flag = true;
+                    updateCart();
+
                     goto goOut;
                 }
             }
@@ -144,26 +146,28 @@ namespace retail_store
             {
                 productToInsert = new ProdStock(Product.Name,Product.ImageUrl,Product.Id,Product.Shopcode,Product.FatherId,Product.Sku,Product.PriceOfUnit, 1);
                 ProductStock.Add(productToInsert);
-            }
-            if (!del)
-            {
                 insertCart();
+            }
+            if (del)
+            {
+                deleteCart();
             }
             
         }
 
-        public void deleteCart(Boolean all=false)
+        public async void deleteCart(Boolean all=false)
         {
             if (all)
             {
                 foreach (ProdStock p in ProductStock)
                 {
-                    App.myC8oCart.CallJson(
+                    JObject data;
+                    data = await App.myC8oCart.CallJson(
                         "fs://.delete",
                         "docid", p.Id)
                         .Fail((e, q) =>
                         {
-                            // Handle errors..
+                            Debug.WriteLine(e.ToString()); // Handle errors..
                         })
                     .Async();   
                 }
@@ -171,26 +175,45 @@ namespace retail_store
             }
             else
             {
-                App.myC8oCart.CallJson(
+                JObject data;
+                data = await App.myC8oCart.CallJson(
                     "fs://.delete",
                     "docid", productToInsert.Id)
                     .Fail((e, q) =>
                     {
-                    // Handle errors..
+                        Debug.WriteLine(e.ToString()); // Handle errors..
                     })
                     .Async();
             }
         }
 
 
+        public async void updateCart()
+        {
+            JObject data;
+            data = await App.myC8oCart.CallJson(
+                "fs://.post",
+                "_id", productToInsert.Id,
+                "count", productToInsert.Count,
+                "_use_policy","merge")
+                .Fail((e, q) =>
+                {
+                    Debug.WriteLine(e.ToString()); // Handle errors..
+                    })
+                .Async();
+        
+        }
+
+
         //insertCart as indicated by his name insert a new productStock in local base
-        public void insertCart()
+        public async void insertCart()
         {
             //We verify if productToInsert as weel been assigned.
             if (productToInsert != null)
             {
                 //Then we can insert data into FS://CARTDB thanks to c8o object
-                App.myC8oCart.CallJson(
+                JObject data;
+                data = await App.myC8oCart.CallJson(
                         "fs://.post",
                         "_id", productToInsert.Id ,
                         "name", productToInsert.Name,
@@ -202,7 +225,7 @@ namespace retail_store
                         "fatherId",productToInsert.FatherId)
                         .Fail((e, q) =>
                         {
-                            // Handle errors..
+                            Debug.WriteLine(e.ToString());// Handle errors..
                         })
                     .Async();
             }
@@ -218,7 +241,7 @@ namespace retail_store
                     "reduce", true)
                     .Fail((e, p) =>
                     {
-                        // Handle errors..
+                        Debug.WriteLine(e.ToString()); // Handle errors..
                     })
                     .Async();
 

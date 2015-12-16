@@ -54,8 +54,9 @@ namespace retail_store
         protected override void OnAppearing()
         {
             
-            App.cvm.GetReducePrice();
+            //App.cvm.GetReducePrice();
             GetView();
+            App.cvm.GetReducePrice();
         }
 
         void tapImage_Tapped(object sender, EventArgs e)
@@ -68,14 +69,16 @@ namespace retail_store
                 case "plus.png":
                     App.cvm.SetProductBySku(sku);
                     App.cvm.CheckCart(true);
+                    App.cvm.GetReducePrice();
                     break;
                 case "moins.png":
                     App.cvm.SetProductBySku(sku);
                     App.cvm.CheckCart(false);
+                    App.cvm.GetReducePrice();
                     break;
             }
 
-            App.cvm.GetReducePrice();
+            //App.cvm.GetReducePrice();
             
 
         }

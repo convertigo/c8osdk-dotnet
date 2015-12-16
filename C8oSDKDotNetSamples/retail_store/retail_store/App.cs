@@ -106,31 +106,30 @@ namespace retail_store
                 .Async();
 
             //CallJson Method is called thanks to C8o Object 
-            data = await myC8o.CallJson(
-                    "fs://.sync",                   //We give him parameters as the name of the FULLSYNC connector that we calls
-                    "live", "true")                 //And the live sync
+            data = await myC8oCart.CallJson(
+                    "fs://.sync")                   //We give him parameters as the name of the FULLSYNC connector that we calls
+                     .Fail((e,p) =>                //And the live sync
+                     {
+                        Debug.WriteLine("" + e);
+                    })
+                    .Async();
+
+            data = await myC8oCart.CallJson(
+                    "fs://.sync",                       //We give him parameters as the name of the FULLSYNC connector that we calls
+                    "continuous", true)               //And the live sync
                     .Progress(progress =>
                     {
-                        //We are able to obtain the progress of the task
-                        var complete = progress.Current / progress.Total * 100;
-
-                        //And test for example if the task is done
-                        if (progress.Finished)
-                        {
-                            App.cvm.GetRealPrice();
-                            App.cvm.GetReducePrice();
-                            MainPage.Navigation.PopModalAsync();
-                        }
-                            
+                        App.cvm.GetRealPrice();
+                        /*App.cvm.GetReducePrice();*/
                     })
-                    .Fail((e,p) =>
+                    .Fail((e, p) =>
                     {
-                        Debug.WriteLine("LAA" + e);
+                        Debug.WriteLine("" + e);
                     })
                     .Async();
 
 
-            
+
         }
 
         protected override void OnSleep()
