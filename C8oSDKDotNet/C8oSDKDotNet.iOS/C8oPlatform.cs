@@ -1,5 +1,5 @@
-﻿using Foundation;
-using System.IO;
+﻿using Convertigo.SDK.Internal;
+using Foundation;
 
 namespace Convertigo.SDK
 {
@@ -9,18 +9,7 @@ namespace Convertigo.SDK
         {
             C8o.defaultUiDispatcher = new NSObject().BeginInvokeOnMainThread;
 
-            C8oFileTransfer.fileManager = new C8oFileManager(path =>
-            {
-                FileStream fileStream = File.Create(path);
-                return fileStream;
-            }, path =>
-            {
-                FileStream fileStream = File.Open(path, FileMode.Open, FileAccess.Read);
-                return fileStream;
-            });
-
-            C8oFullSyncCbl.Init();
-            C8oHttpInterfaceSSL.Init();
+            C8oPlatformCommon.Init();
         }
     }
 }

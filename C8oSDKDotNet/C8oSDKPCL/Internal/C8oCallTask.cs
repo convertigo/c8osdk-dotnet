@@ -1,13 +1,10 @@
-﻿using Convertigo.SDK.C8oEnum;
-using Convertigo.SDK.Exceptions;
-using Convertigo.SDK.Utils;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Convertigo.SDK
+namespace Convertigo.SDK.Internal
 {
     class C8oCallTask
     {

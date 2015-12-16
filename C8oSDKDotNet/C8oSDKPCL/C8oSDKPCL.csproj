@@ -43,38 +43,36 @@
   <ItemGroup>
     <Compile Include="C8oFileTransfer.cs" />
     <Compile Include="C8o.cs" />
-    <Compile Include="C8oCallTask.cs" />
-    <Compile Include="C8oEnum.cs" />
+    <Compile Include="Internal\C8oCallTask.cs" />
+    <Compile Include="Internal\C8oEnum.cs" />
     <Compile Include="C8oExceptionListener.cs" />
     <Compile Include="C8oExceptionMessage.cs" />
     <Compile Include="C8oProgress.cs" />
     <Compile Include="C8oPromiseFailSync.cs" />
     <Compile Include="C8oResponseJsonListener.cs" />
-    <Compile Include="C8oLogger.cs" />
+    <Compile Include="Internal\C8oLogger.cs" />
     <Compile Include="C8oPromise.cs" />
     <Compile Include="C8oPromiseSync.cs" />
     <Compile Include="C8oResponseListener.cs" />
     <Compile Include="C8oResponseProgressListener.cs" />
     <Compile Include="C8oSettings.cs" />
-    <Compile Include="C8oTranslator.cs" />
-    <Compile Include="C8oUtils.cs" />
+    <Compile Include="Internal\C8oTranslator.cs" />
+    <Compile Include="Internal\C8oUtils.cs" />
     <Compile Include="C8oResponseXmlListener.cs" />
-    <Compile Include="ConcurrentQueue.cs" />
     <Compile Include="Delegates.cs" />
     <Compile Include="C8oFileTransferStatus.cs" />
     <Compile Include="Exceptions.cs" />
-    <Compile Include="C8oFullSyncEnum.cs" />
-    <Compile Include="C8oFullSyncHttp.cs" />
-    <Compile Include="C8oFullSync.cs" />
+    <Compile Include="Internal\C8oFullSyncEnum.cs" />
+    <Compile Include="Internal\C8oFullSyncHttp.cs" />
+    <Compile Include="Internal\C8oFullSync.cs" />
     <Compile Include="C8oFullSyncTranslator.cs" />
-    <Compile Include="C8oFullSyncUtils.cs" />
-    <Compile Include="C8oHttpInterface.cs" />
-    <Compile Include="C8oFileManager.cs" />
-    <Compile Include="JavaEnumTemplate.cs" />
+    <Compile Include="Internal\C8oFullSyncUtils.cs" />
+    <Compile Include="Internal\C8oHttpInterface.cs" />
+    <Compile Include="Internal\C8oFileManager.cs" />
     <Compile Include="C8oLocalCacheResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="C8oBase.cs" />
-    <Compile Include="VoidResponse.cs" />
+    <Compile Include="Internal\VoidResponse.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

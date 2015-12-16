@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Convertigo.SDK.Exceptions
+namespace Convertigo.SDK
 {
     public class C8oException : Exception
     {

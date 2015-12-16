@@ -1,4 +1,6 @@
-﻿namespace Convertigo.SDK
+﻿using Convertigo.SDK.Internal;
+
+namespace Convertigo.SDK
 {
     public class C8oProgress
     {

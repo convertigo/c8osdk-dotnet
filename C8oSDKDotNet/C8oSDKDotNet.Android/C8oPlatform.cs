@@ -1,6 +1,5 @@
 ﻿using Android.OS;
-using System;
-using System.IO;
+using Convertigo.SDK.Internal;
 
 namespace Convertigo.SDK
 {
@@ -20,22 +19,10 @@ namespace Convertigo.SDK
                     mainLooperHandler.Post(code);
                 }
             };
-
-            C8oFileTransfer.fileManager = new C8oFileManager(path =>
-            {
-                FileStream fileStream = File.Create(path);
-                return fileStream;
-            }, path =>
-            {
-                FileStream fileStream = File.Open(path, FileMode.Open, FileAccess.Read);
-                return fileStream;
-            });
             
-
             C8o.deviceUUID = Android.OS.Build.Serial;
 
-            C8oFullSyncCbl.Init();
-            C8oHttpInterfaceSSL.Init();
+            C8oPlatformCommon.Init();
         }
     }
 }

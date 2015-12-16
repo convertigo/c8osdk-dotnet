@@ -95,6 +95,7 @@
   <Import Project="..\C8oFullSyncNet\C8oFullSyncNet.projitems" Label="Shared" Condition="Exists('..\C8oFullSyncNet\C8oFullSyncNet.projitems')" />
   <Import Project="..\C8oFullSyncCbl\C8oFullSyncNet.projitems" Label="Shared" Condition="Exists('..\C8oFullSyncCbl\C8oFullSyncNet.projitems')" />
   <Import Project="..\C8oFullSyncCbl\C8oFullSyncNet.projitems" Label="Shared" Condition="Exists('..\C8oFullSyncCbl\C8oFullSyncNet.projitems')" />
+  <Import Project="..\C8oPlatforms\C8oPlatforms.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Import Project="..\packages\SQLitePCL.raw.0.8.4\build\Xamarin.iOS10\SQLitePCL.raw.targets" Condition="Exists('..\packages\SQLitePCL.raw.0.8.4\build\Xamarin.iOS10\SQLitePCL.raw.targets')" />

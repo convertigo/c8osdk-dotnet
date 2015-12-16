@@ -2,11 +2,10 @@
 using System;
 using System.Collections.Generic;
 
-namespace Convertigo.SDK.Utils
+namespace Convertigo.SDK.Internal
 {
-    public class FullSyncUtils
+    internal class FullSyncUtils
     {
-        
         //*** Post merge ***//
 
         public static void MergeProperties(IDictionary<string, object> newProperties, IDictionary<string, object> oldProperties)

@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿using Convertigo.SDK.Internal;
 using System.Windows;
 
 namespace Convertigo.SDK
@@ -14,18 +14,8 @@ namespace Convertigo.SDK
                 dispatcher.BeginInvoke(code);
             };
 
-            C8oFileTransfer.fileManager = new C8oFileManager(path =>
-            {
-                FileStream fileStream = File.Create(path);
-                return fileStream;
-            }, path =>
-            {
-                FileStream fileStream = File.Open(path, FileMode.Open, FileAccess.Read);
-                return fileStream;
-            });
-
-            C8oFullSyncCbl.Init();
-            C8oHttpInterfaceSSL.Init();
+            C8oHTTPsProxy.Init();
+            C8oPlatformCommon.Init();
         }
     }
 }

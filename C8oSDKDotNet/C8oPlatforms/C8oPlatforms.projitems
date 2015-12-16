@@ -9,6 +9,7 @@
     <Import_RootNamespace>C8oPlatforms</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)C8oPlatform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oHttpInterfaceSSL.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oPlatformCommon.cs" />
   </ItemGroup>
 </Project>

@@ -1,9 +1,9 @@
-namespace Convertigo.SDK
+namespace Convertigo.SDK.Internal
 {
     /// <summary>
     /// Represents a void response in case of c8o call which returns nothing directly.
     /// </summary>
-    public class VoidResponse
+    internal class VoidResponse
     {
         private static readonly VoidResponse VOID_RESPONSE_INSTANCE = new VoidResponse();
 	

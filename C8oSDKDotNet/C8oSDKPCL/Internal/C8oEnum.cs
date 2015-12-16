@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.NetworkInformation;
 
-namespace Convertigo.SDK.C8oEnum
+namespace Convertigo.SDK.Internal
 {
     internal class LocalCachePolicy
     {

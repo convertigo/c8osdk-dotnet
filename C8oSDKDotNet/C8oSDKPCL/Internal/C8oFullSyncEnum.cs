@@ -1,18 +1,17 @@
-﻿using Convertigo.SDK.Utils;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Convertigo.SDK.FullSync.Enums
+namespace Convertigo.SDK.Internal
 {
     //*** FullSync requestables ***//
 
     /// <summary>
     /// FullSync requestables.
     /// </summary>
-    public class FullSyncRequestable
+    internal class FullSyncRequestable
     {
         public static readonly FullSyncRequestable GET = new FullSyncRequestable("get", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {

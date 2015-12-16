@@ -1,11 +1,10 @@
-﻿using Convertigo.SDK.Exceptions;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 
-namespace Convertigo.SDK.Utils
+namespace Convertigo.SDK.Internal
 {
-    public class C8oUtils
+    internal class C8oUtils
     {
 
         /// <summary>

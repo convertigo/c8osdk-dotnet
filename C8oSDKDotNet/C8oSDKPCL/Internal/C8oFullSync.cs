@@ -1,13 +1,10 @@
-﻿using Convertigo.SDK.Exceptions;
-using Convertigo.SDK.FullSync.Enums;
-using Convertigo.SDK.Utils;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 
-namespace Convertigo.SDK
+namespace Convertigo.SDK.Internal
 {
     internal abstract class C8oFullSync
     {

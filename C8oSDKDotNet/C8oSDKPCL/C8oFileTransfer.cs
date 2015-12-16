@@ -1,4 +1,4 @@
-﻿using Convertigo.SDK.FullSync.Enums;
+﻿using Convertigo.SDK.Internal;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;

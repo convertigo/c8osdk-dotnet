@@ -1,8 +1,8 @@
-﻿using Convertigo.SDK.Utils;
+﻿using Convertigo.SDK.Internal;
 using System;
 using System.Collections.Generic;
 
-namespace Convertigo.SDK.Exceptions
+namespace Convertigo.SDK
 {
     public class C8oExceptionMessage
     {
