@@ -726,7 +726,6 @@ C8oSDKDotNet/C8oFullSyncCbl/C8oFullSyncCblEnum.cs -text
 C8oSDKDotNet/C8oFullSyncCbl/C8oFullSyncCblTranslator.cs -text
 C8oSDKDotNet/C8oFullSyncCbl/C8oFullSyncDatabase.cs -text
 C8oSDKDotNet/C8oFullSyncCbl/C8oFullSyncNet.projitems -text
-C8oSDKDotNet/C8oFullSyncCbl/C8oHttpInterfaceSSL.cs -text
 C8oSDKDotNet/C8oFullSyncCbl/C8oResponseCblListener.cs -text
 C8oSDKDotNet/C8oFullSyncCbl/FullSyncResponses.cs -text
 C8oSDKDotNet/C8oFullSyncCbl/JSViewCompilerCopy.cs -text

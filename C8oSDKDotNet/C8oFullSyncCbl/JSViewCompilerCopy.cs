@@ -7,14 +7,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Convertigo.SDK.FullSync
+namespace Convertigo.SDK.Internal
 {
     /// <summary>
     /// A class for compiling views from Javascript source
     /// Copied from https://github.com/couchbase/couchbase-lite-net/blob/ee085e3ee661489f9ef6f69cf07606095f152302/src/ListenerComponent/Couchbase.Lite.Listener.Shared/PeerToPeer/JSViewCompiler.cs
     /// https://github.com/couchbase/couchbase-lite-net/blob/master/src/ListenerComponent/Couchbase.Lite.Listener.Shared/PeerToPeer/JSViewCompiler.cs
     /// </summary>
-    public  class JSViewCompilerCopy : IViewCompiler
+    internal class JSViewCompilerCopy : IViewCompiler
     {
 
         #region IViewCompiler

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Convertigo.SDK.FullSync.Responses
+namespace Convertigo.SDK.Internal
 {
-    class FullSyncResponse
+    internal class FullSyncResponse
     {
         /// <summary>
         /// The response key indicating the operation status.

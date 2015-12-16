@@ -1,19 +1,16 @@
-using Convertigo.SDK.Exceptions;
-using Convertigo.SDK.Utils;
 using Couchbase.Lite;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
-namespace Convertigo.SDK.FullSync.Enums
+namespace Convertigo.SDK.Internal
 {
 
     internal class C8oFullSyncCblEnum
     {
-        private static Boolean initialized = false;
-        private static IDictionary<FullSyncRequestParameter, Action<Query, Object>> fullSyncRequestParameters;
+        private static bool initialized = false;
+        private static IDictionary<FullSyncRequestParameter, Action<Query, object>> fullSyncRequestParameters;
         private static IDictionary<FullSyncPolicy, Func<Database, IDictionary<string, object>, Document>> fullSyncPolicies;
-        private static IDictionary<FullSyncReplicationParameter, Action<Replication, Object>> fullSyncReplicationParameters;
+        private static IDictionary<FullSyncReplicationParameter, Action<Replication, object>> fullSyncReplicationParameters;
 
         private static void Init()
         {
@@ -26,20 +23,20 @@ namespace Convertigo.SDK.FullSync.Enums
             }
         }
 
-        internal static void AddToQuery(Query query, FullSyncRequestParameter requestParameter, Object value)
+        internal static void AddToQuery(Query query, FullSyncRequestParameter requestParameter, object value)
         {
             Init();
             // Checks if the value type is String and the request parameter type is not
-            if (typeof(String).IsAssignableFrom(value.GetType()) && !typeof(String).IsAssignableFrom(requestParameter.type))
+            if (typeof(string).IsAssignableFrom(value.GetType()) && !typeof(string).IsAssignableFrom(requestParameter.type))
             {
                 // Tries to convert the string to the request parameter type
-                value = C8oTranslator.StringToObject((String)value, requestParameter.type);
+                value = C8oTranslator.StringToObject(value as string, requestParameter.type);
             }
             // Checks if the type is valid
             if (requestParameter.type.IsAssignableFrom(value.GetType()))
             {
                 // No reasons to fail
-                Action<Query, Object> addToQueryOp = null;
+                Action<Query, object> addToQueryOp = null;
                 if (fullSyncRequestParameters.TryGetValue(requestParameter, out addToQueryOp))
                 {
                     addToQueryOp(query, value);
@@ -65,16 +62,16 @@ namespace Convertigo.SDK.FullSync.Enums
             }
         }
 
-        internal static void SetReplication(FullSyncReplicationParameter replicationParameter, Replication replication, Object value)
+        internal static void SetReplication(FullSyncReplicationParameter replicationParameter, Replication replication, object value)
         {
             Init();
             // Checks if the value type is String and the request parameter type is not
-            if (typeof(String).IsAssignableFrom(value.GetType()) && !typeof(String).IsAssignableFrom(replicationParameter.type))
+            if (typeof(string).IsAssignableFrom(value.GetType()) && !typeof(string).IsAssignableFrom(replicationParameter.type))
             {
                 try
                 {
                     // Tries to convert the string to the request parameter type
-                    value = C8oTranslator.StringToObject((String)value, replicationParameter.type);
+                    value = C8oTranslator.StringToObject(value as string, replicationParameter.type);
                 }
                 catch (Exception e)
                 {
@@ -85,7 +82,7 @@ namespace Convertigo.SDK.FullSync.Enums
             if (replicationParameter.type.IsAssignableFrom(value.GetType()))
             {
                 // No reasons to fail
-                Action<Replication, Object> setReplicationOp = null;
+                Action<Replication, object> setReplicationOp = null;
                 if (fullSyncReplicationParameters.TryGetValue(replicationParameter, out setReplicationOp))
                 {
                     setReplicationOp(replication, value);
@@ -101,54 +98,55 @@ namespace Convertigo.SDK.FullSync.Enums
 
         private static void InitFullSyncRequestParameters()
         {
-            fullSyncRequestParameters = new Dictionary<FullSyncRequestParameter, Action<Query, Object>>();
+            fullSyncRequestParameters = new Dictionary<FullSyncRequestParameter, Action<Query, object>>();
             FullSyncRequestParameter requestParameter;
-            Action<Query, Object> action;
+            Action<Query, object> action;
             // DESCENDING
             requestParameter = FullSyncRequestParameter.DESCENDING;
             action = (query, value) => 
             {
-                query.Descending = (Boolean)value;
+                query.Descending = (bool) value;
             };
-            fullSyncRequestParameters.Add(requestParameter, action);
+            fullSyncRequestParameters[requestParameter] = action;
             // ENDKEY
             requestParameter = FullSyncRequestParameter.ENDKEY;
             action = (query, value) =>
             {
                 query.EndKey = value;
             };
-            fullSyncRequestParameters.Add(requestParameter, action);
+            fullSyncRequestParameters[requestParameter] = action;
             // ENDKEY_DOCID
             requestParameter = FullSyncRequestParameter.ENDKEY_DOCID;
             action = (query, value) =>
             {
-                query.EndKeyDocId = (String)value;
+                query.EndKeyDocId = value as string;
             };
-            fullSyncRequestParameters.Add(requestParameter, action);
+            fullSyncRequestParameters[requestParameter] = action;
             // GROUP_LEVEL
             requestParameter = FullSyncRequestParameter.GROUP_LEVEL;
             action = (query, value) =>
             {
-                query.GroupLevel = (int)value;
+                query.GroupLevel = (int) value;
             };
-            fullSyncRequestParameters.Add(requestParameter, action);
+            fullSyncRequestParameters[requestParameter] = action;
             // INCLUDE_DELETED
             requestParameter = FullSyncRequestParameter.INCLUDE_DELETED;
             action = (query, value) =>
             {
-                query.IncludeDeleted = (Boolean)value;
+                query.IncludeDeleted = (bool) value;
             };
-            fullSyncRequestParameters.Add(requestParameter, action);
+            fullSyncRequestParameters[requestParameter] = action;
             // INDEX_UPDATE_MODE
             requestParameter = FullSyncRequestParameter.INDEX_UPDATE_MODE;
             action = (query, value) =>
             {
-                String valueStr = (String)value;
-                Array indexUpdateModeValues = Enum.GetValues(typeof(IndexUpdateMode));
-                IEnumerator indexUpdateModeEnumerator = indexUpdateModeValues.GetEnumerator();
+                string valueStr = value as string;
+                var indexUpdateModeValues = Enum.GetValues(typeof(IndexUpdateMode));
+                var indexUpdateModeEnumerator = indexUpdateModeValues.GetEnumerator();
+
                 while (indexUpdateModeEnumerator.MoveNext())
                 {
-                    IndexUpdateMode indexUpdateMode = (IndexUpdateMode)indexUpdateModeEnumerator.Current;
+                    var indexUpdateMode = (IndexUpdateMode) indexUpdateModeEnumerator.Current;
                     if (valueStr.Equals(indexUpdateMode.ToString()))
                     {
                         query.IndexUpdateMode = indexUpdateMode;
@@ -156,63 +154,63 @@ namespace Convertigo.SDK.FullSync.Enums
                     }
                 }
             };
-            fullSyncRequestParameters.Add(requestParameter, action);
+            fullSyncRequestParameters[requestParameter] = action;
             // KEYS
             requestParameter = FullSyncRequestParameter.KEYS;
             action = (query, value) =>
             {
-                query.Keys = (IEnumerable<Object>)value;
+                query.Keys = value as IEnumerable<object>;
             };
-            fullSyncRequestParameters.Add(requestParameter, action);
+            fullSyncRequestParameters[requestParameter] = action;
             // LIMIT
             requestParameter = FullSyncRequestParameter.LIMIT;
             action = (query, value) =>
             {
-                query.Limit = (int)value;
+                query.Limit = (int) value;
             };
-            fullSyncRequestParameters.Add(requestParameter, action);
+            fullSyncRequestParameters[requestParameter] = action;
             // INCLUDE_DOCS
             requestParameter = FullSyncRequestParameter.INCLUDE_DOCS;
             action = (query, value) =>
             {
                 // missing include_docs !
             };
-            fullSyncRequestParameters.Add(requestParameter, action);
+            fullSyncRequestParameters[requestParameter] = action;
             // MAP_ONLY
             requestParameter = FullSyncRequestParameter.MAP_ONLY;
             action = (query, value) =>
             {
-                query.MapOnly = (Boolean)value;
+                query.MapOnly = (bool) value;
             };
-            fullSyncRequestParameters.Add(requestParameter, action);
+            fullSyncRequestParameters[requestParameter] = action;
             // PREFETCH
             requestParameter = FullSyncRequestParameter.PREFETCH;
             action = (query, value) =>
             {
-                query.Prefetch = (Boolean)value;
+                query.Prefetch = (bool) value;
             };
-            fullSyncRequestParameters.Add(requestParameter, action);
+            fullSyncRequestParameters[requestParameter] = action;
             // SKIP
             requestParameter = FullSyncRequestParameter.SKIP;
             action = (query, value) =>
             {
-                query.Skip = (int)value;
+                query.Skip = (int) value;
             };
-            fullSyncRequestParameters.Add(requestParameter, action);
+            fullSyncRequestParameters[requestParameter] = action;
             // STARTKEY
             requestParameter = FullSyncRequestParameter.STARTKEY;
             action = (query, value) =>
             {
                 query.StartKey = value;
             };
-            fullSyncRequestParameters.Add(requestParameter, action);
+            fullSyncRequestParameters[requestParameter] = action;
             // STARTKEY_DOCID
             requestParameter = FullSyncRequestParameter.STARTKEY_DOCID;
             action = (query, value) =>
             {
-                query.StartKeyDocId = (String)value;
+                query.StartKeyDocId = value as string;
             };
-            fullSyncRequestParameters.Add(requestParameter, action);
+            fullSyncRequestParameters[requestParameter] = action;
         }
 
         //*** FullSyncPolicies ***//
@@ -240,7 +238,7 @@ namespace Convertigo.SDK.FullSync.Enums
             func = (database, newProperties) =>
             {
                 // Gets the document ID
-                String documentId = C8oUtils.GetParameterStringValue(newProperties, C8oFullSync.FULL_SYNC__ID, false);
+                string documentId = C8oUtils.GetParameterStringValue(newProperties, C8oFullSync.FULL_SYNC__ID, false);
 
                 // Removes special properties in order to create a new document
                 newProperties.Remove(C8oFullSync.FULL_SYNC__ID);
@@ -258,7 +256,7 @@ namespace Convertigo.SDK.FullSync.Enums
                 }
 
                 // Merges old properties with the new ones
-                IDictionary<string, object> oldProperties = createdDocument.Properties;
+                var oldProperties = createdDocument.Properties;
                 if (oldProperties != null)
                 {
                     FullSyncUtils.MergeProperties(newProperties, oldProperties);
@@ -273,7 +271,7 @@ namespace Convertigo.SDK.FullSync.Enums
             policy = FullSyncPolicy.NONE;
             func = (database, newProperties) =>
             {
-                Document createdDocument = (newProperties.ContainsKey(C8oFullSync.FULL_SYNC__ID)) ?
+                var createdDocument = (newProperties.ContainsKey(C8oFullSync.FULL_SYNC__ID)) ?
                     database.GetDocument(newProperties[C8oFullSync.FULL_SYNC__ID].ToString()) :
                     database.CreateDocument();
                 createdDocument.PutProperties(newProperties);
@@ -285,7 +283,7 @@ namespace Convertigo.SDK.FullSync.Enums
             func = (database, newProperties) =>
             {
                 // Gets the document ID
-                String documentId = C8oUtils.GetParameterStringValue(newProperties, C8oFullSync.FULL_SYNC__ID, false);
+                string documentId = C8oUtils.GetParameterStringValue(newProperties, C8oFullSync.FULL_SYNC__ID, false);
 
                 // Removes special properties in order to create a new document
                 newProperties.Remove(C8oFullSync.FULL_SYNC__ID);
@@ -301,10 +299,10 @@ namespace Convertigo.SDK.FullSync.Enums
                 {
                     createdDocument = database.GetDocument(documentId);
                     // Must add the current revision to the properties
-                    SavedRevision currentRevision = createdDocument.CurrentRevision;
+                    var currentRevision = createdDocument.CurrentRevision;
                     if (currentRevision != null)
                     {
-                        newProperties.Add(C8oFullSync.FULL_SYNC__REV, currentRevision.Id);
+                        newProperties[C8oFullSync.FULL_SYNC__REV] = currentRevision.Id;
                     }
                 }
                 createdDocument.PutProperties(newProperties);
@@ -331,14 +329,14 @@ namespace Convertigo.SDK.FullSync.Enums
             replicationParameter = FullSyncReplicationParameter.DOCIDS;
             action = (replication, value) =>
             {
-                replication.DocIds = (IEnumerable<String>)value;
+                replication.DocIds = value as IEnumerable<string>;
             };
             fullSyncReplicationParameters.Add(replicationParameter, action);
             // LIVE
             replicationParameter = FullSyncReplicationParameter.LIVE;
             action = (replication, value) =>
             {
-                replication.Continuous = (Boolean)value;
+                replication.Continuous = (bool) value;
             };
             fullSyncReplicationParameters.Add(replicationParameter, action);
         }
