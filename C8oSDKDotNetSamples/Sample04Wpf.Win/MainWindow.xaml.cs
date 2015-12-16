@@ -1,4 +1,5 @@
 ﻿using Convertigo.SDK;
+using System.IO;
 using System.Net;
 using System.Windows;
 
@@ -21,14 +22,19 @@ namespace Sample04Wpf.Win
             int cl = ServicePointManager.DefaultConnectionLimit = 10;
             ContentArea.Content = new Login(this);
 
+            var cert = File.ReadAllBytes("D:\\COMMON\\C8O\\7.3.3_srv_win\\tomcat\\conf\\client.p12");
+
             c8o = new C8o(
-                "http://tonus.twinsoft.fr:18080/convertigo/projects/BigFileTransferSample"
-                //"http://nicolasa.convertigo.net/cems/projects/BigFileTransferSample"
-            );
+                "https://tonus.twinsoft.fr:28443/convertigo/projects/BigFileTransferSample",
+                //"http://tonus.twinsoft.fr:18080/convertigo/projects/BigFileTransferSample"
+            //"http://nicolasa.convertigo.net/cems/projects/BigFileTransferSample"
+            new C8oSettings()
+                .SetTrustAllCertificates(true)
+                .AddClientCertificate(cert, "password"));
 
             fileTransfer = new C8oFileTransfer(c8o);
 
-            fileTransfer.RaiseDebug += (object sender, string debug) =>
+            fileTransfer.RaiseDebug += (sender, debug) =>
             {
                 c8o.RunUI(() =>
                 {
