@@ -12,26 +12,5 @@ namespace Convertigo.SDK
         {
             OnXmlResponse = onXmlResponse;
         }
-        /*
-        public String OnStreamResponse(Stream streamResponse, IDictionary<string, object> parameters, Boolean localCacheEnabled)
-        {
-            String responseString = null;
-            if (localCacheEnabled)
-            {
-                responseString = C8oTranslator.StreamToString(streamResponse);
-                this.OnStringResponse(responseString, parameters);
-            }
-            else
-            {
-                this.OnXmlResponse(C8oTranslator.StreamToXml(streamResponse), parameters);
-            }
-            return responseString;
-        }
-
-        public void OnStringResponse(String stringResponse, IDictionary<string, object> parameters)
-        {
-            this.OnXmlResponse(C8oTranslator.StringToXml(stringResponse), parameters);
-        }
-        */
     }
 }
