@@ -214,16 +214,17 @@ namespace Convertigo.SDK.Internal
         public static readonly FullSyncRequestParameter KEYS = new FullSyncRequestParameter("keys", typeof(IEnumerable<object>));
         public static readonly FullSyncRequestParameter LIMIT = new FullSyncRequestParameter("limit", typeof(int));
         public static readonly FullSyncRequestParameter INCLUDE_DOCS = new FullSyncRequestParameter("include_docs", typeof(bool));
-        public static readonly FullSyncRequestParameter MAP_ONLY = new FullSyncRequestParameter("map_only", typeof(bool));
+        public static readonly FullSyncRequestParameter REDUCE = new FullSyncRequestParameter("reduce", typeof(bool));
+        public static readonly FullSyncRequestParameter GROUP = new FullSyncRequestParameter("group", typeof(bool));
         public static readonly FullSyncRequestParameter PREFETCH = new FullSyncRequestParameter("prefetch", typeof(bool));
         public static readonly FullSyncRequestParameter SKIP = new FullSyncRequestParameter("skip", typeof(int));
         public static readonly FullSyncRequestParameter STARTKEY = new FullSyncRequestParameter("startkey", typeof(object));
         public static readonly FullSyncRequestParameter STARTKEY_DOCID = new FullSyncRequestParameter("startkey_docid", typeof(string));
 
-        public readonly String name;
+        public readonly string name;
         public readonly Type type;
 
-        private FullSyncRequestParameter(String name, Type type)
+        private FullSyncRequestParameter(string name, Type type)
         {
             this.name = name; 
             this.type = type;
@@ -231,10 +232,10 @@ namespace Convertigo.SDK.Internal
 
         public static FullSyncRequestParameter[] Values()
         {
-            return new FullSyncRequestParameter[] { DESCENDING, ENDKEY, ENDKEY_DOCID, GROUP_LEVEL, INCLUDE_DELETED, INDEX_UPDATE_MODE, KEYS, LIMIT, MAP_ONLY, PREFETCH, SKIP, STARTKEY, STARTKEY_DOCID };
+            return new FullSyncRequestParameter[] { DESCENDING, ENDKEY, ENDKEY_DOCID, GROUP_LEVEL, INCLUDE_DELETED, INDEX_UPDATE_MODE, KEYS, LIMIT, REDUCE, GROUP, PREFETCH, SKIP, STARTKEY, STARTKEY_DOCID };
         }
 
-        public static FullSyncRequestParameter GetFullSyncRequestParameter(String name)
+        public static FullSyncRequestParameter GetFullSyncRequestParameter(string name)
         {
             if (name != null) 
             {

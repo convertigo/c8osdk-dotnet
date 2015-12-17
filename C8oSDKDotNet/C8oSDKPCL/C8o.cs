@@ -38,14 +38,14 @@ namespace Convertigo.SDK
 
         //*** Engine reserved parameters ***//
 
-        public static readonly string ENGINE_PARAMETER_PROJECT = "__project";
-        public static readonly string ENGINE_PARAMETER_SEQUENCE = "__sequence";
-        public static readonly string ENGINE_PARAMETER_CONNECTOR = "__connector";
-        public static readonly string ENGINE_PARAMETER_TRANSACTION = "__transaction";
-        public static readonly string ENGINE_PARAMETER_ENCODED = "__encoded";
-        public static readonly string ENGINE_PARAMETER_LOCAL_CACHE = "__localCache";
-        public static readonly string ENGINE_PARAMETER_DEVICE_UUID = "__uuid";
-        public static readonly string ENGINE_PARAMETER_PROGRESS = "__progress";
+        internal static readonly string ENGINE_PARAMETER_PROJECT = "__project";
+        internal static readonly string ENGINE_PARAMETER_SEQUENCE = "__sequence";
+        internal static readonly string ENGINE_PARAMETER_CONNECTOR = "__connector";
+        internal static readonly string ENGINE_PARAMETER_TRANSACTION = "__transaction";
+        internal static readonly string ENGINE_PARAMETER_ENCODED = "__encoded";
+        internal static readonly string ENGINE_PARAMETER_LOCAL_CACHE = "__localCache";
+        internal static readonly string ENGINE_PARAMETER_DEVICE_UUID = "__uuid";
+        internal static readonly string ENGINE_PARAMETER_PROGRESS = "__progress";
 
         //*** Local cache keys ***//
 
@@ -60,8 +60,8 @@ namespace Convertigo.SDK
 
 	    //*** Response type ***//
 
-        public static readonly string RESPONSE_TYPE_XML = "pxml";
-        public static readonly string RESPONSE_TYPE_JSON = "json";
+        internal static readonly string RESPONSE_TYPE_XML = "pxml";
+        internal static readonly string RESPONSE_TYPE_JSON = "json";
 
         //*** Static configuration ***//
         internal static Type C8oHttpInterfaceUsed;

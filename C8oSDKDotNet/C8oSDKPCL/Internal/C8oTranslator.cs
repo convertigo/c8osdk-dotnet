@@ -61,7 +61,10 @@ namespace Convertigo.SDK.Internal
             else if (json is JValue)
             {
                 var jsonValue = (JValue) json;
-                parentElement.Value = jsonValue.Value.ToString();
+                if (jsonValue.Value != null)
+                {
+                    parentElement.Value = jsonValue.Value.ToString();
+                }
             }
         }
 
