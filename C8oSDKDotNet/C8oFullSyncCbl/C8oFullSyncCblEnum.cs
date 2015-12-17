@@ -176,11 +176,18 @@ namespace Convertigo.SDK.Internal
                 // missing include_docs !
             };
             fullSyncRequestParameters[requestParameter] = action;
-            // MAP_ONLY
-            requestParameter = FullSyncRequestParameter.MAP_ONLY;
+            // REDUCE
+            requestParameter = FullSyncRequestParameter.REDUCE;
             action = (query, value) =>
             {
-                query.MapOnly = (bool) value;
+                query.MapOnly = ! (bool) value;
+            };
+            fullSyncRequestParameters[requestParameter] = action;
+            // GROUP
+            requestParameter = FullSyncRequestParameter.GROUP;
+            action = (query, value) =>
+            {
+                query.GroupLevel = (bool) value ? 99 : 0;
             };
             fullSyncRequestParameters[requestParameter] = action;
             // PREFETCH
