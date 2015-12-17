@@ -2,6 +2,9 @@
 
 namespace Convertigo.SDK
 {
+    /// <summary>
+    /// This class gives dome information about a running replication
+    /// </summary>
     public class C8oProgress
     {
         private bool changed = false;
@@ -43,11 +46,19 @@ namespace Convertigo.SDK
             }
         }
 
+        /// <summary>
+        /// A built in replication status indicator.
+        /// </summary>
+        /// <returns>A String in the form "Direction : current / total (running)"</returns>
         public override string ToString()
         {
             return Direction + ": " + current + "/" + total + " (" + (finished ? (continuous ? "live" : "done") : "running") + ")";
         }
-        
+
+        /// <summary>
+        /// true if in continuous mode, false otherwise. In continuous mode, replications are done continuously as long as
+        /// the network is present. Otherwise replication stops when all the documents have been replicated
+        /// </summary>
         public bool Continuous
         {
             get
@@ -65,6 +76,12 @@ namespace Convertigo.SDK
             }
         }
 
+        /// <summary>
+        /// For a normal repliacation will be true when the replication has finished. For a continuous replication, will be true during phase 1
+        /// when all documents are being replicate to a stable state, then false during the continuous replication process. As design documents
+        /// are also replicated during a database sync, never use a view before the progress.finished == true to be sure the design document holding
+        /// this view is replicated locally.
+        /// </summary>
         public bool Finished
         {
             get
@@ -82,6 +99,9 @@ namespace Convertigo.SDK
             }
         }
 
+        /// <summary>
+        /// True is the replication is in pull mode (From server to device) false in push mode (Mobile to server)
+        /// </summary>
         public bool Pull
         {
             get
@@ -99,6 +119,9 @@ namespace Convertigo.SDK
             }
         }
 
+        /// <summary>
+        /// True is the replication is in push mode (From mobile to device) false in pull  mode (Server to mobile)
+        /// </summary>
         public bool Push
         {
             get
@@ -107,6 +130,9 @@ namespace Convertigo.SDK
             }
         }
 
+        /// <summary>
+        /// The current number of revisions repliacted. can be used as a progress indicator.
+        /// </summary>
         public long Current
         {
             get
@@ -123,7 +149,10 @@ namespace Convertigo.SDK
                 }
             }
         }
-        
+
+        /// <summary>
+        /// The total number of revisions to be repliacted so far.
+        /// </summary>
         public long Total
         {
             get
@@ -141,6 +170,9 @@ namespace Convertigo.SDK
             }
         }
 
+        /// <summary>
+        /// A Direction (Pull or push) information
+        /// </summary>
         public string Direction
         {
             get
@@ -151,6 +183,9 @@ namespace Convertigo.SDK
             }
         }
 
+        /// <summary>
+        /// A Status information
+        /// </summary>
         public string Status
         {
             get
@@ -168,6 +203,9 @@ namespace Convertigo.SDK
             }
         }
 
+        /// <summary>
+        /// A task information status from the underlying replication engine.
+        /// </summary>
         public string TaskInfo
         {
             get
@@ -185,6 +223,9 @@ namespace Convertigo.SDK
             }
         }
 
+        /// <summary>
+        /// The underlying replication engine replication object.
+        /// </summary>
         public object Raw
         {
             get

@@ -483,36 +483,58 @@ namespace Convertigo.SDK
             return "C8o[" + endpoint + "] " + base.ToString();
         }
 
+        /// <summary>
+        /// The endpoint of this C8O object as initialized in the constructor
+        /// </summary>
         public string Endpoint
         {
             get { return endpoint; }
         }
 
+        /// <summary>
+        /// The name of the Convertigo server coming from the endpoint url.
+        /// </summary>
         public string EndpointConvertigo
         {
             get { return endpointConvertigo; }
         }
 
+        /// <summary>
+        /// true if the endpoint has been initialized with a https:// url
+        /// </summary>
         public bool EndpointIsSecure
         {
             get { return endpointIsSecure; }
         }
 
+        /// <summary>
+        /// The target server hostname ,coming from the endpoint url.
+        /// </summary>
         public string EndpointHost
         {
             get { return endpointHost; }
         }
 
+        /// <summary>
+        /// The target server hostname ,coming from the endpoint url.
+        /// </summary>
         public string EndpointPort
         {
             get { return endpointPort; }
         }
 
+        /// <summary>
+        /// The Unique device ID for this mobile device. This value will be used in logs, analytics and billing tables
+        /// The Device mode licence model is based on these unique devices Ids.
+        /// </summary>
         public string DeviceUUID
         {
             get { return deviceUUID; }
         }
 
+        /// <summary>
+        /// The Cookie Store for this endpoint. All the cookies for this end point will be held here.
+        /// </summary>
         public CookieContainer CookieStore
         {
             get { return httpInterface.CookieStore; }
