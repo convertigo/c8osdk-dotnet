@@ -120,7 +120,10 @@ namespace retail_store
                     .Progress(progress =>
                     {
                         App.cvm.GetRealPrice();
+                        //App.cvm.GetReducePrice();
                         /*App.cvm.GetReducePrice();*/
+                        Debug.WriteLine(progress.ToString());
+                        
                     })
                     .Fail((e, p) =>
                     {

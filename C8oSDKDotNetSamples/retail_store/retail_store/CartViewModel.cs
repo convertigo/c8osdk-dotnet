@@ -131,8 +131,7 @@ namespace retail_store
                         if (productToInsert.Count ==0)
                         {
                             del = true;
-                            ProductStock.Remove(productToInsert);
-                            
+                            goto goOut;
                         }
                     }
                     updateCart();
@@ -175,6 +174,18 @@ namespace retail_store
             }
             else
             {
+                JObject data1;
+                data1 = await App.myC8oCart.CallJson(
+                    "fs://.post",
+                    "_id", productToInsert.Id,
+                    "count", productToInsert.Count,
+                    "_use_policy", "merge")
+                    .Fail((e, q) =>
+                    {
+                        Debug.WriteLine(e.ToString()); // Handle errors..
+                })
+                    .Async();
+
                 JObject data;
                 data = await App.myC8oCart.CallJson(
                     "fs://.delete",
@@ -184,24 +195,26 @@ namespace retail_store
                         Debug.WriteLine(e.ToString()); // Handle errors..
                     })
                     .Async();
+                ProductStock.Remove(productToInsert);
             }
         }
 
 
         public async void updateCart()
         {
-            JObject data;
-            data = await App.myC8oCart.CallJson(
+            
+            JObject data1;
+            data1 = await App.myC8oCart.CallJson(
                 "fs://.post",
                 "_id", productToInsert.Id,
                 "count", productToInsert.Count,
-                "_use_policy","merge")
+                "_use_policy", "merge")
                 .Fail((e, q) =>
                 {
                     Debug.WriteLine(e.ToString()); // Handle errors..
-                    })
+                })
                 .Async();
-        
+
         }
 
 
@@ -265,11 +278,11 @@ namespace retail_store
             
         }
 
-        public void SetProductBySku(string sku)
+        public void SetProductBySku(string id)
         {
             foreach (ProdStock p in productStock)
             {
-                if (p.Sku == sku)
+                if (p.Id == id)
                 {
                     Product = p;
                     break;

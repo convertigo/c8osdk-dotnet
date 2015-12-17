@@ -34,7 +34,7 @@
       <ListView x:Name="listView" ItemsSource="ProductStock">
         <ListView.ItemTemplate>
           <DataTemplate>
-            <ViewCell ClassId="{Binding Sku}">
+            <ViewCell ClassId="{Binding Id}">
               
               <StackLayout Orientation="Horizontal" Grid.ColumnSpan="2" Padding="5, 0">
                 <Grid>
