@@ -24,6 +24,20 @@ namespace retail_store
 
         public App()
         {
+            connectivity = CrossConnectivity.Current.IsConnected;
+            CrossConnectivity.Current.ConnectivityChanged += (sender, args) =>
+            {
+                connectivity = CrossConnectivity.Current.IsConnected;
+                if (connectivity == true)
+                {
+                    OnStart();
+                    ((TabbedPageP)this.MainPage).myCart.SetVisibility(true);
+                }
+                else
+                {
+                    ((TabbedPageP)this.MainPage).myCart.SetVisibility(false);
+                }
+            };
             //instanciate C8o Object with attributes
             myC8o = new C8o("http://192.168.100.86:18080/convertigo/projects/sampleMobileRetailStore",
                     new C8oSettings().
@@ -56,48 +70,51 @@ namespace retail_store
 
     protected override async void OnStart()
         {
-           
+
             // Handle when your app starts
 
-            //instanciate a new JObject data that will recieve json from our C8o objects
-            JObject data;
-
-            //CallJson Method is called thanks to C8o Object 
-            data = await myC8o.CallJson(
+            //if network state is ok then we can authentificate
+            if (connectivity)
+            {
+                //instanciate a new JObject data that will recieve json from our C8o objects
+                JObject data;
+                data = await myC8o.CallJson(
                 ".select_shop",          //We give him parameters as the name of the sequence that we calls
                 "shopCode", "42")       //And the parameters for the sequence    
-                .Fail((e, p) => 
+                .Fail((e, p) =>
                 {
-                    Debug.WriteLine("LAA"+e);//Handle errors..
+                    Debug.WriteLine("LAA" + e);//Handle errors..
                 })
                 .Async();               //Async Call
 
-            // if data return "42" for selectshop then..
-            if (data["document"]["shopCode"].ToString() == "42")
-            {
-                //Open the modal page in order to give the state of the waiting
-                await MainPage.Navigation.PushModalAsync(new LoadingPage());
-
                 //CallJson Method is called thanks to C8o Object 
-                data = await myC8o.CallJson(
-                    "fs://.sync")           //We give him parameters as the name of the FULLSYNC connector that we calls
-                    .Progress(progress => 
-                    {
-                        LoadP.Current = "" + progress.Current;
-                        LoadP.Total= "/ " + progress.Total;
-                        Debug.WriteLine(""+progress.Current +"/"+ progress.Total); //We are able to obtain the progress of the task
-                    })
-                    .Fail((e, p) =>
-                    {
-                        Debug.WriteLine("LAA" + e);//Handle errors..
-                    })
-                    .Async();
-                //Close the modal page that give us the progress...
-               await MainPage.Navigation.PopModalAsync();
-            }
+                // if data return "42" for selectshop then..
+                if (data["document"]["shopCode"].ToString() == "42")
+                {
+                    //Open the modal page in order to give the state of the waiting
+                    await MainPage.Navigation.PushModalAsync(new LoadingPage());
 
-            //CallJson Method is called thanks to C8o Object    
-            JObject dataCart = await myC8oCart.CallJson(
+                    //CallJson Method is called thanks to C8o Object 
+                    data = await myC8o.CallJson(
+                        "fs://.sync")           //We give him parameters as the name of the FULLSYNC connector that we calls
+                        .Progress(progress =>
+                        {
+                            LoadP.Current = "" + progress.Current;
+                            LoadP.Total = "/ " + progress.Total;
+                            Debug.WriteLine("" + progress.Current + "/" + progress.Total); //We are able to obtain the progress of the task
+                        })
+                        .Fail((e, p) =>
+                        {
+                            Debug.WriteLine("LAA" + e);//Handle errors..
+                        })
+                        .Async();
+                    //Close the modal page that give us the progress...
+                    await MainPage.Navigation.PopModalAsync();
+
+                }
+
+                //CallJson Method is called thanks to C8o Object    
+                await myC8oCart.CallJson(
                 ".Connect")         //We give him parameters as the name of the FULLSYNC connector that we calls
                 .Fail((e, p) =>
                 {
@@ -105,34 +122,33 @@ namespace retail_store
                 })
                 .Async();
 
-            //CallJson Method is called thanks to C8o Object 
-            data = await myC8oCart.CallJson(
+
+                //CallJson Method is called thanks to C8o Object 
+                await myC8oCart.CallJson(
                     "fs://.sync")                   //We give him parameters as the name of the FULLSYNC connector that we calls
-                     .Fail((e,p) =>                //And the live sync
-                     {
-                        Debug.WriteLine("" + e);
-                    })
+                        .Fail((e, p) =>                //And the live sync
+                    {
+                            Debug.WriteLine("" + e);
+                        })
                     .Async();
 
-            data = await myC8oCart.CallJson(
+                await myC8oCart.CallJson(
                     "fs://.sync",                       //We give him parameters as the name of the FULLSYNC connector that we calls
                     "continuous", true)               //And the live sync
                     .Progress(progress =>
                     {
                         App.cvm.GetRealPrice();
-                        //App.cvm.GetReducePrice();
-                        /*App.cvm.GetReducePrice();*/
+                    //App.cvm.GetReducePrice();
+                    /*App.cvm.GetReducePrice();*/
                         Debug.WriteLine(progress.ToString());
-                        
+
                     })
                     .Fail((e, p) =>
                     {
                         Debug.WriteLine("" + e);
                     })
                     .Async();
-
-
-
+            }
         }
 
         protected override void OnSleep()

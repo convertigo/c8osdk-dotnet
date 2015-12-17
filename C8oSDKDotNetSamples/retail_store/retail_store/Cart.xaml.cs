@@ -14,7 +14,7 @@ namespace retail_store
 {
     public partial class Cart : ContentPage
     {
-
+        
         public Cart()
         {
             InitializeComponent();
@@ -25,9 +25,21 @@ namespace retail_store
             labReDis.BindingContext = (ReduceTot)App.cvm.Reduce[0];
 
 
-           
-        
 
+        }
+
+        public void SetVisibility(bool visible)
+        {
+            if (visible)
+            {
+                labReNewP.IsVisible = true;
+                labReDis.IsVisible = true;
+            }
+            else
+            {
+                labReNewP.IsVisible = false;
+                labReDis.IsVisible = false;
+            }
         }
         public async void GetView()
         {

@@ -117,7 +117,7 @@ namespace retail_store
             {
                 //If we found the produce we change count attributes to update the amount
 
-                if (pStock.Sku == Product.Sku)
+                if (pStock.Id == Product.Id)
                 {
                     flag = true;
                     productToInsert = pStock;
