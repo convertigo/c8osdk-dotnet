@@ -1,4 +1,5 @@
 ﻿using Couchbase.Lite;
+using Couchbase.Lite.Views;
 using Jint;
 using Jint.Native;
 using Jint.Native.Array;
@@ -16,9 +17,6 @@ namespace Convertigo.SDK.Internal
     /// </summary>
     internal class JSViewCompilerCopy : IViewCompiler
     {
-
-        #region IViewCompiler
-
         public delegate void LogDelegate(String msg);
 
         public MapDelegate CompileMap(string source, string language)
@@ -28,22 +26,28 @@ namespace Convertigo.SDK.Internal
                 return null;
             }
 
+            EmitDelegate rtEmit = null;
+            EmitDelegate wrapEmit = (key, value) =>
+            {
+                rtEmit(key, value);
+            };
+
             source = source.Replace("function", "function _f1");
+
             var engine = new Engine();
 
+            engine.SetValue("log", new LogDelegate((msg) =>
+            {
+                // TODO: handle log
+            }));
+
+            engine.SetValue("emit", wrapEmit);
+            engine.Execute(source);
+
             return (doc, emit) =>
-            {                
-                engine.SetValue("emit", emit);
-                engine.SetValue("log", new LogDelegate((msg) =>
-                {
-                    // TODO: handle log
-                }));
-                Object value;
-                doc.TryGetValue("_id", out value);
-
-                // Console.WriteLine("Doc id is :" + value.ToString());
-
-                String tempSource = source + "\n_f1(" + JsonConvert.SerializeObject(doc) + ");";
+            {
+                rtEmit = emit;
+                string tempSource = "_f1(" + JsonConvert.SerializeObject(doc) + ");";
                 engine.Execute(tempSource);
             };
         }
@@ -57,39 +61,53 @@ namespace Convertigo.SDK.Internal
 
             if (source.StartsWith("_"))
             {
-                // return BuiltinReduceFunctions.Get(source.TrimStart('_'));
+                if (source.StartsWith("_sum"))
+                {
+                    return BuiltinReduceFunctions.Sum;
+                }
+                else if (source.StartsWith("_count"))
+                {
+                    return BuiltinReduceFunctions.Count;
+                }
+                else if (source.StartsWith("_stats"))
+                {
+                    return BuiltinReduceFunctions.Stats;
+                }
+                else if (source.StartsWith("_average"))
+                {
+                    return BuiltinReduceFunctions.Average;
+                }
+                else if (source.StartsWith("_max"))
+                {
+                    return BuiltinReduceFunctions.Max;
+                }
+                else if (source.StartsWith("_min"))
+                {
+                    return BuiltinReduceFunctions.Min;
+                }
+                else if (source.StartsWith("_median"))
+                {
+                    return BuiltinReduceFunctions.Median;
+                }
             }
 
             source = source.Replace("function", "function _f2");
-            var engine = new Engine().Execute(source);//.SetValue("log", new Action<object>((line) => Log.I("JSViewCompiler", line.ToString())));
+
+            var engine = new Engine();
+
+            engine.SetValue("log", new LogDelegate((msg) =>
+            {
+                // TODO: handle log
+            }));
+
+            engine.Execute(source);
 
             return (keys, values, rereduce) =>
             {
-                var jsKeys = ToJSArray(keys, engine);
-                var jsVals = ToJSArray(values, engine);
-
-                var result = engine.Invoke("_f2", jsKeys, jsVals, rereduce);
-                return result.ToObject();
+                string tempSource = "_f2(" + JsonConvert.SerializeObject(keys) + ", " + JsonConvert.SerializeObject(values) + ", " + (rereduce ? "true" : "false") + ")";
+                var result = engine.Execute(tempSource).GetCompletionValue().ToObject();
+                return result;
             };
         }
-
-        #endregion
-
-        #region Private Methods
-
-        //Arrays cannot simply be passed into the Javascript engine, they must be allocated
-        //according to Javascript rules
-        private static ArrayInstance ToJSArray(IEnumerable list, Engine engine)
-        {
-            List<JsValue> wrappedVals = new List<JsValue>();
-            foreach (object x in list)
-            {
-                wrappedVals.Add(JsValue.FromObject(engine, x));
-            }
-
-            return (ArrayInstance)engine.Array.Construct(wrappedVals.ToArray());
-        }
-
-        #endregion
     }
 }
