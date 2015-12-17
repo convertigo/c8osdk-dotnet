@@ -157,7 +157,8 @@ namespace retail_store
         {
             base.OnAppearing();
             NavigationPage.SetHasNavigationBar(this, false);
-
+            indicator.IsVisible = true;
+            indicatorStr.IsVisible = true;
             //Here we call, thanks to myC8o object, a new view on our local base with specified parameters.
             JObject data = await App.myC8o.CallJson(
                     "fs://.view",
@@ -172,14 +173,15 @@ namespace retail_store
                         Debug.WriteLine("LAA" + e);// Handle errors..
                     })
                     .Async();
-
+            indicator.IsVisible = false;
+            indicatorStr.IsVisible = false;
             Object model;
             App.models.TryGetValue("CategoryViewModel", out model);
             Model a = (Model)model;
             a.PopulateData(data, IsProduct);
 
         }
-        
 
+        
     }
 }

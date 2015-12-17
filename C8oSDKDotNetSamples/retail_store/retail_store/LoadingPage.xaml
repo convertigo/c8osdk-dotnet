@@ -37,16 +37,16 @@
 
     <StackLayout  Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="7" HorizontalOptions="Center">
       <ActivityIndicator Color="Red" IsRunning="true" Grid.Row="2"/>
-      <Label Text="Loading please wait...." TextColor="#262261"  FontSize="15" ></Label>
+      <Label Text="Loading please wait.... We are downloading articles" TextColor="#262261"  FontSize="15" ></Label>
 
     </StackLayout>
     <StackLayout Grid.Row="4" Grid.Column="2">
       <Label  x:Name="current" Text="{Binding Current}" TextColor="#262261"  FontSize="15" HorizontalOptions="Center"></Label>
-      <!--<ProgressBar  x:Name="progressB" Progress="0.7" ></ProgressBar>-->
+      
     </StackLayout>
     <StackLayout Grid.Row="4" Grid.Column="3">
       <Label  x:Name="tot" Text="{Binding Total}" TextColor="#262261"  FontSize="15" HorizontalOptions="Center"></Label>
-      <!--<ProgressBar  x:Name="progressB" Progress="0.7" ></ProgressBar>-->
+      
     </StackLayout>
     <StackLayout Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="7" HorizontalOptions="Center" VerticalOptions="End">
       <Label Text="Enjoy your shopping !" TextColor="#262261"  FontSize="15"></Label>

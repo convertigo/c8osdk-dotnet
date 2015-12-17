@@ -250,8 +250,8 @@ namespace retail_store
             JObject data = await App.myC8oCart.CallJson(
                     "fs://.view",
                     "ddoc", "design",
-                    "view", "reduceTot",
-                    "reduce", true)
+                    "view", "reduceTot"
+                    )
                     .Fail((e, p) =>
                     {
                         Debug.WriteLine(e.ToString()); // Handle errors..
@@ -312,7 +312,7 @@ namespace retail_store
              foreach(JObject jo in (JArray)jsonResponse["rows"])
              {
                  this.Reduce[0].Discount = (((string)jo["value"]["discount"])).ToString();
-                 this.Reduce[0].NewPrice = Math.Round(((float)jo["value"]["newPrice"])).ToString() + " €";
+                 this.Reduce[0].NewPrice = Math.Round(((float)jo["value"]["newPrice"]),2).ToString() + " €";
                  flag = true;
              }
              if (!flag)

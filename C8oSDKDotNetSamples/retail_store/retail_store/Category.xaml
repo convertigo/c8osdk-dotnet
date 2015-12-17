@@ -33,6 +33,8 @@
       
     </StackLayout>
       <StackLayout Grid.Row="3" Grid.Column="0">
+        <ActivityIndicator x:Name="indicator" Color="Red" IsRunning="true" Grid.Row="2"/>
+        <Label x:Name="indicatorStr" Text="Loading please wait.... We are optimazing your database" TextColor="#262261"  FontSize="15" HorizontalOptions="CenterAndExpand" ></Label>
       <ListView x:Name="listView" ItemsSource="{Binding Rayons}" ItemTapped="OnItemTapped">
         <ListView.ItemTemplate>
           <DataTemplate>

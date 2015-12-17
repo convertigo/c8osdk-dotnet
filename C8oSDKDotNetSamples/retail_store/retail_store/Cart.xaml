@@ -111,7 +111,7 @@
           
         </Label>
       </StackLayout>
-        <StackLayout Grid.Row="1" Grid.Column="0" HorizontalOptions="Center" >
+        <StackLayout Grid.Row="1" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" >
           <Label x:Name="labReNewP" Text="{Binding NewPrice}" TextColor="#FF0000" />
         </StackLayout>
         <StackLayout Grid.Row="2" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" >

@@ -1,7 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:retail_store;assembly=retail_store"
              x:Class="retail_store.Products">
+
+  <NavigationPage.BindingContext>
+    <local:CategoryViewModel />
+  </NavigationPage.BindingContext>
 
   <Grid BackgroundColor="#FFFFFF">
     
@@ -25,11 +30,23 @@
     <StackLayout Grid.Row="1" Grid.ColumnSpan="5" BackgroundColor="#262261">
       <Label  Text="Products Research" VerticalOptions="Start" HorizontalOptions="Center" TextColor="#FFFFFF"/>
       
-      <SearchBar x:Name="SearchFor" Placeholder="search for" Text="{Binding Path=SearchText}"  SearchButtonPressed="OnSearch" VerticalOptions="Start"/>
+      <SearchBar x:Name="SearchFor" Placeholder="search for" Text="{Binding Path=SearchText}"  TextChanged="OnSearch" VerticalOptions="Start"/>
     </StackLayout>
 
-    
-    
+
+    <StackLayout Grid.Row="2"  Grid.RowSpan="5" Grid.ColumnSpan="5">
+      <ListView x:Name="listView" ItemsSource="{Binding Rayons}">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Padding="5, 5">
+                <Label Text="{Binding Name}" HorizontalOptions="StartAndExpand" VerticalOptions="Center" TextColor="#000000" FontSize="12"/>
+              </StackLayout>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </StackLayout>
     <StackLayout Grid.Row="2" Grid.Column="1">
       <Image x:Name="imgN" Source="nouv.jpg" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Image>
       <Label Text="Novelty"  HorizontalOptions="Center" FontSize="11" TextColor="#262261"/>

@@ -12,7 +12,7 @@ namespace retail_store
     public class App : Application
     {
         const string conn = "";
-        
+     
         //instanciate static objects accessible from the whole solution. 
         public static C8o myC8o;
         public static C8o myC8oCart;
@@ -26,6 +26,23 @@ namespace retail_store
 
         public App()
         {
+            /*label.FontFamily = Device.OnPlatform (
+ iOS:      "MarkerFelt-Thin"
+ Android:  "Droid Sans Mono"
+ WinPhone: "Comic Sans MS"
+);*/
+            // The Application ResourceDictionary is available in Xamarin.Forms 1.3 and later
+            Application.Current.Resources = new ResourceDictionary();
+            var appStyle = new Style(typeof(Label))
+            {
+                BaseResourceKey = Device.Styles.SubtitleStyleKey,
+                Setters = {
+                new Setter { Property = Label.FontProperty, Value = "roboto" }
+            }
+            };
+            Application.Current.Resources.Add("AppStyle", appStyle); // use the "AppStyle" key in the app
+
+
             connectivity = CrossConnectivity.Current.IsConnected;
             CrossConnectivity.Current.ConnectivityChanged += (sender, args) =>
             {
@@ -142,6 +159,7 @@ namespace retail_store
                         if (progress.Finished == true)
                         {
                             App.cvm.GetRealPrice();
+                            //App.cvm.GetReducePrice();
                             Debug.WriteLine(progress.ToString());
                         }
                     })
