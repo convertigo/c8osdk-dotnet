@@ -239,9 +239,12 @@ namespace Sample05Shared
         {
             Output.Text = "Test09\n";
 
-            var c8o = new C8o("https://tonus.twinsoft.fr:18081/convertigo/projects/Sample05", new C8oSettings().SetTrustAllCertificates(true));
-
-            c8o.CallXml(".sample05.GetServerInfo").ThenUI((xml, param) =>
+            c8o.CallXml("fs://.view",
+                "ddoc", "design",
+                "view", "modulos",
+                "limit", 15,
+                "reduce", false
+            ).ThenUI((xml, param) =>
             {
                 Output.Text += xml.ToString();
                 Output.Text += "\n==========\n";
@@ -256,9 +259,12 @@ namespace Sample05Shared
         {
             Output.Text = "Test10\n";
 
-            var c8o = new C8o("https://tonus.twinsoft.fr:18081/convertigo/projects/Sample05", new C8oSettings().SetTrustAllCertificates(true));
-
-            c8o.CallXml(".sample05.GetServerInfo").ThenUI((xml, param) =>
+            c8o.CallXml("fs://.view",
+                "ddoc", "design",
+                "view", "modulos",
+                "reduce", true,
+                "group", true
+            ).ThenUI((xml, param) =>
             {
                 Output.Text += xml.ToString();
                 Output.Text += "\n==========\n";
