@@ -312,7 +312,7 @@ namespace retail_store
              foreach(JObject jo in (JArray)jsonResponse["rows"])
              {
                  this.Reduce[0].Discount = (((string)jo["value"]["discount"])).ToString();
-                 this.Reduce[0].NewPrice = ((string)jo["value"]["newPrice"]).ToString();
+                 this.Reduce[0].NewPrice = Math.Round(((float)jo["value"]["newPrice"])).ToString() + " €";
                  flag = true;
              }
              if (!flag)

@@ -10,7 +10,9 @@ using Newtonsoft.Json.Linq;
 namespace retail_store
 {
     public class App : Application
-    {   
+    {
+        const string conn = "";
+        
         //instanciate static objects accessible from the whole solution. 
         public static C8o myC8o;
         public static C8o myC8oCart;
@@ -124,24 +126,24 @@ namespace retail_store
 
 
                 //CallJson Method is called thanks to C8o Object 
-                await myC8oCart.CallJson(
+                /*await myC8oCart.CallJson(
                     "fs://.sync")                   //We give him parameters as the name of the FULLSYNC connector that we calls
                         .Fail((e, p) =>                //And the live sync
                     {
                             Debug.WriteLine("" + e);
                         })
-                    .Async();
+                    .Async();*/
 
                 await myC8oCart.CallJson(
                     "fs://.sync",                       //We give him parameters as the name of the FULLSYNC connector that we calls
                     "continuous", true)               //And the live sync
                     .Progress(progress =>
                     {
-                        App.cvm.GetRealPrice();
-                    //App.cvm.GetReducePrice();
-                    /*App.cvm.GetReducePrice();*/
-                        Debug.WriteLine(progress.ToString());
-
+                        if (progress.Finished == true)
+                        {
+                            App.cvm.GetRealPrice();
+                            Debug.WriteLine(progress.ToString());
+                        }
                     })
                     .Fail((e, p) =>
                     {

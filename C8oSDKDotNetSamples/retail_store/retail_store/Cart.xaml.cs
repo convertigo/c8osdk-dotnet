@@ -71,7 +71,6 @@ namespace retail_store
 
         void tapImage_Tapped(object sender, EventArgs e)
         {
-            string sku = ((ViewCell)((Image)sender).Parent.Parent.Parent.Parent.Parent.Parent).ClassId.ToString();
             string id = ((ViewCell)((Image)sender).Parent.Parent.Parent.Parent.Parent.Parent).ClassId.ToString();
 
             string imageName = ((FileImageSource)((Image)sender).Source).File.ToString();
@@ -83,7 +82,7 @@ namespace retail_store
                     
                     break;
                 case "moins.png":
-                    App.cvm.SetProductBySku(sku);
+                    App.cvm.SetProductBySku(id);
                     App.cvm.CheckCart(false);
                     
                     break;
