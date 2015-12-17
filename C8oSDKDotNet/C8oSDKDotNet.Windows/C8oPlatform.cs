@@ -14,6 +14,8 @@ namespace Convertigo.SDK
                 dispatcher.BeginInvoke(code);
             };
 
+            C8o.deviceUUID = new HardwareHelper().GetHardwareID();
+
             C8oHTTPsProxy.Init();
             C8oPlatformCommon.Init();
         }
