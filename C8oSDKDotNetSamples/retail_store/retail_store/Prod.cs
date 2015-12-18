@@ -39,7 +39,11 @@ namespace retail_store
 
             set
             {
-                priceOfUnit = value;
+                if (value == null)
+                {
+                    value = "0";
+                }
+                priceOfUnit = value +" €";
             }
         }
 

@@ -4,9 +4,9 @@
              xmlns:local="clr-namespace:retail_store;assembly=retail_store"
              x:Class="retail_store.Products">
 
-  <NavigationPage.BindingContext>
+  <ContentPage.BindingContext>
     <local:CategoryViewModel />
-  </NavigationPage.BindingContext>
+  </ContentPage.BindingContext>
 
   <Grid BackgroundColor="#FFFFFF">
     
@@ -30,45 +30,49 @@
     <StackLayout Grid.Row="1" Grid.ColumnSpan="5" BackgroundColor="#262261">
       <Label  Text="Products Research" VerticalOptions="Start" HorizontalOptions="Center" TextColor="#FFFFFF"/>
       
-      <SearchBar x:Name="SearchFor" Placeholder="search for" Text="{Binding Path=SearchText}"  TextChanged="OnSearch" VerticalOptions="Start"/>
+      <SearchBar x:Name="SearchFor" Placeholder="search for"   TextChanged="OnSearch" VerticalOptions="Start"/>
     </StackLayout>
 
 
-    <StackLayout Grid.Row="2"  Grid.RowSpan="5" Grid.ColumnSpan="5">
-      <ListView x:Name="listView" ItemsSource="{Binding Rayons}">
-        <ListView.ItemTemplate>
-          <DataTemplate>
-            <ViewCell>
-              <StackLayout Orientation="Horizontal" Padding="5, 5">
-                <Label Text="{Binding Name}" HorizontalOptions="StartAndExpand" VerticalOptions="Center" TextColor="#000000" FontSize="12"/>
-              </StackLayout>
-            </ViewCell>
-          </DataTemplate>
-        </ListView.ItemTemplate>
-      </ListView>
-    </StackLayout>
-    <StackLayout Grid.Row="2" Grid.Column="1">
-      <Image x:Name="imgN" Source="nouv.jpg" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Image>
-      <Label Text="Novelty"  HorizontalOptions="Center" FontSize="11" TextColor="#262261"/>
-    </StackLayout>
+        <StackLayout Grid.Row="2" Grid.Column="1">
+          <Image x:Name="imgN" Source="nouv.jpg" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Image>
+          <Label x:Name="imgN_text" Text="Novelty"  HorizontalOptions="Center" FontSize="11" TextColor="#262261"/>
+        </StackLayout>
 
-    <StackLayout Grid.Row="2" Grid.Column="3">
-      <Image x:Name="imgP" Source="prod.jpg" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Image>
-      <Label Text="Promotions"  HorizontalOptions="Center" FontSize="11" TextColor="#262261"/>
-    </StackLayout>
+        <StackLayout  Grid.Row="2" Grid.Column="3">
+          <Image x:Name="imgP" Source="prod.jpg" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Image>
+          <Label x:Name="imgP_text" Text="Promotions"  HorizontalOptions="Center" FontSize="11" TextColor="#262261"/>
+        </StackLayout>
 
-    <StackLayout Grid.Row="3" Grid.ColumnSpan="3" Grid.Column="1" VerticalOptions="Start">
-      <Image Source="freshness.jpg"/>
-    </StackLayout>
+        <StackLayout   Grid.Row="3" Grid.ColumnSpan="3" Grid.Column="1" VerticalOptions="Start">
+          <Image x:Name="img_fresh" Source="freshness.jpg"/>
+        </StackLayout>
 
-    <StackLayout Grid.Row="4" Grid.ColumnSpan="5" VerticalOptions="Start">
-      <Label Text="Retail Store"  HorizontalOptions="Center" FontSize="15" TextColor="#262261"/>
-    </StackLayout>
+        <StackLayout  Grid.Row="4" Grid.ColumnSpan="5" VerticalOptions="Start">
+          <Label x:Name="txt_ret" Text="Retail Store"  HorizontalOptions="Center" FontSize="15" TextColor="#262261"/>
+        </StackLayout>
+
+        <StackLayout Grid.Row="4" Grid.ColumnSpan="5" VerticalOptions="Center">
+          <Label x:Name="txt_fr" Text="Guaranteed freshness"  HorizontalOptions="Center" FontSize="15" TextColor="#262261"/>
+        </StackLayout>
+
+
     
-    <StackLayout Grid.Row="4" Grid.ColumnSpan="5" VerticalOptions="Center">
-      <Label Text="Guaranteed freshness"  HorizontalOptions="Center" FontSize="15" TextColor="#262261"/>
-    </StackLayout>
+      <StackLayout Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="5">
+        <ListView x:Name="listView" ItemsSource="{Binding Rayons}" ItemTapped="OnItemTapped">
+          <ListView.ItemTemplate>
+            <DataTemplate>
+              <ViewCell>
+                <StackLayout Orientation="Horizontal" Padding="5, 5">
+                  <Label Text="{Binding Name}" HorizontalOptions="StartAndExpand" VerticalOptions="Center" TextColor="#000000" FontSize="12"/>
+                </StackLayout>
+              </ViewCell>
+            </DataTemplate>
+          </ListView.ItemTemplate>
+        </ListView>
+      </StackLayout>
 
+    
   </Grid>
-  
+
 </ContentPage>

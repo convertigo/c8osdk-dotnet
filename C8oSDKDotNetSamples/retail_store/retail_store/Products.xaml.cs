@@ -18,41 +18,45 @@ namespace retail_store
         public Products()
         {
             InitializeComponent();
-            
+            IsVisibleProd(false);
             //Creating TapGestureRecognizers  
-            var tapImage = new TapGestureRecognizer();
+            var tapImage_nouv = new TapGestureRecognizer();
+            var tapImage_promo = new TapGestureRecognizer();
             //Binding events  
-            tapImage.Tapped += tapImage_Tapped;
+            tapImage_nouv.Tapped += tapImage_Tapped;
+            tapImage_promo.Tapped += tapImage_Tapped_promo;
             //Associating tap events to the image buttons  
-            imgN.GestureRecognizers.Add(tapImage);
-            imgP.GestureRecognizers.Add(tapImage);
+            imgN.GestureRecognizers.Add(tapImage_nouv);
+            imgP.GestureRecognizers.Add(tapImage_promo);
+           
             
             
         }
-        void tapImage_Tapped(object sender, EventArgs e)
+        public async  void tapImage_Tapped_promo(object sender, EventArgs e)
         {
-            // handle the tap  
-            DisplayAlert("Alert", "This is an image button", "OK");
+            Category c = new Category("PROMO");
+            await Navigation.PushAsync(c, true);
+        }
+        public async void tapImage_Tapped(object sender, EventArgs e)
+        {
+            Category c = new Category("NEWS");
+            await Navigation.PushAsync(c, true);
         }
 
         public async void OnSearch(object sender, EventArgs e)
         {
             if (SearchFor.Text != "")
             {
-                listView.IsVisible = true;
+                IsVisibleProd(true);
+                string val = SearchFor.Text;
+                string valUp = val.ToUpper();
+                string valLow = val.ToLower();
+                Search(valLow, valUp);
             }
             else
             {
-                listView.IsVisible = false;
+                IsVisibleProd(false);
             }
-            string val = SearchFor.Text;
-            string valUp = val.ToUpper();
-            string valLow = val.ToLower();
-            //int lVal = val.Length;
-            Search(valLow, valUp);
-
-
-            // ((TabbedPageP)App.MainPage).np
         }
         protected override void OnAppearing()
         {
@@ -66,10 +70,14 @@ namespace retail_store
                    "fs://.view",
                    "ddoc", "design",
                    "view", "Search",
-                   "startkey", "['42', '" + valLow + "]",
+                   "startkey", "['42', '" + valLow + "']",
                    "endkey", "['42', '" + valUp + "Z']",
                    "limit", 20,
                    "skip", 0)
+                   .Progress(progress =>
+                   {
+                       Debug.WriteLine(progress.TaskInfo);
+                   })
                    .Fail((e, p) =>
                    {
                        Debug.WriteLine("LAA" + e);// Handle errors..
@@ -78,8 +86,40 @@ namespace retail_store
             Object model;
             App.models.TryGetValue("CategoryViewModel", out model);
             Model a = (Model)model;
+           
             a.PopulateData(data, true);
+            listView.BindingContext = a;
 
         }
-    }
+        public void IsVisibleProd(bool b)
+        {
+            double val;
+            if (b)
+            {
+                val = 0.15;
+            }
+            else
+            {
+                val = 1;
+                
+            }
+            listView.IsVisible = b;
+            imgN.Opacity = val;
+            imgP.Opacity = val;
+            imgN_text.Opacity = val;
+            imgP_text.Opacity = val;
+            img_fresh.Opacity = val;
+            txt_ret.Opacity = val;
+            txt_fr.Opacity = val;
+        }
+
+        async void OnItemTapped(object sender, ItemTappedEventArgs e)
+        {
+            Prod prod = (Prod)e.Item;
+            await Navigation.PushAsync(new Detail(prod), true);
+        }
+            
+
+
+        }
 }

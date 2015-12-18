@@ -177,8 +177,8 @@ namespace retail_store
             indicatorStr.IsVisible = false;
             Object model;
             App.models.TryGetValue("CategoryViewModel", out model);
-            Model a = (Model)model;
-            a.PopulateData(data, IsProduct);
+            Model mod = (Model)model;
+            mod.PopulateData(data, IsProduct);
 
         }
 
