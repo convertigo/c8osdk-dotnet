@@ -4,6 +4,10 @@ using System.Net;
 
 namespace Convertigo.SDK
 {
+    /// <summary>
+    /// This class manages various settings to configure Convertigo SDK. You can use an instance of this object in a
+    /// new C8o endpoint object to initialize the endpoint with the correct settings
+    /// </summary>
     public class C8oSettings : C8oBase
     {
         public C8oSettings()
@@ -53,6 +57,13 @@ namespace Convertigo.SDK
             return this;
         }
 
+        /// <summary>
+        /// When using https TLS/SSL connections you may have to provide client certifiactes. Use this setting to add a client certificate 
+        /// that the SDK will use connecting to Convertigo Server.
+        /// </summary>
+        /// <param name="certificate">A PKCS#12 Binary certificate</param>
+        /// <param name="password">the password to use this certificate</param>
+        /// <returns>The current <c>C8oSettings</c>, for chaining.</returns>
         public C8oSettings AddClientCertificate(byte[] certificate, string password)
         {
             if (clientCertificateBinaries == null)
@@ -64,6 +75,13 @@ namespace Convertigo.SDK
             return this;
         }
 
+        /// <summary>
+        /// When using https TLS/SSL connections you may have to provide client certifiactes. Use this setting to add a client certificate 
+        /// that the SDK will use connecting to Convertigo Server.
+        /// </summary>
+        /// <param name="certificate">The path to a .P12 certificate file</param>
+        /// <param name="password">the password to use this certificate</param>
+        /// <returns>The current <c>C8oSettings</c>, for chaining.</returns>
         public C8oSettings AddClientCertificate(string certificatePath, string password)
         {
             if (clientCertificateFiles == null)
@@ -98,6 +116,11 @@ namespace Convertigo.SDK
 
         //*** Log ***//
 
+        /// <summary>
+        /// Set logging to remote. If true, logs will be sent to COnvertigo MBaaS server.
+        /// </summary>
+        /// <param name="logRemote"></param>
+        /// <returns>The current<c>C8oSettings</c>, for chaining.</returns>
         public C8oSettings SetIsLogRemote(bool logRemote)
         {
             this.logRemote = logRemote;
@@ -111,6 +134,12 @@ namespace Convertigo.SDK
         }
         //*** FullSync ***//
 
+        /// <summary>
+        /// When you use FullSync request in the form fs://database.verb, you can use this setting if you want to have a default
+        /// database. In this case using fs://.verb will automatically use the database configured with this setting.
+        /// </summary>
+        /// <param name="defaultDatabaseName">The default data base</param>
+        /// <returns>The current<c>C8oSettings</c>, for chaining.</returns>
         public C8oSettings SetDefaultDatabaseName(string defaultDatabaseName)
         {
             this.defaultDatabaseName = defaultDatabaseName;
