@@ -58,7 +58,7 @@ namespace Convertigo.SDK
         }
 
         /// <summary>
-        /// When using https TLS/SSL connections you may have to provide client certifiactes. Use this setting to add a client certificate 
+        /// When using https TLS/SSL connections you may have to provide client certificates. Use this setting to add a client certificate 
         /// that the SDK will use connecting to Convertigo Server.
         /// </summary>
         /// <param name="certificate">A PKCS#12 Binary certificate</param>
@@ -76,7 +76,7 @@ namespace Convertigo.SDK
         }
 
         /// <summary>
-        /// When using https TLS/SSL connections you may have to provide client certifiactes. Use this setting to add a client certificate 
+        /// When using https TLS/SSL connections you may have to provide client certificates. Use this setting to add a client certificate 
         /// that the SDK will use connecting to Convertigo Server.
         /// </summary>
         /// <param name="certificate">The path to a .P12 certificate file</param>
@@ -117,7 +117,7 @@ namespace Convertigo.SDK
         //*** Log ***//
 
         /// <summary>
-        /// Set logging to remote. If true, logs will be sent to COnvertigo MBaaS server.
+        /// Set logging to remote. If true, logs will be sent to Convertigo MBaaS server.
         /// </summary>
         /// <param name="logRemote"></param>
         /// <returns>The current<c>C8oSettings</c>, for chaining.</returns>
