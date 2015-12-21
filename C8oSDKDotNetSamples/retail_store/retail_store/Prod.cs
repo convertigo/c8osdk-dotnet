@@ -43,7 +43,7 @@ namespace retail_store
                 {
                     value = "0";
                 }
-                priceOfUnit = value +" €";
+                priceOfUnit = value;
             }
         }
 

@@ -197,6 +197,7 @@ namespace retail_store
                     .Async();
                 ProductStock.Remove(productToInsert);
             }
+            App.cvm.GetReducePrice();
         }
 
 
@@ -214,6 +215,7 @@ namespace retail_store
                     Debug.WriteLine(e.ToString()); // Handle errors..
                 })
                 .Async();
+            App.cvm.GetReducePrice();
 
         }
 
@@ -241,6 +243,7 @@ namespace retail_store
                             Debug.WriteLine(e.ToString());// Handle errors..
                         })
                     .Async();
+                App.cvm.GetReducePrice();
             }
             
         }
@@ -312,7 +315,7 @@ namespace retail_store
              foreach(JObject jo in (JArray)jsonResponse["rows"])
              {
                  this.Reduce[0].Discount = (((string)jo["value"]["discount"])).ToString();
-                 this.Reduce[0].NewPrice = Math.Round(((float)jo["value"]["newPrice"]),2).ToString() + " €";
+                this.Reduce[0].NewPrice = Math.Round(((float)jo["value"]["newPrice"]), 2).ToString();
                  flag = true;
              }
              if (!flag)

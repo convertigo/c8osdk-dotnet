@@ -62,7 +62,7 @@ namespace retail_store
                     "view", view,
                     "startkey", "['42','" + Categor + "'," + Leaf + "]",
                     "endkey", "['42','" + Categor2 + "'," + Leaf2 + "]",
-                    "limit", 20,
+                    //"limit", 20,
                     "skip", 0)
                     .Fail((e, p) =>
                     {

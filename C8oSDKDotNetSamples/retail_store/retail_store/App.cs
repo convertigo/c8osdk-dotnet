@@ -26,11 +26,7 @@ namespace retail_store
 
         public App()
         {
-            /*label.FontFamily = Device.OnPlatform (
- iOS:      "MarkerFelt-Thin"
- Android:  "Droid Sans Mono"
- WinPhone: "Comic Sans MS"
-);*/
+            exec = false;
             // The Application ResourceDictionary is available in Xamarin.Forms 1.3 and later
             Application.Current.Resources = new ResourceDictionary();
             var appStyle = new Style(typeof(Label))
@@ -91,7 +87,7 @@ namespace retail_store
         {
 
             // Handle when your app starts
-
+            
             //if network state is ok then we can authentificate
             if (connectivity)
             {
@@ -159,7 +155,6 @@ namespace retail_store
                         if (progress.Finished == true)
                         {
                             App.cvm.GetRealPrice();
-                            //App.cvm.GetReducePrice();
                             Debug.WriteLine(progress.ToString());
                         }
                     })
@@ -168,8 +163,14 @@ namespace retail_store
                         Debug.WriteLine("" + e);
                     })
                     .Async();
+                
             }
-            MainPage = new TabbedPageP();
+            if(!exec)
+            {
+                MainPage = new TabbedPageP();
+                exec = true;
+            }
+            
             //await MainPage.Navigation.PopModalAsync();
         }
 

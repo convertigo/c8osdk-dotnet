@@ -27,7 +27,7 @@
     </StackLayout>
 
     <StackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BackgroundColor="#262261">
-      <Label Text="Basket" TextColor="#FFFFFF"/>
+      <Label Text="Cart" TextColor="#FFFFFF"/>
     </StackLayout>
     
     <StackLayout  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
@@ -115,7 +115,8 @@
           <Label x:Name="labReNewP" Text="{Binding NewPrice}" TextColor="#FF0000" />
         </StackLayout>
         <StackLayout Grid.Row="2" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" >
-          <Label x:Name="labReDis" Text="{Binding Discount}" TextColor="#FF0000" />
+          <Label x:Name="labReDis" Text="{Binding Discount}" TextColor="#FF0000">
+          </Label>
         </StackLayout>
       </Grid>
     </StackLayout>

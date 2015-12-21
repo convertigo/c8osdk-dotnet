@@ -73,7 +73,7 @@ namespace retail_store
         {
             get
             {
-                return newPrice;
+                return newPrice + " €";
             }
 
             set
@@ -83,6 +83,8 @@ namespace retail_store
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs(null));
                 }
+                
+                
             }
         }
 

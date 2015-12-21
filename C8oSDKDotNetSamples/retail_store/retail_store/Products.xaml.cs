@@ -23,11 +23,11 @@ namespace retail_store
             var tapImage_nouv = new TapGestureRecognizer();
             var tapImage_promo = new TapGestureRecognizer();
             //Binding events  
-            tapImage_nouv.Tapped += tapImage_Tapped;
-            tapImage_promo.Tapped += tapImage_Tapped_promo;
+            //tapImage_nouv.Tapped += tapImage_Tapped;
+            //tapImage_promo.Tapped += tapImage_Tapped_promo;
             //Associating tap events to the image buttons  
-            imgN.GestureRecognizers.Add(tapImage_nouv);
-            imgP.GestureRecognizers.Add(tapImage_promo);
+            //imgN.GestureRecognizers.Add(tapImage_nouv);
+            //imgP.GestureRecognizers.Add(tapImage_promo);
             NavigationPage.SetHasNavigationBar(this, false);
 
 
@@ -108,7 +108,7 @@ namespace retail_store
             imgP.Opacity = val;
             imgN_text.Opacity = val;
             imgP_text.Opacity = val;
-            //img_fresh.Opacity = val;
+            img_fresh.Opacity = val;
             txt_ret.Opacity = val;
             txt_fr.Opacity = val;
         }

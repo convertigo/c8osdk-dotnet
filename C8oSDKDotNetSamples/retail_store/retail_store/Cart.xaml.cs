@@ -23,9 +23,6 @@ namespace retail_store
             labRePr.BindingContext = (ReduceTot)App.cvm.Reduce[0];
             labReNewP.BindingContext = (ReduceTot)App.cvm.Reduce[0];
             labReDis.BindingContext = (ReduceTot)App.cvm.Reduce[0];
-
-
-
         }
 
         public void SetVisibility(bool visible)
@@ -58,15 +55,16 @@ namespace retail_store
             {
                 listView.ItemsSource = App.cvm.ProductStock;
             }
-            
-            
         }
 
-
-        protected override void OnAppearing()
+        public void refresh()
         {
             GetView();
-            
+            App.cvm.GetReducePrice();
+        }
+        protected override void OnAppearing()
+        {
+            refresh();
         }
 
         void tapImage_Tapped(object sender, EventArgs e)
@@ -88,7 +86,7 @@ namespace retail_store
                     break;
             }
 
-            //App.cvm.GetReducePrice();
+            
             
 
         }
