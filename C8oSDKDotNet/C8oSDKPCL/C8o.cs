@@ -142,36 +142,42 @@ namespace Convertigo.SDK
             {
                 uiDispatcher = defaultUiDispatcher;
             }
+
             try
             {
-                httpInterface = C8oHttpInterfaceUsed.GetTypeInfo().DeclaredConstructors.ElementAt(1).Invoke(new object[] { this }) as C8oHttpInterface;
+                if (C8oHttpInterfaceUsed != null)
+                {
+                    httpInterface = C8oHttpInterfaceUsed.GetTypeInfo().DeclaredConstructors.ElementAt(1).Invoke(new object[] { this }) as C8oHttpInterface;
+                }
+                else
+                {
+                    httpInterface = new C8oHttpInterface(this);
+                }
             }
-            catch
+            catch (Exception e)
             {
-                httpInterface = new C8oHttpInterface(this);
+                throw new C8oException(C8oExceptionMessage.InitHttpInterface(), e);
             }
 
             c8oLogger = new C8oLogger(this);
-            c8oLogger.SetRemoteLogParameters(httpInterface, LogRemote, endpointConvertigo, DeviceUUID);
 
             c8oLogger.LogMethodCall("C8o", this);
 
             try
             {
-                c8oFullSync = C8oFullSyncUsed.GetTypeInfo().DeclaredConstructors.ElementAt(0).Invoke(new object[0]) as C8oFullSync;
-            }
-            catch
-            {
-                c8oFullSync = new C8oFullSyncHttp(FullSyncServerUrl, FullSyncUsername, FullSyncPassword);
-            }
-
-            try
-            {
+                if (C8oFullSyncUsed != null)
+                {
+                    c8oFullSync = C8oFullSyncUsed.GetTypeInfo().DeclaredConstructors.ElementAt(0).Invoke(new object[0]) as C8oFullSync;
+                }
+                else
+                {
+                    c8oFullSync = new C8oFullSyncHttp(FullSyncServerUrl, FullSyncUsername, FullSyncPassword);
+                }
                 c8oFullSync.Init(this);
             }
             catch (Exception e)
             {
-                throw new C8oException(C8oExceptionMessage.ToDo(), e);
+                throw new C8oException(C8oExceptionMessage.FullSyncInterfaceInstance(), e);
             }
         }
 
@@ -182,7 +188,7 @@ namespace Convertigo.SDK
             {
                 if (requestable == null)
                 {
-                    throw new System.ArgumentNullException(C8oExceptionMessage.InvalidArgumentNullParameter("Call requestable"));
+                    throw new System.ArgumentNullException(C8oExceptionMessage.InvalidArgumentNullParameter("requestable"));
                 }
 
                 // Checks parameters validity
@@ -224,7 +230,7 @@ namespace Convertigo.SDK
             }
             catch (Exception e)
             {
-                C8o.HandleCallException(c8oExceptionListener, parameters, e);
+                HandleCallException(c8oExceptionListener, parameters, e);
             }
         }
 
@@ -253,7 +259,7 @@ namespace Convertigo.SDK
             }
             catch (Exception e)
             {
-                C8o.HandleCallException(c8oExceptionListener, parameters, e);
+                HandleCallException(c8oExceptionListener, parameters, e);
             }
         }
 
@@ -456,9 +462,16 @@ namespace Convertigo.SDK
         /// <sample>
         ///     <code>myC8o.Log (C8oLogLevel.DEBUG, "This is my message");</code>
         /// </sample>
+        /*
         public void Log(C8oLogLevel c8oLogLevel, string message)
         {
             c8oLogger.Log(c8oLogLevel, message);
+        }
+        */
+
+        public C8oLogger Log
+        {
+            get { return c8oLogger; }
         }
 
         /// <summary>
@@ -557,9 +570,10 @@ namespace Convertigo.SDK
             return newParameters;
         }
 
-        internal static void HandleCallException(C8oExceptionListener c8oExceptionListener, IDictionary<string, object> requestParameters, Exception exception)
+        internal void HandleCallException(C8oExceptionListener c8oExceptionListener, IDictionary<string, object> requestParameters, Exception exception)
         {
-            C8oLogger.LogLocal(C8oLogLevel.ERROR, exception.Message);
+            c8oLogger._Warn("Handle a call exception", exception);
+
             if (c8oExceptionListener != null)
             {
                 c8oExceptionListener.OnException(exception, requestParameters);

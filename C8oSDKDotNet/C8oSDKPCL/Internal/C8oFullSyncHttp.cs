@@ -263,7 +263,7 @@ namespace Convertigo.SDK.Internal
             json["cancel"] = true;
             
             var response = await Execute(request, json);
-            c8o.Log(C8oLogLevel.WARN, "CANCEL REPLICATE:\n" + response.ToString());
+            c8o.Log._Warn("CANCEL REPLICATE:\n" + response.ToString());
 
             if (cancel)
             {
@@ -307,7 +307,7 @@ namespace Convertigo.SDK.Internal
                         break;
                     }
 
-                    c8o.Log(C8oLogLevel.WARN, res.ToString());
+                    c8o.Log._Warn(res.ToString());
 
                     JObject task = null;
                     foreach (JToken item in res["item"])
@@ -328,7 +328,7 @@ namespace Convertigo.SDK.Internal
                         progress.Current = task["revisions_checked"].Value<long>();
                         progress.TaskInfo = task.ToString();
 
-                        c8o.Log(C8oLogLevel.WARN, progress.ToString());
+                        c8o.Log._Warn(progress.ToString());
 
                         if (progress.Changed)
                         {
@@ -368,7 +368,7 @@ namespace Convertigo.SDK.Internal
                 request.Method = "POST";
 
                 response = await Execute(request, json);
-                c8o.Log(C8oLogLevel.WARN, response.ToString());
+                c8o.Log._Warn(response.ToString());
                 
                 /*
                 string localId = response["_local_id"].ToString();

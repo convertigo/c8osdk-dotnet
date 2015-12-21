@@ -4,17 +4,17 @@ using System.Collections.Generic;
 
 namespace Convertigo.SDK
 {
-    public class C8oExceptionMessage
+    internal class C8oExceptionMessage
     {
 
-        public static String NotImplementedFullSyncInterface()
+        public static string NotImplementedFullSyncInterface()
         {
             return "You are using the default FullSyncInterface which is not implemented";
         }
 
-        public static String InvalidParameterValue(String parameterName, String details)
+        public static string InvalidParameterValue(string parameterName, string details)
         {
-            String errorMessage = "The parameter '" + parameterName + "' is invalid";
+            string errorMessage = "The parameter '" + parameterName + "' is invalid";
             if (details != null) 
             {
                 errorMessage += ", " + details;
@@ -22,27 +22,27 @@ namespace Convertigo.SDK
             return errorMessage;
         }
 
-        public static String MissingValue(String valueName)
+        public static string MissingValue(string valueName)
         {
             return "The " + valueName + " is missing";
         }
 
-        public static String UnknownValue(String valueName, String value)
+        public static string UnknownValue(string valueName, string value)
         {
             return "The " + valueName + " value " + value + " is unknown";
         }
 
-        public static String UnknownType(String variableName, Object variable)
+        public static string UnknownType(string variableName, Object variable)
         {
             return "The " + variableName + " type " + C8oUtils.GetObjectClassName(variable) + "is unknown";
         }
 
-        public static String RessourceNotFound(String ressourceName)
+        public static string RessourceNotFound(string ressourceName)
         {
             return "The " + ressourceName + " was not found";
         }
 
-        public static String ToDo()
+        public static string ToDo()
         {
             return "TODO";
         }
@@ -53,53 +53,53 @@ namespace Convertigo.SDK
 
         //*** TAG Illegal argument ***//
 
-        public static String illegalArgumentInvalidFullSyncDatabaseUrl(String fullSyncDatabaseUrlStr)
+        public static string illegalArgumentInvalidFullSyncDatabaseUrl(string fullSyncDatabaseUrlStr)
         {
             return "The fullSync database url '" + fullSyncDatabaseUrlStr + "' is not a valid url";
         }
 
-        public static String MissParameter(String parameterName)
+        public static string MissParameter(string parameterName)
         {
             return "The parameter '" + parameterName + "' is missing";
         }
 
-        private static String illegalArgumentInvalidParameterValue(String parameterName, String parameterValue)
+        private static string illegalArgumentInvalidParameterValue(string parameterName, string parameterValue)
         {
             return "'" + parameterValue + "' is not a valid value for the parameter '" + parameterName + "'";
         }
 
-        //public static String illegalArgumentInvalidParameterProjectRequestableFullSync(String projectParameter)
+        //public static string illegalArgumentInvalidParameterProjectRequestableFullSync(string projectParameter)
         //{
         //    return C8oExceptionMessage.illegalArgumentInvalidParameterValue(C8o.ENGINE_PARAMETER_PROJECT, projectParameter) +
         //    ", to run a fullSync request this parameter must start with '" + FullSyncInterface.FULL_SYNC_PROJECT + "'";
         //}
 
-        public static String InvalidArgumentInvalidURL(String urlStr)
+        public static string InvalidArgumentInvalidURL(string urlStr)
         {
             return "'" + urlStr + "' is not a valid URL";
         }
 
-        public static String InvalidArgumentInvalidEndpoint(String endpoint)
+        public static string InvalidArgumentInvalidEndpoint(string endpoint)
         {
             return "'" + endpoint + "' is not a valid Convertigo endpoint";
         }
 
-        public static String InvalidRequestable(String requestable)
+        public static string InvalidRequestable(string requestable)
         {
             return "'" + requestable + "' is not a valid requestable.";
         }
 
-        public static String InvalidParameterType(String parameterName, String wantedParameterType, String actualParameterType)
+        public static string InvalidParameterType(string parameterName, string wantedParameterType, string actualParameterType)
         {
             return "The parameter '" + parameterName + "' must be of type '" + wantedParameterType + "' and not '" + actualParameterType + "'";
         }
 
-        public static String illegalArgumentIncompatibleListener(String listenerType, String responseType)
+        public static string illegalArgumentIncompatibleListener(string listenerType, string responseType)
         {
             return "The listener type '" + listenerType + "' is incompatible with the response type '" + responseType + "'";
         }
 
-        public static String InvalidArgumentNullParameter(String parameterName)
+        public static string InvalidArgumentNullParameter(string parameterName)
         {
             return parameterName + " must be not null";
         }
@@ -107,513 +107,518 @@ namespace Convertigo.SDK
         //*** TAG Initialization ***//
 
         // TODO
-        public static String initError()
+        public static string InitError()
         {
             return "Unable to initialize ";
         }
 
-        public static String initRsaPublicKey()
+        public static string InitRsaPublicKey()
         {
             return "Unable to initialize the RSA public key";
         }
 
-        public static String initCouchManager()
+        public static string InitCouchManager()
         {
             return "Unable to initialize the fullSync databases manager";
         }
 
-        public static String initSslSocketFactory()
+        public static string InitSslSocketFactory()
         {
             return "Unable to initialize the ssl socket factory";
         }
 
-        public static String initDocumentBuilder()
+        public static string InitDocumentBuilder()
         {
             return "Unable to initialize the XML document builder";
         }
 
         //*** TAG Parse ***//
 
-        public static String parseStreamToJson()
+        public static string ParseStreamToJson()
         {
             return "Unable to parse the input stream to a json document";
         }
 
-        public static String parseStreamToXml()
+        public static string ParseStreamToXml()
         {
             return "Unable to parse the input stream to an xml document";
         }
 
-        public static String parseInputStreamToString()
+        public static string parseInputStreamToString()
         {
             return "Unable to parse the input stream to a string";
         }
 
-        public static String parseXmlToString()
+        public static string parseXmlToString()
         {
             return "Unable to parse the xml document to a string";
         }
 
-        public static String parseRsaPublicKey()
+        public static string parseRsaPublicKey()
         {
             return "Unable to parse the RSA public key";
         }
 
-        public static String parseQueryEnumeratorToJson()
+        public static string parseQueryEnumeratorToJson()
         {
             return "Unable to parse the query to a json document";
         }
 
-        public static String parseLogsToJson()
+        public static string parseLogsToJson()
         {
             return "Unable to parse logs to a json document";
         }
 
-        public static String parseLogsStreamToJson()
+        public static string parseLogsStreamToJson()
         {
             return "Unable to parse stream containing logs response to a json document";
         }
 
-        public static String parseC8oReplicationResultToJson()
+        public static string parseC8oReplicationResultToJson()
         {
             return "Unable to parse the replication result to a json document";
         }
 
-        public static String parseFullSyncDefaultResponseToJson()
+        public static string parseFullSyncDefaultResponseToJson()
         {
             return "Unable to parse the default fullSync result to a json document";
         }
 
-        public static String parseFullSyncPostDocumentResponseToJson()
+        public static string parseFullSyncPostDocumentResponseToJson()
         {
             return "Unable to parse the post document fullSync result to a json document";
         }
 
-        public static String parseStringToJson()
+        public static string parseStringToJson()
         {
             return "Unable to parse the string to a JSON document";
         }
 
-        public static String StringToJsonValue(String str)
+        public static string StringToJsonValue(string str)
         {
             return "Unable to translate the string '" + str + "' to a JSON value"; 
         }
 
-        public static String GetParameterJsonValue(KeyValuePair<string, object> parameter)
+        public static string GetParameterJsonValue(KeyValuePair<string, object> parameter)
         {
             return "Unable to translate the string value '" + parameter.Value + "' of the key + '" + parameter.Key + "' to a JSON value";
         }
 
         //*** TAG HTTP ***//
 
-        public static String retrieveRsaPublicKey()
+        public static string retrieveRsaPublicKey()
         {
             return "Error during http request to get the RSA public key";
         }
 
-        public static String httpLogs()
+        public static string httpLogs()
         {
             return "Error during http request to send logs to the Convertigo server";
         }
 
         //*** TAG Couch ***//
 
-        public static String couchRequestGetView()
+        public static string couchRequestGetView()
         {
             return "Unable to run the view query";
         }
 
-        public static String couchRequestAllDocuments()
+        public static string couchRequestAllDocuments()
         {
             return "Unable to run the all query";
         }
 
-        public static String couchRequestResetDatabase()
+        public static string couchRequestResetDatabase()
         {
             return "Unable to run the reset query";
         }
 
-        public static String couchRequestDeleteDocument()
+        public static string couchRequestDeleteDocument()
         {
             return "Unable to run the delete document query";
         }
 
-        public static String couchRequestInvalidRevision()
+        public static string couchRequestInvalidRevision()
         {
             return "The revision is invalid";
         }
 
-        public static String couchRequestPostDocument()
+        public static string couchRequestPostDocument()
         {
             return "Unable to run the post document query";
         }
 
-        public static String unableToGetFullSyncDatabase(String databaseName)
+        public static string unableToGetFullSyncDatabase(string databaseName)
         {
             return "Unable to get the fullSync database '" + databaseName + "' from the manager";
         }
 
-        public static String couchNullResult()
+        public static string couchNullResult()
         {
             return "An error occured during the fullSync request, its result is null";
         }
 
-        public static String couchFullSyncNotActive()
+        public static string couchFullSyncNotActive()
         {
             return "Unable to use fullSync because it was not activated at the initialization";
         }
 
-        //public static String fullSyncPutProperties(Map<string, object> properties)
+        //public static string fullSyncPutProperties(Map<string, object> properties)
         //{
         //    return "Unable to put the following properties in the fullSync Document : " + properties;
         //}
 
-        public static String fullSyncGetOrCreateDatabase(String databaseName)
+        public static string fullSyncGetOrCreateDatabase(string databaseName)
         {
             return "Unable to get or create the fullSync database '" + databaseName + "'";
         }
 
-        //public static String fullSyncHandleRequest(String requestable, String databaseName, List<NameValuePair> parameters)
+        //public static string fullSyncHandleRequest(string requestable, string databaseName, List<NameValuePair> parameters)
         //{
         //    return "Error while running the fullSync request, requestalbe='" + requestable + "', databaseName='" + databaseName + "', parameters=" + parameters;
         //}
 
-        public static String fullSyncHandleResponse()
+        public static string fullSyncHandleResponse()
         {
             return "Error while handling the fullSync response";
         }
 
         //*** TAG Certificate ***//
 
-        public static String loadKeyStore()
+        public static string loadKeyStore()
         {
             return "Failed to load key store";
         }
 
-        public static String trustAllCertificates()
+        public static string trustAllCertificates()
         {
             return "Unable to load a key store trusting all certificates";
         }
 
-        public static String clientKeyStore()
+        public static string clientKeyStore()
         {
             return "Unable to load the client key store";
         }
 
-        public static String serverKeyStore()
+        public static string serverKeyStore()
         {
             return "Unable to load the server key store";
         }
 
         //*** TAG Not found ***//
 
-        public static String illegalArgumentNotFoundFullSyncView(String viewName, String databaseName)
+        public static string illegalArgumentNotFoundFullSyncView(string viewName, string databaseName)
         {
             return "Cannot found the view '" + viewName + "' in database '" + databaseName + "'";
         }
 
         //*** TAG Other ***//
 
-        public static String unhandledResponseType(String responseType)
+        public static string unhandledResponseType(string responseType)
         {
             return "The response type '" + responseType + "' is not handled";
         }
 
-        public static String unhandledListenerType(String listenerType)
+        public static string unhandledListenerType(string listenerType)
         {
             return "The listener type '" + listenerType + "' is not handled";
         }
 
-        public static String WrongListener(C8oResponseListener c8oListener)
+        public static string WrongListener(C8oResponseListener c8oListener)
         {
             return "The C8oListener class " + C8oUtils.GetObjectClassName(c8oListener) + " is not handled";
         }
 
-        //public static String wrongResult(Object result)
+        //public static string wrongResult(Object result)
         //{
         //    return "The response class " + C8oUtils.getObjectClassName(result) + " is not handled";
         //}
 
-        public static String toDo()
+        public static string toDo()
         {
             return "todo";
         }
 
-        public static String unhandledFullSyncRequestable(String fullSyncRequestableValue)
+        public static string unhandledFullSyncRequestable(string fullSyncRequestableValue)
         {
             return "The fullSync requestable '" + fullSyncRequestableValue + "' is not handled";
         }
 
-        public static String closeInputStream()
+        public static string closeInputStream()
         {
             return "Unable to close the input stream";
         }
 
-        public static String deserializeJsonObjectFromString(String str)
+        public static string deserializeJsonObjectFromString(string str)
         {
-            return "Unable to deserialize the JSON object from the following String : '" + str + "'";
+            return "Unable to deserialize the JSON object from the following string : '" + str + "'";
         }
 
-        //public static String getNameValuePairObjectValue(NameValuePair nameValuePair)
+        //public static string getNameValuePairObjectValue(NameValuePair nameValuePair)
         //{
         //    return "Unable to get the value from the NameValuePair with name '" + nameValuePair.getName() + "'";
         //}
 
-        public static String postDocument()
+        public static string postDocument()
         {
             return "Unable to post document";
         }
 
-        public static String getNameValuePairObjectValue(String name)
+        public static string getNameValuePairObjectValue(string name)
         {
             return "Unable to get the object value from the NameValuePair named '" + name + "'";
         }
 
-        public static String queryEnumeratorToJSON()
+        public static string queryEnumeratorToJSON()
         {
             return "Unable to parse the QueryEnumerato to a JSON document";
         }
 
-        public static String queryEnumeratorToXML()
+        public static string queryEnumeratorToXML()
         {
             return "Unable to parse the QueryEnumerato to a XML document";
         }
 
-        public static String addparametersToQuery()
+        public static string addparametersToQuery()
         {
             return "Unable to add parameters to the fullSync query";
         }
 
-        public static String putJson()
+        public static string putJson()
         {
             return "Failed to put data in JSON ...";
         }
 
-        public static String changeEventToJson()
+        public static string changeEventToJson()
         {
             return "Failed to parse ChangeEvent to JSON document";
         }
 
-        public static String initC8oSslSocketFactory()
+        public static string initC8oSslSocketFactory()
         {
             return "Failed to initialize C8oSslSocketFactory";
         }
 
-        public static String createSslContext()
+        public static string createSslContext()
         {
             return "failed to create a new SSL context";
         }
 
-        public static String keyManagerFactoryInstance()
+        public static string keyManagerFactoryInstance()
         {
             return "Failed to instanciate KeyManagerFactory";
         }
 
-        public static String initKeyManagerFactory()
+        public static string initKeyManagerFactory()
         {
             return "Failed to initialize the key manager factory";
         }
 
-        public static String trustManagerFactoryInstance()
+        public static string InitHttpInterface()
+        {
+            return "Failed to initialize the secure HTTP Interface";
+        }
+
+        public static string trustManagerFactoryInstance()
         {
             return "Failed to instanciate KeyManagerFactory";
         }
 
-        public static String initTrustManagerFactory()
+        public static string initTrustManagerFactory()
         {
             return "Failed to initialize the key manager factory";
         }
 
-        public static String initSslContext()
+        public static string initSslContext()
         {
             return "Failed to initialize the SSL context";
         }
 
-        public static String initCipher()
+        public static string initCipher()
         {
             return "Failed to initialize the cipher";
         }
 
-        public static String urlEncode()
+        public static string urlEncode()
         {
             return "Failed to URL encode prameters";
         }
 
-        public static String getParametersStringBytes()
+        public static string getParametersStringBytes()
         {
             return "Failed to get parameters string bytes";
         }
 
-        public static String encodeParameters()
+        public static string encodeParameters()
         {
             return "Failed to encode parameters";
         }
 
-        public static String RunHttpRequest()
+        public static string RunHttpRequest()
         {
             return "Failed to run the HTTP request";
         }
 
-        public static String generateRsaPublicKey()
+        public static string generateRsaPublicKey()
         {
             return "Failed to generate RSA public key";
         }
 
-        public static String keyFactoryInstance()
+        public static string keyFactoryInstance()
         {
             return "Failed to get KeyFactory instance";
         }
 
-        public static String getCipherInstance()
+        public static string getCipherInstance()
         {
             return "Failed to get Cipher instance";
         }
 
-        public static String entryNotFound(String entryKey)
+        public static string entryNotFound(string entryKey)
         {
             return "Entry key '" + entryKey + "' not found";
         }
 
-        public static String c8oCallRequestToJson()
+        public static string c8oCallRequestToJson()
         {
             return "Failed to parse c8o call request to JSON";
         }
 
-        public static String getJsonKey(String key)
+        public static string getJsonKey(string key)
         {
             return "Failed to get the JSON key '" + key + "'";
         }
 
-        public static String jsonValueToXML()
+        public static string jsonValueToXML()
         {
             return "Failed to parse JSON value to XML";
         }
 
-        public static String inputStreamToXML()
+        public static string inputStreamToXML()
         {
             return "Failed to parse InputStream to an XML document";
         }
 
-        public static String inputStreamReaderEncoding()
+        public static string inputStreamReaderEncoding()
         {
             return "Failed to instanciate the InputStreamReader";
         }
 
-        public static String readLineFromBufferReader()
+        public static string readLineFromBufferReader()
         {
             return "Failed to read line from the BufferReader";
         }
 
-        public static String getLocalCacheParameters()
+        public static string getLocalCacheParameters()
         {
             return "Failed to get local cache parameters";
         }
 
-        public static String fullSyncJsonToXML()
+        public static string fullSyncJsonToXML()
         {
             return "Failed to translate full sync JSON to XML";
         }
 
-        public static String takeLog()
+        public static string takeLog()
         {
             return "Failed to take a log line in the list";
         }
 
-        public static String remoteLogHttpRequest()
+        public static string remoteLogHttpRequest()
         {
             return "Failed while running the HTTP request sending logs to the Convertigo server";
         }
 
-        public static String getInputStreamFromHttpResponse()
+        public static string getInputStreamFromHttpResponse()
         {
             return "Failed to get InputStream from the HTTP response";
         }
 
-        public static String inputStreamToJSON()
+        public static string inputStreamToJSON()
         {
             return "Failed to translate the input stream to a JSON document";
         }
 
-        public static String httpInterfaceInstance()
+        public static string httpInterfaceInstance()
         {
             return "Failed to instanciate the HTTP interface";
         }
 
-        public static String fullSyncInterfaceInstance()
+        public static string FullSyncInterfaceInstance()
         {
             return "Failed to instanciate the FullSync interface";
         }
 
-        public static String getDocumentFromDatabase(String documentId)
+        public static string getDocumentFromDatabase(string documentId)
         {
             return "Failed to get fullSync document '" + documentId + "' from the database";
         }
 
-        public static String localCachePolicyIsDisable()
+        public static string localCachePolicyIsDisable()
         {
             return "Depending to the network state the local cache is disabled";
         }
 
-        public static String localCacheDocumentJustCreated()
+        public static string localCacheDocumentJustCreated()
         {
             return "The local cache document is just created (empty)";
         }
 
-        public static String illegalArgumentInvalidLocalCachePolicy(String localCachePolicyString)
+        public static string illegalArgumentInvalidLocalCachePolicy(string localCachePolicyString)
         {
             return "The local cache policy '" + localCachePolicyString + "' is invalid";
         }
 
-        public static String timeToLiveExpired()
+        public static string timeToLiveExpired()
         {
             return "The time to live expired";
         }
 
-        public static String invalidLocalCacheResponseInformation()
+        public static string invalidLocalCacheResponseInformation()
         {
             return "Local cache response informations are invalid";
         }
 
-        public static String overrideDocument()
+        public static string overrideDocument()
         {
             return "Failed to override the fullSync document";
         }
 
-        public static String handleFullSyncRequest()
+        public static string handleFullSyncRequest()
         {
             return "Failed while running the fullSync request";
         }
 
-        public static String serializeC8oCallRequest()
+        public static string serializeC8oCallRequest()
         {
             return "Failes to serialize the Convertigo call request";
         }
 
-        public static String getResponseFromLocalCache()
+        public static string getResponseFromLocalCache()
         {
             return "Failed to get response from the local cache";
         }
 
-        public static String getResponseFromLocalCacheDocument()
+        public static string getResponseFromLocalCacheDocument()
         {
             return "Failed to get response form the local cache document";
         }
 
-        public static String handleC8oCallRequest()
+        public static string handleC8oCallRequest()
         {
             return "Failed while runnig the c8o call request";
         }
 
-        public static String saveResponseToLocalCache()
+        public static string saveResponseToLocalCache()
         {
             return "Failed to save the response to the local cache";
         }
 
-        //	public static String illegalArgumentCallParametersNull() {
+        //	public static string illegalArgumentCallParametersNull() {
         //		return "Call parameters must be not null";
         //	}
         //	
-        //	public static String illegalArgumentCallC8oResponseListenerNull() {
+        //	public static string illegalArgumentCallC8oResponseListenerNull() {
         //		return "Call response listener must be not null";
         //	}
 

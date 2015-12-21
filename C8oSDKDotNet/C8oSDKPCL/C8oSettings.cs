@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Convertigo.SDK.Internal;
+using System;
 using System.Collections.Generic;
 using System.Net;
 
@@ -124,6 +125,18 @@ namespace Convertigo.SDK
         public C8oSettings SetIsLogRemote(bool logRemote)
         {
             this.logRemote = logRemote;
+            return this;
+        }
+
+        public C8oSettings SetLogLevelLocal(C8oLogLevel logLevelLocal)
+        {
+            this.logLevelLocal = logLevelLocal;
+            return this;
+        }
+
+        public C8oSettings SetLogC8o(bool logC8o)
+        {
+            this.logC8o = logC8o;
             return this;
         }
 

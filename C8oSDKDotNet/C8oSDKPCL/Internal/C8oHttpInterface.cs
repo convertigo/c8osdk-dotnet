@@ -102,6 +102,7 @@ namespace Convertigo.SDK.Internal
 
                 // First get the request stream before send it (don't use async because of a .net bug for the request)
                 var task = Task<Stream>.Factory.FromAsync(request.BeginGetRequestStream, request.EndGetRequestStream, request);
+                task.Wait();
 
                 using (var entity = task.Result)
                 {
