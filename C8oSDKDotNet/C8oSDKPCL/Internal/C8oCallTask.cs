@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace Convertigo.SDK.Internal
 {
-    class C8oCallTask
+    internal class C8oCallTask
     {
         private C8o c8o;
         private IDictionary<string, object> parameters;
@@ -49,7 +49,7 @@ namespace Convertigo.SDK.Internal
 
             if (isFullSyncRequest)
             {
-                c8o.Log(C8oLogLevel.DEBUG, "Is FullSync request");
+                c8o.Log._Debug("Is FullSync request");
                 // The result cannot be handled here because it can be different depending to the platform
                 // But it can be useful bor debug
                 try
@@ -226,7 +226,7 @@ namespace Convertigo.SDK.Internal
                 }
                 catch (Exception e)
                 {
-                    C8o.HandleCallException(c8oExceptionListener, parameters, e);
+                    c8o.HandleCallException(c8oExceptionListener, parameters, e);
                 }
             }
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Convertigo.SDK.Internal;
+using System;
 using System.Collections.Generic;
 using System.Net;
 
@@ -17,6 +18,8 @@ namespace Convertigo.SDK
         //*** Log ***//
 
         protected bool logRemote = true;
+        protected C8oLogLevel logLevelLocal = C8oLogLevel.NONE;
+        protected bool logC8o = true;
         protected C8oOnFail logOnFail;
 
         //*** FullSync ***//
@@ -88,6 +91,16 @@ namespace Convertigo.SDK
         public bool LogRemote
         {
             get { return logRemote; }
+        }
+
+        public C8oLogLevel LogLevelLocal
+        {
+            get { return logLevelLocal; }
+        }
+
+        public bool LogC8o
+        {
+            get { return logC8o; }
         }
 
         public C8oOnFail LogOnFail
@@ -179,6 +192,8 @@ namespace Convertigo.SDK
             //*** Log ***//
 
             logRemote = c8oBase.logRemote;
+            logLevelLocal = c8oBase.logLevelLocal;
+            logC8o = c8oBase.logC8o;
             logOnFail = c8oBase.logOnFail;
 
             //*** FullSync ***//
