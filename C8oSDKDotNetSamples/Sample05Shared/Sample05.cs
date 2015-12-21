@@ -22,6 +22,7 @@ namespace Sample05Shared
                 new C8oSettings().SetFullSyncUsername("admin")
                 .SetFullSyncPassword("admin")
                 .SetDefaultDatabaseName("sample05")
+                .SetLogLevelLocal(C8oLogLevel.TRACE)
             );
         }
 

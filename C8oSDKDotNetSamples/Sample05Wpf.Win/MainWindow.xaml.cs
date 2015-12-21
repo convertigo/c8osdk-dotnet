@@ -16,6 +16,8 @@ namespace Sample05Wpf.Win
         public MainWindow()
         {
             InitializeComponent();
+            
+            Debug.WriteLine("test");
 
             Sample05.cert = File.ReadAllBytes("D:\\COMMON\\C8O\\7.3.3_srv_win\\tomcat\\conf\\client.p12");
 
