@@ -2,6 +2,7 @@ using Couchbase.Lite;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -36,6 +37,8 @@ namespace Convertigo.SDK.Internal
 
             fullSyncDatabases = new Dictionary<string, C8oFullSyncDatabase>();
             manager = Manager.SharedInstance;
+
+            Debug.Listeners.Remove("Couchbase");
         }
 
         public Task<C8oFullSyncDatabase> GetOrCreateFullSyncDatabase(string databaseName)
