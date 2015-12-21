@@ -16,6 +16,7 @@ namespace retail_store
         public TabbedPageP()
         {
             InitializeComponent();
+            
             pr = new NavigationPage(new Products()) { Title = "Products" };
             NavigationPage.SetHasNavigationBar(pr, false);
             np = new NavigationPage(new Category()) { Title = "Category" };

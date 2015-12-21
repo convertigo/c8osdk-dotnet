@@ -24,11 +24,9 @@ namespace retail_store.iOS
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-            
-           
+            C8oPlatform.Init();
             global::Xamarin.Forms.Forms.Init();
             LoadApplication(new App());
-            C8oPlatform.Init();
             return base.FinishedLaunching(app, options);
         }
     }

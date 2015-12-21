@@ -29,8 +29,6 @@
     <StackLayout Grid.Row="1" Grid.Column="0" BackgroundColor="#262261" />
 
     <StackLayout Grid.Row="2" Grid.Column="0">
-      
-      
     </StackLayout>
       <StackLayout Grid.Row="3" Grid.Column="0">
         <ActivityIndicator x:Name="indicator" Color="Red" IsRunning="true" Grid.Row="2"/>

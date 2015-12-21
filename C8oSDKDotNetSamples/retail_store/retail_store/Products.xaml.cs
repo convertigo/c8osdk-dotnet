@@ -28,9 +28,10 @@ namespace retail_store
             //Associating tap events to the image buttons  
             imgN.GestureRecognizers.Add(tapImage_nouv);
             imgP.GestureRecognizers.Add(tapImage_promo);
-           
-            
-            
+            NavigationPage.SetHasNavigationBar(this, false);
+
+
+
         }
         public async  void tapImage_Tapped_promo(object sender, EventArgs e)
         {
@@ -61,7 +62,6 @@ namespace retail_store
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            NavigationPage.SetHasNavigationBar(this, false);
         }
 
         public async void Search(string valLow, string valUp)
@@ -108,7 +108,7 @@ namespace retail_store
             imgP.Opacity = val;
             imgN_text.Opacity = val;
             imgP_text.Opacity = val;
-            img_fresh.Opacity = val;
+            //img_fresh.Opacity = val;
             txt_ret.Opacity = val;
             txt_fr.Opacity = val;
         }

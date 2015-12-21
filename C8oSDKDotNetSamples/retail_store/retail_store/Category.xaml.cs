@@ -46,9 +46,36 @@ namespace retail_store
                 this.Leaf2 = "'true'";
                 IsProduct = true;
             }
-            
+
+            run();
         }
 
+        public async void run()
+        {
+            NavigationPage.SetHasNavigationBar(this, false);
+            this.indicator.IsVisible = true;
+            this.indicatorStr.IsVisible = true;
+            //Here we call, thanks to myC8o object, a new view on our local base with specified parameters.
+            JObject data = await App.myC8o.CallJson(
+                    "fs://.view",
+                    "ddoc", "design",
+                    "view", view,
+                    "startkey", "['42','" + Categor + "'," + Leaf + "]",
+                    "endkey", "['42','" + Categor2 + "'," + Leaf2 + "]",
+                    "limit", 20,
+                    "skip", 0)
+                    .Fail((e, p) =>
+                    {
+                        Debug.WriteLine("LAA" + e);// Handle errors..
+                    })
+                    .Async();
+            indicator.IsVisible = false;
+            indicatorStr.IsVisible = false;
+            Object model;
+            App.models.TryGetValue("CategoryViewModel", out model);
+            Model mod = (Model)model;
+            mod.PopulateData(data, IsProduct);
+        }
         //Getters and Setters
         public string Categor
         {
@@ -156,30 +183,6 @@ namespace retail_store
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            NavigationPage.SetHasNavigationBar(this, false);
-            indicator.IsVisible = true;
-            indicatorStr.IsVisible = true;
-            //Here we call, thanks to myC8o object, a new view on our local base with specified parameters.
-            JObject data = await App.myC8o.CallJson(
-                    "fs://.view",
-                    "ddoc", "design",
-                    "view", view,
-                    "startkey", "['42','" + Categor + "'," + Leaf + "]",
-                    "endkey", "['42','" + Categor2 + "'," + Leaf2 + "]",
-                    "limit", 20,
-                    "skip", 0)
-                    .Fail((e, p) =>
-                    {
-                        Debug.WriteLine("LAA" + e);// Handle errors..
-                    })
-                    .Async();
-            indicator.IsVisible = false;
-            indicatorStr.IsVisible = false;
-            Object model;
-            App.models.TryGetValue("CategoryViewModel", out model);
-            Model mod = (Model)model;
-            mod.PopulateData(data, IsProduct);
-
         }
 
         

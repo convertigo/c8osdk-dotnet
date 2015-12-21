@@ -1084,6 +1084,7 @@ C8oSDKDotNetSamples/retail_store/retail_store.iOS/AppDelegate.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Entitlements.plist -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Info.plist -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Main.cs -text
+C8oSDKDotNetSamples/retail_store/retail_store.iOS/PluginsHelp/ConnectivityReadme.txt -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Properties/AssemblyInfo.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/Default-568h@2x.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/Default-Portrait.png -text

@@ -30,6 +30,7 @@ namespace retail_store
             //Image2.GestureRecognizers.Add(tapImage);
             Image3.GestureRecognizers.Add(tapImage);
             Image2.GestureRecognizers.Add(tapImage);
+            NavigationPage.SetHasNavigationBar(this, false);
         }
 
         public Prod Prod

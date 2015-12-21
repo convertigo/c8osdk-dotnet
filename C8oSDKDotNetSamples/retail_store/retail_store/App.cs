@@ -82,7 +82,7 @@ namespace retail_store
 
             /* Set the MainPage
             It is a tabbedPage from wich we will be able to navigate into the whole application.*/
-            MainPage = new TabbedPageP();
+            MainPage = new LoadingPage();
         }
 
         
@@ -111,7 +111,7 @@ namespace retail_store
                 if (data["document"]["shopCode"].ToString() == "42")
                 {
                     //Open the modal page in order to give the state of the waiting
-                    await MainPage.Navigation.PushModalAsync(new LoadingPage());
+                    //await MainPage.Navigation.PushModalAsync(new LoadingPage());
 
                     //CallJson Method is called thanks to C8o Object 
                     data = await myC8o.CallJson(
@@ -128,7 +128,7 @@ namespace retail_store
                         })
                         .Async();
                     //Close the modal page that give us the progress...
-                    await MainPage.Navigation.PopModalAsync();
+                    //await MainPage.Navigation.PopModalAsync();
 
                 }
 
@@ -169,6 +169,8 @@ namespace retail_store
                     })
                     .Async();
             }
+            MainPage = new TabbedPageP();
+            //await MainPage.Navigation.PopModalAsync();
         }
 
         protected override void OnSleep()
