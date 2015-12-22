@@ -157,7 +157,7 @@ namespace Convertigo.SDK
 
                 if (isLogConsole)
                 {
-                   System.Diagnostics.Debug.WriteLine("(" + time + ") [" + logLevel.name + "] " + message, exception);
+                    System.Diagnostics.Debug.WriteLine("(" + time + ") [" + logLevel.name + "] " + message);
                 }
             }
         }
