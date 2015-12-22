@@ -192,6 +192,7 @@
     <AndroidResource Include="Resources\drawable\moins.png" />
     <AndroidResource Include="Resources\drawable\plus.png" />
     <AndroidResource Include="Resources\drawable-hdpi\product.png" />
+    <AndroidResource Include="Resources\drawable\del.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\retail_store\retail_store.csproj">

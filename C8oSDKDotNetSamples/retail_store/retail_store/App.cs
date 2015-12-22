@@ -27,25 +27,15 @@ namespace retail_store
         public App()
         {
             exec = false;
-            // The Application ResourceDictionary is available in Xamarin.Forms 1.3 and later
-            Application.Current.Resources = new ResourceDictionary();
-            var appStyle = new Style(typeof(Label))
-            {
-                BaseResourceKey = Device.Styles.SubtitleStyleKey,
-                Setters = {
-                new Setter { Property = Label.FontProperty, Value = "roboto" }
-            }
-            };
-            Application.Current.Resources.Add("AppStyle", appStyle); // use the "AppStyle" key in the app
-
-
             connectivity = CrossConnectivity.Current.IsConnected;
             CrossConnectivity.Current.ConnectivityChanged += (sender, args) =>
             {
                 connectivity = CrossConnectivity.Current.IsConnected;
                 if (connectivity == true)
                 {
+                    CheckCartAfterConn();
                     OnStart();
+                   
                     ((TabbedPageP)this.MainPage).myCart.SetVisibility(true);
                 }
                 else
@@ -163,15 +153,27 @@ namespace retail_store
                         Debug.WriteLine("" + e);
                     })
                     .Async();
-                
+                CheckCartAfterConn();
             }
             if(!exec)
             {
                 MainPage = new TabbedPageP();
                 exec = true;
+               
             }
+        }
+
+        public async void CheckCartAfterConn()
+        {
+            await myC8oCart.CallJson(
+                ".CartUpdated"          //We give him parameters as the name of the sequence that we calls
+                )       //And the parameters for the sequence    
+                .Fail((e, p) =>
+                {
+                    Debug.WriteLine("LAA" + e);//Handle errors..
+                })
+                .Async();
             
-            //await MainPage.Navigation.PopModalAsync();
         }
 
         protected override void OnSleep()

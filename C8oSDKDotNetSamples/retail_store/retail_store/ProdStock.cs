@@ -13,13 +13,28 @@ namespace retail_store
     {
         public event PropertyChangedEventHandler PropertyChanged;
         float count;
+        string priceEur;
 
         public ProdStock(String name, String imageUrl, String id, String shopcode, String fatherId, String sku, String priceOfUnit, float count):base( name,  imageUrl,  id,  shopcode,  fatherId,  sku,  priceOfUnit)
         {
             Count = count;
-            
+            priceEur = priceOfUnit + " €";
         }
 
+        public string PriceEur
+        {
+            get
+            {
+                return base.PriceOfUnit.ToString() + " €";
+            }
+        }
+        public string PriceEurCount
+        {
+            get
+            {
+                return ((Convert.ToDouble(base.PriceOfUnit)) * (this.Count)).ToString() + " €";
+            }
+        }
         public float Count
         {
             get

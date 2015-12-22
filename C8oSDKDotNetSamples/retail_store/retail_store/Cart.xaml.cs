@@ -18,11 +18,15 @@ namespace retail_store
         public Cart()
         {
             InitializeComponent();
-            
             labReCo.BindingContext = (ReduceTot)App.cvm.Reduce[0];
             labRePr.BindingContext = (ReduceTot)App.cvm.Reduce[0];
             labReNewP.BindingContext = (ReduceTot)App.cvm.Reduce[0];
             labReDis.BindingContext = (ReduceTot)App.cvm.Reduce[0];
+            listView.ItemsSource = App.cvm.ProductStock;
+            
+            //BindingOperations.EnableCollectionSynchronization();
+
+
         }
 
         public void SetVisibility(bool visible)
@@ -40,7 +44,6 @@ namespace retail_store
         }
         public async void GetView()
         {
-            
             JObject data = await App.myC8oCart.CallJson(
                 "fs://.view",
                 "ddoc", "design",
@@ -51,6 +54,11 @@ namespace retail_store
                 })
                 .Async();
             App.cvm.PopulateData(data, true);
+
+            
+        }
+        public void a()
+        {
             if (App.cvm.ProductStock != null)
             {
                 listView.ItemsSource = App.cvm.ProductStock;
@@ -60,6 +68,7 @@ namespace retail_store
         public void refresh()
         {
             GetView();
+            //a();
             App.cvm.GetReducePrice();
         }
         protected override void OnAppearing()
@@ -77,17 +86,29 @@ namespace retail_store
                 case "plus.png":
                     App.cvm.SetProductBySku(id);
                     App.cvm.CheckCart(true);
-                    
+
                     break;
                 case "moins.png":
                     App.cvm.SetProductBySku(id);
                     App.cvm.CheckCart(false);
-                    
+
+                    break;
+                case "del.jpg":
+                    App.cvm.SetProductBySku(id);
+                    App.cvm.deleteCart(true);
+
                     break;
             }
-
-            
-            
+        }
+        public async void tapImage_dell(object sender, EventArgs e)
+        {
+            var answer = await DisplayAlert("Alert !", "Would you realy wants to delete these items ?", "Yes", "No");
+            if (answer)
+            {
+                string id = ((ViewCell)((Image)sender).Parent.Parent.Parent.Parent).ClassId.ToString();
+                App.cvm.SetProductBySku(id);
+                App.cvm.deleteCart(true);
+            }
 
         }
         public void sal(object sender, EventArgs e)

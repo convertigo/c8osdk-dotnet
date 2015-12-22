@@ -14,10 +14,10 @@ using System.Collections.ObjectModel;
 
 namespace retail_store
 {
-    public class CartViewModel : ObservableCollection<ProdStock>, Model
+    public class CartViewModel : ObservableCollection<ProdStock> ,Model
     {
-        //public event PropertyChangedEventHandler PropertyChanged;
         
+
         //list of productstock contains in local base
         private ObservableCollection<ProdStock> productStock;
         private ObservableCollection<ReduceTot> reduce;
@@ -35,9 +35,7 @@ namespace retail_store
             ProductStock = new ObservableCollection<ProdStock>();
             Reduce = new ObservableCollection<ReduceTot>();
             Reduce.Add(new ReduceTot("0", "0"));
-
-
-
+            
         }
         public CartViewModel()
         {
@@ -46,7 +44,6 @@ namespace retail_store
             ProductStock = new ObservableCollection<ProdStock>();
             Reduce = new ObservableCollection<ReduceTot>();
             Reduce.Add(new ReduceTot("0", "0"));
-            
 
         }
 
@@ -54,6 +51,7 @@ namespace retail_store
         
         public ObservableCollection<ProdStock> ProductStock
         {
+            
             get
             {
                 return productStock;
@@ -61,6 +59,8 @@ namespace retail_store
             set
             { 
                 productStock = value;
+                
+
             }
         }
 
@@ -95,15 +95,22 @@ namespace retail_store
         //PopulateData allow us to get the whole objects contained in the local base and put it on productStock(list)
         public void PopulateData(JObject json,bool check)
         {
-            ObservableCollection<ProdStock> data = new ObservableCollection<ProdStock>();
+            //ObservableCollection<ProdStock> data = new ObservableCollection<ProdStock>();
+            this.ProductStock.Clear();
             foreach (JObject jo in (JArray)json["rows"])
             {
-                data.Add(new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"],(String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"],(float)jo["value"]["count"]));
+                this.ProductStock.Add(new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"],(String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"],(float)jo["value"]["count"]));
             }
-            if (data !=null)
+            /*if (this.ProductStock != null)
             {
-                this.ProductStock = data;
-            }
+                
+                foreach (ProdStock item in data)
+                {
+                    this.ProductStock.Add(item);
+                }*/
+                
+                GetReducePrice();
+            //}
 
         }
 
@@ -160,17 +167,35 @@ namespace retail_store
             {
                 foreach (ProdStock p in ProductStock)
                 {
-                    JObject data;
-                    data = await App.myC8oCart.CallJson(
-                        "fs://.delete",
-                        "docid", p.Id)
-                        .Fail((e, q) =>
-                        {
-                            Debug.WriteLine(e.ToString()); // Handle errors..
+                    if (p.Id == product.Id)
+                    {
+                        productToInsert = p;
+                        JObject data1;
+                        data1 = await App.myC8oCart.CallJson(
+                            "fs://.post",
+                            "_id", p.Id,
+                            "count", 0,
+                            "_use_policy", "merge")
+                            .Fail((e, q) =>
+                            {
+                                Debug.WriteLine(e.ToString()); // Handle errors..
                         })
-                    .Async();   
+                            .Async();
+
+                        JObject data;
+                        data = await App.myC8oCart.CallJson(
+                            "fs://.delete",
+                            "docid", p.Id)
+                            .Fail((e, q) =>
+                            {
+                                Debug.WriteLine(e.ToString()); // Handle errors..
+                        })
+                        .Async();
+                        ProductStock.Remove(productToInsert);
+                        break;
+                    }
+                    
                 }
-                ProductStock.Clear();
             }
             else
             {
@@ -325,6 +350,8 @@ namespace retail_store
              }
                
         }
+
+        
 
     }
 }
