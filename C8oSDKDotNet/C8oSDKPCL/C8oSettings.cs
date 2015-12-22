@@ -1,5 +1,4 @@
-﻿using Convertigo.SDK.Internal;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 
