@@ -1069,6 +1069,7 @@ C8oSDKDotNetSamples/retail_store/retail_store.Droid/Resources/drawable-hdpi/icon
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/Resources/drawable-hdpi/product.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/Resources/drawable-xhdpi/icon.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/Resources/drawable-xxhdpi/icon.png -text
+C8oSDKDotNetSamples/retail_store/retail_store.Droid/Resources/drawable/del.jpg -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/Resources/drawable/freshness.jpg -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/Resources/drawable/icon.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/Resources/drawable/moins.png -text
@@ -1102,6 +1103,7 @@ C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/Icon-Small.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/Icon-Small@2x.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/Icon-Small@3x.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/LaunchScreen.storyboard -text
+C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/del.jpg -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/freshness.jpg -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/moins.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/nouv.jpg -text
