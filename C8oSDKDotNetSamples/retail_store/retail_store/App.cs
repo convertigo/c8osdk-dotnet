@@ -104,9 +104,7 @@ namespace retail_store
                         "fs://.sync")           //We give him parameters as the name of the FULLSYNC connector that we calls
                         .Progress(progress =>
                         {
-                            LoadP.Current = "" + progress.Current;
-                            LoadP.Total = "/ " + progress.Total;
-                            Debug.WriteLine("" + progress.Current + "/" + progress.Total); //We are able to obtain the progress of the task
+                            LoadP.State = "" + progress.Current + "/" + progress.Total;
                         })
                         .Fail((e, p) =>
                         {
