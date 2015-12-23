@@ -230,6 +230,9 @@
   <ItemGroup>
     <Content Include="PluginsHelp\ConnectivityReadme.txt" />
     <BundleResource Include="Resources\del.jpg" />
+    <BundleResource Include="Resources\CartIcon.png" />
+    <BundleResource Include="Resources\categ.png" />
+    <BundleResource Include="Resources\prodIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

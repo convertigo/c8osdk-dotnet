@@ -20,8 +20,8 @@ namespace retail_store
             InitializeComponent();
             IsVisibleProd(false);
             //Creating TapGestureRecognizers  
-            var tapImage_nouv = new TapGestureRecognizer();
-            var tapImage_promo = new TapGestureRecognizer();
+            //var tapImage_nouv = new TapGestureRecognizer();
+            //var tapImage_promo = new TapGestureRecognizer();
             //Binding events  
             //tapImage_nouv.Tapped += tapImage_Tapped;
             //tapImage_promo.Tapped += tapImage_Tapped_promo;
@@ -29,6 +29,8 @@ namespace retail_store
             //imgN.GestureRecognizers.Add(tapImage_nouv);
             //imgP.GestureRecognizers.Add(tapImage_promo);
             NavigationPage.SetHasNavigationBar(this, false);
+            
+            listView.SeparatorColor = Color.Black;
 
 
 
@@ -44,7 +46,7 @@ namespace retail_store
             await Navigation.PushAsync(c, true);
         }
 
-        public async void OnSearch(object sender, EventArgs e)
+        public void OnSearch(object sender, EventArgs e)
         {
             if (SearchFor.Text != "")
             {

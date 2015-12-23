@@ -24,6 +24,8 @@ namespace retail_store
             labReDis.BindingContext = (ReduceTot)App.cvm.Reduce[0];
             listView.ItemsSource = App.cvm.ProductStock;
             
+            listView.SeparatorColor = Color.Black;
+            
             //BindingOperations.EnableCollectionSynchronization();
 
 

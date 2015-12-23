@@ -8,6 +8,13 @@
     <local:CategoryViewModel />
   </NavigationPage.BindingContext>
   
+  <ContentPage.Padding>
+    <OnPlatform x:TypeArguments="Thickness"
+        iOS="0,20,0,0"
+        Android="0,0,0,0"
+        WinPhone="0,0,0,0" />
+  </ContentPage.Padding>
+
   <Grid BackgroundColor="#FFFFFF">
 
     <Grid.RowDefinitions>

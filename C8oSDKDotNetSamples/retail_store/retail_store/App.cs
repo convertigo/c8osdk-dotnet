@@ -69,6 +69,11 @@ namespace retail_store
             /* Set the MainPage
             It is a tabbedPage from wich we will be able to navigate into the whole application.*/
             MainPage = new LoadingPage();
+            if (Device.OS == TargetPlatform.iOS)
+            {
+                MainPage.Padding = new Thickness(0, 20, 0, 0);
+            }
+                
         }
 
         
@@ -156,6 +161,10 @@ namespace retail_store
             if(!exec)
             {
                 MainPage = new TabbedPageP();
+                if (Device.OS == TargetPlatform.iOS)
+                {
+                    MainPage.Padding = new Thickness(0, 20, 0, 0);
+                }
                 exec = true;
                
             }

@@ -1087,6 +1087,7 @@ C8oSDKDotNetSamples/retail_store/retail_store.iOS/Info.plist -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Main.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/PluginsHelp/ConnectivityReadme.txt -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Properties/AssemblyInfo.cs -text
+C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/CartIcon.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/Default-568h@2x.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/Default-Portrait.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/Default-Portrait@2x.png -text
@@ -1103,12 +1104,14 @@ C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/Icon-Small.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/Icon-Small@2x.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/Icon-Small@3x.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/LaunchScreen.storyboard -text
+C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/categ.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/del.jpg -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/freshness.jpg -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/moins.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/nouv.jpg -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/plus.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/prod.jpg -text
+C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/prodIcon.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/product.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Resources/retail_logo.png -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/app.config -text
@@ -1144,6 +1147,8 @@ C8oSDKDotNetSamples/retail_store/retail_store/Products.xaml.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Properties/AssemblyInfo.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Rayon.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/ReduceTot.cs -text
+C8oSDKDotNetSamples/retail_store/retail_store/Settings.xaml -text
+C8oSDKDotNetSamples/retail_store/retail_store/Settings.xaml.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/SubClass.xaml -text
 C8oSDKDotNetSamples/retail_store/retail_store/SubClass.xaml.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/TabbedPageP.xaml -text

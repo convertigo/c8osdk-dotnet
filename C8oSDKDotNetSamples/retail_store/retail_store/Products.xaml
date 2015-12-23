@@ -7,6 +7,12 @@
   <ContentPage.BindingContext>
     <local:CategoryViewModel />
   </ContentPage.BindingContext>
+  <ContentPage.Padding>
+  <OnPlatform x:TypeArguments="Thickness"
+      iOS="0,20,0,0"
+      Android="0,0,0,0"
+      WinPhone="0,0,0,0" />
+    </ContentPage.Padding>
 
   <Grid BackgroundColor="#FFFFFF">
     
@@ -56,11 +62,11 @@
           <Image x:Name="img_fresh" Source="freshness.jpg"/>
         </StackLayout>
 
-        <StackLayout  Grid.Row="4" Grid.ColumnSpan="5" VerticalOptions="Start">
+        <StackLayout  Grid.Row="4" Grid.ColumnSpan="5" VerticalOptions="Center">
           <Label x:Name="txt_ret" Text="Retail Store"  HorizontalOptions="Center" FontSize="15" TextColor="#262261"/>
         </StackLayout>
 
-        <StackLayout Grid.Row="4" Grid.ColumnSpan="5" VerticalOptions="Center">
+        <StackLayout Grid.Row="4" Grid.ColumnSpan="5" VerticalOptions="End">
           <Label x:Name="txt_fr" Text="Guaranteed freshness"  HorizontalOptions="Center" FontSize="15" TextColor="#262261"/>
         </StackLayout>
 

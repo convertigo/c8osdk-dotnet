@@ -8,13 +8,20 @@
     <local:CartViewModel/>
   </NavigationPage.BindingContext>
   
+  <ContentPage.Padding>
+    <OnPlatform x:TypeArguments="Thickness"
+        iOS="0,20,0,-20"
+        Android="0,0,0,0"
+        WinPhone="0,0,0,0" />
+  </ContentPage.Padding>
+
   <Grid BackgroundColor="#FFFFFF">
     
     <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
+      <RowDefinition Height="2*" />
+      <RowDefinition Height="20" />
+      <RowDefinition Height="7*" />
+      <RowDefinition Height="1*" />
     </Grid.RowDefinitions>
     
     <Grid.ColumnDefinitions>
@@ -98,7 +105,7 @@
                   
                 </StackLayout>
                 <StackLayout  Grid.Column="3" Grid.Row ="0" Grid.RowSpan="2">
-                  <Image Source="del.png">
+                  <Image Source="del.jpg">
                     <Image.GestureRecognizers>
                       <TapGestureRecognizer Tapped="tapImage_dell" />
                     </Image.GestureRecognizers>
@@ -125,18 +132,17 @@
           <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
       <StackLayout Grid.Row="0" Grid.Column="0" HorizontalOptions="Center" >
-        <Label x:Name="labRePr" Text="{Binding Total}" TextColor="#FFFFFF" />
+        <Label x:Name="labRePr" Text="{Binding Total}" TextColor="#FFFFFF" FontSize="10" />
       </StackLayout>
       <StackLayout Grid.Row="0" Grid.Column="1" HorizontalOptions="Center" >
-        <Label x:Name="labReCo" Text="{Binding Count}" TextColor="#FFFFFF" >
-          
+        <Label x:Name="labReCo" Text="{Binding Count}" TextColor="#FFFFFF" FontSize="10" >
         </Label>
       </StackLayout>
         <StackLayout Grid.Row="1" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" >
-          <Label x:Name="labReNewP" Text="{Binding NewPrice}" TextColor="#FF0000" />
+          <Label x:Name="labReNewP" Text="{Binding NewPrice}" TextColor="#FF0000" FontSize="10" />
         </StackLayout>
-        <StackLayout Grid.Row="2" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" >
-          <Label x:Name="labReDis" Text="{Binding Discount}" TextColor="#FF0000">
+        <StackLayout Grid.Row="2" Grid.ColumnSpan="2" VerticalOptions="End" HorizontalOptions="CenterAndExpand" >
+          <Label x:Name="labReDis" Text="{Binding Discount}" FontSize="10" TextColor="#FF0000">
           </Label>
         </StackLayout>
       </Grid>

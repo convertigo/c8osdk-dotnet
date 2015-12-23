@@ -69,6 +69,9 @@
     </Compile>
     <Compile Include="Rayon.cs" />
     <Compile Include="ReduceTot.cs" />
+    <Compile Include="Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SubClass.xaml.cs">
       <DependentUpon>SubClass.xaml</DependentUpon>
     </Compile>
@@ -179,6 +182,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Page1.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Settings.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

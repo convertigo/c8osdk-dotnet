@@ -13,19 +13,24 @@ namespace retail_store
         public NavigationPage pr;
         public NavigationPage np;
         public Cart myCart;
+        public Settings  Setting;
         public TabbedPageP()
         {
             InitializeComponent();
             
-            pr = new NavigationPage(new Products()) { Title = "Products" };
-            NavigationPage.SetHasNavigationBar(pr, false);
-            np = new NavigationPage(new Category()) { Title = "Category" };
-            NavigationPage.SetHasNavigationBar(np, false);
-            myCart = new Cart() { Title = "Cart" };
+            pr = new NavigationPage(new Products()) { Title = "Products"};
+            np = new NavigationPage(new Category()) { Title = "Category"};
+            myCart = new Cart() { Title = "Cart"};
+            Setting = new Settings() { Title = "Settings" };
+
+
+
+
             np.BackgroundColor = Color.FromHex("#FFFFFF");
             this.Children.Add(pr);
             this.Children.Add(np);
             this.Children.Add(myCart);
+            this.Children.Add(Setting);
         }
         
     }

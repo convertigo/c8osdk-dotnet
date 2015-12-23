@@ -3,7 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:retail_store;assembly=retail_store"
              x:Class="retail_store.Detail">
-
+  <ContentPage.Padding>
+    <OnPlatform x:TypeArguments="Thickness"
+        iOS="0,20,0,0"
+        Android="0,0,0,0"
+        WinPhone="0,0,0,0" />
+  </ContentPage.Padding>
 
   <Grid BackgroundColor="#FFFFFF">
 
