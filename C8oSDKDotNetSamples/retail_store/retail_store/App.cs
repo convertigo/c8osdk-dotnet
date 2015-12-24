@@ -123,7 +123,8 @@ namespace retail_store
 
                 //CallJson Method is called thanks to C8o Object    
                 await myC8oCart.CallJson(
-                ".Connect")         //We give him parameters as the name of the FULLSYNC connector that we calls
+                ".Connect",
+                "User", "User1")         //We give him parameters as the name of the FULLSYNC connector that we calls
                 .Fail((e, p) =>
                 {
                     Debug.WriteLine("LAA" + e);//Handle errors...
@@ -150,6 +151,7 @@ namespace retail_store
                             App.cvm.GetRealPrice();
                             Debug.WriteLine(progress.ToString());
                         }
+                        Debug.WriteLine(progress.ToString());
                     })
                     .Fail((e, p) =>
                     {

@@ -14,5 +14,10 @@ namespace retail_store
         {
             InitializeComponent();
         }
+
+        public async void Connexion(object sender, EventArgs e)
+        {
+            await DisplayAlert("Alert !", "Would you realy wants to delete these items ?", "Yes", "No");
+        }
     }
 }
