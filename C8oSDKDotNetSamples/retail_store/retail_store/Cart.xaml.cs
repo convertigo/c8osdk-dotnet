@@ -23,12 +23,7 @@ namespace retail_store
             labReNewP.BindingContext = (ReduceTot)App.cvm.Reduce[0];
             labReDis.BindingContext = (ReduceTot)App.cvm.Reduce[0];
             listView.ItemsSource = App.cvm.ProductStock;
-            
             listView.SeparatorColor = Color.Black;
-            
-            //BindingOperations.EnableCollectionSynchronization();
-
-
         }
 
         public void SetVisibility(bool visible)
@@ -56,8 +51,6 @@ namespace retail_store
                 })
                 .Async();
             App.cvm.PopulateData(data, true);
-
-            
         }
         public void a()
         {
@@ -70,7 +63,6 @@ namespace retail_store
         public void refresh()
         {
             GetView();
-            //a();
             App.cvm.GetReducePrice();
         }
         protected override void OnAppearing()
@@ -81,7 +73,7 @@ namespace retail_store
         void tapImage_Tapped(object sender, EventArgs e)
         {
             string id = ((ViewCell)((Image)sender).Parent.Parent.Parent.Parent.Parent.Parent).ClassId.ToString();
-
+            
             string imageName = ((FileImageSource)((Image)sender).Source).File.ToString();
             switch (imageName)
             {
@@ -113,11 +105,5 @@ namespace retail_store
             }
 
         }
-        public void sal(object sender, EventArgs e)
-        {
-            App.cvm.deleteCart(true);
-        }
-
-
     }  
 }

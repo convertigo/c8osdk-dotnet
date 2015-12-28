@@ -19,31 +19,26 @@ namespace retail_store
         {
             InitializeComponent();
             IsVisibleProd(false);
-            //Creating TapGestureRecognizers  
-            //var tapImage_nouv = new TapGestureRecognizer();
-            //var tapImage_promo = new TapGestureRecognizer();
-            //Binding events  
-            //tapImage_nouv.Tapped += tapImage_Tapped;
-            //tapImage_promo.Tapped += tapImage_Tapped_promo;
-            //Associating tap events to the image buttons  
-            //imgN.GestureRecognizers.Add(tapImage_nouv);
-            //imgP.GestureRecognizers.Add(tapImage_promo);
             NavigationPage.SetHasNavigationBar(this, false);
-            
             listView.SeparatorColor = Color.Black;
-
-
-
         }
+
         public async  void tapImage_Tapped_promo(object sender, EventArgs e)
         {
-            Category c = new Category("PROMO");
-            await Navigation.PushAsync(c, true);
+            if (listView.IsVisible == false)
+            {
+                Category c = new Category("PROMO");
+                await Navigation.PushAsync(c, true);
+            }
+            
         }
         public async void tapImage_Tapped(object sender, EventArgs e)
         {
-            Category c = new Category("NEWS");
-            await Navigation.PushAsync(c, true);
+            if (listView.IsVisible == false)
+            {
+                Category c = new Category("NEWS");
+                await Navigation.PushAsync(c, true);
+            }
         }
 
         public void OnSearch(object sender, EventArgs e)
@@ -103,7 +98,7 @@ namespace retail_store
             else
             {
                 val = 1;
-                
+
             }
             listView.IsVisible = b;
             imgN.Opacity = val;
@@ -120,8 +115,5 @@ namespace retail_store
             Prod prod = (Prod)e.Item;
             await Navigation.PushAsync(new Detail(prod), true);
         }
-            
-
-
-        }
+     }
 }

@@ -89,7 +89,7 @@ namespace retail_store
                 //instanciate a new JObject data that will recieve json from our C8o objects
                 JObject data;
                 data = await myC8o.CallJson(
-                ".select_shop",          //We give him parameters as the name of the sequence that we calls
+                ".select_shop",          //We give it parameters as the name of the sequence that we calls
                 "shopCode", "42")       //And the parameters for the sequence    
                 .Fail((e, p) =>
                 {
@@ -101,12 +101,9 @@ namespace retail_store
                 // if data return "42" for selectshop then..
                 if (data["document"]["shopCode"].ToString() == "42")
                 {
-                    //Open the modal page in order to give the state of the waiting
-                    //await MainPage.Navigation.PushModalAsync(new LoadingPage());
-
                     //CallJson Method is called thanks to C8o Object 
-                    data = await myC8o.CallJson(
-                        "fs://.sync")           //We give him parameters as the name of the FULLSYNC connector that we calls
+                    await myC8o.CallJson(
+                        "fs://.sync")           //We give it parameters as the name of the FULLSYNC connector that we calls
                         .Progress(progress =>
                         {
                             LoadP.State = "" + progress.Current + "/" + progress.Total;
@@ -116,42 +113,28 @@ namespace retail_store
                             Debug.WriteLine("LAA" + e);//Handle errors..
                         })
                         .Async();
-                    //Close the modal page that give us the progress...
-                    //await MainPage.Navigation.PopModalAsync();
-
                 }
 
                 //CallJson Method is called thanks to C8o Object    
                 await myC8oCart.CallJson(
-                ".Connect",
-                "User", "User1")         //We give him parameters as the name of the FULLSYNC connector that we calls
+                ".Connect",                 
+                "User", "User1")         //We give it parameters as the name of the FULLSYNC connector that we calls
                 .Fail((e, p) =>
                 {
                     Debug.WriteLine("LAA" + e);//Handle errors...
                 })
                 .Async();
 
-
-                //CallJson Method is called thanks to C8o Object 
-                /*await myC8oCart.CallJson(
-                    "fs://.sync")                   //We give him parameters as the name of the FULLSYNC connector that we calls
-                        .Fail((e, p) =>                //And the live sync
-                    {
-                            Debug.WriteLine("" + e);
-                        })
-                    .Async();*/
-
+                //CallJson Method is called thanks to C8o Object    
                 await myC8oCart.CallJson(
-                    "fs://.sync",                       //We give him parameters as the name of the FULLSYNC connector that we calls
+                    "fs://.sync",                       //We give it parameters as the name of the FULLSYNC connector that we calls
                     "continuous", true)               //And the live sync
                     .Progress(progress =>
                     {
                         if (progress.Finished == true)
                         {
                             App.cvm.GetRealPrice();
-                            Debug.WriteLine(progress.ToString());
                         }
-                        Debug.WriteLine(progress.ToString());
                     })
                     .Fail((e, p) =>
                     {

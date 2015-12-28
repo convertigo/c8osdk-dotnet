@@ -13,7 +13,7 @@ namespace retail_store
         public NavigationPage pr;
         public NavigationPage np;
         public Cart myCart;
-        public Settings  Setting;
+        //public Settings  Setting;
         public TabbedPageP()
         {
             InitializeComponent();
@@ -21,7 +21,7 @@ namespace retail_store
             pr = new NavigationPage(new Products()) { Title = "Products"};
             np = new NavigationPage(new Category()) { Title = "Category"};
             myCart = new Cart() { Title = "Cart"};
-            Setting = new Settings() { Title = "Settings" };
+            //Setting = new Settings() { Title = "Settings" };
 
 
 
@@ -30,7 +30,7 @@ namespace retail_store
             this.Children.Add(pr);
             this.Children.Add(np);
             this.Children.Add(myCart);
-            this.Children.Add(Setting);
+            //this.Children.Add(Setting);
         }
         
     }

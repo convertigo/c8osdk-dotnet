@@ -41,7 +41,7 @@
       <ListView x:Name="listView" ItemsSource="ProductStock" CachingStrategy="RecycleElement">
         <ListView.ItemTemplate>
           <DataTemplate>
-            <ViewCell ClassId="{Binding Id}">
+            <ViewCell x:Name="vId" ClassId="{Binding Id}">
               <StackLayout Orientation="Horizontal" Grid.ColumnSpan="2" Padding="5, 5">
               <Grid>
                 <Grid.RowDefinitions>

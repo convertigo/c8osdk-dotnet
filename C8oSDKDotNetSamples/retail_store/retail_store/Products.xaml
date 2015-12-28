@@ -39,6 +39,19 @@
       <SearchBar x:Name="SearchFor" Placeholder="search for"   TextChanged="OnSearch" VerticalOptions="Start"/>
     </StackLayout>
 
+    <StackLayout x:Name="stack"  Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="5">
+      <ListView x:Name="listView" ItemsSource="{Binding Rayons}" ItemTapped="OnItemTapped">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ViewCell>
+              <StackLayout Orientation="Horizontal" Padding="5, 5">
+                <Label Text="{Binding Name}" HorizontalOptions="StartAndExpand" VerticalOptions="Center" TextColor="#000000" FontSize="12"/>
+              </StackLayout>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </StackLayout>
 
         <StackLayout Grid.Row="2" Grid.Column="1">
           <Image x:Name="imgN" Source="nouv.jpg" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
@@ -71,20 +84,8 @@
         </StackLayout>
 
 
+
     
-      <StackLayout Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="5">
-        <ListView x:Name="listView" ItemsSource="{Binding Rayons}" ItemTapped="OnItemTapped">
-          <ListView.ItemTemplate>
-            <DataTemplate>
-              <ViewCell>
-                <StackLayout Orientation="Horizontal" Padding="5, 5">
-                  <Label Text="{Binding Name}" HorizontalOptions="StartAndExpand" VerticalOptions="Center" TextColor="#000000" FontSize="12"/>
-                </StackLayout>
-              </ViewCell>
-            </DataTemplate>
-          </ListView.ItemTemplate>
-        </ListView>
-      </StackLayout>
 
     
   </Grid>

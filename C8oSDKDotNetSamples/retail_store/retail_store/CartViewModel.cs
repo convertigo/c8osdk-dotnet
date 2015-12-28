@@ -1,23 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
 using Newtonsoft.Json.Linq;
-////using Convertigo.SDK.Listeners;
-using Convertigo.SDK;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 
 namespace retail_store
 {
     public class CartViewModel : ObservableCollection<ProdStock> ,Model
     {
-        
-
         //list of productstock contains in local base
         private ObservableCollection<ProdStock> productStock;
         private ObservableCollection<ReduceTot> reduce;
@@ -48,10 +37,8 @@ namespace retail_store
         }
 
         //Getters and Setters
-        
         public ObservableCollection<ProdStock> ProductStock
         {
-            
             get
             {
                 return productStock;
@@ -59,8 +46,6 @@ namespace retail_store
             set
             { 
                 productStock = value;
-                
-
             }
         }
 
@@ -91,7 +76,6 @@ namespace retail_store
         }
 
 
-
         //PopulateData allow us to get the whole objects contained in the local base and put it on productStock(list)
         public void PopulateData(JObject json,bool check)
         {
@@ -101,17 +85,8 @@ namespace retail_store
             {
                 this.ProductStock.Add(new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"],(String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"],(float)jo["value"]["count"]));
             }
-            /*if (this.ProductStock != null)
-            {
-                
-                foreach (ProdStock item in data)
-                {
-                    this.ProductStock.Add(item);
-                }*/
-                
-                GetReducePrice();
-            //}
 
+            GetReducePrice();
         }
 
         //CheckCart allow us to check if the products that we want to insert is already contains in database 
@@ -241,9 +216,7 @@ namespace retail_store
                 })
                 .Async();
             App.cvm.GetReducePrice();
-
         }
-
 
         //insertCart as indicated by his name insert a new productStock in local base
         public async void insertCart()
@@ -321,7 +294,6 @@ namespace retail_store
 
         public async void GetRealPrice()
         {
-
             JObject data = await App.myC8oCart.CallJson(
                     "fs://.view",
                     "ddoc", "design",
@@ -348,10 +320,6 @@ namespace retail_store
                  this.Reduce[0].Discount = "0";
                  this.Reduce[0].NewPrice = "0";
              }
-               
         }
-
-        
-
     }
 }
