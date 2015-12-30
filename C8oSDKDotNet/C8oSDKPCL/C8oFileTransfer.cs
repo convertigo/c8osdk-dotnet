@@ -178,9 +178,11 @@ namespace Convertigo.SDK
 
         async Task DownloadFile(C8oFileTransferStatus transferStatus, JObject task)
         {
+            bool needRemoveSession = false;
+            C8o c8o = null;
             try
             {
-                var c8o = new C8o(c8oTask.Endpoint, new C8oSettings(c8oTask).SetFullSyncLocalSuffix("_" + transferStatus.Uuid));
+                c8o = new C8o(c8oTask.Endpoint, new C8oSettings(c8oTask).SetFullSyncLocalSuffix("_" + transferStatus.Uuid));
                 string fsConnector = null;
 
                 //
@@ -188,6 +190,7 @@ namespace Convertigo.SDK
                 //
                 if (!task["replicated"].Value<bool>() || !task["remoteDeleted"].Value<bool>())
                 {
+                    needRemoveSession = true;
                     var json = await c8o.CallJson(".SelectUuid", "uuid", transferStatus.Uuid).Async();
 
                     Debug("SelectUuid:\n" + json.ToString());
@@ -217,6 +220,7 @@ namespace Convertigo.SDK
 
                     await c8o.CallJson("fs://" + fsConnector + ".create").Async();
 
+                    needRemoveSession = true;
                     c8o.CallJson("fs://" + fsConnector + ".replicate_pull").Then((json, param) =>
                     {
                         lock (locker)
@@ -311,6 +315,7 @@ namespace Convertigo.SDK
                     var res = await c8o.CallJson("fs://" + fsConnector + ".destroy").Async();
                     Debug("destroy local true:\n" + res.ToString());
 
+                    needRemoveSession = true;
                     res = await c8o.CallJson(".DeleteUuid", "uuid", transferStatus.Uuid).Async();
                     Debug("deleteUuid:\n" + res);
 
@@ -334,6 +339,11 @@ namespace Convertigo.SDK
             catch (Exception e)
             {
                 Notify(e);
+            }
+
+            if (needRemoveSession && c8o != null)
+            {
+                c8o.CallJson(".RemoveSession");
             }
 
             tasks.Remove(transferStatus.Uuid);
