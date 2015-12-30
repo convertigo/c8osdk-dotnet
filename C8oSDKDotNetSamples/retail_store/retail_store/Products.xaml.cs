@@ -21,14 +21,17 @@ namespace retail_store
             IsVisibleProd(false);
             NavigationPage.SetHasNavigationBar(this, false);
             listView.SeparatorColor = Color.Black;
-        }
+            
+            }
 
         public async  void tapImage_Tapped_promo(object sender, EventArgs e)
         {
             if (listView.IsVisible == false)
             {
-                Category c = new Category("PROMO");
-                await Navigation.PushAsync(c, true);
+                ((TabbedPageP)Parent.Parent).tabletP.Master = new Category("PROMO");
+                
+               /* Category c = new Category("PROMO");
+                await Navigation.PushAsync(c, true);*/
             }
             
         }

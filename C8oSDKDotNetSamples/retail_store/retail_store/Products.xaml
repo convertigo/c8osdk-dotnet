@@ -59,7 +59,7 @@
               <TapGestureRecognizer Tapped="tapImage_Tapped" />
             </Image.GestureRecognizers>
           </Image>
-          <Label x:Name="imgN_text" Text="Novelty"  HorizontalOptions="Center" FontSize="11" TextColor="#262261"/>
+          <Label x:Name="imgN_text" Text="Novelty"  HorizontalOptions="CenterAndExpand" FontSize="10" TextColor="#262261"/>
         </StackLayout>
 
         <StackLayout  Grid.Row="2" Grid.Column="3">
@@ -68,7 +68,7 @@
               <TapGestureRecognizer Tapped="tapImage_Tapped_promo" />
             </Image.GestureRecognizers>
           </Image>
-          <Label x:Name="imgP_text" Text="Promotions"  HorizontalOptions="Center" FontSize="11" TextColor="#262261"/>
+          <Label x:Name="imgP_text" Text="Promotions"  HorizontalOptions="CenterAndExpand" FontSize="10" TextColor="#262261"/>
         </StackLayout>
 
         <StackLayout   Grid.Row="3" Grid.ColumnSpan="3" Grid.Column="1" VerticalOptions="Start">

@@ -40,7 +40,13 @@
       <DependentUpon>Cart.xaml</DependentUpon>
     </Compile>
     <Compile Include="CartViewModel.cs" />
+    <Compile Include="Cat.xaml.cs">
+      <DependentUpon>Cat.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Categ.cs" />
+    <Compile Include="CategoryTablet.xaml.cs">
+      <DependentUpon>CategoryTablet.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CategoryViewModel.cs" />
     <Compile Include="ConnectivityChangedEventArgs.cs" />
     <Compile Include="Detail.xaml.cs">
@@ -188,6 +194,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Settings.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CategoryTablet.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Cat.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

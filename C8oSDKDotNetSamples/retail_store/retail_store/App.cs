@@ -177,7 +177,7 @@ namespace retail_store
         {
             // Handle when your app resumes
         }
-
         
+
     }
 }

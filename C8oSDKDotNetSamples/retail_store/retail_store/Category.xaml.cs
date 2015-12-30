@@ -21,18 +21,20 @@ namespace retail_store
         private string leaf;
         private string leaf2;
         private Boolean isSearch;
-
+        private bool isRight;
+        public Action<Detail> ItemSelected { get; set; }
+        
         //Constructor by default here category is set to "Menu" it's the root category of our Design document.
         //isProduct is also set to false by default because our first root menu is not a product. 
         public Category(string category = "Menu",  Boolean isProduct = false, string category2 = "Menu", string view= "children_byFather")
         {
+            Title = "title";
             InitializeComponent();
             if (Device.OS == TargetPlatform.iOS)
             {
                 if (category == "Menu")
                 {
                     NavigationPage.SetHasNavigationBar(this, false);
-                    
                 }
                 else
                 {
@@ -43,16 +45,19 @@ namespace retail_store
             {
                 NavigationPage.SetHasNavigationBar(this, false);
             }
+            Title = "bbbbb";
+            this.IsRight = isRight;
             this.Categor = category;
             this.Categor2 = category2;
             this.isProduct = isProduct;
             this.view = view;
             IsSearch = isSearch;
-            listView.SeparatorColor = Color.Black;
+            this.listView.SeparatorColor = Color.Black;
             this.Categor2 = category;
             this.Leaf = "";
             this.Leaf2 = "{}";
             run();
+            
         }
 
         public async void run()
@@ -72,6 +77,7 @@ namespace retail_store
                         Debug.WriteLine("LAA" + e);// Handle errors..
                     })
                     .Async();
+
             indicator.IsVisible = false;
             indicatorStr.IsVisible = false;
             Object model;
@@ -82,19 +88,39 @@ namespace retail_store
 
         public async void OnItemTapped(object sender, ItemTappedEventArgs e)
         {
-            //If the item is not product we push async a new category view
-            if (IsProduct == false)
+            if (Device.Idiom == TargetIdiom.Tablet || Device.Idiom == TargetIdiom.Desktop)
             {
-                Categ categ = (Categ)e.Item;
-                await Navigation.PushAsync(new Category(categ.LevelId, categ.Leaf), true);
+                //If the item is not product we push async a new category view
+                if (IsProduct == false)
+                {
+                    ((CategoryTablet)Parent).ListPage.Add(this);
+                    Categ categ = (Categ)e.Item;
+                    ((CategoryTablet)Parent).Master = new Category(categ.LevelId, categ.Leaf);
+                }
+                //If the item is a product we push async a new detail view
+                else
+                {
+                    Prod prod = (Prod)e.Item;
+                    ((CategoryTablet)Parent).Detail = new Detail(prod);
+                    listView.SelectedItem = 0;
+
+                }
             }
-            //If the item is a product we push async a new detail view
             else
             {
-                Prod prod = (Prod)e.Item;
-                await Navigation.PushAsync(new Detail(prod), true);
+                //If the item is not product we push async a new category view
+                if (IsProduct == false)
+                {
+                    Categ categ = (Categ)e.Item;
+                    await Navigation.PushAsync(new Category(categ.LevelId, categ.Leaf), true);
+                }
+                //If the item is a product we push async a new detail view
+                else
+                {
+                    Prod prod = (Prod)e.Item;
+                    await Navigation.PushAsync(new Detail(prod), true);
+                }
             }
-
 
         }
         //Getters and Setters
@@ -177,5 +203,17 @@ namespace retail_store
             }
         }
 
+        public bool IsRight
+        {
+            get
+            {
+                return isRight;
+            }
+
+            set
+            {
+                isRight = value;
+            }
+        }
     }
 }

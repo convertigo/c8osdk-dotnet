@@ -28,7 +28,11 @@ namespace retail_store
             set
             {
                 rayons = value;
-                PropertyChanged(this, new PropertyChangedEventArgs(null));
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs(null));
+                }
+                
             }
             get
             {

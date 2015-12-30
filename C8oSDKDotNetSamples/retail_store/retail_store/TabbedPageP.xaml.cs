@@ -12,25 +12,35 @@ namespace retail_store
     {
         public NavigationPage pr;
         public NavigationPage np;
+        public CategoryTablet tabletP;
         public Cart myCart;
-        //public Settings  Setting;
         public TabbedPageP()
         {
             InitializeComponent();
             
+
             pr = new NavigationPage(new Products()) { Title = "Products"};
-            np = new NavigationPage(new Category()) { Title = "Category"};
-            myCart = new Cart() { Title = "Cart"};
-            //Setting = new Settings() { Title = "Settings" };
-
-
-
-
-            np.BackgroundColor = Color.FromHex("#FFFFFF");
             this.Children.Add(pr);
-            this.Children.Add(np);
+            if (Device.Idiom == TargetIdiom.Tablet || Device.Idiom == TargetIdiom.Desktop)
+            {
+                tabletP = new CategoryTablet() { Title = "Category" };
+                this.Children.Add(tabletP);
+            }
+                
+            else
+            {
+                np = new NavigationPage(new Category()) { Title = "Category" };
+                this.Children.Add(np);
+                np.BackgroundColor = Color.FromHex("#FFFFFF");
+            }
+
+
+            myCart = new Cart() { Title = "Cart" };
             this.Children.Add(myCart);
-            //this.Children.Add(Setting);
+            
+            
+            
+          
         }
         
     }

@@ -18,7 +18,7 @@
   <Grid BackgroundColor="#FFFFFF">
     
     <Grid.RowDefinitions>
-      <RowDefinition Height="2*" />
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="20" />
       <RowDefinition Height="7*" />
       <RowDefinition Height="1*" />
@@ -50,7 +50,7 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                   <!--<ColumnDefinition Width="*" />-->
-                  <ColumnDefinition Width="5*" />
+                  <ColumnDefinition Width="7*" />
                   <ColumnDefinition Width="3*" />
                   <ColumnDefinition Width="*" />
                   <ColumnDefinition Width="*" />
@@ -98,14 +98,14 @@
 
                     </Grid>
                 </StackLayout>
-                <StackLayout  Grid.Column="2" Grid.Row ="0" Grid.RowSpan="2" VerticalOptions="Center">
+                <StackLayout  Grid.Column="2" Grid.Row ="0" Grid.RowSpan="2" VerticalOptions="Center" HorizontalOptions="Center">
                   
                     <Label Text="{Binding PriceEurCount}" TextColor="#000000" FontSize="8" FontAttributes="Italic"/>
                   
                   
                 </StackLayout>
-                <StackLayout  Grid.Column="3" Grid.Row ="0" Grid.RowSpan="2">
-                  <Image Source="del.jpg">
+                <StackLayout  Grid.Column="3" Grid.Row ="0" Grid.RowSpan="2" HorizontalOptions="End">
+                  <Image Source="del.jpg" >
                     <Image.GestureRecognizers>
                       <TapGestureRecognizer Tapped="tapImage_dell" />
                     </Image.GestureRecognizers>
