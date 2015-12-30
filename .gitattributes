@@ -1123,9 +1123,13 @@ C8oSDKDotNetSamples/retail_store/retail_store/App.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Cart.xaml -text
 C8oSDKDotNetSamples/retail_store/retail_store/Cart.xaml.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/CartViewModel.cs -text
+C8oSDKDotNetSamples/retail_store/retail_store/Cat.xaml -text
+C8oSDKDotNetSamples/retail_store/retail_store/Cat.xaml.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Categ.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Category.xaml -text
 C8oSDKDotNetSamples/retail_store/retail_store/Category.xaml.cs -text
+C8oSDKDotNetSamples/retail_store/retail_store/CategoryTablet.xaml -text
+C8oSDKDotNetSamples/retail_store/retail_store/CategoryTablet.xaml.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/CategoryViewModel.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/ConnectivityChangedEventArgs.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Detail.xaml -text
