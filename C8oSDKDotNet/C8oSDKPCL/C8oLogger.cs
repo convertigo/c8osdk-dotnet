@@ -85,12 +85,12 @@ namespace Convertigo.SDK
 
         private bool IsLoggableRemote(C8oLogLevel logLevel)
         {
-            return isLogRemote && logLevel != null && C8oLogLevel.TRACE.priority <= remoteLogLevel.priority && logLevel.priority <= remoteLogLevel.priority;
+            return isLogRemote && logLevel != null && C8oLogLevel.TRACE.priority <= remoteLogLevel.priority && remoteLogLevel.priority <= logLevel.priority;
         }
 
         private bool IsLoggableConsole(C8oLogLevel logLevel)
         {
-            return logLevel != null && C8oLogLevel.TRACE.priority <= c8o.LogLevelLocal.priority && logLevel.priority <= c8o.LogLevelLocal.priority;
+            return logLevel != null && C8oLogLevel.TRACE.priority <= c8o.LogLevelLocal.priority && c8o.LogLevelLocal.priority <= logLevel.priority;
         }
 
         //*** Basics log ***//
