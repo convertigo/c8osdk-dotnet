@@ -49,6 +49,9 @@
     <StackLayout Grid.Row="5" Grid.Column="1">
       <Image x:Name="Image2" Source="moins.png" Aspect="AspectFill " HorizontalOptions="Center"/>
     </StackLayout>
+    <StackLayout Grid.Row="5" Grid.Column="2">
+      <Label x:Name="labelCount" Text="{Binding Count}" HorizontalOptions="Center"/>
+    </StackLayout>
     <StackLayout Grid.Row="5" Grid.Column="3">
       <Image x:Name="Image3" Source="plus.png" Aspect="AspectFill " HorizontalOptions="Center"/>
     </StackLayout>

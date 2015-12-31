@@ -28,10 +28,10 @@ namespace retail_store
         {
             if (listView.IsVisible == false)
             {
-                ((TabbedPageP)Parent.Parent).tabletP.Master = new Category("PROMO");
+                //((TabbedPageP)Parent.Parent).tabletP.Master = new Category("PROMO");
                 
-               /* Category c = new Category("PROMO");
-                await Navigation.PushAsync(c, true);*/
+               Category c = new Category("PROMO");
+                await Navigation.PushAsync(c, true);
             }
             
         }
