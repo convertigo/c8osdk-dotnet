@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="retail_store.contentDetailTablet">
+
+  <ContentPage.Padding>
+    <OnPlatform x:TypeArguments="Thickness"
+        iOS="0,20,0,0"
+        Android="0,0,0,0"
+        WinPhone="0,0,0,0" />
+  </ContentPage.Padding>
+
+  <Grid BackgroundColor="#FFFFFF">
+
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="10"/>
+      <RowDefinition Height="Auto"/>
+      
+    </Grid.RowDefinitions>
+
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+
+    <StackLayout x:Name="Img" Grid.Row="0" Grid.Column="0">
+      <Image Source="retail_logo.png"/>
+    </StackLayout>
+
+    <StackLayout Grid.Row="1" Grid.Column="0" BackgroundColor="#262261" />
+    <StackLayout Grid.Row="2" Grid.Column="0" HorizontalOptions="Center"
+                 VerticalOptions="Center">
+      <Label Text="Select a category" TextColor="#000000" />
+    </StackLayout>
+
+  </Grid>
+
+  </ContentPage>

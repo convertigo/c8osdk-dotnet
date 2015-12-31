@@ -45,6 +45,11 @@ namespace retail_store
             {
                 NavigationPage.SetHasNavigationBar(this, false);
             }
+            if (Device.Idiom == TargetIdiom.Tablet || Device.Idiom == TargetIdiom.Desktop)
+            {
+                this.Img.IsVisible = false;
+                this.stack.IsVisible = false;
+            }
             Title = "bbbbb";
             this.IsRight = isRight;
             this.Categor = category;

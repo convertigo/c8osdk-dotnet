@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Convertigo.SDK;
-//using Convertigo.SDK.Listeners;
 using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 
@@ -23,15 +22,22 @@ namespace retail_store
             listView.SeparatorColor = Color.Black;
             
             }
-
+        
         public async  void tapImage_Tapped_promo(object sender, EventArgs e)
         {
             if (listView.IsVisible == false)
             {
-                //((TabbedPageP)Parent.Parent).tabletP.Master = new Category("PROMO");
-                
-               Category c = new Category("PROMO");
-                await Navigation.PushAsync(c, true);
+                if (Device.Idiom == TargetIdiom.Tablet || Device.Idiom == TargetIdiom.Desktop)
+                {
+                    ((CategoryTablet)((TabbedPageP)Parent.Parent).tabletP).ListPage.Add(this);
+                    ((CategoryTablet)((TabbedPageP)Parent.Parent).tabletP).Master = new Category("PROMO");
+                    ((TabbedPageP)Parent.Parent).CurrentPage = ((TabbedPageP)Parent.Parent).Children[1];
+                }
+                else
+                {
+                    Category c = new Category("PROMO");
+                    await Navigation.PushAsync(c, true);
+                }   
             }
             
         }
@@ -39,8 +45,18 @@ namespace retail_store
         {
             if (listView.IsVisible == false)
             {
-                Category c = new Category("NEWS");
-                await Navigation.PushAsync(c, true);
+                if (Device.Idiom == TargetIdiom.Tablet || Device.Idiom == TargetIdiom.Desktop)
+                {
+                    ((CategoryTablet)((TabbedPageP)Parent.Parent).tabletP).ListPage.Add(this);
+                    ((CategoryTablet)((TabbedPageP)Parent.Parent).tabletP).Master = new Category("NEWS");
+                    ((TabbedPageP)Parent.Parent).CurrentPage = ((TabbedPageP)Parent.Parent).Children[1];
+                }
+                else
+                {
+                    Category c = new Category("NEWS");
+                    await Navigation.PushAsync(c, true);
+                }
+                
             }
         }
 
@@ -109,7 +125,7 @@ namespace retail_store
             imgN_text.Opacity = val;
             imgP_text.Opacity = val;
             img_fresh.Opacity = val;
-            txt_ret.Opacity = val;
+            //txt_ret.Opacity = val;
             txt_fr.Opacity = val;
         }
 

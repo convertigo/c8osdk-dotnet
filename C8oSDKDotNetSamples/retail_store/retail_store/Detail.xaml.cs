@@ -42,7 +42,11 @@ namespace retail_store
             {
                 NavigationPage.SetHasNavigationBar(this, false);
             }
-            GetView();
+            if (Device.Idiom == TargetIdiom.Tablet || Device.Idiom == TargetIdiom.Desktop)
+            {
+               
+            }
+             GetView();
             searchUnit();
             labelCount.BindingContext = this;
         }

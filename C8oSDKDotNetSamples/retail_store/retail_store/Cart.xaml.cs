@@ -39,19 +39,7 @@ namespace retail_store
                 labReDis.IsVisible = false;
             }
         }
-        public async void GetView()
-        {
-            JObject data = await App.myC8oCart.CallJson(
-                "fs://.view",
-                "ddoc", "design",
-                "view", "view")
-                .Fail((e, p) =>
-                {
-                    // Handle errors..
-                })
-                .Async();
-            App.cvm.PopulateData(data, true);
-        }
+        
         public void a()
         {
             if (App.cvm.ProductStock != null)
@@ -62,7 +50,7 @@ namespace retail_store
 
         public void refresh()
         {
-            GetView();
+            App.cvm.GetView();
             App.cvm.GetReducePrice();
         }
         protected override void OnAppearing()

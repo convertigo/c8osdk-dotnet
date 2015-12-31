@@ -49,6 +49,9 @@
     </Compile>
     <Compile Include="CategoryViewModel.cs" />
     <Compile Include="ConnectivityChangedEventArgs.cs" />
+    <Compile Include="contentDetailTablet.xaml.cs">
+      <DependentUpon>contentDetailTablet.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Detail.xaml.cs">
       <DependentUpon>Detail.xaml</DependentUpon>
     </Compile>
@@ -206,6 +209,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Cat.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="contentDetailTablet.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

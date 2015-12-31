@@ -267,9 +267,18 @@ namespace retail_store
             Boolean flag = false;
             foreach (JObject jo in (JArray)jsRep["rows"])
             {
-                this.Reduce[0].Total = ((string)jo["value"]["total"]).ToString();
-                this.Reduce[0].Count= ((string)jo["value"]["count"]).ToString();
-                flag = true;
+                try
+                {
+                    this.Reduce[0].Total = ((string)jo["value"]["total"]).ToString();
+                    this.Reduce[0].Count = ((string)jo["value"]["count"]).ToString();
+                    flag = true;
+                }
+                catch (Exception e)
+                {
+
+                    Debug.WriteLine(e.ToString());
+                }
+                
             }
             if (!flag)
             {
@@ -311,8 +320,12 @@ namespace retail_store
              Boolean flag = false;
              foreach(JObject jo in (JArray)jsonResponse["rows"])
              {
-                 this.Reduce[0].Discount = (((string)jo["value"]["discount"])).ToString();
-                this.Reduce[0].NewPrice = Math.Round(((float)jo["value"]["newPrice"]), 2).ToString();
+                if (Math.Round(((float)jo["value"]["newPrice"]), 2).ToString() != this.Reduce[0].NewPrice)
+                {
+                    this.Reduce[0].Discount = (((string)jo["value"]["discount"])).ToString();
+                    this.Reduce[0].NewPrice = Math.Round(((float)jo["value"]["newPrice"]), 2).ToString();
+                    GetView();
+                }
                  flag = true;
              }
              if (!flag)
@@ -320,6 +333,20 @@ namespace retail_store
                  this.Reduce[0].Discount = "0";
                  this.Reduce[0].NewPrice = "0";
              }
+        }
+
+        public async void GetView()
+        {
+            JObject data = await App.myC8oCart.CallJson(
+                "fs://.view",
+                "ddoc", "design",
+                "view", "view")
+                .Fail((e, p) =>
+                {
+                    // Handle errors..
+                })
+                .Async();
+            PopulateData(data, true);
         }
     }
 }

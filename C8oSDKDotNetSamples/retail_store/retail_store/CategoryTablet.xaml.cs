@@ -12,36 +12,13 @@ namespace retail_store
     {
 
         public List<Page> ListPage;
-        ContentPage cp;
         public CategoryTablet()
         {
             ListPage = new List<Page>();
             InitializeComponent();
             Title = "Category";
-            BackButtonPressedEventArgs bButon = new BackButtonPressedEventArgs();
-            if (bButon.Handled)
-            {
-                int a = 1;
-            }
-
-
             Master = new Category();
-
-           
-            cp= new ContentPage
-            {
-                Content = new StackLayout
-                {
-                    VerticalOptions = LayoutOptions.Center,
-                    HorizontalOptions = LayoutOptions.Center,
-                    Children =
-                {
-                    new Label { Text = "Select a Category", FontSize = Device.GetNamedSize(NamedSize.Large, typeof(Label)) }
-                }
-                }
-
-            };
-            Detail = cp;
+            Detail = new contentDetailTablet();
            this.Detail.BackgroundColor = Color.Gray;
             
             
@@ -59,7 +36,7 @@ namespace retail_store
                 
                 base.OnBackButtonPressed();
             }
-            Detail = cp;
+            Detail = new contentDetailTablet();
             return true;
         }
 
