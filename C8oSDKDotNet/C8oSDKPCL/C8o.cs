@@ -361,6 +361,56 @@ namespace Convertigo.SDK
             return CallJson(requestable, ToParameters(parameters));
         }
 
+        /// <summary>
+        /// Call a Convertigo Server backend service and return data in a JSON Object.
+        /// CallJSON will asynchrously call a "requestable" (Sequence, transaction or FullSync database) and return a
+        /// C8oPromise object.
+        /// </summary>
+        /// <param name="requestable">
+        /// A "requestable" object of this form :
+        /// <list type ="bullet">
+        ///     <item>project.sequence to call a Sequence in the convertigo server. If project is not specified explicitly here, 
+        ///     (.sequence) the default project specified in the enpoint will be used.</item>
+        ///     <item>
+        ///     project.connector.transaction to call a transaction in the convertigo server. if project is not specified explicitly here, 
+        ///     (.connector.transaction) the default project specified in the enpoint will be used. If
+        ///     connector is not specified (..transaction) the default connector will be used.</item>
+        ///     <item>fs://database.fullsync_verb   to call the local NoSQL database for quering, updating and syncing according to the full_sync
+        ///     verb used. See FullSync documentation for a list of verbs and parameters.</item>
+        /// </list>
+        /// </param>
+        /// <param name="parameters">
+        /// A JObject of Key/Value pairs mapped on Sequence/transaction/fullsync variables.
+        /// </param>
+        /// <returns>
+        /// A C8oPromise object on which you can chain other requests to get the data with the Then(), ThenUI() methods or
+        /// use the Async() to wait for the server response without blocking the request thread. You can also use the .Fail() and
+        /// FailUI() methods to handle errors.
+        /// </returns>
+        /// <sample>
+        /// This is a sample usage of CallJSON to call a "select_shop" sequence providing a shopCode variable ste to "42". We use the
+        /// Async() method to wait without blocking the calling thread with the await operator.
+        /// <code>
+        ///     JObject parameter = new JObject() {{"shopCode", "42"}};
+        ///     JObject data = await myC8o.CallJSON(".select_shop", parameter).Async();
+        /// </code>
+        /// or this code to use the promise :
+        /// <code>
+        ///    myC8o.CallJson (".select_shop",							 // This is the requestable
+		///        parameter	    									 // The key/value parameters to the sequence
+	    ///    ).Then((response, parameters) => {						 // This will run as soon as the Convertigo server responds
+		///        // do my stuff in a	 worker thread					 // This is worker thread not suitable to update UI
+		///        String sc = (String)response["document"]["shopCode"]; // Get the data using Linq
+        ///        myC8o.Log (C8oLogLevel.DEBUG, sc);					 // Log data on the Convertigo Server
+		///        return null;											 // last step of the promise chain, return null
+	    ///    });
+        /// </code>
+        /// </sample>
+        public C8oPromise<JObject> CallJson(string requestable, JObject parameters)
+        {
+            return CallJson(requestable, parameters.ToObject<IDictionary<string, object>>());
+        }
+
 
         /// <summary>
         /// Call a Convertigo Server backend service and return data as an XML Document.
