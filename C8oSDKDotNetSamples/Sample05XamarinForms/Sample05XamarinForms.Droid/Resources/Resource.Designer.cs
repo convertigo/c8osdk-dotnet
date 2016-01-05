@@ -3937,11 +3937,11 @@ namespace Sample05XamarinForms.Droid
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f07001f
-			public const int ApplicationName = 2131165215;
+			// aapt resource value: 0x7f070020
+			public const int ApplicationName = 2131165216;
 			
-			// aapt resource value: 0x7f07001e
-			public const int Hello = 2131165214;
+			// aapt resource value: 0x7f07001f
+			public const int Hello = 2131165215;
 			
 			// aapt resource value: 0x7f07000b
 			public const int abc_action_bar_home_description = 2131165195;
@@ -3996,6 +3996,9 @@ namespace Sample05XamarinForms.Droid
 			
 			// aapt resource value: 0x7f07001d
 			public const int appbar_scrolling_view_behavior = 2131165213;
+			
+			// aapt resource value: 0x7f07001e
+			public const int library_name = 2131165214;
 			
 			// aapt resource value: 0x7f070000
 			public const int mr_media_route_button_content_description = 2131165184;

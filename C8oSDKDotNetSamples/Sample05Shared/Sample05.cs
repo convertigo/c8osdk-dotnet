@@ -1,4 +1,5 @@
 ﻿using Convertigo.SDK;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Threading.Tasks;
 
@@ -55,6 +56,13 @@ namespace Sample05Shared
                 "pong1", "PoNG",
                 "pong2", "PoooonG"
             ).Async();
+            Output.Text += json.ToString();
+            Output.Text += "\n==========\n";
+            json = await c8o.CallJson(".Ping", new JObject()
+            {
+                { "pong1", "with" },
+                { "pong2", "JObject" }
+            }).Async();
             Output.Text += json.ToString();
             Output.Text += "\n==========\n";
         }
@@ -280,12 +288,47 @@ namespace Sample05Shared
         {
             Output.Text = "Test11\n";
 
-            var c8o = new C8o("https://tonus.twinsoft.fr:18081/convertigo/projects/Sample05", new C8oSettings().SetTrustAllCertificates(true));
-
-            c8o.CallXml(".sample05.GetServerInfo").ThenUI((xml, param) =>
+            var obj = new JObject()
             {
-                Output.Text += xml.ToString();
+                { "_id", "jobject" },
+                { "sub", new JObject() { { "ok", true } } },
+                { "bad", false }
+            };
+
+            c8o.CallJson("fs://.delete", "docid", "jobject").ThenUI((json, param) =>
+            {
+                Output.Text += json.ToString();
                 Output.Text += "\n==========\n";
+
+                return c8o.CallJson("fs://.post", obj);
+            }).ThenUI((json, param) =>
+            {
+                Output.Text += json.ToString();
+                Output.Text += "\n==========\n";
+
+                return c8o.CallJson("fs://.get", "docid", "jobject");
+            }).ThenUI((json, param) =>
+            {
+                Output.Text += json.ToString();
+                Output.Text += "\n==========\n";
+
+                json["bad"] = "no way";
+                json["new"] = true;
+                json["sub"] = new JObject() { { "bis", 3.14 } };
+                json[C8o.FS_POLICY] = "merge";
+
+                return c8o.CallJson("fs://.post", json);
+            }).ThenUI((json, param) =>
+            {
+                Output.Text += json.ToString();
+                Output.Text += "\n==========\n";
+
+                return c8o.CallJson("fs://.get", "docid", "jobject");
+            }).ThenUI((json, param) =>
+            {
+                Output.Text += json.ToString();
+                Output.Text += "\n==========\n";
+
                 return null;
             }).FailUI((e, parameters) =>
             {
