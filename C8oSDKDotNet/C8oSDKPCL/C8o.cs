@@ -47,6 +47,15 @@ namespace Convertigo.SDK
         internal static readonly string ENGINE_PARAMETER_DEVICE_UUID = "__uuid";
         internal static readonly string ENGINE_PARAMETER_PROGRESS = "__progress";
 
+        //*** FULLSYNC parameters ***//
+
+        public static readonly string FS_POLICY = "_use_policy";
+        public static readonly string FS_POLICY_NONE = "none";
+        public static readonly string FS_POLICY_CREATE = "create";
+        public static readonly string FS_POLICY_OVERRIDE = "override";
+        public static readonly string FS_POLICY_MERGE = "merge";
+        public static readonly string FS_SUBKEY_SEPARATOR = "_use_subkey_separator";
+
         //*** Local cache keys ***//
 
         public static readonly string LOCAL_CACHE_PARAMETER_KEY_ENABLED = "enabled";
