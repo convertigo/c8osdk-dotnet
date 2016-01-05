@@ -23,9 +23,13 @@ namespace Convertigo.SDK.Internal
                 Object newPropertyValue;
                 if (newProperties.TryGetValue(oldPropertyKey, out newPropertyValue))
                 {
-                    if (newPropertyValue is Dictionary<string, object> && oldPropertyValue is Dictionary<string, object>)
+                    if (newPropertyValue is IDictionary<string, object> && oldPropertyValue is IDictionary<string, object>)
                     {
                         FullSyncUtils.MergeProperties(newPropertyValue as Dictionary<string, object>, oldPropertyValue as Dictionary<string, object>);
+                    }
+                    else if (newPropertyValue is JObject && oldPropertyValue is JObject)
+                    {
+                        FullSyncUtils.MergeProperties(newPropertyValue as JObject, oldPropertyValue as JObject);
                     }
                     else if (newPropertyValue is JArray && oldPropertyValue is JArray)
                     {
