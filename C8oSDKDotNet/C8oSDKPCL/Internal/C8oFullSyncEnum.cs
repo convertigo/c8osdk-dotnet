@@ -295,8 +295,8 @@ namespace Convertigo.SDK.Internal
 
     public class FullSyncPostDocumentParameter 
     {
-        public static readonly FullSyncPostDocumentParameter POLICY = new FullSyncPostDocumentParameter("_use_policy");
-        public static readonly FullSyncPostDocumentParameter SUBKEY_SEPARATOR = new FullSyncPostDocumentParameter("_use_subkey_separator");
+        public static readonly FullSyncPostDocumentParameter POLICY = new FullSyncPostDocumentParameter(C8o.FS_POLICY);
+        public static readonly FullSyncPostDocumentParameter SUBKEY_SEPARATOR = new FullSyncPostDocumentParameter(C8o.FS_SUBKEY_SEPARATOR);
 		
 		public readonly String name;
 		
@@ -342,10 +342,10 @@ namespace Convertigo.SDK.Internal
     /// </summary>
     public class FullSyncPolicy
     {
-        public static readonly FullSyncPolicy NONE = new FullSyncPolicy("none");
-        public static readonly FullSyncPolicy CREATE = new FullSyncPolicy("create");
-        public static readonly FullSyncPolicy OVERRIDE = new FullSyncPolicy("override");
-        public static readonly FullSyncPolicy MERGE = new FullSyncPolicy("merge");
+        public static readonly FullSyncPolicy NONE = new FullSyncPolicy(C8o.FS_POLICY_NONE);
+        public static readonly FullSyncPolicy CREATE = new FullSyncPolicy(C8o.FS_POLICY_CREATE);
+        public static readonly FullSyncPolicy OVERRIDE = new FullSyncPolicy(C8o.FS_POLICY_OVERRIDE);
+        public static readonly FullSyncPolicy MERGE = new FullSyncPolicy(C8o.FS_POLICY_MERGE);
 
         public readonly String value;
 

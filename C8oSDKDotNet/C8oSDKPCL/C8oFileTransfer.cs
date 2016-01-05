@@ -273,7 +273,7 @@ namespace Convertigo.SDK
                     }
 
                     var res = await c8oTask.CallJson("fs://" + fsConnector + ".post",
-                        "_use_policy", FullSyncPolicy.MERGE.value,
+                        C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
                         "_id", task["_id"].Value<string>(),
                         "replicated", task["replicated"] = true
                     ).Async();
@@ -300,7 +300,7 @@ namespace Convertigo.SDK
                     createdFileStream.Dispose();
 
                     var res = await c8oTask.CallJson("fs://.post",
-                        "_use_policy", FullSyncPolicy.MERGE.value,
+                        C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
                         "_id", task["_id"].Value<string>(),
                         "assembled", task["assembled"] = true
                     ).Async();
@@ -320,7 +320,7 @@ namespace Convertigo.SDK
                     Debug("deleteUuid:\n" + res);
 
                     res = await c8oTask.CallJson("fs://.post",
-                        "_use_policy", FullSyncPolicy.MERGE.value,
+                        C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
                         "_id", task["_id"].Value<string>(),
                         "remoteDeleted", task["remoteDeleted"] = true
                     ).Async();
