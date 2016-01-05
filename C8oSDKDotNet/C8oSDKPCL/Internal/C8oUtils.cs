@@ -10,13 +10,14 @@ namespace Convertigo.SDK.Internal
         /// <summary>
         /// FullSync parameters prefix.
         /// </summary>
-	    private static String USE_PARAMETER_IDENTIFIER = "_use_";
+	    private static string USE_PARAMETER_IDENTIFIER = "_use_";
+
 
         //*** Class ***//
 
-        public static String GetObjectClassName(Object obj)
+        public static string GetObjectClassName(object obj)
         {
-            String className = "null";
+            string className = "null";
             if (obj != null)
             {
                 className = obj.GetType().Name;
@@ -37,7 +38,7 @@ namespace Convertigo.SDK.Internal
         {
             foreach (KeyValuePair<string, object> parameter in parameters)
             {
-                String parameterName = parameter.Key;
+                string parameterName = parameter.Key;
                 if (name.Equals(parameterName) || (useName && name.Equals(C8oUtils.USE_PARAMETER_IDENTIFIER + parameterName)))
                 {
                     return parameter;
@@ -46,7 +47,7 @@ namespace Convertigo.SDK.Internal
             return new KeyValuePair<string, object>(null, null);
         }
 
-        public static object GetParameterObjectValue(IDictionary<string, object> parameters, String name, Boolean useName = false)
+        public static object GetParameterObjectValue(IDictionary<string, object> parameters, string name, bool useName = false)
         {
             KeyValuePair<string, object> parameter = GetParameter(parameters, name, useName);
             if (parameter.Key != null)
@@ -66,7 +67,7 @@ namespace Convertigo.SDK.Internal
         /// <returns></returns>
         public static string GetParameterStringValue(IDictionary<string, object> parameters, string name, bool useName = false)
         {
-            var parameter = C8oUtils.GetParameter(parameters, name, useName);
+            var parameter = GetParameter(parameters, name, useName);
             if (parameter.Key != null)
             {
                 return "" + parameter.Value;
@@ -93,7 +94,7 @@ namespace Convertigo.SDK.Internal
 
         public static object GetParameterJsonValue(IDictionary<string, object> parameters, string name, bool useName = false) 
         {
-		    var parameter = C8oUtils.GetParameter(parameters, name, useName);
+		    var parameter = GetParameter(parameters, name, useName);
             if (parameter.Key != null)
             {
                 return C8oUtils.GetParameterJsonValue(parameter);
@@ -101,13 +102,13 @@ namespace Convertigo.SDK.Internal
 		    return null;
 	    }
 
-        public static Object GetParameterJsonValue(KeyValuePair<string, object> parameter)
+        public static object GetParameterJsonValue(KeyValuePair<string, object> parameter)
         {
-            if (parameter.Value is String)
+            if (parameter.Value is string)
             {
                 try
                 {
-                    return C8oTranslator.StringToJson(parameter.Value as String);
+                    return C8oTranslator.StringToJson(parameter.Value as string);
                 }
                 catch (FormatException e)
                 {
@@ -117,14 +118,14 @@ namespace Convertigo.SDK.Internal
             return parameter.Value;
         }
 
-        public static Boolean TryGetParameterObjectValue<T>(IDictionary<string, object> parameters, String name, out T value, Boolean useName = false, T defaultValue = default(T))
+        public static bool TryGetParameterObjectValue<T>(IDictionary<string, object> parameters, string name, out T value, bool useName = false, T defaultValue = default(T))
         {
-            KeyValuePair<string, object> parameter = C8oUtils.GetParameter(parameters, name, useName);
+            KeyValuePair<string, object> parameter = GetParameter(parameters, name, useName);
             if (parameter.Key != null && parameter.Value != null)
             {
-                if (parameter.Value is String && typeof(T) != typeof(String))
+                if (parameter.Value is string && typeof(T) != typeof(string))
                 {
-                    value = (T) C8oTranslator.StringToObject(parameter.Value as String, typeof(T));
+                    value = (T) C8oTranslator.StringToObject(parameter.Value as string, typeof(T));
                 }
                 else
                 {
@@ -143,7 +144,7 @@ namespace Convertigo.SDK.Internal
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public static bool IsValidUrl(String url)
+        public static bool IsValidUrl(string url)
         {
             Uri uriResult = null;
             return (Uri.TryCreate(url, UriKind.Absolute, out uriResult) && (uriResult.Scheme == "http" || uriResult.Scheme == "https"));
@@ -191,12 +192,12 @@ namespace Convertigo.SDK.Internal
             {
                 if (foundValue is T)
                 {
-                    value = (T)(Object)foundValue;
+                    value = (T)(object)foundValue;
                     return true;
                 }
                 else if (foundValue is JValue && (foundValue as JValue).Value is T)
                 {
-                    value = (T)(Object)(foundValue as JValue).Value;
+                    value = (T)(object)(foundValue as JValue).Value;
                     return true;
                 }
             }
@@ -215,7 +216,7 @@ namespace Convertigo.SDK.Internal
             return responseType + json.ToString();
         }
 
-        public static String UrlDecode(String str)
+        public static string UrlDecode(string str)
         {
             return Uri.UnescapeDataString(str);
         }

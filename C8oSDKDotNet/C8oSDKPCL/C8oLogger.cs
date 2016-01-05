@@ -318,17 +318,9 @@ namespace Convertigo.SDK
             {
                 string methodCallLogMessage = "Method call : " + methodName;
 
-                if (IsTrace)
+                if (IsTrace && parameters.Length > 0)
                 {
-                    methodCallLogMessage += ", Parameters : [";
-                    // Add parameters
-                    foreach (Object parameter in parameters)
-                    {
-                        methodCallLogMessage += "\n" + parameter + ", ";
-                    }
-                    // Remove the last character
-                    methodCallLogMessage = methodCallLogMessage.Substring(0, methodCallLogMessage.Length - 2) + "]";
-
+                    methodCallLogMessage += "\n" + JsonConvert.SerializeObject(parameters);
                     _Trace(methodCallLogMessage);
                 }
                 else
@@ -347,9 +339,12 @@ namespace Convertigo.SDK
         {
             if (c8o.LogC8o && IsDebug)
             {
-                string c8oCallLogMessage = "C8o call :" +
-                    " URL=" + url + ", " +
-                    " Parameters=" + parameters;
+                string c8oCallLogMessage = "C8o call : " + url;
+                
+                if (parameters.Count > 0)
+                {
+                    c8oCallLogMessage += "\n" + JsonConvert.SerializeObject(parameters);
+                }
 
                 _Debug(c8oCallLogMessage);
             }
@@ -381,10 +376,14 @@ namespace Convertigo.SDK
         {
             if (c8o.LogC8o && IsTrace)
             {
-                string c8oCallResponseLogMessage = "C8o call " + responseType + " response :" +
-                    " URL=" + url + ", " +
-                    " Parameters=" + parameters + ", " +
-                    " Response=" + responseStr;
+                string c8oCallResponseLogMessage = "C8o call " + responseType + " response : " + url;
+                
+                if (parameters.Count > 0)
+                {
+                    c8oCallResponseLogMessage += "\n" + JsonConvert.SerializeObject(parameters);
+                }
+
+                c8oCallResponseLogMessage += "\n" + responseStr;
 
                 _Trace(c8oCallResponseLogMessage);
             }

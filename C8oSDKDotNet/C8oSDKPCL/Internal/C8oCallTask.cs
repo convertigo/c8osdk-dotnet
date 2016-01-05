@@ -21,7 +21,7 @@ namespace Convertigo.SDK.Internal
             this.c8oResponseListener = c8oResponseListener;
             this.c8oExceptionListener = c8oExceptionListener;
 
-            c8o.c8oLogger.LogMethodCall("C8oCallTask", parameters, c8oResponseListener, c8oExceptionListener);
+            c8o.c8oLogger.LogMethodCall("C8oCallTask", parameters);
         }
 
         public void Execute()

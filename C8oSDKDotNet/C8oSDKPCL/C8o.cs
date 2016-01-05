@@ -170,7 +170,7 @@ namespace Convertigo.SDK
 
             c8oLogger = new C8oLogger(this);
 
-            c8oLogger.LogMethodCall("C8o", this);
+            c8oLogger.LogMethodCall("C8o constructor");
 
             try
             {
@@ -248,7 +248,7 @@ namespace Convertigo.SDK
             // IMPORTANT : all c8o calls have to end here !
             try
             {
-                c8oLogger.LogMethodCall("Call", parameters, c8oResponseListener, c8oExceptionListener);
+                c8oLogger.LogMethodCall("Call", parameters);
 
                 // Checks parameters validity
                 if (parameters == null)
