@@ -125,15 +125,24 @@ namespace retail_store
                 })
                 .Async();
 
-                //CallJson Method is called thanks to C8o Object    
-                await myC8oCart.CallJson(
+                //CallJson Method is called thanks to C8o Object  
+                JObject Jobj;
+                Jobj =  await myC8oCart.CallJson(
                     "fs://.sync",                       //We give it parameters as the name of the FULLSYNC connector that we calls
                     "continuous", true)               //And the live sync
                     .Progress(progress =>
                     {
+                        Debug.WriteLine(progress.TaskInfo);
                         if (progress.Finished == true)
                         {
-                            App.cvm.GetRealPrice();
+                            if (progress.Pull)
+                            {
+                                
+                                
+
+                                
+                                App.cvm.GetRealPrice();
+                            }
                         }
                     })
                     .Fail((e, p) =>

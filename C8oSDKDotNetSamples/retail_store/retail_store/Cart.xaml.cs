@@ -24,6 +24,12 @@ namespace retail_store
             labReDis.BindingContext = (ReduceTot)App.cvm.Reduce[0];
             listView.ItemsSource = App.cvm.ProductStock;
             listView.SeparatorColor = Color.Black;
+
+            listView.ItemSelected += (object sender, SelectedItemChangedEventArgs e) => {
+                if (e.SelectedItem == null) return; // don't do anything if we just de-selected the row
+                // do something with e.SelectedItem
+                ((ListView)sender).SelectedItem = null; // de-select the row
+            };
         }
 
         public void SetVisibility(bool visible)

@@ -86,7 +86,7 @@ namespace retail_store
                 this.ProductStock.Add(new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"],(String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"],(float)jo["value"]["count"]));
             }
 
-            GetReducePrice();
+            
         }
 
         //CheckCart allow us to check if the products that we want to insert is already contains in database 
@@ -269,9 +269,13 @@ namespace retail_store
             {
                 try
                 {
-                    this.Reduce[0].Total = ((string)jo["value"]["total"]).ToString();
-                    this.Reduce[0].Count = ((string)jo["value"]["count"]).ToString();
-                    flag = true;
+                    if (((string)jo["value"]["total"]).ToString() != null)
+                    {
+                        this.Reduce[0].Total = ((string)jo["value"]["total"]).ToString();
+                        this.Reduce[0].Count = ((string)jo["value"]["count"]).ToString();
+                        flag = true;
+                    }
+                    
                 }
                 catch (Exception e)
                 {

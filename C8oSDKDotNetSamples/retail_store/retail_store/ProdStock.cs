@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace retail_store
         {
             get
             {
-                return ((Convert.ToDouble(base.PriceOfUnit)) * (this.Count)).ToString() + " €";
+                return ((Convert.ToDouble(base.PriceOfUnit, CultureInfo.InvariantCulture)) * (this.Count)).ToString() + " €";
             }
         }
         public float Count
