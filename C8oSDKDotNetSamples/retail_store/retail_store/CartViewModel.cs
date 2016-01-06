@@ -79,7 +79,6 @@ namespace retail_store
         //PopulateData allow us to get the whole objects contained in the local base and put it on productStock(list)
         public void PopulateData(JObject json,bool check)
         {
-            //ObservableCollection<ProdStock> data = new ObservableCollection<ProdStock>();
             this.ProductStock.Clear();
             foreach (JObject jo in (JArray)json["rows"])
             {
@@ -98,7 +97,6 @@ namespace retail_store
             foreach(ProdStock pStock in this.ProductStock)
             {
                 //If we found the produce we change count attributes to update the amount
-
                 if (pStock.Id == Product.Id)
                 {
                     flag = true;
@@ -117,7 +115,6 @@ namespace retail_store
                         }
                     }
                     updateCart();
-
                     goto goOut;
                 }
             }

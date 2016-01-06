@@ -43,40 +43,43 @@ namespace retail_store
                     ((TabbedPageP)this.MainPage).myCart.SetVisibility(false);
                 }
             };
+
+            //Here we are going to work with two C8o Objects. One for the catalogue and another for the cart.
+
             //instanciate C8o Object with attributes
-            myC8o = new C8o("http://192.168.100.86:18080/convertigo/projects/sampleMobileRetailStore",
-                    new C8oSettings().
-                    SetTimeout(10000).
-                    SetTrustAllCertificates(true).
-                    SetDefaultDatabaseName("retaildb").
-                    SetIsLogRemote(true)
+            myC8o = new C8o("http://192.168.100.86:18080/convertigo/projects/sampleMobileRetailStore",      // This variable is related to the end point URL.
+                    new C8oSettings().                                                                      //
+                    SetTimeout(10000).                                                                      // Here we set timeout to 10000 ms
+                    SetTrustAllCertificates(true).                                                          //
+                    SetDefaultDatabaseName("retaildb").                                                     // Here we define the default database name as "retaildb"
+                    SetIsLogRemote(true)                                                                    //
                 );
 
             //instanciate C8o Object for our cart with attributes
-            myC8oCart = new C8o("http://192.168.100.86:18080/convertigo/projects/sampleMobileRetailStore",
-                    new C8oSettings().
-                    SetTimeout(10000).
-                    SetTrustAllCertificates(true).
-                    SetDefaultDatabaseName("cartdb").
-                    SetIsLogRemote(true)
+            myC8oCart = new C8o("http://192.168.100.86:18080/convertigo/projects/sampleMobileRetailStore",  // This variable is related to the end point URL.
+                    new C8oSettings().                                                                      //
+                    SetTimeout(10000).                                                                      // Here we set timeout to 10000 ms
+                    SetTrustAllCertificates(true).                                                          //
+                    SetDefaultDatabaseName("cartdb").                                                       // Here we define the default database name as "cartdb"
+                    SetIsLogRemote(true)                                                                    //
                 );
 
-            //instanciate dictionnary
+            //instanciate respectively new Dictionary, CartViewModel , and LoadingPageModel.
             models = new Dictionary<string, object>();
             cvm = new CartViewModel();
             LoadP = new LoadingPageModel();
 
             /* Set the MainPage
-            It is a tabbedPage from wich we will be able to navigate into the whole application.*/
+            Here is a tabbedPage from wich we will be able to navigate into the whole application.*/
             MainPage = new LoadingPage();
+
+            // If the device's operating system is IOS then we set a diffrent padding due to the header's floating bar
             if (Device.OS == TargetPlatform.iOS)
             {
                 MainPage.Padding = new Thickness(0, 20, 0, 0);
             }
                 
         }
-
-        
 
     protected override async void OnStart()
         {
@@ -89,13 +92,15 @@ namespace retail_store
                 //instanciate a new JObject data that will recieve json from our C8o objects
                 JObject data;
                 data = await myC8o.CallJson(
-                ".select_shop",          //We give it parameters as the name of the sequence that we calls
-                "shopCode", "42")       //And the parameters for the sequence    
+                ".select_shop",          //We call here the "select_shop" sequence from the default project as the project has been define in the endpoint URL. 
+                "shopCode", "42")        //And the sequence's variables 
                 .Fail((e, p) =>
                 {
-                    Debug.WriteLine("LAA" + e);//Handle errors..
+                    Debug.WriteLine("LAA" + e);     //Handle errors..
                 })
-                .Async();               //Async Call
+                .Async();                           //Async Call
+
+
 
                 //CallJson Method is called thanks to C8o Object 
                 // if data return "42" for selectshop then..
@@ -103,16 +108,16 @@ namespace retail_store
                 {
                     //CallJson Method is called thanks to C8o Object 
                     await myC8o.CallJson(
-                        "fs://.sync")           //We give it parameters as the name of the FULLSYNC connector that we calls
+                        "fs://.sync")           //We synchronize here the Catalogue from the default project as the project has been define in the endpoint URL. 
                         .Progress(progress =>
                         {
-                            LoadP.State = "" + progress.Current + "/" + progress.Total;
+                            LoadP.State = "" + progress.Current + "/" + progress.Total; // We recover the progression's state with Current and total attribute
                         })
                         .Fail((e, p) =>
                         {
-                            Debug.WriteLine("LAA" + e);//Handle errors..
+                            Debug.WriteLine("" + e);     //Handle errors..
                         })
-                        .Async();
+                        .Async();                       //Async Call
                 }
 
                 //CallJson Method is called thanks to C8o Object    
@@ -129,27 +134,24 @@ namespace retail_store
                 JObject Jobj;
                 Jobj =  await myC8oCart.CallJson(
                     "fs://.sync",                       //We give it parameters as the name of the FULLSYNC connector that we calls
-                    "continuous", true)               //And the live sync
+                    "continuous", true)               //And the live synchronization
                     .Progress(progress =>
                     {
-                        Debug.WriteLine(progress.TaskInfo);
-                        if (progress.Finished == true)
+                        if (progress.Finished == true)      // If initial replication is finished
                         {
-                            if (progress.Pull)
-                            {
-                                
-                                
-
-                                
-                                App.cvm.GetRealPrice();
+                            if (progress.Pull)              //If replication's direction is pull then...
+                            { 
+                                App.cvm.GetRealPrice();     
                             }
                         }
                     })
-                    .Fail((e, p) =>
+                    .Fail((e, p) =>                         
                     {
-                        Debug.WriteLine("" + e);
+                        Debug.WriteLine("" + e);           //Handle errors.. 
                     })
-                    .Async();
+                    .Async();   
+                
+                                           
                 CheckCartAfterConn();
             }
             if(!exec)
@@ -166,6 +168,7 @@ namespace retail_store
 
         public async void CheckCartAfterConn()
         {
+            // When we retrive Network we execute CartUpdated sequence on server
             await myC8oCart.CallJson(
                 ".CartUpdated"          //We give him parameters as the name of the sequence that we calls
                 )       //And the parameters for the sequence    
