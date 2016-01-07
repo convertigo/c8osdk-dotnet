@@ -14,7 +14,6 @@ namespace retail_store
 {
     public partial class Cart : ContentPage
     {
-        
         public Cart()
         {
             InitializeComponent();
@@ -25,8 +24,12 @@ namespace retail_store
             listView.ItemsSource = App.cvm.ProductStock;
             listView.SeparatorColor = Color.Black;
 
-            listView.ItemSelected += (object sender, SelectedItemChangedEventArgs e) => {
-                if (e.SelectedItem == null) return; // don't do anything if we just de-selected the row
+            listView.ItemSelected += (object sender, SelectedItemChangedEventArgs e) =>
+            {
+                if (e.SelectedItem == null)
+                {
+                    return; // don't do anything if we just de-selected the row
+                }
                 // do something with e.SelectedItem
                 ((ListView)sender).SelectedItem = null; // de-select the row
             };
@@ -45,14 +48,6 @@ namespace retail_store
                 labReDis.IsVisible = false;
             }
         }
-        
-        public void a()
-        {
-            if (App.cvm.ProductStock != null)
-            {
-                listView.ItemsSource = App.cvm.ProductStock;
-            }
-        }
 
         public void refresh()
         {
@@ -67,24 +62,20 @@ namespace retail_store
         void tapImage_Tapped(object sender, EventArgs e)
         {
             string id = ((ViewCell)((Image)sender).Parent.Parent.Parent.Parent.Parent.Parent).ClassId.ToString();
-            
             string imageName = ((FileImageSource)((Image)sender).Source).File.ToString();
             switch (imageName)
             {
                 case "plus.png":
                     App.cvm.SetProductBySku(id);
                     App.cvm.CheckCart(true);
-
                     break;
                 case "moins.png":
                     App.cvm.SetProductBySku(id);
                     App.cvm.CheckCart(false);
-
                     break;
                 case "del.jpg":
                     App.cvm.SetProductBySku(id);
-                    App.cvm.deleteCart(true);
-
+                    App.cvm.deleteCart();
                     break;
             }
         }
@@ -95,7 +86,7 @@ namespace retail_store
             {
                 string id = ((ViewCell)((Image)sender).Parent.Parent.Parent.Parent).ClassId.ToString();
                 App.cvm.SetProductBySku(id);
-                App.cvm.deleteCart(true);
+                App.cvm.deleteCart();
             }
 
         }

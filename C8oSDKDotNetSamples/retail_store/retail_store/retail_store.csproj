@@ -40,9 +40,6 @@
       <DependentUpon>Cart.xaml</DependentUpon>
     </Compile>
     <Compile Include="CartViewModel.cs" />
-    <Compile Include="Cat.xaml.cs">
-      <DependentUpon>Cat.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Categ.cs" />
     <Compile Include="CategoryTablet.xaml.cs">
       <DependentUpon>CategoryTablet.xaml</DependentUpon>
@@ -64,9 +61,6 @@
     <Compile Include="LoadingPageModel.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="Model2.cs" />
-    <Compile Include="Page1.xaml.cs">
-      <DependentUpon>Page1.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Prod.cs" />
     <Compile Include="ProdStock.cs" />
     <Compile Include="Products.xaml.cs">
@@ -78,12 +72,6 @@
     </Compile>
     <Compile Include="Rayon.cs" />
     <Compile Include="ReduceTot.cs" />
-    <Compile Include="Settings.xaml.cs">
-      <DependentUpon>Settings.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SubClass.xaml.cs">
-      <DependentUpon>SubClass.xaml</DependentUpon>
-    </Compile>
     <Compile Include="TabbedPageP.xaml.cs">
       <DependentUpon>TabbedPageP.xaml</DependentUpon>
     </Compile>
@@ -151,12 +139,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SubClass.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Products.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
@@ -190,25 +172,7 @@
     <Content Include="PluginsHelp\ConnectivityReadme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Page1.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Settings.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="CategoryTablet.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Cat.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

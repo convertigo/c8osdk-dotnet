@@ -10,7 +10,7 @@ namespace retail_store
     {
         private string levelId;
         private Boolean leaf;
-
+        //Mapping class
         public Categ(String name, String imageUrl, String id, String shopcode, String fatherId, String levelId, String leaf) : base(name, imageUrl, id, shopcode, fatherId)
         {
             this.LevelId = levelId;

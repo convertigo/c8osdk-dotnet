@@ -13,16 +13,14 @@ namespace retail_store
         private string count;
         private string newPrice;
         private string discount;
-
         public event PropertyChangedEventHandler PropertyChanged;
-
+        //Mapping class
         public ReduceTot(string total, string count, string newPrice, string discount)
         {
             this.Total = total;
             this.Count = count;
             this.NewPrice = newPrice;
             this.Discount = discount;
-            
         }
         public ReduceTot(string total, string count)
         {

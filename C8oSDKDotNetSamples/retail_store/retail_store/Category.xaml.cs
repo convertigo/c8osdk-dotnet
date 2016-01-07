@@ -50,7 +50,7 @@ namespace retail_store
                 this.Img.IsVisible = false;
                 this.stack.IsVisible = false;
             }
-            Title = "bbbbb";
+
             this.IsRight = isRight;
             this.Categor = category;
             this.Categor2 = category2;
@@ -71,17 +71,17 @@ namespace retail_store
             this.indicatorStr.IsVisible = true;
             //Here we call, thanks to myC8o object, a new view on our local base with specified parameters.
             JObject data = await App.myC8o.CallJson(
-                    "fs://.view",
-                    "ddoc", "design",
+                    "fs://.view",                                   //We get here a view from the default project as the project has been define in the endpoint URL.  
+                    "ddoc", "design",                               //And give here parameters
                     "view", view,
                     "startkey", "['42','" + Categor + "'," + Leaf + "]",
                     "endkey", "['42','" + Categor2 + "'," + Leaf2 + "]",
                     "skip", 0)
                     .Fail((e, p) =>
                     {
-                        Debug.WriteLine("LAA" + e);// Handle errors..
+                        Debug.WriteLine("" + e);                    // Handle errors..
                     })
-                    .Async();
+                    .Async();                                       //Async Call
 
             indicator.IsVisible = false;
             indicatorStr.IsVisible = false;

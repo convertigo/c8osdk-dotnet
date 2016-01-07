@@ -8,11 +8,9 @@ using Newtonsoft.Json.Linq;
 
 namespace retail_store
 {
-    class CategoryViewModel : INotifyPropertyChanged, Model
+    public class CategoryViewModel : INotifyPropertyChanged, Model
     {
-        
         List<Rayon> rayons;
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public CategoryViewModel()
@@ -22,7 +20,7 @@ namespace retail_store
             App.models.Add("CategoryViewModel", this);
             rayons = new List<Rayon>();
         }
-
+        //Getters and Setters
         public List<Rayon> Rayons
         {
             set
@@ -32,18 +30,19 @@ namespace retail_store
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs(null));
                 }
-                
             }
             get
             {
                 return rayons;
             }
         }
+
         public void PopulateData(JObject json, Boolean isproduct)
         {
             if (isproduct == false)
             {
                 List<Rayon> data = new List<Rayon>();
+                //Browsing JArray in order to collect data
                 foreach (JObject jo in (JArray)json["rows"])
                 {
                     data.Add(new Categ((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["key"][0], (String)jo["key"][1],(String)jo["value"]["levelId"], (String)jo["value"]["leaf"]));
@@ -53,6 +52,7 @@ namespace retail_store
             else
             {
                 List<Rayon> data = new List<Rayon>();
+                //Browsing JArray in order to collect data
                 foreach (JObject jo in (JArray)json["rows"])
                 {
                     data.Add(new Prod((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["key"][0], (String)jo["key"][1], (String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"]));

@@ -24,7 +24,6 @@ namespace retail_store
             ProductStock = new ObservableCollection<ProdStock>();
             Reduce = new ObservableCollection<ReduceTot>();
             Reduce.Add(new ReduceTot("0", "0"));
-            
         }
         public CartViewModel()
         {
@@ -33,7 +32,6 @@ namespace retail_store
             ProductStock = new ObservableCollection<ProdStock>();
             Reduce = new ObservableCollection<ReduceTot>();
             Reduce.Add(new ReduceTot("0", "0"));
-
         }
 
         //Getters and Setters
@@ -80,12 +78,11 @@ namespace retail_store
         public void PopulateData(JObject json,bool check)
         {
             this.ProductStock.Clear();
+            //Browsing JArray in order to collect data
             foreach (JObject jo in (JArray)json["rows"])
             {
                 this.ProductStock.Add(new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"],(String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"],(float)jo["value"]["count"]));
             }
-
-            
         }
 
         //CheckCart allow us to check if the products that we want to insert is already contains in database 
@@ -101,6 +98,7 @@ namespace retail_store
                 {
                     flag = true;
                     productToInsert = pStock;
+                    //if we want to add a product
                     if (plus)
                     {
                         productToInsert.Count += 1;
@@ -119,7 +117,7 @@ namespace retail_store
                 }
             }
             goOut:
-            //Else we create a new ProdStock object to add it on database.
+            //Else if flag is set to false we create a new ProdStock object to add it on database.
             if (flag==false)
             {
                 productToInsert = new ProdStock(Product.Name,Product.ImageUrl,Product.Id,Product.Shopcode,Product.FatherId,Product.Sku,Product.PriceOfUnit, 1);
@@ -133,86 +131,54 @@ namespace retail_store
             
         }
 
-        public async void deleteCart(Boolean all=false)
+        public async void deleteCart()
         {
-            if (all)
+            foreach (ProdStock pStock in ProductStock)
             {
-                foreach (ProdStock p in ProductStock)
+                if (pStock.Id == product.Id)
                 {
-                    if (p.Id == product.Id)
-                    {
-                        productToInsert = p;
-                        JObject data1;
-                        data1 = await App.myC8oCart.CallJson(
-                            "fs://.post",
-                            "_id", p.Id,
-                            "count", 0,
-                            "_use_policy", "merge")
-                            .Fail((e, q) =>
-                            {
-                                Debug.WriteLine(e.ToString()); // Handle errors..
-                        })
-                            .Async();
-
-                        JObject data;
-                        data = await App.myC8oCart.CallJson(
-                            "fs://.delete",
-                            "docid", p.Id)
-                            .Fail((e, q) =>
-                            {
-                                Debug.WriteLine(e.ToString()); // Handle errors..
-                        })
-                        .Async();
-                        ProductStock.Remove(productToInsert);
-                        break;
-                    }
-                    
-                }
-            }
-            else
-            {
-                JObject data1;
-                data1 = await App.myC8oCart.CallJson(
-                    "fs://.post",
-                    "_id", productToInsert.Id,
-                    "count", productToInsert.Count,
-                    "_use_policy", "merge")
-                    .Fail((e, q) =>
-                    {
-                        Debug.WriteLine(e.ToString()); // Handle errors..
-                })
-                    .Async();
-
-                JObject data;
-                data = await App.myC8oCart.CallJson(
-                    "fs://.delete",
-                    "docid", productToInsert.Id)
-                    .Fail((e, q) =>
-                    {
-                        Debug.WriteLine(e.ToString()); // Handle errors..
+                    await App.myC8oCart.CallJson(
+                        "fs://.post",               //We post here the an item into the cart from the default project as the project has been define in the endpoint URL. 
+                        "_id", pStock.Id,           //And give here parameters
+                        "count", 0,
+                        "_use_policy", "merge")     
+                        .Fail((e, q) =>
+                        {
+                            Debug.WriteLine(""+e); // Handle errors..
                     })
-                    .Async();
-                ProductStock.Remove(productToInsert);
+                        .Async();                   //Async Call
+
+                    await App.myC8oCart.CallJson(
+                        "fs://.delete",             //We delete here the an item into the cart from the default project as the project has been define in the endpoint URL. 
+                        "docid", pStock.Id)         //And give here parameters
+                        .Fail((e, q) =>
+                        {
+                            Debug.WriteLine(e.ToString()); // Handle errors..
+                    })
+                    .Async();                             //Async Call
+
+                    ProductStock.Remove(pStock);         //We remove this item from our array of itm
+                    break;
+                }   
             }
-            App.cvm.GetReducePrice();
+            App.cvm.GetReducePrice();               // We update our reduce price
         }
 
 
         public async void updateCart()
         {
-            
-            JObject data1;
-            data1 = await App.myC8oCart.CallJson(
-                "fs://.post",
-                "_id", productToInsert.Id,
+            await App.myC8oCart.CallJson(
+                "fs://.post",                   //We post here the an item into the cart from the default project as the project has been define in the endpoint URL. 
+                "_id", productToInsert.Id,      //And give here parameters
                 "count", productToInsert.Count,
                 "_use_policy", "merge")
                 .Fail((e, q) =>
                 {
                     Debug.WriteLine(e.ToString()); // Handle errors..
                 })
-                .Async();
-            App.cvm.GetReducePrice();
+                .Async();                         //Async Call
+
+            App.cvm.GetReducePrice();             // We update our reduce price
         }
 
         //insertCart as indicated by his name insert a new productStock in local base
@@ -221,24 +187,23 @@ namespace retail_store
             //We verify if productToInsert as weel been assigned.
             if (productToInsert != null)
             {
-                //Then we can insert data into FS://CARTDB thanks to c8o object
-                JObject data;
-                data = await App.myC8oCart.CallJson(
-                        "fs://.post",
-                        "_id", productToInsert.Id ,
-                        "name", productToInsert.Name,
-                        "imageUrl", productToInsert.ImageUrl,
-                        "count", productToInsert.Count,
-                        "priceOfUnit",productToInsert.PriceOfUnit,
-                        "sku", productToInsert.Sku,
-                        "shopcode",productToInsert.Shopcode,
-                        "fatherId",productToInsert.FatherId)
-                        .Fail((e, q) =>
-                        {
-                            Debug.WriteLine(e.ToString());// Handle errors..
-                        })
-                    .Async();
-                App.cvm.GetReducePrice();
+                await App.myC8oCart.CallJson(
+                    "fs://.post",                                       //We post here the an item into the cart from the default project as the project has been define in the endpoint URL.
+                    "_id", productToInsert.Id,                         //And give here parameters
+                    "name", productToInsert.Name,
+                    "imageUrl", productToInsert.ImageUrl,
+                    "count", productToInsert.Count,
+                    "priceOfUnit",productToInsert.PriceOfUnit,
+                    "sku", productToInsert.Sku,
+                    "shopcode",productToInsert.Shopcode,
+                    "fatherId",productToInsert.FatherId)
+                    .Fail((e, q) =>
+                    {
+                        Debug.WriteLine(e.ToString());  // Handle errors..
+                    })
+                .Async();                               //Async Call
+
+                App.cvm.GetReducePrice();              // We update our reduce price
             }
             
         }
@@ -246,15 +211,15 @@ namespace retail_store
         public async void GetReducePrice()
         {
             JObject data = await App.myC8oCart.CallJson(
-                    "fs://.view",
-                    "ddoc", "design",
+                    "fs://.view",                            //We get here a view from the default project as the project has been define in the endpoint URL.
+                    "ddoc", "design",                       //And give here parameters
                     "view", "reduceTot"
                     )
                     .Fail((e, p) =>
                     {
                         Debug.WriteLine(e.ToString()); // Handle errors..
                     })
-                    .Async();
+                    .Async();                          //Async Call
 
             SetReduce(data);
         }
@@ -264,29 +229,19 @@ namespace retail_store
             Boolean flag = false;
             foreach (JObject jo in (JArray)jsRep["rows"])
             {
-                try
+                //Browsing JArray in order to collect data
+                if (((string)jo["value"]["total"]).ToString() != null)
                 {
-                    if (((string)jo["value"]["total"]).ToString() != null)
-                    {
-                        this.Reduce[0].Total = ((string)jo["value"]["total"]).ToString();
-                        this.Reduce[0].Count = ((string)jo["value"]["count"]).ToString();
-                        flag = true;
-                    }
-                    
-                }
-                catch (Exception e)
-                {
-
-                    Debug.WriteLine(e.ToString());
-                }
-                
+                    this.Reduce[0].Total = ((string)jo["value"]["total"]).ToString();
+                    this.Reduce[0].Count = ((string)jo["value"]["count"]).ToString();
+                    flag = true;
+                }   
             }
             if (!flag)
             {
                 this.Reduce[0].Total = "0";
                 this.Reduce[0].Count = "0";
             }
-            
         }
 
         public void SetProductBySku(string id)
@@ -299,27 +254,28 @@ namespace retail_store
                     break;
                 }
             }
-
         }
 
         public async void GetRealPrice()
         {
             JObject data = await App.myC8oCart.CallJson(
-                    "fs://.view",
-                    "ddoc", "design",
+                    "fs://.view",                            //We get here a view from the default project as the project has been define in the endpoint URL.     
+                    "ddoc", "design",                        //And give here parameters
                     "view", "CartPrice")
                     .Fail((e, p) =>
                     {
-                        // Handle errors..
+                        Debug.WriteLine("" + e);        // Handle errors..
                     })
-                    .Async();
+                    .Async();                           //Async Call
+
             SetRealPrice(data);
         }
 
         public void SetRealPrice(JObject jsonResponse)
         {    
              Boolean flag = false;
-             foreach(JObject jo in (JArray)jsonResponse["rows"])
+            //Browsing JArray in order to collect data
+            foreach (JObject jo in (JArray)jsonResponse["rows"])
              {
                 if (Math.Round(((float)jo["value"]["newPrice"]), 2).ToString() != this.Reduce[0].NewPrice)
                 {
@@ -339,14 +295,15 @@ namespace retail_store
         public async void GetView()
         {
             JObject data = await App.myC8oCart.CallJson(
-                "fs://.view",
-                "ddoc", "design",
+                "fs://.view",                               //We get here a view from the default project as the project has been define in the endpoint URL.
+                "ddoc", "design",                           //And give here parameters
                 "view", "view")
                 .Fail((e, p) =>
                 {
-                    // Handle errors..
+                    Debug.WriteLine("" + e);        // Handle errors..
                 })
-                .Async();
+                .Async();                           //Async Call
+
             PopulateData(data, true);
         }
     }

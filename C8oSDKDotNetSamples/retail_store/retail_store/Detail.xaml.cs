@@ -21,11 +21,8 @@ namespace retail_store
         public Detail(Prod prod)
         {
             InitializeComponent();
-            
-
             this.prod = prod;
             this.BindingContext = Prod;
-
             //Creating TapGestureRecognizers  
             var tapImage = new TapGestureRecognizer();
             //Binding events  
@@ -46,21 +43,22 @@ namespace retail_store
             {
                
             }
-             GetView();
+            GetView();
             searchUnit();
             labelCount.BindingContext = this;
         }
         public async void GetView()
         {
             JObject data = await App.myC8oCart.CallJson(
-                "fs://.view",
-                "ddoc", "design",
+                "fs://.view",                               //We get here a view from the default project as the project has been define in the endpoint URL.  
+                "ddoc", "design",                           //And give here parameters
                 "view", "view")
                 .Fail((e, p) =>
                 {
-                    // Handle errors..
+                    Debug.WriteLine("" + e);        // Handle errors..
                 })
-                .Async();
+                .Async();                           //Async Call
+
             App.cvm.PopulateData(data, true);
         }
 
@@ -83,6 +81,30 @@ namespace retail_store
                 this.Count = "0";
             }
         }
+        
+
+        public void tapImage_Tapped(object sender, EventArgs e)
+        {
+            string imageName = ((FileImageSource)((Image)sender).Source).File.ToString();
+            switch (imageName)
+            {
+                case "plus.png":
+                    App.cvm.Product = Prod;
+                    App.cvm.CheckCart(true);
+                    break;
+                case "moins.png":
+                    App.cvm.Product = Prod;
+                    App.cvm.CheckCart(false);
+                    break;
+            }
+            searchUnit();
+        }
+        protected override void OnAppearing()
+        {
+            searchUnit();
+        }
+
+        //Getters and Setters
         public Prod Prod
         {
             get
@@ -111,27 +133,6 @@ namespace retail_store
                     PropertyChanged(this, new PropertyChangedEventArgs(null));
                 }
             }
-        }
-
-        public void tapImage_Tapped(object sender, EventArgs e)
-        {
-            string imageName = ((FileImageSource)((Image)sender).Source).File.ToString();
-            switch (imageName)
-            {
-                case "plus.png":
-                    App.cvm.Product = Prod;
-                    App.cvm.CheckCart(true);
-                    break;
-                case "moins.png":
-                    App.cvm.Product = Prod;
-                    App.cvm.CheckCart(false);
-                    break;
-            }
-            searchUnit();
-        }
-        protected override void OnAppearing()
-        {
-            searchUnit();
         }
 
 

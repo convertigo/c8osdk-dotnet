@@ -13,20 +13,17 @@ namespace retail_store
         String id;
         String shopcode;
         String fatherId;
-        
-
-
-
+        //Mapping class
         public Rayon(String name, String imageUrl, String id, String shopcode, String fatherId)
         {
             this.name = name;
             this.imageUrl = imageUrl;
             this.id = id;
             this.shopcode = shopcode;
-            this.fatherId = fatherId;
-            
+            this.fatherId = fatherId; 
         }
 
+        //Getters and Setters.
         public string Name
         {
             get

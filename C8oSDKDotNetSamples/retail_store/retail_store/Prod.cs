@@ -10,7 +10,7 @@ namespace retail_store
     {
         String sku;
         String priceOfUnit;
-
+        //Mapping class
         public Prod(String name, String imageUrl, String id, String shopcode, String fatherId, String sku, String priceOfUnit) : base(name, imageUrl, id, shopcode, fatherId)
         {
             this.Sku = sku;

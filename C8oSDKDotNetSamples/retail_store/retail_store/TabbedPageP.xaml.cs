@@ -17,8 +17,6 @@ namespace retail_store
         public TabbedPageP()
         {
             InitializeComponent();
-            
-
             pr = new NavigationPage(new Products()) { Title = "Products"};
             this.Children.Add(pr);
             if (Device.Idiom == TargetIdiom.Tablet || Device.Idiom == TargetIdiom.Desktop)
@@ -26,21 +24,14 @@ namespace retail_store
                 tabletP = new CategoryTablet() { Title = "Category" };
                 this.Children.Add(tabletP);
             }
-                
             else
             {
                 np = new NavigationPage(new Category()) { Title = "Category" };
                 this.Children.Add(np);
                 np.BackgroundColor = Color.FromHex("#FFFFFF");
             }
-
-
             myCart = new Cart() { Title = "Cart" };
             this.Children.Add(myCart);
-            
-            
-            
-          
         }
         
     }

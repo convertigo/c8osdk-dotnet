@@ -11,23 +11,21 @@ namespace retail_store
 {
     public class App : Application
     {
-        const string conn = "";
-     
-        //instanciate static objects accessible from the whole solution. 
+        // We define the endpoint Url throw a constant variable
+        const string conn = "http://192.168.100.86:18080/convertigo/projects/sampleMobileRetailStore";
         public static C8o myC8o;
         public static C8o myC8oCart;
         public static Dictionary<String, Object> models;
         public static CartViewModel cvm;
-        //instanciate not static objects accessible from the whole solution. 
         public Boolean connectivity;
-        public bool exec;
+        public bool execution;
         public static LoadingPageModel LoadP;
         
-
         public App()
         {
-            exec = false;
+            execution = false;
             connectivity = CrossConnectivity.Current.IsConnected;
+
             CrossConnectivity.Current.ConnectivityChanged += (sender, args) =>
             {
                 connectivity = CrossConnectivity.Current.IsConnected;
@@ -35,7 +33,6 @@ namespace retail_store
                 {
                     CheckCartAfterConn();
                     OnStart();
-                   
                     ((TabbedPageP)this.MainPage).myCart.SetVisibility(true);
                 }
                 else
@@ -47,21 +44,21 @@ namespace retail_store
             //Here we are going to work with two C8o Objects. One for the catalogue and another for the cart.
 
             //instanciate C8o Object with attributes
-            myC8o = new C8o("http://192.168.100.86:18080/convertigo/projects/sampleMobileRetailStore",      // This variable is related to the end point URL.
-                    new C8oSettings().                                                                      //
-                    SetTimeout(10000).                                                                      // Here we set timeout to 10000 ms
-                    SetTrustAllCertificates(true).                                                          //
-                    SetDefaultDatabaseName("retaildb").                                                     // Here we define the default database name as "retaildb"
-                    SetIsLogRemote(true)                                                                    //
+            myC8o = new C8o(conn,                               // This variable is related to the end point URL.
+                    new C8oSettings().                          //
+                    SetTimeout(10000).                          // Here we set timeout to 10000 ms
+                    SetTrustAllCertificates(true).              //
+                    SetDefaultDatabaseName("retaildb").         // Here we define the default database name as "retaildb"
+                    SetIsLogRemote(true)                        //
                 );
 
             //instanciate C8o Object for our cart with attributes
-            myC8oCart = new C8o("http://192.168.100.86:18080/convertigo/projects/sampleMobileRetailStore",  // This variable is related to the end point URL.
-                    new C8oSettings().                                                                      //
-                    SetTimeout(10000).                                                                      // Here we set timeout to 10000 ms
-                    SetTrustAllCertificates(true).                                                          //
-                    SetDefaultDatabaseName("cartdb").                                                       // Here we define the default database name as "cartdb"
-                    SetIsLogRemote(true)                                                                    //
+            myC8oCart = new C8o(conn,                           // This variable is related to the end point URL.
+                    new C8oSettings().                          //
+                    SetTimeout(10000).                          // Here we set timeout to 10000 ms
+                    SetTrustAllCertificates(true).              //
+                    SetDefaultDatabaseName("cartdb").           // Here we define the default database name as "cartdb"
+                    SetIsLogRemote(true)                        //
                 );
 
             //instanciate respectively new Dictionary, CartViewModel , and LoadingPageModel.
@@ -108,7 +105,8 @@ namespace retail_store
                 {
                     //CallJson Method is called thanks to C8o Object 
                     await myC8o.CallJson(
-                        "fs://.sync")           //We synchronize here the Catalogue from the default project as the project has been define in the endpoint URL. 
+                        "fs://.sync")           //We synchronize here the Catalogue from the default project on the mobile (fs://)
+                                                //as the project has been define in the endpoint URL. 
                         .Progress(progress =>
                         {
                             LoadP.State = "" + progress.Current + "/" + progress.Total; // We recover the progression's state with Current and total attribute
@@ -122,19 +120,19 @@ namespace retail_store
 
                 //CallJson Method is called thanks to C8o Object    
                 await myC8oCart.CallJson(
-                ".Connect",                 
+                ".Connect",               //We call here the "Connect" sequence from the default project as the project has been define in the endpoint URL.
                 "User", "User1")         //We give it parameters as the name of the FULLSYNC connector that we calls
                 .Fail((e, p) =>
                 {
-                    Debug.WriteLine("LAA" + e);//Handle errors...
+                    Debug.WriteLine("" + e);     //Handle errors...
                 })
-                .Async();
+                .Async();                           //Async Call
 
                 //CallJson Method is called thanks to C8o Object  
                 JObject Jobj;
                 Jobj =  await myC8oCart.CallJson(
-                    "fs://.sync",                       //We give it parameters as the name of the FULLSYNC connector that we calls
-                    "continuous", true)               //And the live synchronization
+                    "fs://.sync",                       //We synchronize here the Cart from the default project as the project has been define in the endpoint URL. 
+                    "continuous", true)                 //And set synchronization to true
                     .Progress(progress =>
                     {
                         if (progress.Finished == true)      // If initial replication is finished
@@ -149,19 +147,20 @@ namespace retail_store
                     {
                         Debug.WriteLine("" + e);           //Handle errors.. 
                     })
-                    .Async();   
-                
-                                           
+                    .Async();                             //Async Call
+
+
                 CheckCartAfterConn();
             }
-            if(!exec)
+            if(!execution)
             {
+                
                 MainPage = new TabbedPageP();
-                if (Device.OS == TargetPlatform.iOS)
+                if (Device.OS == TargetPlatform.iOS)                // If target device's os is ios then...
                 {
                     MainPage.Padding = new Thickness(0, 20, 0, 0);
                 }
-                exec = true;
+                execution = true;
                
             }
         }
@@ -170,14 +169,14 @@ namespace retail_store
         {
             // When we retrive Network we execute CartUpdated sequence on server
             await myC8oCart.CallJson(
-                ".CartUpdated"          //We give him parameters as the name of the sequence that we calls
-                )       //And the parameters for the sequence    
+                ".CartUpdated"          //We call here the "CartUpdated" sequence from the default project as the project has been define in the endpoint URL.
+                )        
                 .Fail((e, p) =>
                 {
-                    Debug.WriteLine("LAA" + e);//Handle errors..
+                    Debug.WriteLine("" + e);     //Handle errors..
                 })
-                .Async();
-            
+                .Async();                         //Async Call
+
         }
 
         protected override void OnSleep()

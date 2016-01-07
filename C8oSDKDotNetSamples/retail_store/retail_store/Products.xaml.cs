@@ -20,8 +20,7 @@ namespace retail_store
             IsVisibleProd(false);
             NavigationPage.SetHasNavigationBar(this, false);
             listView.SeparatorColor = Color.Black;
-            
-            }
+        }
         
         public async  void tapImage_Tapped_promo(object sender, EventArgs e)
         {
@@ -83,28 +82,24 @@ namespace retail_store
         public async void Search(string valLow, string valUp)
         {
             JObject data = await App.myC8o.CallJson(
-                   "fs://.view",
-                   "ddoc", "design",
+                   "fs://.view",                                    //We get here a view from the default project as the project has been define in the endpoint URL.   
+                   "ddoc", "design",                                //And give here parameters
                    "view", "Search",
                    "startkey", "['42', '" + valLow + "']",
                    "endkey", "['42', '" + valUp + "Z']",
                    "limit", 20,
                    "skip", 0)
-                   .Progress(progress =>
-                   {
-                       Debug.WriteLine(progress.TaskInfo);
-                   })
                    .Fail((e, p) =>
                    {
-                       Debug.WriteLine("LAA" + e);// Handle errors..
+                       Debug.WriteLine("LAA" + e);                // Handle errors..
                    })
-                   .Async();
+                   .Async();                                      //Async Call
+
             Object model;
             App.models.TryGetValue("CategoryViewModel", out model);
-            Model a = (Model)model;
-           
-            a.PopulateData(data, true);
-            listView.BindingContext = a;
+            Model mode = (Model)model;
+            mode.PopulateData(data, true);
+            listView.BindingContext = mode;
 
         }
         public void IsVisibleProd(bool b)
@@ -125,7 +120,6 @@ namespace retail_store
             imgN_text.Opacity = val;
             imgP_text.Opacity = val;
             img_fresh.Opacity = val;
-            //txt_ret.Opacity = val;
             txt_fr.Opacity = val;
         }
 

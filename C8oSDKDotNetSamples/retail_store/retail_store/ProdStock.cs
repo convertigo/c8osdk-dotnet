@@ -15,7 +15,7 @@ namespace retail_store
         public event PropertyChangedEventHandler PropertyChanged;
         float count;
         string priceEur;
-
+        //Mapping class
         public ProdStock(String name, String imageUrl, String id, String shopcode, String fatherId, String sku, String priceOfUnit, float count):base( name,  imageUrl,  id,  shopcode,  fatherId,  sku,  priceOfUnit)
         {
             Count = count;

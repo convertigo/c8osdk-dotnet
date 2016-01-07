@@ -10,8 +10,8 @@ namespace retail_store
 {
     public partial class CategoryTablet : MasterDetailPage
     {
-
         public List<Page> ListPage;
+
         public CategoryTablet()
         {
             ListPage = new List<Page>();
@@ -20,8 +20,6 @@ namespace retail_store
             Master = new Category();
             Detail = new contentDetailTablet();
            this.Detail.BackgroundColor = Color.Gray;
-            
-            
         }
         protected override bool OnBackButtonPressed()
         {
