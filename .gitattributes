@@ -1123,8 +1123,6 @@ C8oSDKDotNetSamples/retail_store/retail_store/App.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Cart.xaml -text
 C8oSDKDotNetSamples/retail_store/retail_store/Cart.xaml.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/CartViewModel.cs -text
-C8oSDKDotNetSamples/retail_store/retail_store/Cat.xaml -text
-C8oSDKDotNetSamples/retail_store/retail_store/Cat.xaml.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Categ.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Category.xaml -text
 C8oSDKDotNetSamples/retail_store/retail_store/Category.xaml.cs -text
@@ -1141,8 +1139,6 @@ C8oSDKDotNetSamples/retail_store/retail_store/LoadingPage.xaml.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/LoadingPageModel.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Model.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Model2.cs -text
-C8oSDKDotNetSamples/retail_store/retail_store/Page1.xaml -text
-C8oSDKDotNetSamples/retail_store/retail_store/Page1.xaml.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/PluginsHelp/ConnectivityReadme.txt -text
 C8oSDKDotNetSamples/retail_store/retail_store/Prod.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/ProdStock.cs -text
@@ -1151,10 +1147,6 @@ C8oSDKDotNetSamples/retail_store/retail_store/Products.xaml.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Properties/AssemblyInfo.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Rayon.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/ReduceTot.cs -text
-C8oSDKDotNetSamples/retail_store/retail_store/Settings.xaml -text
-C8oSDKDotNetSamples/retail_store/retail_store/Settings.xaml.cs -text
-C8oSDKDotNetSamples/retail_store/retail_store/SubClass.xaml -text
-C8oSDKDotNetSamples/retail_store/retail_store/SubClass.xaml.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/TabbedPageP.xaml -text
 C8oSDKDotNetSamples/retail_store/retail_store/TabbedPageP.xaml.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/app.config -text
