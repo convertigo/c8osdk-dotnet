@@ -153,16 +153,17 @@ namespace Convertigo.SDK.Internal
             return XDocument.Parse(xmlString);
         } 
 
-        public static object StringToJson(string jsonValueString)
+        public static JToken StringToJson(string jsonValueString)
         {
+            object obj = jsonValueString;
             try
             {
-                return JsonConvert.DeserializeObject(jsonValueString);
+                obj = JsonConvert.DeserializeObject(jsonValueString);
             }
-            catch (Exception e)
+            catch
             {
-                throw new System.FormatException(C8oExceptionMessage.StringToJsonValue(jsonValueString), e);
             }
+            return obj is JToken ? obj as JToken : new JValue(obj);
         }
 
         public static object StringToObject(string objectValue, Type type)
