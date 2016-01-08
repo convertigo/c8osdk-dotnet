@@ -127,6 +127,7 @@ namespace Convertigo.SDK.Internal
                                     catch (C8oUnavailableLocalCacheException e)
                                     {
                                         // does nothing
+                                        e.ToString();
                                     }
                                 }
                             }

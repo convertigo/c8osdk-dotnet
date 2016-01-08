@@ -11,11 +11,11 @@ namespace Convertigo.SDK.Internal
 {
     internal class C8oTranslator
     {        
-	    private static String XML_KEY_ITEM = "item";
-	    private static String XML_KEY_OBJECT = "object";
-	    private static String XML_KEY__ATTACHMENTS = "_attachments";
-	    private static String XML_KEY_ATTACHMENT = "attachment";
-	    private static String XML_KEY_NAME = "name";
+	    private static string XML_KEY_ITEM = "item";
+	    private static string XML_KEY_OBJECT = "object";
+	    private static string XML_KEY__ATTACHMENTS = "_attachments";
+	    private static string XML_KEY_ATTACHMENT = "attachment";
+	    private static string XML_KEY_NAME = "name";
 
         /// <summary>
         /// Translates the specidied JSON to XML and append it to the specidief XML element.
@@ -68,7 +68,7 @@ namespace Convertigo.SDK.Internal
             }
         }
 
-        public static void JsonKeyToXml(String jsonKey, JToken jsonValue, XElement parentElement)
+        public static void JsonKeyToXml(string jsonKey, JToken jsonValue, XElement parentElement)
         {
             // Replaces the key if it is not specified
             if (String.IsNullOrEmpty(jsonKey))
@@ -102,7 +102,7 @@ namespace Convertigo.SDK.Internal
             }
         }
 
-        //*** XML / JSON / Stream to String ***//
+        //*** XML / JSON / Stream to string ***//
 
         public static string XmlToString(XDocument xmlDocument)
         {
@@ -121,7 +121,7 @@ namespace Convertigo.SDK.Internal
                 // stream.Position = 0;
                 // stream.Seek(0, SeekOrigin.Begin);               
                 StreamReader streamReader = new StreamReader(stream);
-                String tmp = streamReader.ReadToEnd();
+                string tmp = streamReader.ReadToEnd();
                 return tmp;
             //}
             //catch (Exception e)
@@ -134,7 +134,7 @@ namespace Convertigo.SDK.Internal
 
         public static JObject StreamToJson(Stream stream)
         {
-            // Converts the Stream to String then String to JObject
+            // Converts the Stream to string then string to JObject
             string jsonString = StreamToString(stream);
             var json = StringToJson(jsonString) as JObject;
             return json;
@@ -146,18 +146,17 @@ namespace Convertigo.SDK.Internal
             return xml;
         }
 
-        //*** String to XML / JSON / Object ***//
+        //*** string to XML / JSON / object ***//
 
-        public static XDocument StringToXml(String xmlString)
+        public static XDocument StringToXml(string xmlString)
         {
             return XDocument.Parse(xmlString);
         } 
 
-        public static Object StringToJson(String jsonValueString)
+        public static object StringToJson(string jsonValueString)
         {
             try
             {
-                // return JToken.Parse(jsonValueString);
                 return JsonConvert.DeserializeObject(jsonValueString);
             }
             catch (Exception e)
@@ -166,7 +165,7 @@ namespace Convertigo.SDK.Internal
             }
         }
 
-        public static Object StringToObject(String objectValue, Type type)
+        public static object StringToObject(string objectValue, Type type)
         {
             try
             {
@@ -186,7 +185,7 @@ namespace Convertigo.SDK.Internal
             return hex.Replace("-", "");
         }
 
-        public static String DoubleToHexString(double d)
+        public static string DoubleToHexString(double d)
         {
             byte[] bytes = BitConverter.GetBytes(d);
             return C8oTranslator.ByteArrayToHexString(bytes);
@@ -204,7 +203,7 @@ namespace Convertigo.SDK.Internal
             return Convert.ToBase64String(bytes);
         }
 
-        public static byte[] HexStringToByteArray(String hex)
+        public static byte[] HexStringToByteArray(string hex)
         {
             // Checks if the string length is not even
             int plus = 0;
