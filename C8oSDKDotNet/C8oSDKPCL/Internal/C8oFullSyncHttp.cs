@@ -185,9 +185,9 @@ namespace Convertigo.SDK.Internal
         public async override Task<object> HandleSyncRequest(string fullSyncDatatbaseName, IDictionary<string, object> parameters, C8oResponseListener c8oResponseListener)
         {
             await CheckDatabase(fullSyncDatatbaseName);
-            Task.Run(() =>
+            Task.Run(async () =>
             {
-                HandleReplicatePushRequest(fullSyncDatatbaseName, parameters, c8oResponseListener);
+                await HandleReplicatePushRequest(fullSyncDatatbaseName, parameters, c8oResponseListener);
             }).GetAwaiter();
             return await HandleReplicatePullRequest(fullSyncDatatbaseName, parameters, c8oResponseListener);
         }
@@ -481,8 +481,9 @@ namespace Convertigo.SDK.Internal
         //    }
         //}
 
-        public override async Task SaveResponseToLocalCache(string c8oCallRequestIdentifier, C8oLocalCacheResponse localCacheResponse)
+        public override /*async*/ Task SaveResponseToLocalCache(string c8oCallRequestIdentifier, C8oLocalCacheResponse localCacheResponse)
         {
+            return null;
         }
 
         //public override void SaveResponseToLocalCache(string c8oCallRequestIdentifier, string responseString, string responseType, int localCacheTimeToLive)
@@ -529,7 +530,7 @@ namespace Convertigo.SDK.Internal
             }
             catch (Exception e)
             {
-
+                c8o.Log._Debug("Cannot find revision of docid=" + docid, e);
             }
 
             return rev;
@@ -669,7 +670,7 @@ namespace Convertigo.SDK.Internal
                 }
                 catch (Exception e)
                 {
-                    //TODO: handle
+                    c8o.Log._Info("Failed to merge json documents", e);
                 }
             }
         }
@@ -707,8 +708,7 @@ namespace Convertigo.SDK.Internal
                 }
                 catch (Exception e)
                 {
-                    //TODO: handle
-
+                    c8o.Log._Info("Failed to merge json arrays", e);
                 }
             }
         }
@@ -791,14 +791,14 @@ namespace Convertigo.SDK.Internal
                 {
                     json = JObject.Parse(entityContent);
                 }
-                catch (Exception e)
+                catch
                 {
                     json = new JObject();
                     try
                     {
                         json["item"] = JArray.Parse(entityContent);
                     }
-                    catch (Exception e2)
+                    catch
                     {
                         json["data"] = entityContent;
                     }

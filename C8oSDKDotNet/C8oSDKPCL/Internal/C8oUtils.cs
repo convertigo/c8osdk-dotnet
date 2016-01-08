@@ -106,14 +106,7 @@ namespace Convertigo.SDK.Internal
         {
             if (parameter.Value is string)
             {
-                try
-                {
-                    return C8oTranslator.StringToJson(parameter.Value as string);
-                }
-                catch (FormatException e)
-                {
-                    // throw new C8oException(C8oExceptionMessage.GetParameterJsonValue(parameter), e);
-                }
+                return C8oTranslator.StringToJson(parameter.Value as string);
             }
             return parameter.Value;
         }
