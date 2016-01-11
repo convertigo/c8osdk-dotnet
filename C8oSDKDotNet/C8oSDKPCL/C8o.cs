@@ -78,6 +78,11 @@ namespace Convertigo.SDK
         internal static Action<Action> defaultUiDispatcher;
         internal static string deviceUUID;
 
+        public static string GetSdkVersion()
+        {
+            return "2.0.0";
+        }
+
         //*** Attributes ***//
 
         /// <summary>

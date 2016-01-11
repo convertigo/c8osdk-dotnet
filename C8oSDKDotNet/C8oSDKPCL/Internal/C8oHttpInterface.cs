@@ -38,7 +38,7 @@ namespace Convertigo.SDK.Internal
             OnRequestCreate(request);
 
             request.Method = "POST";
-
+            request.Headers["x-convertigo-sdk"] = C8o.GetSdkVersion();
             request.CookieContainer = cookieContainer;
 
             SetRequestEntity(request, parameters);
