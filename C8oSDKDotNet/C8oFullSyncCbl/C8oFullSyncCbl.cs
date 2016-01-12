@@ -234,7 +234,7 @@ namespace Convertigo.SDK.Internal
             }
             catch (Exception e)
             {
-                throw new C8oException(C8oExceptionMessage.ToDo(), e);
+                throw new C8oException(C8oExceptionMessage.CouchDeleteFailed(), e);
             }
             bool deleted = document.Deleted;
 

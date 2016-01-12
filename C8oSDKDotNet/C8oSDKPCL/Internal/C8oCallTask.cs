@@ -59,7 +59,7 @@ namespace Convertigo.SDK.Internal
                 }
                 catch (Exception e)
                 {
-                    throw new C8oException(C8oExceptionMessage.ToDo(), e);
+                    throw new C8oException(C8oExceptionMessage.FullSyncRequestFail(), e);
                 }
             }
             else
@@ -124,21 +124,20 @@ namespace Convertigo.SDK.Internal
                                             //return;
                                         }
                                     }
-                                    catch (C8oUnavailableLocalCacheException e)
+                                    catch (C8oUnavailableLocalCacheException)
                                     {
                                         // does nothing
-                                        e.ToString();
                                     }
                                 }
                             }
                             else
                             {
-                                throw new ArgumentException(C8oExceptionMessage.ToDo());
+                                throw new ArgumentException(C8oExceptionMessage.GetLocalCachePolicy(localCachePolicyStr));
                             }
                         }
                         else
                         {
-                            throw new ArgumentException(C8oExceptionMessage.ToDo());
+                            throw new ArgumentException(C8oExceptionMessage.GetLocalCacheParameters());
                         }
                     }
                 }

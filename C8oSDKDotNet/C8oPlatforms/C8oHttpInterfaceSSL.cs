@@ -67,6 +67,8 @@ namespace Convertigo.SDK.Internal
 
         internal override void OnRequestCreate(HttpWebRequest request)
         {
+            request.UserAgent = "Convertigo Client SDK " + C8o.GetSdkVersion();
+
             if (clientCertificates != null)
             {
                 foreach (var cert in clientCertificates)

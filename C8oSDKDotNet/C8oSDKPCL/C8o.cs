@@ -621,7 +621,7 @@ namespace Convertigo.SDK
         {
             if (parameters.Length % 2 != 0)
             {
-                throw new System.ArgumentException("TODO");
+                throw new System.ArgumentException(C8oExceptionMessage.InvalidParameterValue("parameters", "needs pairs of values"));
             }
 
             var newParameters = new Dictionary<string, object>();
