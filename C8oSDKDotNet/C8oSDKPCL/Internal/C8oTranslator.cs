@@ -170,11 +170,11 @@ namespace Convertigo.SDK.Internal
         {
             try
             {
-                return JsonConvert.DeserializeObject(objectValue as String, type);
+                return JsonConvert.DeserializeObject(objectValue as string, type);
             }
             catch (Exception e)
             {
-                throw new System.FormatException(C8oExceptionMessage.ToDo(), e);
+                throw new System.FormatException(C8oExceptionMessage.ParseStringToObject(type), e);
             }  
         }
 

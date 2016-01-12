@@ -12,7 +12,7 @@ namespace Convertigo.SDK
             return "You are using the default FullSyncInterface which is not implemented";
         }
 
-        public static string InvalidParameterValue(string parameterName, string details)
+        public static string InvalidParameterValue(string parameterName, string details = null)
         {
             string errorMessage = "The parameter '" + parameterName + "' is invalid";
             if (details != null) 
@@ -194,6 +194,11 @@ namespace Convertigo.SDK
             return "Unable to parse the string to a JSON document";
         }
 
+        public static string ParseStringToObject(Type type)
+        {
+            return "Unable to parse the string (JSON) to an object of type " + type;
+        }
+
         public static string StringToJsonValue(string str)
         {
             return "Unable to translate the string '" + str + "' to a JSON value"; 
@@ -261,6 +266,11 @@ namespace Convertigo.SDK
         public static string couchFullSyncNotActive()
         {
             return "Unable to use fullSync because it was not activated at the initialization";
+        }
+
+        public static string CouchDeleteFailed()
+        {
+            return "Delete the Couch document failed";
         }
 
         //public static string fullSyncPutProperties(Map<string, object> properties)
@@ -509,9 +519,14 @@ namespace Convertigo.SDK
             return "Failed to read line from the BufferReader";
         }
 
-        public static string getLocalCacheParameters()
+        public static string GetLocalCacheParameters()
         {
             return "Failed to get local cache parameters";
+        }
+
+        public static string GetLocalCachePolicy(string policy)
+        {
+            return "Failed to get local cache policy: " + policy;
         }
 
         public static string fullSyncJsonToXML()
@@ -622,5 +637,14 @@ namespace Convertigo.SDK
         //		return "Call response listener must be not null";
         //	}
 
+        public static string RemoteLogFail()
+        {
+            return "Failed to send log to the Convertigo server: disabling remote logging";
+        }
+
+        public static string FullSyncRequestFail()
+        {
+            return "Failed to process the fullsync request";
+        }
     }
 }

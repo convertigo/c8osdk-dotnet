@@ -278,7 +278,7 @@ namespace Convertigo.SDK
                         isLogRemote = false;
                         if (c8o.LogOnFail != null)
                         {
-                            c8o.LogOnFail(new C8oException(C8oExceptionMessage.ToDo(), e), null);
+                            c8o.LogOnFail(new C8oException(C8oExceptionMessage.RemoteLogFail(), e), null);
                         }
                         return;
                     }

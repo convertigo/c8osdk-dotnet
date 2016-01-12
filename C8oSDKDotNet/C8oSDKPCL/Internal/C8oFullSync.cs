@@ -40,7 +40,7 @@ namespace Convertigo.SDK.Internal
 
             if (!projectParameterValue.StartsWith(FULL_SYNC_PROJECT))
             {
-                throw new ArgumentException(C8oExceptionMessage.InvalidParameterValue(projectParameterValue, "TODO"));
+                throw new ArgumentException(C8oExceptionMessage.InvalidParameterValue(projectParameterValue, "its don't start with " + FULL_SYNC_PROJECT));
             }
 
             String fullSyncRequestableValue = C8oUtils.PeekParameterStringValue(parameters, C8o.ENGINE_PARAMETER_SEQUENCE, true);
@@ -69,7 +69,7 @@ namespace Convertigo.SDK.Internal
             }
             catch (Exception e)
             {
-                throw new C8oException(C8oExceptionMessage.ToDo(), e);
+                throw new C8oException(C8oExceptionMessage.FullSyncRequestFail(), e);
             }
 
             if (response == null)
