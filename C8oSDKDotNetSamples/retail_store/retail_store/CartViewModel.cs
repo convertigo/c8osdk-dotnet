@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
+using System.Drawing;
 
 namespace retail_store
 {
@@ -82,9 +83,11 @@ namespace retail_store
             foreach (JObject jo in (JArray)json["rows"])
             {
                 this.ProductStock.Add(new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"],(String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"],(float)jo["value"]["count"]));
+
             }
         }
 
+       
         //CheckCart allow us to check if the products that we want to insert is already contains in database 
         public void CheckCart(bool plus)
         {

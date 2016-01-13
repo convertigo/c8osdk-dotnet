@@ -52,6 +52,7 @@
     <Compile Include="Detail.xaml.cs">
       <DependentUpon>Detail.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IGetImage.cs" />
     <Compile Include="ListProducts.xaml.cs">
       <DependentUpon>ListProducts.xaml</DependentUpon>
     </Compile>
@@ -92,6 +93,9 @@
     <Reference Include="Plugin.Connectivity.Abstractions, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xam.Plugin.Connectivity.2.0.0\lib\portable-net45+wp80+wp81+wpa81+win8+MonoAndroid10+MonoTouch10+Xamarin.iOS10+UAP10\Plugin.Connectivity.Abstractions.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.Drawing.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http, Version=1.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Net.Http.2.2.29\lib\portable-net40+sl4+win8+wp71+wpa81\System.Net.Http.dll</HintPath>

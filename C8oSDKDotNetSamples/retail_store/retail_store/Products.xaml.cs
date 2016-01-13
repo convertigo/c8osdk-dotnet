@@ -28,9 +28,8 @@ namespace retail_store
             {
                 if (Device.Idiom == TargetIdiom.Tablet || Device.Idiom == TargetIdiom.Desktop)
                 {
-                    ((CategoryTablet)((TabbedPageP)Parent.Parent).tabletP).ListPage.Add(this);
-                    ((CategoryTablet)((TabbedPageP)Parent.Parent).tabletP).Master = new Category("PROMO");
                     ((TabbedPageP)Parent.Parent).CurrentPage = ((TabbedPageP)Parent.Parent).Children[1];
+                    await ((CategoryTablet)((TabbedPageP)Parent.Parent).tabletP).Master.Navigation.PushAsync(new Category("PROMO"));
                 }
                 else
                 {
@@ -46,9 +45,8 @@ namespace retail_store
             {
                 if (Device.Idiom == TargetIdiom.Tablet || Device.Idiom == TargetIdiom.Desktop)
                 {
-                    ((CategoryTablet)((TabbedPageP)Parent.Parent).tabletP).ListPage.Add(this);
-                    ((CategoryTablet)((TabbedPageP)Parent.Parent).tabletP).Master = new Category("NEWS");
                     ((TabbedPageP)Parent.Parent).CurrentPage = ((TabbedPageP)Parent.Parent).Children[1];
+                    await ((CategoryTablet)((TabbedPageP)Parent.Parent).tabletP).Master.Navigation.PushAsync(new Category("NEWS"));
                 }
                 else
                 {

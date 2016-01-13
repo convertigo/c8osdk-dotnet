@@ -48,7 +48,7 @@ namespace retail_store
                     new C8oSettings().                          //
                     SetTimeout(10000).                          // Here we set timeout to 10000 ms
                     SetTrustAllCertificates(true).              //
-                    SetDefaultDatabaseName("retaildb").         // Here we define the default database name as "retaildb"
+                    SetDefaultDatabaseName("retailfulldb").         // Here we define the default database name as "retaildb"
                     SetIsLogRemote(true)                        //
                 );
 

@@ -10,6 +10,10 @@ using System.ComponentModel;
 
 using Xamarin.Forms;
 using Newtonsoft.Json.Linq;
+using System.IO;
+
+using System.Drawing;
+
 
 namespace retail_store
 {
@@ -60,6 +64,61 @@ namespace retail_store
                 .Async();                           //Async Call
 
             App.cvm.PopulateData(data, true);
+
+
+            JObject data2 = await App.myC8o.CallJson(
+                        "fs://.get",               //We post here the an item into the cart from the default project as the project has been define in the endpoint URL. 
+                        "docid", prod.Id           //And give here parameters
+                        )
+                        .Fail((e, q) =>
+                        {
+                            Debug.WriteLine("" + e); // Handle errors..
+                        })
+                        .Async();                   //Async Call
+            if (data2["_attachments"]["img.jpg"]["content_path"] != null)
+            {
+                /* labelImage.Source = ((byte[])ImageSource.FromUri(new Uri(((string)data2["_attachments"]["img.jpg"]["content_url"])));
+                 /* MemoryStream mStream = new MemoryStream();
+                  byte[] pData = ((byte[])data2["_attachments"]["img.jpg"]["content_url"]);
+                  mStream.Write(pData, 0, Convert.ToInt32(pData.Length));
+                  Bitmap bm = new Bitmap(mStream, false);
+                  mStream.Dispose();
+                  labelImage.Source = Xamarin.Forms.((byte[])data2["_attachments"]["img.jpg"]["content_url"]);*/
+                /*
+               FileStream fs = null;
+               try
+               {
+                   fs = File.OpenRead(fullFilePath);
+                   byte[] bytes = new byte[fs.Length];
+                   fs.Read(bytes, 0, Convert.ToInt32(fs.Length));
+                   return bytes;
+               }
+               finally
+               {
+                   if (fs != null)
+                   {
+                       fs.Close();
+                       fs.Dispose();
+                   }
+               }
+               byte[] bytes = File.ReadAllBytes((string)data2["_attachments"]["img.jpg"]["content_url"]);
+                   Xamarin.Forms.ImageSource a = ImageSource.FromStream(() => new MemoryStream(((byte[])data2["_attachments"]["img.jpg"]["content_url"])));
+                   labelImage.Source = a;*/
+
+
+                /* ((Byte[])data2["_attachments"]["img.jpg"]["content_url"])
+                 labelImage.Source = Xamarin.Forms.ImageSource.FromUri(new Uri("file:///data/data/retail_store.Droid/files/.local/share/retailfulldb_device attachments/445D35AB35261309F60F47496A5A0435F7410025.jpg"));
+                 */
+
+                byte[] b = DependencyService.Get<IGetImage>().GetMyImage(((string)data2["_attachments"]["img.jpg"]["content_path"]));
+                labelImage.Source = ImageSource.FromStream(() => new MemoryStream(b));
+                
+                
+                labelImage.Aspect = Aspect.Fill;
+            }
+
+
+
         }
 
         public void searchUnit()
@@ -85,7 +144,7 @@ namespace retail_store
 
         public void tapImage_Tapped(object sender, EventArgs e)
         {
-            string imageName = ((FileImageSource)((Image)sender).Source).File.ToString();
+            string imageName = ((FileImageSource)((Xamarin.Forms.Image)sender).Source).File.ToString();
             switch (imageName)
             {
                 case "plus.png":

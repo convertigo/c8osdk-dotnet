@@ -28,7 +28,7 @@ namespace retail_store
         //isProduct is also set to false by default because our first root menu is not a product. 
         public Category(string category = "Menu",  Boolean isProduct = false, string category2 = "Menu", string view= "children_byFather")
         {
-            Title = "title";
+            //Title = "return";
             InitializeComponent();
             if (Device.OS == TargetPlatform.iOS)
             {
@@ -98,15 +98,16 @@ namespace retail_store
                 //If the item is not product we push async a new category view
                 if (IsProduct == false)
                 {
-                    ((CategoryTablet)Parent).ListPage.Add(this);
+                    //((CategoryTablet)Parent).ListPage.Add(this);
                     Categ categ = (Categ)e.Item;
-                    ((CategoryTablet)Parent).Master = new Category(categ.LevelId, categ.Leaf);
+                    await Navigation.PushAsync(new Category(categ.LevelId, categ.Leaf), true);
+                    //((CategoryTablet)Parent).Master = new Category(categ.LevelId, categ.Leaf);
                 }
                 //If the item is a product we push async a new detail view
                 else
                 {
                     Prod prod = (Prod)e.Item;
-                    ((CategoryTablet)Parent).Detail = new Detail(prod);
+                    ((CategoryTablet)Parent.Parent).Detail = new Detail(prod);
                     listView.SelectedItem = 0;
 
                 }

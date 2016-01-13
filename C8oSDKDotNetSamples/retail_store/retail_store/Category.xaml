@@ -44,6 +44,9 @@
         <ListView.ItemTemplate>
           <DataTemplate>
             <ViewCell>
+              <StackLayout>
+                <Image></Image>
+              </StackLayout>
               <StackLayout Orientation="Horizontal" Padding="5, 5">
                   <Label Text="{Binding Name}" HorizontalOptions="StartAndExpand" VerticalOptions="Center" TextColor="#000000" FontSize="12"/>
               </StackLayout>

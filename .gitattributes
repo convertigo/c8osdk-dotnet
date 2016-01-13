@@ -1056,6 +1056,7 @@ C8oSDKDotNetSamples/SampleBigFileTransfer/SampleBigFileTransfer/Login.xaml.cs -t
 C8oSDKDotNetSamples/SampleBigFileTransfer/SampleBigFileTransfer/SampleBigFileTransfer.projitems -text
 C8oSDKDotNetSamples/SampleBigFileTransfer/SampleBigFileTransfer/SampleBigFileTransfer.shproj -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/Assets/AboutAssets.txt -text
+C8oSDKDotNetSamples/retail_store/retail_store.Droid/GetImageImplementation.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/MainActivity.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/MainApplication.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/PluginsHelp/ConnectivityReadme.txt -text
@@ -1132,6 +1133,7 @@ C8oSDKDotNetSamples/retail_store/retail_store/CategoryViewModel.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/ConnectivityChangedEventArgs.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Detail.xaml -text
 C8oSDKDotNetSamples/retail_store/retail_store/Detail.xaml.cs -text
+C8oSDKDotNetSamples/retail_store/retail_store/IGetImage.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/ListProducts.xaml -text
 C8oSDKDotNetSamples/retail_store/retail_store/ListProducts.xaml.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/LoadingPage.xaml -text

@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace retail_store
 {
@@ -14,12 +15,16 @@ namespace retail_store
     {
         public event PropertyChangedEventHandler PropertyChanged;
         float count;
+        Image img;
+       
         string priceEur;
         //Mapping class
         public ProdStock(String name, String imageUrl, String id, String shopcode, String fatherId, String sku, String priceOfUnit, float count):base( name,  imageUrl,  id,  shopcode,  fatherId,  sku,  priceOfUnit)
         {
             Count = count;
+            Img = img;
             priceEur = priceOfUnit + " €";
+            
         }
 
         public string PriceEur
@@ -53,7 +58,21 @@ namespace retail_store
             }
         }
 
-        
-        
+        public Image Img
+        {
+            get
+            {
+                return img;
+            }
+
+            set
+            {
+                img = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs(null));
+                }
+            }
+        }
     }
 }

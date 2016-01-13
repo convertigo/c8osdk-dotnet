@@ -17,7 +17,8 @@ namespace retail_store
             ListPage = new List<Page>();
             InitializeComponent();
             Title = "Category";
-            Master = new Category();
+            // new NavigationPage(new Category()) { Title = "Products" };
+            Master = new NavigationPage(new Category()) { Title = "return" };
             Detail = new contentDetailTablet();
            this.Detail.BackgroundColor = Color.Gray;
         }

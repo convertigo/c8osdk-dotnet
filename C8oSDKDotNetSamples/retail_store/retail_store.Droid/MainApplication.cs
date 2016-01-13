@@ -59,5 +59,6 @@ namespace retail_store.Droid
         public void OnActivityStopped(Activity activity)
         {
         }
+       
     }
 }
