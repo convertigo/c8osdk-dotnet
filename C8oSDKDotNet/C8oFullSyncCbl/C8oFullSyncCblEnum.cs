@@ -44,7 +44,7 @@ namespace Convertigo.SDK.Internal
             }
             else
             {
-                throw new ArgumentException(C8oExceptionMessage.ToDo());
+                throw new ArgumentException(C8oExceptionMessage.InvalidParameterType(requestParameter.name, "" + requestParameter.type, "" + value.GetType()));
             }
         }
 
@@ -58,7 +58,7 @@ namespace Convertigo.SDK.Internal
             }
             else
             {
-                throw new ArgumentException(C8oExceptionMessage.ToDo());
+                throw new ArgumentException(C8oExceptionMessage.UnknownFullSyncPolicy(policy));
             }
         }
 
@@ -75,7 +75,7 @@ namespace Convertigo.SDK.Internal
                 }
                 catch (Exception e)
                 {
-                    throw new C8oException(C8oExceptionMessage.ToDo(), e);
+                    throw new C8oException(C8oExceptionMessage.ParseStringToObject(replicationParameter.type), e);
                 }
             }
             // Checks if the type is valid
@@ -90,7 +90,7 @@ namespace Convertigo.SDK.Internal
             }
             else
             {
-                throw new ArgumentException(C8oExceptionMessage.ToDo());
+                throw new ArgumentException(C8oExceptionMessage.InvalidParameterType(replicationParameter.name, "" + replicationParameter.type, "" + value.GetType()));
             }           
         }
 

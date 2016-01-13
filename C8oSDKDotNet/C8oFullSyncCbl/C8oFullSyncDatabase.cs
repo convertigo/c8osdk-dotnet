@@ -48,7 +48,7 @@ namespace Convertigo.SDK.Internal
             {
                 if (!(e is C8oException))
                 {
-                    e = new C8oException(C8oExceptionMessage.ToDo(), e);
+                    e = new C8oException(C8oExceptionMessage.FullSyncDatabaseInitFailed(databaseName), e);
                 }
                 throw e;
             }
