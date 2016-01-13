@@ -58,6 +58,11 @@ namespace Convertigo.SDK
             return "The fullSync database url '" + fullSyncDatabaseUrlStr + "' is not a valid url";
         }
 
+        internal static string FullSyncDatabaseInitFailed(string databaseName)
+        {
+            return "Failed to initialize the FullSync database '" + databaseName + "'";
+        }
+
         public static string MissParameter(string parameterName)
         {
             return "The parameter '" + parameterName + "' is missing";
@@ -77,6 +82,11 @@ namespace Convertigo.SDK
         public static string InvalidArgumentInvalidURL(string urlStr)
         {
             return "'" + urlStr + "' is not a valid URL";
+        }
+
+        internal static string UnknownFullSyncPolicy(FullSyncPolicy policy)
+        {
+            return "Unknown the FullSync policy '" + policy + "'";
         }
 
         public static string InvalidArgumentInvalidEndpoint(string endpoint)
@@ -569,6 +579,11 @@ namespace Convertigo.SDK
             return "Failed to get fullSync document '" + documentId + "' from the database";
         }
 
+        internal static string FullSyncReplicationFail(string databaseName, string way)
+        {
+            return "Failed to '" + way + "' replicate the '" + databaseName + "' database";
+        }
+
         public static string localCachePolicyIsDisable()
         {
             return "Depending to the network state the local cache is disabled";
@@ -589,7 +604,7 @@ namespace Convertigo.SDK
             return "The time to live expired";
         }
 
-        public static string invalidLocalCacheResponseInformation()
+        public static string InvalidLocalCacheResponseInformation()
         {
             return "Local cache response informations are invalid";
         }
@@ -645,6 +660,11 @@ namespace Convertigo.SDK
         public static string FullSyncRequestFail()
         {
             return "Failed to process the fullsync request";
+        }
+
+        internal static string MissingLocalCacheResponseDocument()
+        {
+            return "Missing local cache response document";
         }
     }
 }

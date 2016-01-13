@@ -382,7 +382,7 @@ namespace Convertigo.SDK.Internal
             }
             catch (Exception e)
             {
-                throw new C8oException(C8oExceptionMessage.ToDo(), e);
+                throw new C8oException(C8oExceptionMessage.FullSyncReplicationFail(databaseName, "sync"), e);
             }
             return VoidResponse.GetInstance();
         }
@@ -396,7 +396,7 @@ namespace Convertigo.SDK.Internal
             }
             catch (Exception e)
             {
-                throw new C8oException(C8oExceptionMessage.ToDo(), e);
+                throw new C8oException(C8oExceptionMessage.FullSyncReplicationFail(databaseName, "pull"), e);
             }
             return VoidResponse.GetInstance();
         }
@@ -410,7 +410,7 @@ namespace Convertigo.SDK.Internal
             }
             catch (Exception e)
             {
-                throw new C8oException(C8oExceptionMessage.ToDo(), e);
+                throw new C8oException(C8oExceptionMessage.FullSyncReplicationFail(databaseName, "push"), e);
             }
             return VoidResponse.GetInstance();
         }
@@ -543,7 +543,7 @@ namespace Convertigo.SDK.Internal
 
             if (localCacheDocument == null)
             {
-                throw new C8oUnavailableLocalCacheException(C8oExceptionMessage.ToDo());
+                throw new C8oUnavailableLocalCacheException(C8oExceptionMessage.MissingLocalCacheResponseDocument());
             }
 
             IDictionary<string, object> properties = localCacheDocument.Properties;
@@ -554,7 +554,7 @@ namespace Convertigo.SDK.Internal
             if (!C8oUtils.TryGetParameterObjectValue<String>(properties, C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE, out response) || 
                 !C8oUtils.TryGetParameterObjectValue<String>(properties, C8o.LOCAL_CACHE_DOCUMENT_KEY_RESPONSE_TYPE, out responseType))
             {
-                throw new C8oUnavailableLocalCacheException(C8oExceptionMessage.invalidLocalCacheResponseInformation());
+                throw new C8oUnavailableLocalCacheException(C8oExceptionMessage.InvalidLocalCacheResponseInformation());
             }
             if (!C8oUtils.TryGetParameterObjectValue<long>(properties, C8o.LOCAL_CACHE_DOCUMENT_KEY_EXPIRATION_DATE, out expirationDate))
             {
