@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using Xamarin.Forms;
 
 namespace retail_store
 {
@@ -15,14 +16,14 @@ namespace retail_store
     {
         public event PropertyChangedEventHandler PropertyChanged;
         float count;
-        Image img;
+
        
         string priceEur;
         //Mapping class
-        public ProdStock(String name, String imageUrl, String id, String shopcode, String fatherId, String sku, String priceOfUnit, float count):base( name,  imageUrl,  id,  shopcode,  fatherId,  sku,  priceOfUnit)
+        public ProdStock(String name, String imageUrl, String id, String shopcode, String fatherId, String sku, String priceOfUnit, float count, ImageSource imgs = null) :base( name,  imageUrl,  id,  shopcode,  fatherId,  sku,  priceOfUnit, imgs)
         {
             Count = count;
-            Img = img;
+
             priceEur = priceOfUnit + " €";
             
         }
@@ -58,21 +59,7 @@ namespace retail_store
             }
         }
 
-        public Image Img
-        {
-            get
-            {
-                return img;
-            }
-
-            set
-            {
-                img = value;
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs(null));
-                }
-            }
-        }
+       
+        
     }
 }

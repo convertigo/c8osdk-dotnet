@@ -3,6 +3,8 @@ using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using Xamarin.Forms;
+using System.IO;
 
 namespace retail_store
 {
@@ -76,14 +78,41 @@ namespace retail_store
 
 
         //PopulateData allow us to get the whole objects contained in the local base and put it on productStock(list)
-        public void PopulateData(JObject json,bool check)
+        public async void PopulateData(JObject json,bool check)
         {
             this.ProductStock.Clear();
             //Browsing JArray in order to collect data
             foreach (JObject jo in (JArray)json["rows"])
             {
-                this.ProductStock.Add(new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"],(String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"],(float)jo["value"]["count"]));
 
+                JObject data2 = await App.myC8o.CallJson(
+                        "fs://.get",               //We post here the an item into the cart from the default project as the project has been define in the endpoint URL. 
+                        "docid", (String)jo["id"]          //And give here parameters
+                        )
+                        .Fail((e, q) =>
+                        {
+                            Debug.WriteLine("" + e); // Handle errors..
+                        })
+                        .Async();
+                try
+                {
+                    if (data2["_attachments"]["img.jpg"]["content_path"] != null)
+                    {
+                        byte[] b = DependencyService.Get<IGetImage>().GetMyImage(((string)data2["_attachments"]["img.jpg"]["content_path"]));
+                        ImageSource i = ImageSource.FromStream(() => new MemoryStream(b));
+                        this.ProductStock.Add(new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"], (String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"], (float)jo["value"]["count"], i));
+                    }
+                    else
+                    {
+                        this.ProductStock.Add(new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"], (String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"], (float)jo["value"]["count"]));
+                    }
+
+
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.ToString());
+                }
             }
         }
 
@@ -123,7 +152,7 @@ namespace retail_store
             //Else if flag is set to false we create a new ProdStock object to add it on database.
             if (flag==false)
             {
-                productToInsert = new ProdStock(Product.Name,Product.ImageUrl,Product.Id,Product.Shopcode,Product.FatherId,Product.Sku,Product.PriceOfUnit, 1);
+                productToInsert = new ProdStock(Product.Name,Product.ImageUrl,Product.Id,Product.Shopcode,Product.FatherId,Product.Sku,Product.PriceOfUnit, 1, Product.Imgs);
                 ProductStock.Add(productToInsert);
                 insertCart();
             }

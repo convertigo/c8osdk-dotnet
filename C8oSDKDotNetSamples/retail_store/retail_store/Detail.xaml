@@ -36,7 +36,7 @@
     <StackLayout Grid.Row="1" Grid.ColumnSpan="5" BackgroundColor="#262261"/>
 
     <StackLayout Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3">
-      <Image x:Name="labelImage" Source="product.png" Aspect="AspectFill " HorizontalOptions="Center" WidthRequest="300" HeightRequest="300" />
+      <Image x:Name="labelImage" Source="{Binding Imgs}" Aspect="AspectFill " HorizontalOptions="Center" WidthRequest="300" HeightRequest="300" />
     </StackLayout>
 
     <StackLayout Grid.Row="3"  Grid.ColumnSpan="5">

@@ -8,6 +8,7 @@ using Xamarin.Forms;
 using Convertigo.SDK;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using System.IO;
 
 namespace retail_store
 {
@@ -62,6 +63,7 @@ namespace retail_store
             this.Leaf = "";
             this.Leaf2 = "{}";
             run();
+          
             
         }
 
@@ -89,6 +91,29 @@ namespace retail_store
             App.models.TryGetValue("CategoryViewModel", out model);
             Model mod = (Model)model;
             mod.PopulateData(data, IsProduct);
+            //imageB.Source = ((CategoryViewModel)mod).Rayons.
+            /*if (isProduct)
+            {
+              foreach(Rayon r in ((CategoryViewModel)mod).Rayons)
+                {
+                    JObject data2 = await App.myC8o.CallJson(
+                        "fs://.get",               //We post here the an item into the cart from the default project as the project has been define in the endpoint URL. 
+                        "docid", r.Id           //And give here parameters
+                        )
+                        .Fail((e, q) =>
+                        {
+                            Debug.WriteLine("" + e); // Handle errors..
+                        })
+                        .Async();                   //Async Call
+                    if (data2["_attachments"]["img.jpg"]["content_path"] != null)
+                    {
+                        byte[] b = DependencyService.Get<IGetImage>().GetMyImage(((string)data2["_attachments"]["img.jpg"]["content_path"]));
+                        r.Img = ImageSource.FromStream(() => new MemoryStream(b));
+                    }
+                }
+                //this.imageB.
+            }*/
+
         }
 
         public async void OnItemTapped(object sender, ItemTappedEventArgs e)

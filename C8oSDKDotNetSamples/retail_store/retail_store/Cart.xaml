@@ -49,24 +49,24 @@
                   <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                  <!--<ColumnDefinition Width="*" />-->
+                  <ColumnDefinition Width="*" />
                   <ColumnDefinition Width="7*" />
                   <ColumnDefinition Width="3*" />
                   <ColumnDefinition Width="*" />
                   <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <!--<StackLayout  Grid.Column="0" Grid.Row ="0" Grid.RowSpan="2">
-                  <Image Source="{Binding ImageUrl}"/>
-                </StackLayout>-->
-                  <StackLayout  Grid.Column="0" Grid.Row ="0" Grid.RowSpan="1">
+                <StackLayout  Grid.Column="0" Grid.Row ="0" Grid.RowSpan="2">
+                  <Image Source="{Binding Imgs}"/>
+                </StackLayout>
+                  <StackLayout  Grid.Column="1" Grid.Row ="0" Grid.RowSpan="1">
                     <Label Text="{Binding Name}" TextColor="#000000" FontSize="10"/>
                   </StackLayout>
-                <StackLayout  Grid.Column="0" Grid.Row ="1" Grid.RowSpan="1">
+                <StackLayout  Grid.Column="1" Grid.Row ="1" Grid.RowSpan="1">
                   <Label Text="{Binding PriceEur}" TextColor="#000000" FontSize="8" FontAttributes="Italic"/>
                 </StackLayout>
                   
-                  <StackLayout   Grid.Column="1"  VerticalOptions="Center">
+                  <StackLayout   Grid.Column="2"  VerticalOptions="Center">
                     
                     <Grid>
                      
@@ -98,13 +98,13 @@
 
                     </Grid>
                 </StackLayout>
-                <StackLayout  Grid.Column="2" Grid.Row ="0" Grid.RowSpan="2" VerticalOptions="Center" HorizontalOptions="Center">
+                <StackLayout  Grid.Column="3" Grid.Row ="0" Grid.RowSpan="2" VerticalOptions="Center" HorizontalOptions="Center">
                   
                     <Label Text="{Binding PriceEurCount}" TextColor="#000000" FontSize="8" FontAttributes="Italic"/>
                   
                   
                 </StackLayout>
-                <StackLayout  Grid.Column="3" Grid.Row ="0" Grid.RowSpan="2" HorizontalOptions="End">
+                <StackLayout  Grid.Column="4" Grid.Row ="0" Grid.RowSpan="2" HorizontalOptions="End">
                   <Image Source="del.jpg" >
                     <Image.GestureRecognizers>
                       <TapGestureRecognizer Tapped="tapImage_dell" />

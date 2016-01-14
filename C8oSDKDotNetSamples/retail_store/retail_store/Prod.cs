@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace retail_store
 {
@@ -10,11 +11,13 @@ namespace retail_store
     {
         String sku;
         String priceOfUnit;
+        private ImageSource imgs;
         //Mapping class
-        public Prod(String name, String imageUrl, String id, String shopcode, String fatherId, String sku, String priceOfUnit) : base(name, imageUrl, id, shopcode, fatherId)
+        public Prod(String name, String imageUrl, String id, String shopcode, String fatherId, String sku, String priceOfUnit, ImageSource imgs = null) : base(name, imageUrl, id, shopcode, fatherId)
         {
             this.Sku = sku;
             this.PriceOfUnit = priceOfUnit;
+            this.imgs = imgs;
         }
 
         public string Sku
@@ -47,6 +50,19 @@ namespace retail_store
             }
         }
 
-        
+        public ImageSource Imgs
+        {
+            get
+            {
+                return imgs;
+            }
+
+            set
+            {
+                imgs = value;
+            }
+        }
+
+
     }
 }
