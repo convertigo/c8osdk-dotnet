@@ -14,7 +14,10 @@ namespace retail_store
         {
             InitializeComponent();
             current.BindingContext = App.LoadP;
-            
+            message.BindingContext = App.LoadP;
+            message2.BindingContext = App.LoadP;
+            message3.BindingContext = App.LoadP;
+
         }
     }
 }

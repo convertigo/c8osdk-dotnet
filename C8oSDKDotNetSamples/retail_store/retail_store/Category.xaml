@@ -51,7 +51,7 @@
                     <ColumnDefinition Width="Auto" />
                   </Grid.ColumnDefinitions>
                   <StackLayout Grid.Column="0" >
-                    <Image x:Name="imageB" Source="{Binding Imgs}"/>
+                    <Image x:Name="imageB" Source="{Binding Imgs}" Aspect="Fill"/>
                   </StackLayout>
                   <StackLayout Grid.Column="1">
                     <Label Text="{Binding Name}" HorizontalOptions="StartAndExpand" VerticalOptions="Center" TextColor="#000000" FontSize="12"/>

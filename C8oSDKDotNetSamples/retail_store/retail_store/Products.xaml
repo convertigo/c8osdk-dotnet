@@ -45,8 +45,20 @@
           <DataTemplate>
             <ViewCell>
               <StackLayout Orientation="Horizontal" Padding="5, 5">
-                <Label Text="{Binding Name}" HorizontalOptions="StartAndExpand" VerticalOptions="Center" TextColor="#000000" FontSize="12"/>
-              </StackLayout>
+              <Grid x:Name="zz">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackLayout Grid.Column="0" >
+                  <Image x:Name="imageB" Source="{Binding Imgs}" Aspect="Fill"/>
+                </StackLayout>
+                <StackLayout Grid.Column="1" Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                  <Label Text="{Binding Name}" HorizontalOptions="StartAndExpand" VerticalOptions="Center" TextColor="#000000" FontSize="12"/>
+                </StackLayout>
+              </Grid>
+            </StackLayout>
+              
             </ViewCell>
           </DataTemplate>
         </ListView.ItemTemplate>

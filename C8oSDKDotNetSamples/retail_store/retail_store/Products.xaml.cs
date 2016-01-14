@@ -93,11 +93,9 @@ namespace retail_store
                    })
                    .Async();                                      //Async Call
 
-            Object model;
-            App.models.TryGetValue("CategoryViewModel", out model);
-            Model mode = (Model)model;
-            mode.PopulateData(data, true);
-            listView.BindingContext = mode;
+            CategoryViewModel categvm = new CategoryViewModel();
+            categvm.PopulateData(data, true);
+            listView.BindingContext = categvm;
 
         }
         public void IsVisibleProd(bool b)

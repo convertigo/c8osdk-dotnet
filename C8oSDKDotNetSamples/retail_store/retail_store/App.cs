@@ -23,6 +23,15 @@ namespace retail_store
         
         public App()
         {
+            //instanciate LoadingPageModel.
+            LoadP = new LoadingPageModel();
+            LoadP.Task = "check_connectivity";
+            /* Set the MainPage
+            Here is a tabbedPage from wich we will be able to navigate into the whole application.*/
+            MainPage = new LoadingPage();
+
+            
+
             execution = false;
             connectivity = CrossConnectivity.Current.IsConnected;
 
@@ -43,12 +52,13 @@ namespace retail_store
 
             //Here we are going to work with two C8o Objects. One for the catalogue and another for the cart.
 
+            LoadP.Task = "check_database";
             //instanciate C8o Object with attributes
             myC8o = new C8o(conn,                               // This variable is related to the end point URL.
                     new C8oSettings().                          //
                     SetTimeout(10000).                          // Here we set timeout to 10000 ms
                     SetTrustAllCertificates(true).              //
-                    SetDefaultDatabaseName("retailfulldb").         // Here we define the default database name as "retaildb"
+                    SetDefaultDatabaseName("retaildbimg").         // Here we define the default database name as "retaildb"
                     SetIsLogRemote(true)                        //
                 );
 
@@ -61,14 +71,12 @@ namespace retail_store
                     SetIsLogRemote(true)                        //
                 );
 
-            //instanciate respectively new Dictionary, CartViewModel , and LoadingPageModel.
+            //instanciate new Dictionary and CartViewModel 
             models = new Dictionary<string, object>();
             cvm = new CartViewModel();
-            LoadP = new LoadingPageModel();
+           
 
-            /* Set the MainPage
-            Here is a tabbedPage from wich we will be able to navigate into the whole application.*/
-            MainPage = new LoadingPage();
+            
 
             // If the device's operating system is IOS then we set a diffrent padding due to the header's floating bar
             if (Device.OS == TargetPlatform.iOS)
@@ -86,6 +94,7 @@ namespace retail_store
             //if network state is ok then we can authentificate
             if (connectivity)
             {
+                LoadP.Task = "update_articles";
                 //instanciate a new JObject data that will recieve json from our C8o objects
                 JObject data;
                 data = await myC8o.CallJson(
@@ -118,6 +127,7 @@ namespace retail_store
                         .Async();                       //Async Call
                 }
 
+                LoadP.Task = "update_cart";
                 //CallJson Method is called thanks to C8o Object    
                 await myC8oCart.CallJson(
                 ".Connect",               //We call here the "Connect" sequence from the default project as the project has been define in the endpoint URL.
@@ -135,11 +145,14 @@ namespace retail_store
                     "continuous", true)                 //And set synchronization to true
                     .Progress(progress =>
                     {
+
+                        Debug.WriteLine("" + progress.TaskInfo);
                         if (progress.Finished == true)      // If initial replication is finished
                         {
                             if (progress.Pull)              //If replication's direction is pull then...
                             { 
-                                App.cvm.GetRealPrice();     
+                                App.cvm.GetRealPrice();
+                                
                             }
                         }
                     })
