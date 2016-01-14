@@ -34,5 +34,10 @@ namespace retail_store
             this.Children.Add(myCart);
         }
         
+        public void AlertNet()
+        {
+
+            DisplayAlert("Network status changed", "You have lost Network you are now in offline mode", "OK");
+        }
     }
 }

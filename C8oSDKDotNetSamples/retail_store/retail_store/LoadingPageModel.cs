@@ -101,13 +101,13 @@ namespace retail_store
                         break;
                     case "update_articles":
                         Message = "We are downloading articles for the first use"; 
-                        Message3 = "This will take few minutes";
+                        Message3 = "This may take a few minutes";
                         Message2 = "There is about 3771 articles";
                         break;
                     case "update_cart":
                         Message = "We are synchronizing your cart.";
                         Message2 = "It's alomost finished";
-                        Message3 = "This will take about few seconds";
+                        Message3 = "This will take a few seconds";
                         break;
                 }
             }

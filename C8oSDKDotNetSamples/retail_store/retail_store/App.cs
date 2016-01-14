@@ -30,8 +30,6 @@ namespace retail_store
             Here is a tabbedPage from wich we will be able to navigate into the whole application.*/
             MainPage = new LoadingPage();
 
-            
-
             execution = false;
             connectivity = CrossConnectivity.Current.IsConnected;
 
@@ -47,6 +45,7 @@ namespace retail_store
                 else
                 {
                     ((TabbedPageP)this.MainPage).myCart.SetVisibility(false);
+                    ((TabbedPageP)this.MainPage).AlertNet();
                 }
             };
 
@@ -58,7 +57,7 @@ namespace retail_store
                     new C8oSettings().                          //
                     SetTimeout(10000).                          // Here we set timeout to 10000 ms
                     SetTrustAllCertificates(true).              //
-                    SetDefaultDatabaseName("retaildbimg").         // Here we define the default database name as "retaildb"
+                    SetDefaultDatabaseName("retaildb").         // Here we define the default database name as "retaildb"
                     SetIsLogRemote(true)                        //
                 );
 
