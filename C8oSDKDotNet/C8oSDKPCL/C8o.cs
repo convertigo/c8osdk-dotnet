@@ -43,7 +43,6 @@ namespace Convertigo.SDK
         internal static readonly string ENGINE_PARAMETER_CONNECTOR = "__connector";
         internal static readonly string ENGINE_PARAMETER_TRANSACTION = "__transaction";
         internal static readonly string ENGINE_PARAMETER_ENCODED = "__encoded";
-        internal static readonly string ENGINE_PARAMETER_LOCAL_CACHE = "__localCache";
         internal static readonly string ENGINE_PARAMETER_DEVICE_UUID = "__uuid";
         internal static readonly string ENGINE_PARAMETER_PROGRESS = "__progress";
 
@@ -57,13 +56,10 @@ namespace Convertigo.SDK
         public static readonly string FS_SUBKEY_SEPARATOR = "_use_subkey_separator";
 
         //*** Local cache keys ***//
-
-        public static readonly string LOCAL_CACHE_PARAMETER_KEY_ENABLED = "enabled";
-        public static readonly string LOCAL_CACHE_PARAMETER_KEY_POLICY = "policy";
-        public static readonly string LOCAL_CACHE_PARAMETER_KEY_TTL = "ttl";
-        public static readonly string LOCAL_CACHE_DOCUMENT_KEY_RESPONSE = "response";
-        public static readonly string LOCAL_CACHE_DOCUMENT_KEY_RESPONSE_TYPE = "responseType";
-        public static readonly string LOCAL_CACHE_DOCUMENT_KEY_EXPIRATION_DATE = "expirationDate";
+        
+        internal static readonly string LOCAL_CACHE_DOCUMENT_KEY_RESPONSE = "response";
+        internal static readonly string LOCAL_CACHE_DOCUMENT_KEY_RESPONSE_TYPE = "responseType";
+        internal static readonly string LOCAL_CACHE_DOCUMENT_KEY_EXPIRATION_DATE = "expirationDate";
 
         public static readonly string LOCAL_CACHE_DATABASE_NAME = "c8olocalcache";
 
