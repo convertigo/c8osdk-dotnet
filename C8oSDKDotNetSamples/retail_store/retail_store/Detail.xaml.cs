@@ -33,6 +33,9 @@ namespace retail_store
             //Image2.GestureRecognizers.Add(tapImage);
             Image3.GestureRecognizers.Add(tapImage);
             Image2.GestureRecognizers.Add(tapImage);
+            //labelImage.BindingContext = DependencyService.Get<IDisplay>();
+            labelImage.WidthRequest = DependencyService.Get<IDisplay>().Width;
+            labelImage.HeightRequest = DependencyService.Get<IDisplay>().Height;
             if (Device.OS == TargetPlatform.iOS)
             {
                 NavigationPage.SetHasNavigationBar(this, true);
@@ -47,6 +50,8 @@ namespace retail_store
             }
             searchUnit();
             labelCount.BindingContext = this;
+
+           // Debug.WriteLine("Height: "+ DependencyService.Get<IDisplay>().Height+" Width: "+ DependencyService.Get<IDisplay>().Width);
         }
         public void searchUnit()
         {   
@@ -85,6 +90,7 @@ namespace retail_store
             }
             searchUnit();
         }
+
         protected override void OnAppearing()
         {
             searchUnit();

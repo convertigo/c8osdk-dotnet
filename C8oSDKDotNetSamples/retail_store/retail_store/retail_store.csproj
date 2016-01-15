@@ -52,6 +52,7 @@
     <Compile Include="Detail.xaml.cs">
       <DependentUpon>Detail.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IDisplay.cs" />
     <Compile Include="IGetImage.cs" />
     <Compile Include="ListProducts.xaml.cs">
       <DependentUpon>ListProducts.xaml</DependentUpon>

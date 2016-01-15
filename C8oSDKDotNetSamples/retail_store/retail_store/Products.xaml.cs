@@ -79,6 +79,7 @@ namespace retail_store
 
         public async void Search(string valLow, string valUp)
         {
+           
             JObject data = await App.myC8o.CallJson(
                    "fs://.view",                                    //We get here a view from the default project as the project has been define in the endpoint URL.   
                    "ddoc", "design",                                //And give here parameters
@@ -92,7 +93,7 @@ namespace retail_store
                        Debug.WriteLine("LAA" + e);                // Handle errors..
                    })
                    .Async();                                      //Async Call
-
+            
             CategoryViewModel categvm = new CategoryViewModel();
             categvm.PopulateData(data, true);
             listView.BindingContext = categvm;

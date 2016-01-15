@@ -12,7 +12,7 @@ namespace retail_store
     public class App : Application
     {
         // We define the endpoint Url throw a constant variable
-        const string conn = "http://192.168.100.86:18080/convertigo/projects/sampleMobileRetailStore";
+        const string conn = "http://192.168.100.86:18080/convertigo/projects/sampleSDKBackend";
         public static C8o myC8o;
         public static C8o myC8oCart;
         public static Dictionary<String, Object> models;
@@ -57,7 +57,7 @@ namespace retail_store
                     new C8oSettings().                          //
                     SetTimeout(10000).                          // Here we set timeout to 10000 ms
                     SetTrustAllCertificates(true).              //
-                    SetDefaultDatabaseName("retaildb").         // Here we define the default database name as "retaildb"
+                    SetDefaultDatabaseName("retaildbimg").         // Here we define the default database name as "retaildb"
                     SetIsLogRemote(true)                        //
                 );
 
@@ -125,7 +125,7 @@ namespace retail_store
                         })
                         .Async();                       //Async Call
                 }
-
+                
                 LoadP.Task = "update_cart";
                 //CallJson Method is called thanks to C8o Object    
                 await myC8oCart.CallJson(
