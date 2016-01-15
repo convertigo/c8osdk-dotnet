@@ -43,8 +43,8 @@
   <ItemGroup>
     <Compile Include="C8oFileTransfer.cs" />
     <Compile Include="C8o.cs" />
+    <Compile Include="C8oLocalCache.cs" />
     <Compile Include="Internal\C8oCallTask.cs" />
-    <Compile Include="Internal\C8oEnum.cs" />
     <Compile Include="C8oExceptionListener.cs" />
     <Compile Include="Internal\C8oExceptionMessage.cs" />
     <Compile Include="C8oProgress.cs" />

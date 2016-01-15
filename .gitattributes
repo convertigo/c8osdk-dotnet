@@ -765,6 +765,7 @@ C8oSDKDotNet/C8oSDKPCL/C8oExceptionListener.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oFileTransfer.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oFileTransferStatus.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oFullSyncTranslator.cs -text
+C8oSDKDotNet/C8oSDKPCL/C8oLocalCache.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oLocalCacheResponse.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oLogger.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oNetPclSDK.csproj.user -text
@@ -783,7 +784,6 @@ C8oSDKDotNet/C8oSDKPCL/C8oXMLResponseListener.cs -text
 C8oSDKDotNet/C8oSDKPCL/Delegates.cs -text
 C8oSDKDotNet/C8oSDKPCL/Exceptions.cs -text
 C8oSDKDotNet/C8oSDKPCL/Internal/C8oCallTask.cs -text
-C8oSDKDotNet/C8oSDKPCL/Internal/C8oEnum.cs -text
 C8oSDKDotNet/C8oSDKPCL/Internal/C8oExceptionMessage.cs -text
 C8oSDKDotNet/C8oSDKPCL/Internal/C8oFileManager.cs -text
 C8oSDKDotNet/C8oSDKPCL/Internal/C8oFullSync.cs -text

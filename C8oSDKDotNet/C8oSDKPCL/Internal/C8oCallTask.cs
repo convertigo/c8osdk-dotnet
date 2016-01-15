@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -83,61 +84,40 @@ namespace Convertigo.SDK.Internal
                 string c8oCallRequestIdentifier = null;
 
                 // Allows to enable or disable the local cache on a Convertigo requestable, default value is true
+                C8oLocalCache localCache = C8oUtils.GetParameterObjectValue(parameters, C8oLocalCache.PARAM, false) as C8oLocalCache;
                 bool localCacheEnabled = false;
 
-                // Defines the time to live of the cached response, in milliseconds
-                long localCacheTimeToLive = -1;
-                
-                // Checks if the local cache must be used
-                object localCacheParameterValue = C8oUtils.GetParameterObjectValue(parameters, C8o.ENGINE_PARAMETER_LOCAL_CACHE, false);
-
                 // If the engine parameter for local cache is specified
-                if (localCacheParameterValue != null)
+                if (localCache != null)
                 {
-                    var localCacheParameters = localCacheParameterValue as IDictionary<string, object>;
-                    // Checks if the local cache is enabled, if it is not then the local cache is enabled by default
-                    C8oUtils.TryGetParameterObjectValue<Boolean>(localCacheParameters, C8o.LOCAL_CACHE_PARAMETER_KEY_ENABLED, out localCacheEnabled, defaultValue: true);
-                    if (localCacheEnabled)
+                    // Removes local cache parameters and build the c8o call request identifier
+                    parameters.Remove(C8oLocalCache.PARAM);
+
+                    if (localCacheEnabled = localCache.enable)
                     {
-                        // Removes local cache parameters and build the c8o call request identifier
-                        parameters.Remove(C8o.ENGINE_PARAMETER_LOCAL_CACHE);
-
                         c8oCallRequestIdentifier = C8oUtils.IdentifyC8oCallRequest(parameters, responseType);
-                        // Unused to retrieve the response but used to store the response
-                        C8oUtils.TryGetParameterObjectValue<long>(localCacheParameters, C8o.LOCAL_CACHE_PARAMETER_KEY_TTL, out localCacheTimeToLive, defaultValue: localCacheTimeToLive);
 
-                        // Retrieves the local cache policy
-                        string localCachePolicyStr;
-                        if (C8oUtils.TryGetParameterObjectValue<String>(localCacheParameters, C8o.LOCAL_CACHE_PARAMETER_KEY_POLICY, out localCachePolicyStr))
+                        if (localCache.priority.IsAvailable(c8o))
                         {
-                            LocalCachePolicy localCachePolicy;
-                            if (LocalCachePolicy.TryGetLocalCachePolicy(localCachePolicyStr, out localCachePolicy))
+                            try
                             {
-                                if (localCachePolicy.IsAvailable())
+                                C8oLocalCacheResponse localCacheResponse = await c8o.c8oFullSync.GetResponseFromLocalCache(c8oCallRequestIdentifier);
+                                if (!localCacheResponse.Expired)
                                 {
-                                    try
+                                    if (responseType == C8o.RESPONSE_TYPE_XML)
                                     {
-                                        C8oLocalCacheResponse localCacheResponse = await c8o.c8oFullSync.GetResponseFromLocalCache(c8oCallRequestIdentifier);
-                                        if (!localCacheResponse.Expired)
-                                        {
-                                            //httpResponseListener.OnStringResponse(localCacheResponse.Response, parameters);
-                                            //return;
-                                        }
+                                        return C8oTranslator.StringToXml(localCacheResponse.Response);
                                     }
-                                    catch (C8oUnavailableLocalCacheException)
+                                    else if (responseType == C8o.RESPONSE_TYPE_JSON)
                                     {
-                                        // does nothing
+                                        return C8oTranslator.StringToJson(localCacheResponse.Response);
                                     }
                                 }
                             }
-                            else
+                            catch (C8oUnavailableLocalCacheException)
                             {
-                                throw new ArgumentException(C8oExceptionMessage.GetLocalCachePolicy(localCachePolicyStr));
+                                // no entry
                             }
-                        }
-                        else
-                        {
-                            throw new ArgumentException(C8oExceptionMessage.GetLocalCacheParameters());
                         }
                     }
                 }
@@ -150,7 +130,39 @@ namespace Convertigo.SDK.Internal
                 // Build the c8o call URL
                 c8oCallUrl = c8o.Endpoint + "/." + responseType;
 
-                var httpResponse = await c8o.httpInterface.HandleC8oCallRequest(c8oCallUrl, parameters);
+                HttpWebResponse httpResponse;
+
+                try
+                {
+                    httpResponse = await c8o.httpInterface.HandleC8oCallRequest(c8oCallUrl, parameters);
+                }
+                catch (Exception e)
+                {
+                    if (localCacheEnabled)
+                    {
+                        try
+                        {
+                            C8oLocalCacheResponse localCacheResponse = await c8o.c8oFullSync.GetResponseFromLocalCache(c8oCallRequestIdentifier);
+                            if (!localCacheResponse.Expired)
+                            {
+                                if (responseType == C8o.RESPONSE_TYPE_XML)
+                                {
+                                    return C8oTranslator.StringToXml(localCacheResponse.Response);
+                                }
+                                else if (responseType == C8o.RESPONSE_TYPE_JSON)
+                                {
+                                    return C8oTranslator.StringToJson(localCacheResponse.Response);
+                                }
+                            }
+                        }
+                        catch (C8oUnavailableLocalCacheException)
+                        {
+                            // no entry
+                        }
+                    }
+                    return new C8oException(C8oExceptionMessage.handleC8oCallRequest(), e);
+                }
+
                 var responseStream = httpResponse.GetResponseStream();
 
                 object response;
@@ -172,62 +184,63 @@ namespace Convertigo.SDK.Internal
                 if (localCacheEnabled)
                 {
                     // String responseString = C8oTranslator.StreamToString(responseStream);
-                    long expirationdate = localCacheTimeToLive;
-                    if (expirationdate > 0) {
-                        expirationdate = expirationdate + C8oUtils.GetUnixEpochTime(DateTime.Now);
+                    long expirationDate = -1;
+                    if (localCache.ttl > 0) {
+                        expirationDate = localCache.ttl + C8oUtils.GetUnixEpochTime(DateTime.Now);
                     }
-                    var localCacheResponse = new C8oLocalCacheResponse(responseString, null, expirationdate);
+                    var localCacheResponse = new C8oLocalCacheResponse(responseString, responseType, expirationDate);
                     await c8o.c8oFullSync.SaveResponseToLocalCache(c8oCallRequestIdentifier, localCacheResponse);
                 }
 
                 return response;
             }
         }
-            private void HandleResponse(object result) {
-                try
+
+        private void HandleResponse(object result) {
+            try
+            {
+                if (result is VoidResponse)
                 {
-                    if (result is VoidResponse)
-                    {
-                        return;
-                    }
-
-                    if (c8oResponseListener == null)
-                    {
-                        return;
-                    }
-
-                    if (result is XDocument)
-                    {
-                        c8o.c8oLogger.LogC8oCallXMLResponse(result as XDocument, c8oCallUrl, parameters);
-                        (c8oResponseListener as C8oResponseXmlListener).OnXmlResponse(result as XDocument, parameters);
-                    }
-                    else if (result is JObject)
-                    {
-                        c8o.c8oLogger.LogC8oCallJSONResponse(result as JObject, c8oCallUrl, parameters);
-                        (c8oResponseListener as C8oResponseJsonListener).OnJsonResponse(result as JObject, parameters);
-                    }
-                    /*else if (result instanceof com.couchbase.lite.Document) {
-                        // TODO log
-
-                        // The result is a fillSync query response
-                        ((C8oFullSyncResponseListener) this.c8oResponseListener).onDocumentResponse(this.parameters, (com.couchbase.lite.Document) result);
-                    } else if (result instanceof QueryEnumerator) {
-                        // TODO log
-
-                        // The result is a fillSync query response
-                        ((C8oFullSyncResponseListener) this.c8oResponseListener).onQueryEnumeratorResponse(this.parameters, (QueryEnumerator) result);
-                    } else if (result instanceof Exception){
-                        // The result is an Exception
-                        C8o.handleCallException(this.c8oExceptionListener, this.parameters, (Exception) result);
-                    } else {
-                        // The result type is unknown
-                        C8o.handleCallException(this.c8oExceptionListener, this.parameters, new C8oException(C8oExceptionMessage.WrongResult(result)));
-                    }*/
+                    return;
                 }
-                catch (Exception e)
+
+                if (c8oResponseListener == null)
                 {
-                    c8o.HandleCallException(c8oExceptionListener, parameters, e);
+                    return;
                 }
+
+                if (result is XDocument)
+                {
+                    c8o.c8oLogger.LogC8oCallXMLResponse(result as XDocument, c8oCallUrl, parameters);
+                    (c8oResponseListener as C8oResponseXmlListener).OnXmlResponse(result as XDocument, parameters);
+                }
+                else if (result is JObject)
+                {
+                    c8o.c8oLogger.LogC8oCallJSONResponse(result as JObject, c8oCallUrl, parameters);
+                    (c8oResponseListener as C8oResponseJsonListener).OnJsonResponse(result as JObject, parameters);
+                }
+                /*else if (result instanceof com.couchbase.lite.Document) {
+                    // TODO log
+
+                    // The result is a fillSync query response
+                    ((C8oFullSyncResponseListener) this.c8oResponseListener).onDocumentResponse(this.parameters, (com.couchbase.lite.Document) result);
+                } else if (result instanceof QueryEnumerator) {
+                    // TODO log
+
+                    // The result is a fillSync query response
+                    ((C8oFullSyncResponseListener) this.c8oResponseListener).onQueryEnumeratorResponse(this.parameters, (QueryEnumerator) result);
+                } else if (result instanceof Exception){
+                    // The result is an Exception
+                    C8o.handleCallException(this.c8oExceptionListener, this.parameters, (Exception) result);
+                } else {
+                    // The result type is unknown
+                    C8o.handleCallException(this.c8oExceptionListener, this.parameters, new C8oException(C8oExceptionMessage.WrongResult(result)));
+                }*/
             }
+            catch (Exception e)
+            {
+                c8o.HandleCallException(c8oExceptionListener, parameters, e);
+            }
+        }
     }
 }

@@ -3,7 +3,7 @@ using System;
 
 namespace Convertigo.SDK
 {
-    public class C8oLocalCacheResponse
+    internal class C8oLocalCacheResponse
     {
         private string response;
         private string responseType;
