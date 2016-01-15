@@ -2,7 +2,6 @@
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using Xamarin.Forms;
 using System.IO;
 

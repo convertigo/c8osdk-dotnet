@@ -26,7 +26,7 @@ namespace retail_store.iOS
                 }
                 else
                 {
-                    return UIScreen.MainScreen.Bounds.Size.Height / 2gg.1;
+                    return UIScreen.MainScreen.Bounds.Size.Height / 2.1;
                 }
                 
             }
