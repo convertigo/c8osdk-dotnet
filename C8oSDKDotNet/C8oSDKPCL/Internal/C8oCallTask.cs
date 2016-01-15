@@ -93,7 +93,7 @@ namespace Convertigo.SDK.Internal
                     // Removes local cache parameters and build the c8o call request identifier
                     parameters.Remove(C8oLocalCache.PARAM);
 
-                    if (localCacheEnabled = localCache.enable)
+                    if (localCacheEnabled = localCache.enabled)
                     {
                         c8oCallRequestIdentifier = C8oUtils.IdentifyC8oCallRequest(parameters, responseType);
 
