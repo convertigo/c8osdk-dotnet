@@ -20,6 +20,7 @@ namespace retail_store
             IsVisibleProd(false);
             NavigationPage.SetHasNavigationBar(this, false);
             listView.SeparatorColor = Color.Black;
+            //Debug.WriteLine(DependencyService.Get<IDisplay>().ToString());
         }
         
         public async  void tapImage_Tapped_promo(object sender, EventArgs e)

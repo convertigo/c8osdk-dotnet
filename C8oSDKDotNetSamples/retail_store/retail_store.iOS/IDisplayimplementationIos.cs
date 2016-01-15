@@ -3,27 +3,54 @@ using System.Collections.Generic;
 using System.Text;
 
 using retail_store.iOS;
+using retail_store;
+using UIKit;
+
+[assembly: Xamarin.Forms.Dependency(typeof(IDisplayimplementationIos))]
 namespace retail_store.iOS
 {
-    public class IDisplayimplementationIos
+    public class IDisplayimplementationIos : IDisplay
     {
-        /*public int Height
+
+        public IDisplayimplementationIos()
+        {
+
+        }
+        public Double Height
         {
             get
             {
-                return (int)DpFromPx(Application.Context.Resources.DisplayMetrics.HeightPixels);
+                if (UIDevice.CurrentDevice.Orientation == UIDeviceOrientation.Portrait)
+                {
+                    return (UIScreen.MainScreen.Bounds.Size.Height / 2.1);
+                }
+                else
+                {
+                    return UIScreen.MainScreen.Bounds.Size.Height / 2gg.1;
+                }
                 
             }
         }
 
-        public int Width
+        public Double Width
         {
-            get { return (int)DpFromPx(Application.Context.Resources.DisplayMetrics.WidthPixels); }
-        }
+            get
+            {
 
-        private static float DpFromPx(int px)
-        {
-            return px / Application.Context.Resources.DisplayMetrics.Density;
-        }*/
+                if (UIDevice.CurrentDevice.Orientation == UIDeviceOrientation.Portrait)
+                {
+                    return UIScreen.MainScreen.Bounds.Size.Width / 1.2;
+                }
+                else
+                {
+                    return UIScreen.MainScreen.Bounds.Size.Width / 3;
+                }
+                
+            }
+        }
     }
+
 }
+
+
+
