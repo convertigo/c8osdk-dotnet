@@ -19,7 +19,8 @@ namespace Sample05Shared
             Output = new CrossOuput(output);
             Debug = new CrossDebug(debug);
 
-            c8o = new C8o("http://tonus.twinsoft.fr:18080/convertigo/projects/Sample05",
+            //c8o = new C8o("http://192.168.100.211:28080/convertigo/projects/Sample05",
+            c8o = new C8o("http://pulse.twinsoft.fr:18080/convertigo/projects/Sample05",
                 new C8oSettings().SetFullSyncUsername("admin")
                 .SetFullSyncPassword("admin")
                 .SetDefaultDatabaseName("sample05")
@@ -339,12 +340,15 @@ namespace Sample05Shared
         public void OnTest12(object sender, EventArgs args)
         {
             Output.Text = "Test12\n";
+            Output.Text += "=== Ping local cache priority local 10s ==\n";
 
-            var c8o = new C8o("https://tonus.twinsoft.fr:18081/convertigo/projects/Sample05", new C8oSettings().SetTrustAllCertificates(true));
-
-            c8o.CallXml(".sample05.GetServerInfo").ThenUI((xml, param) =>
+            c8o.CallJson(".Ping",
+                "pong1", "local cache?",
+                "pong2", "I hope priority local",
+                C8oLocalCache.PARAM, new C8oLocalCache(C8oLocalCache.Priority.LOCAL, 10000)
+            ).ThenUI((json, param) =>
             {
-                Output.Text += xml.ToString();
+                Output.Text += json.ToString();
                 Output.Text += "\n==========\n";
                 return null;
             }).FailUI((e, parameters) =>
@@ -356,10 +360,13 @@ namespace Sample05Shared
         public void OnTest13(object sender, EventArgs args)
         {
             Output.Text = "Test13\n";
+            Output.Text += "=== Ping local cache priority server 30s ==\n";
 
-            var c8o = new C8o("https://tonus.twinsoft.fr:18081/convertigo/projects/Sample05", new C8oSettings().SetTrustAllCertificates(true));
-
-            c8o.CallXml(".sample05.GetServerInfo").ThenUI((xml, param) =>
+            c8o.CallXml(".Ping",
+                "pong1", "local cache?",
+                "pong2", "I hope priority server",
+                C8oLocalCache.PARAM, new C8oLocalCache(C8oLocalCache.Priority.SERVER, 30000)
+            ).ThenUI((xml, param) =>
             {
                 Output.Text += xml.ToString();
                 Output.Text += "\n==========\n";
