@@ -1057,6 +1057,7 @@ C8oSDKDotNetSamples/SampleBigFileTransfer/SampleBigFileTransfer/SampleBigFileTra
 C8oSDKDotNetSamples/SampleBigFileTransfer/SampleBigFileTransfer/SampleBigFileTransfer.shproj -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/Assets/AboutAssets.txt -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/GetImageImplementation.cs -text
+C8oSDKDotNetSamples/retail_store/retail_store.Droid/IDispalyImplementationAndroid.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/MainActivity.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/MainApplication.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/PluginsHelp/ConnectivityReadme.txt -text
@@ -1084,6 +1085,8 @@ C8oSDKDotNetSamples/retail_store/retail_store.Droid/packages.config -text
 C8oSDKDotNetSamples/retail_store/retail_store.Droid/retail_store.Droid.csproj -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/AppDelegate.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Entitlements.plist -text
+C8oSDKDotNetSamples/retail_store/retail_store.iOS/GetImageImplementationIOS.cs -text
+C8oSDKDotNetSamples/retail_store/retail_store.iOS/IDisplayimplementationIos.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Info.plist -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/Main.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store.iOS/PluginsHelp/ConnectivityReadme.txt -text
@@ -1133,6 +1136,7 @@ C8oSDKDotNetSamples/retail_store/retail_store/CategoryViewModel.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/ConnectivityChangedEventArgs.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/Detail.xaml -text
 C8oSDKDotNetSamples/retail_store/retail_store/Detail.xaml.cs -text
+C8oSDKDotNetSamples/retail_store/retail_store/IDisplay.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/IGetImage.cs -text
 C8oSDKDotNetSamples/retail_store/retail_store/ListProducts.xaml -text
 C8oSDKDotNetSamples/retail_store/retail_store/ListProducts.xaml.cs -text
