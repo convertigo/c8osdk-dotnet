@@ -766,7 +766,6 @@ C8oSDKDotNet/C8oSDKPCL/C8oFileTransfer.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oFileTransferStatus.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oFullSyncTranslator.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oLocalCache.cs -text
-C8oSDKDotNet/C8oSDKPCL/C8oLocalCacheResponse.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oLogger.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oNetPclSDK.csproj.user -text
 C8oSDKDotNet/C8oSDKPCL/C8oProgress.cs -text
@@ -791,6 +790,7 @@ C8oSDKDotNet/C8oSDKPCL/Internal/C8oFullSyncEnum.cs -text
 C8oSDKDotNet/C8oSDKPCL/Internal/C8oFullSyncHttp.cs -text
 C8oSDKDotNet/C8oSDKPCL/Internal/C8oFullSyncUtils.cs -text
 C8oSDKDotNet/C8oSDKPCL/Internal/C8oHttpInterface.cs -text
+C8oSDKDotNet/C8oSDKPCL/Internal/C8oLocalCacheResponse.cs -text
 C8oSDKDotNet/C8oSDKPCL/Internal/C8oTranslator.cs -text
 C8oSDKDotNet/C8oSDKPCL/Internal/C8oUtils.cs -text
 C8oSDKDotNet/C8oSDKPCL/Internal/VoidResponse.cs -text
