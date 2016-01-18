@@ -106,7 +106,7 @@ namespace retail_store
                         break;
                     case "update_cart":
                         Message = "We are synchronizing your cart.";
-                        Message2 = "It's alomost finished";
+                        Message2 = "It's almost finished";
                         Message3 = "This will take a few seconds";
                         break;
                 }
