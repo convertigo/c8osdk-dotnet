@@ -11,6 +11,7 @@ namespace retail_store
 {
     public class App : Application
     {
+        //try
         // We define the endpoint Url throw a constant variable
         const string conn = "http://demo.convertigo.net/cems/projects/sampleSDKBackend";
         public static C8o myC8o;
