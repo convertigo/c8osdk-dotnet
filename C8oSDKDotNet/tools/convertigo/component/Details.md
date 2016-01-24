@@ -10,7 +10,7 @@ Convertigo supports Xamarin developpers. Services brought by the platform are av
 - Auditing Analytics and logs (SQL, and Google Analytics)
 
 
-Download Convertigo Technology Overview : [http://www.convertigo.com/downloads/TechnolologyOverview.pdf](http://www.convertigo.com/downloads/TechnolologyOverview.pdf "Technology Overview")
+Download Convertigo Technology Overview : [http://download.convertigo.com/webrepository/Marketing/ConvertigoTechnologyOverview.pdf](http://download.convertigo.com/webrepository/Marketing/ConvertigoTechnologyOverview.pdf "Technology Overview")
 
 Access Convertigo MBaaS documentation : [http://www.convertigo.com/document/latest/](http://www.convertigo.com/document/latest/ "Documentation")
 

@@ -1,17 +1,21 @@
 
 # Getting Started with Convertigo MBaaS SDK
-**Convertigo MBaaS SDK** makes it possible to connect Xamarin Apps to **Convertigo** Back end Services You will then be able to call some backend services and to interact with local NoSQL databases. To get started, first, follow these steps to create a backend service your app will call :
+**Convertigo MBaaS SDK** makes it possible to connect Xamarin Apps to **Convertigo** Back end Services You will then be able to call some backend services sync data and interact with local NoSQL databases. To get started we provided a pre-deployed sample backend Convertigo projet deployed on our demo server. This backend service can be acessed here :
+
+[http://demo.convertigo.net/cems/projects/sampleSDKBackend](http://demo.convertigo.net/cems/projects/sampleSDKBackend)
+
+Alternatively you can deploy by yourself this this sample backend project on your own Convertigo environment :  
 
 1. Register on Convertigo.com to get your free Convertigo Developper account. This will give you a free trial cloud access, a **PSC** (Personal Server Certificate) to start your Convertigo Studio and a free account on Convertigo support forums: [http://register.convertigo.com](http://register.convertigo.com "Register")
 
 
 2. Download Convertigo Studio. This will enable you to create back end services called "sequences". You will then be able to call these sequences from your Xamarin apps: [http://sourceforge.net/projects/convertigo/files/latest/download ](http://sourceforge.net/projects/convertigo/files/latest/download "Download Convertigo Studio")
 
-3. Download the retailStore backend sample project from here : [http://download.convertigo.com/retailSore.car](http://download.convertigo.com/retailSore.car "Download project")
+3. Download the **sampleSDKBackend** backend sample project from here : [http://download.convertigo.com/webrepository/sampleSDKBackend.car](http://download.convertigo.com/webrepository/sampleSDKBackend.car "Download project") . This file is about 60Mb because it holds a sample database containing product images. 
 
 4. Import sample project in Convertigo Studio : **File->Import->Convertigo->Convertigo Project**, then cick **next** and browse for the downloaded **.CAR** project, click **Next**  then **Finish**"
 
-5. Deploy your sample retailStore backend project on the trial cloud: In Convertigo Studio, right click your imported project, then choose **Deploy** , **Skip** the version number and choose **trial.convertigo.net** the server list. Ignore the pre-filled account and password and hit **Deploy**. The project will be deployed on the trial Convertigo Cloud.
+5. Deploy your sample retailStore backend project on your own Convertigo server.
 
 You will be ready now to start Xamarin client side programming :
 
@@ -47,9 +51,9 @@ In Xamarin Studio or Visual Studio 2015, Use this to create a **C8o** end point 
 	using Convertigo.SDK;
 	using Newtonsoft.Json.Linq;
     
-    C8o myC8o = new C8o("http://trial.convertigo.net/cems/projects/retailStore");
+    C8o myC8o = new C8o("http://demo.convertigo.net/cems/projects/sampleSDKBackend");
 
-This will create an End point on on trial Convertigo Cloud (**http://trial.convertigo.net/cems/projects**) and select default project to be the **retailStore** project we deployed previously. 
+This will create an End point on on trial Convertigo Cloud (**http://demo.convertigo.net/cems/projects**) and select default project to be the **sampleSDKBackend** project we deployed previously. 
 
 ## Use it:##
 To call a service just use the **CallJSON** method  passing the reference to the service you want to call. A service reference, also called a "**requestable**" is in this form :
