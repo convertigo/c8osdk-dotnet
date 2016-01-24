@@ -53,7 +53,7 @@ In Xamarin Studio or Visual Studio 2015, Use this to create a **C8o** end point 
     
     C8o myC8o = new C8o("http://demo.convertigo.net/cems/projects/sampleSDKBackend");
 
-This will create an End point on on trial Convertigo Cloud (**http://demo.convertigo.net/cems/projects**) and select default project to be the **sampleSDKBackend** project we deployed previously. 
+This will create an End point on on demo Convertigo Cloud (**http://demo.convertigo.net/cems/projects**) and select default project to be the **sampleSDKBackend** project we deployed previously. 
 
 ## Use it:##
 To call a service just use the **CallJSON** method  passing the reference to the service you want to call. A service reference, also called a "**requestable**" is in this form :
