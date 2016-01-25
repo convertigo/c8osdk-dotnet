@@ -77,7 +77,7 @@ If you prefer to use the promise chaining mode you can use the promise object in
 	).Then ((response, parameters) => {							// This will run as soon as the Convertigo server responds
 		// do my stuff in a	 worker thread						// This is worker thread not suitable to update UI
 		String sc = (String)response ["document"]["shopCode"];	// Get the data using Linq
-		myC8o.Log (C8oLogLevel.DEBUG, sc);						// Log data on the Convertigo Server
+		myC8o.Log.debug (sc);									// Log data on the Convertigo Server
 		return null;											// last step of the promise chain, return null
 	});
 
