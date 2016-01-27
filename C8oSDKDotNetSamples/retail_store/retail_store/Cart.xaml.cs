@@ -23,7 +23,7 @@ namespace retail_store
             labReDis.BindingContext = (ReduceTot)App.cvm.Reduce[0];
             listView.ItemsSource = App.cvm.ProductStock;
             listView.SeparatorColor = Color.Black;
-            listView.IsRefreshing = true;
+            //  listView.IsRefreshing = true;
 
             listView.ItemSelected += (object sender, SelectedItemChangedEventArgs e) =>
             {
@@ -62,7 +62,7 @@ namespace retail_store
 
         void tapImage_Tapped(object sender, EventArgs e)
         {
-            listView.IsRefreshing = true;
+            //listView.IsRefreshing = true;
             string id = ((ViewCell)((Image)sender).Parent.Parent.Parent.Parent.Parent.Parent).ClassId.ToString();
             string imageName = ((FileImageSource)((Image)sender).Source).File.ToString();
             switch (imageName)
@@ -80,7 +80,7 @@ namespace retail_store
                     App.cvm.deleteCart();
                     break;
             }
-            listView.IsRefreshing = false;
+            //listView.IsRefreshing = false;
         }
         public async void tapImage_dell(object sender, EventArgs e)
         {

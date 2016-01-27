@@ -79,8 +79,11 @@ namespace retail_store
         //PopulateData allow us to get the whole objects contained in the local base and put it on productStock(list)
         public async void PopulateData(JObject json,bool check)
         {
-            this.ProductStock.Clear();
+            //this.ProductStock.Clear();
+            //ObservableCollection<ProdStock> data = new ObservableCollection<ProdStock>();
             //Browsing JArray in order to collect data
+            int j = 0;
+            int nb = (ProductStock.Count - 1);
             foreach (JObject jo in (JArray)json["rows"])
             {
 
@@ -99,18 +102,30 @@ namespace retail_store
                     {
                         byte[] b = DependencyService.Get<IGetImage>().GetMyImage(((string)data2["_attachments"]["img.jpg"]["content_path"]));
                         ImageSource i = ImageSource.FromStream(() => new MemoryStream(b));
-                        this.ProductStock.Add(new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"], (String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"], (float)jo["value"]["count"], i));
+                        ProductStock.RemoveAt(j);
+                        this.ProductStock.Insert(j,new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"], (String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"], (float)jo["value"]["count"], i));
                     }
                     else
                     {
-                        this.ProductStock.Add(new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"], (String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"], (float)jo["value"]["count"]));
+                        ProductStock.RemoveAt(j);
+                        ProductStock.Insert(j, new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"], (String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"], (float)jo["value"]["count"]));
+
+
                     }
-
-
+                    j++;
+                    
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.ToString());
+                }
+                if ((nb ) > j )
+                {
+                    for (int i = j; i < (nb); i++)
+                    {
+                        ProductStock.RemoveAt(i);
+                    }
+                    
                 }
             }
         }
