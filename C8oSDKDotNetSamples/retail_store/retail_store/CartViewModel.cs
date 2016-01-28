@@ -4,10 +4,11 @@ using System.Diagnostics;
 using System.Collections.ObjectModel;
 using Xamarin.Forms;
 using System.IO;
+using System.ComponentModel;
 
 namespace retail_store
 {
-    public class CartViewModel : ObservableCollection<ProdStock> ,Model
+    public class CartViewModel : INotifyPropertyChanged, Model
     {
         //list of productstock contains in local base
         private ObservableCollection<ProdStock> productStock;
@@ -15,6 +16,7 @@ namespace retail_store
         //this is the product that we wants to insert.
         private Prod product;
         //this is the product stock that we will insert into database;
+        public event PropertyChangedEventHandler PropertyChanged;
         private ProdStock productToInsert;
 
         //Constructors
@@ -36,6 +38,14 @@ namespace retail_store
             Reduce.Add(new ReduceTot("0", "0"));
         }
 
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this,
+                    new PropertyChangedEventArgs(propertyName));
+            }
+        }
         //Getters and Setters
         public ObservableCollection<ProdStock> ProductStock
         {
@@ -46,6 +56,7 @@ namespace retail_store
             set
             { 
                 productStock = value;
+                OnPropertyChanged("ProductStock");
             }
         }
 
@@ -79,14 +90,10 @@ namespace retail_store
         //PopulateData allow us to get the whole objects contained in the local base and put it on productStock(list)
         public async void PopulateData(JObject json,bool check)
         {
-            //this.ProductStock.Clear();
-            //ObservableCollection<ProdStock> data = new ObservableCollection<ProdStock>();
-            //Browsing JArray in order to collect data
-            int j = 0;
-            int nb = (ProductStock.Count - 1);
+            ProductStock.Clear();
+            ObservableCollection<ProdStock> data = new ObservableCollection<ProdStock>();
             foreach (JObject jo in (JArray)json["rows"])
             {
-
                 JObject data2 = await App.myC8o.CallJson(
                         "fs://.get",               //We post here the an item into the cart from the default project as the project has been define in the endpoint URL. 
                         "docid", (String)jo["id"]          //And give here parameters
@@ -102,30 +109,18 @@ namespace retail_store
                     {
                         byte[] b = DependencyService.Get<IGetImage>().GetMyImage(((string)data2["_attachments"]["img.jpg"]["content_path"]));
                         ImageSource i = ImageSource.FromStream(() => new MemoryStream(b));
-                        ProductStock.RemoveAt(j);
-                        this.ProductStock.Insert(j,new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"], (String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"], (float)jo["value"]["count"], i));
+
+                        ProductStock.Add(new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"], (String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"], (float)jo["value"]["count"], i));
                     }
                     else
                     {
-                        ProductStock.RemoveAt(j);
-                        ProductStock.Insert(j, new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"], (String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"], (float)jo["value"]["count"]));
 
-
+                        ProductStock.Add( new ProdStock((String)jo["value"]["name"], (String)jo["value"]["imageUrl"], (String)jo["id"], (String)jo["value"]["shopcode"], (String)jo["value"]["fatherId"], (String)jo["value"]["sku"], (String)jo["value"]["priceOfUnit"], (float)jo["value"]["count"]));
                     }
-                    j++;
-                    
                 }
                 catch (Exception e)
                 {
                     Debug.WriteLine(e.ToString());
-                }
-                if ((nb ) > j )
-                {
-                    for (int i = j; i < (nb); i++)
-                    {
-                        ProductStock.RemoveAt(i);
-                    }
-                    
                 }
             }
         }

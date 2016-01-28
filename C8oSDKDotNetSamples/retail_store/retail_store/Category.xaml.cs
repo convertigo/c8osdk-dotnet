@@ -59,18 +59,29 @@ namespace retail_store
             this.view = view;
             IsSearch = isSearch;
             this.listView.SeparatorColor = Color.Black;
+            this.listView.IsPullToRefreshEnabled = true;
             this.Categor2 = category;
             this.Leaf = "";
             this.Leaf2 = "{}";
-            run();
-          
-            
+            run(false);
+            listView.RefreshCommand = new Command(() =>
+            {
+                run(true);
+                listView.IsRefreshing = false;
+            });
+
+
         }
 
-        public async void run()
+        public async void run(bool isrefresh)
         {
-            this.indicator.IsVisible = true;
-            this.indicatorStr.IsVisible = true;
+            if (!isrefresh)
+            {
+                this.indicator.IsVisible = true;
+                this.indicatorStr.IsVisible = true;
+                listView.IsRefreshing = true;
+            }
+            
             //Here we call, thanks to myC8o object, a new view on our local base with specified parameters.
             JObject data = await App.myC8o.CallJson(
                     "fs://.view",                                   //We get here a view from the default project as the project has been define in the endpoint URL.  
@@ -84,36 +95,17 @@ namespace retail_store
                         Debug.WriteLine("" + e);                    // Handle errors..
                     })
                     .Async();                                       //Async Call
-
-            indicator.IsVisible = false;
-            indicatorStr.IsVisible = false;
             Object model;
             App.models.TryGetValue("CategoryViewModel", out model);
             Model mod = (Model)model;
             mod.PopulateData(data, IsProduct);
-            //imageB.Source = ((CategoryViewModel)mod).Rayons.
-            /*if (isProduct)
-            {
-              foreach(Rayon r in ((CategoryViewModel)mod).Rayons)
-                {
-                    JObject data2 = await App.myC8o.CallJson(
-                        "fs://.get",               //We post here the an item into the cart from the default project as the project has been define in the endpoint URL. 
-                        "docid", r.Id           //And give here parameters
-                        )
-                        .Fail((e, q) =>
-                        {
-                            Debug.WriteLine("" + e); // Handle errors..
-                        })
-                        .Async();                   //Async Call
-                    if (data2["_attachments"]["img.jpg"]["content_path"] != null)
-                    {
-                        byte[] b = DependencyService.Get<IGetImage>().GetMyImage(((string)data2["_attachments"]["img.jpg"]["content_path"]));
-                        r.Img = ImageSource.FromStream(() => new MemoryStream(b));
-                    }
-                }
-                //this.imageB.
-            }*/
 
+            if (!isrefresh)
+            {
+                this.indicator.IsVisible = false;
+                this.indicatorStr.IsVisible = false;
+                listView.IsRefreshing = false;
+            }
         }
 
         public async void OnItemTapped(object sender, ItemTappedEventArgs e)

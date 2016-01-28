@@ -20,7 +20,7 @@ namespace retail_store
             IsVisibleProd(false);
             NavigationPage.SetHasNavigationBar(this, false);
             listView.SeparatorColor = Color.Black;
-            //Debug.WriteLine(DependencyService.Get<IDisplay>().ToString());
+            
         }
         
         public async  void tapImage_Tapped_promo(object sender, EventArgs e)
@@ -60,6 +60,7 @@ namespace retail_store
 
         public void OnSearch(object sender, EventArgs e)
         {
+            
             if (SearchFor.Text != "")
             {
                 IsVisibleProd(true);
@@ -72,6 +73,7 @@ namespace retail_store
             {
                 IsVisibleProd(false);
             }
+            listView.IsRefreshing = false;
         }
         protected override void OnAppearing()
         {
@@ -87,7 +89,7 @@ namespace retail_store
                    "view", "Search",
                    "startkey", "['42', '" + valLow + "']",
                    "endkey", "['42', '" + valUp + "Z']",
-                   "limit", 20,
+                   //"limit", 20,
                    "skip", 0)
                    .Fail((e, p) =>
                    {
@@ -113,6 +115,7 @@ namespace retail_store
 
             }
             listView.IsVisible = b;
+            listView.IsRefreshing = true;
             imgN.Opacity = val;
             imgP.Opacity = val;
             imgN_text.Opacity = val;
