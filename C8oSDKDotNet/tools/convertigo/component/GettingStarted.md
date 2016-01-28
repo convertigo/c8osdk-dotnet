@@ -109,7 +109,7 @@ This will return in **data** all documents defined by the **children_byFather** 
 ## Full Convertigo SDK Documentation ##
 You can get all the detailed SDK documentations here:
 
-[http://www.convertigo.com/document/next/7-4-0/reference-manual/convertigo-sdk/](http://www.convertigo.com/document/next/7-4-0/reference-manual/convertigo-sdk/ "SDK Documentation")
+[http://www.convertigo.com/document/convertigo-client-sdk/programming-guide/](http://www.convertigo.com/document/convertigo-client-sdk/programming-guide/ "SDK Documentation")
 
 ## Convertigo Back End services Quick Start Videos##
 If you want more information on Convertigo back end services programming, have a a look to these quick start videos:
