@@ -121,7 +121,7 @@ namespace Convertigo.SDK
         /// </summary>
         /// <param name="logRemote"></param>
         /// <returns>The current<c>C8oSettings</c>, for chaining.</returns>
-        public C8oSettings SetIsLogRemote(bool logRemote)
+        public C8oSettings SetLogRemote(bool logRemote)
         {
             this.logRemote = logRemote;
             return this;
