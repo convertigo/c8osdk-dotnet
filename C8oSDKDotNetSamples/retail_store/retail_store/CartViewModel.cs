@@ -38,14 +38,6 @@ namespace retail_store
             Reduce.Add(new ReduceTot("0", "0"));
         }
 
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this,
-                    new PropertyChangedEventArgs(propertyName));
-            }
-        }
         //Getters and Setters
         public ObservableCollection<ProdStock> ProductStock
         {
@@ -86,6 +78,15 @@ namespace retail_store
             }
         }
 
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this,
+                    new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
         //PopulateData allow us to get the whole objects contained in the local base and put it on productStock(list)
         public async void PopulateData(JObject json,bool check)

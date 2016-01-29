@@ -29,7 +29,6 @@ namespace retail_store
             /* Set the MainPage
             Here is a tabbedPage from wich we will be able to navigate into the whole application.*/
             MainPage = new LoadingPage();
-
             execution = false;
             connectivity = CrossConnectivity.Current.IsConnected;
 
@@ -58,7 +57,7 @@ namespace retail_store
                     SetTimeout(10000).                          // Here we set timeout to 10000 ms
                     SetTrustAllCertificates(true).              //
                     SetDefaultDatabaseName("retaildb").         // Here we define the default database name as "retaildb"
-                    SetIsLogRemote(true)                        //
+                    SetLogRemote(true)                        //
                 );
 
             //instanciate C8o Object for our cart with attributes
@@ -67,29 +66,23 @@ namespace retail_store
                     SetTimeout(10000).                          // Here we set timeout to 10000 ms
                     SetTrustAllCertificates(true).              //
                     SetDefaultDatabaseName("cartdb").           // Here we define the default database name as "cartdb"
-                    SetIsLogRemote(true)                        //
+                    SetLogRemote(true)                        //
                 );
 
             //instanciate new Dictionary and CartViewModel 
             models = new Dictionary<string, object>();
             cvm = new CartViewModel();
-           
-
-            
 
             // If the device's operating system is IOS then we set a diffrent padding due to the header's floating bar
             if (Device.OS == TargetPlatform.iOS)
             {
                 MainPage.Padding = new Thickness(0, 20, 0, 0);
             }
-                
         }
 
     protected override async void OnStart()
         {
-
             // Handle when your app starts
-            
             //if network state is ok then we can authentificate
             if (connectivity)
             {
@@ -151,7 +144,6 @@ namespace retail_store
                             if (progress.Pull)              //If replication's direction is pull then...
                             { 
                                 App.cvm.GetRealPrice();
-                                
                             }
                         }
                     })
@@ -200,7 +192,5 @@ namespace retail_store
         {
             // Handle when your app resumes
         }
-        
-
     }
 }

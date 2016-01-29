@@ -29,8 +29,6 @@ namespace retail_store
                 OnAppearing();
                 listView.IsRefreshing = false;
             });
-            
-
             listView.ItemSelected += (object sender, SelectedItemChangedEventArgs e) =>
             {
                 if (e.SelectedItem == null)
@@ -95,7 +93,6 @@ namespace retail_store
                 App.cvm.SetProductBySku(id);
                 App.cvm.deleteCart();
             }
-
         }
     }  
 }
