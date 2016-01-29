@@ -148,11 +148,11 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="C8oSDKDotNet.iOS, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\C8oFullSyncExtensions.2.0.0\lib\Xamarin.iOS10\C8oSDKDotNet.iOS.dll</HintPath>
+      <HintPath>..\..\packages\C8oFullSyncExtensions.2.0.1\lib\Xamarin.iOS10\C8oSDKDotNet.iOS.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="C8oSDKPCL, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\C8oSDK-PCL.2.0.0\lib\C8oSDKPCL.dll</HintPath>
+      <HintPath>..\..\packages\C8oSDK-PCL.2.0.1\lib\C8oSDKPCL.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Couchbase.Lite, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
