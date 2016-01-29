@@ -76,7 +76,7 @@ namespace Convertigo.SDK
 
         public static string GetSdkVersion()
         {
-            return "2.0.0";
+            return "2.0.1";
         }
 
         //*** Attributes ***//
