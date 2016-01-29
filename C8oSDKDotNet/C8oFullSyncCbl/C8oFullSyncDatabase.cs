@@ -120,14 +120,12 @@ namespace Convertigo.SDK.Internal
 
             var rep = getReplication(fullSyncReplication);
 
-            // Cancel the replication if it is already running
-            if (rep != null)
-            {
-                rep.Stop();
-            }
-
             if (cancel)
             {
+                if (rep != null)
+                {
+                    rep.Stop();
+                }
                 return;
             }
             
@@ -148,7 +146,7 @@ namespace Convertigo.SDK.Internal
                     progress.Status = "" + rep.Status;
                     progress.Finished = !rep.IsRunning;
 
-                    if (progress.Finished)
+                    if (progress.Finished || rep.Status != ReplicationStatus.Active)
                     {
                         lock (mutex)
                         {
