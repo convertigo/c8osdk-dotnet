@@ -871,6 +871,8 @@ C8oSDKDotNetSamples/Sample04Wpf.Win/Properties/Resources.resx -text
 C8oSDKDotNetSamples/Sample04Wpf.Win/Properties/Settings.Designer.cs -text
 C8oSDKDotNetSamples/Sample04Wpf.Win/Properties/Settings.settings -text
 C8oSDKDotNetSamples/Sample04Wpf.Win/SampleBigFileTransfer.WPF.csproj -text
+C8oSDKDotNetSamples/Sample04Wpf.Win/ServeurDassault.cer -text
+C8oSDKDotNetSamples/Sample04Wpf.Win/clientDassault.p12 -text
 C8oSDKDotNetSamples/Sample04Wpf.Win/packages.config -text
 C8oSDKDotNetSamples/Sample04XamarinForms/Sample04XamarinForms.Droid/Assets/AboutAssets.txt -text
 C8oSDKDotNetSamples/Sample04XamarinForms/Sample04XamarinForms.Droid/MainActivity.cs -text

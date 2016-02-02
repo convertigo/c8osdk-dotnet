@@ -87,19 +87,22 @@ namespace Sample04Wpf.Win
                         }
                     }
 
-                    if (transferStatus.State == C8oFileTransferStatus.StateFinished)
+                    if (file != null)
                     {
-                        file.progress = "";
-                        FilesList.Items.Add(file);
-                    }
-                    else
-                    {
-                        file.progress = transferStatus.State.ToString();
-                        if (transferStatus.State == C8oFileTransferStatus.StateReplicate)
+                        if (transferStatus.State == C8oFileTransferStatus.StateFinished)
                         {
-                            file.progress += " " + transferStatus.Current + "/" + transferStatus.Total + " (" + transferStatus.Progress + ")";
+                            file.progress = "";
+                            FilesList.Items.Add(file);
                         }
-                        FilesListProgress.Items.Add(file);
+                        else
+                        {
+                            file.progress = transferStatus.State.ToString();
+                            if (transferStatus.State == C8oFileTransferStatus.StateReplicate)
+                            {
+                                file.progress += " " + transferStatus.Current + "/" + transferStatus.Total + " (" + transferStatus.Progress + ")";
+                            }
+                            FilesListProgress.Items.Add(file);
+                        }
                     }
                 });
             };
@@ -135,7 +138,7 @@ namespace Sample04Wpf.Win
             if (uuid != null)
             {
                 file.uuid = uuid.Value;
-                await app.fileTransfer.DownloadFile(file.uuid, "D:\\TMP\\" + file.uuid + "_" + file.name);
+                await app.fileTransfer.DownloadFile(file.uuid, "C:\\TMP\\" + file.uuid + "_" + file.name);
             }
         }
     }
