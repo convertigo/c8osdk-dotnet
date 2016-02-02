@@ -17,7 +17,14 @@ namespace Convertigo.SDK.Internal
                 {
                     if (requests.ContainsKey(sender as HttpWebRequest))
                     {
-                        return requests[sender as HttpWebRequest];
+                        if (requests[sender as HttpWebRequest])
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return chain.ChainStatus.Length == 0;
+                        }
                     }
                 }
                 return false;

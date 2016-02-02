@@ -19,8 +19,9 @@ namespace Sample05Shared
             Output = new CrossOuput(output);
             Debug = new CrossDebug(debug);
 
-            //c8o = new C8o("http://192.168.100.211:28080/convertigo/projects/Sample05",
-            c8o = new C8o("http://pulse.twinsoft.fr:18080/convertigo/projects/Sample05",
+            c8o = new C8o("http://192.168.100.95:18080/convertigo/projects/Sample05",
+            // c8o = new C8o("http://pulse.twinsoft.fr:18080/convertigo/projects/Sample05",
+            // c8o = new C8o("http://trial.convertigo.net/cems/projects/Sample05",
                 new C8oSettings().SetFullSyncUsername("admin")
                 .SetFullSyncPassword("admin")
                 .SetDefaultDatabaseName("sample05")
