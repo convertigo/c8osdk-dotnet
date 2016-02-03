@@ -36,11 +36,7 @@ namespace Convertigo.SDK
         private static readonly string JSON_KEY_ENV = "env";
 
         //*** Attributes ***//
-
-        /// <summary>
-        /// Indicates if logs are sent to the Convertigo server. 
-        /// </summary>
-        private bool isLogRemote;
+        
         /// <summary>
         /// The URL used to send logs.
         /// </summary>
@@ -74,8 +70,7 @@ namespace Convertigo.SDK
             remoteLogUrl = c8o.EndpointConvertigo + "/admin/services/logs.Add";
             remoteLogs = new Queue<JObject>();
             alreadyRemoteLogging = new bool[] { false };
-
-            isLogRemote = c8o.LogRemote;
+            
             remoteLogLevel = C8oLogLevel.TRACE;
 
             var currentTime = DateTime.Now;
@@ -85,7 +80,7 @@ namespace Convertigo.SDK
 
         private bool IsLoggableRemote(C8oLogLevel logLevel)
         {
-            return isLogRemote && logLevel != null && C8oLogLevel.TRACE.priority <= remoteLogLevel.priority && remoteLogLevel.priority <= logLevel.priority;
+            return c8o.LogRemote && logLevel != null && C8oLogLevel.TRACE.priority <= remoteLogLevel.priority && remoteLogLevel.priority <= logLevel.priority;
         }
 
         private bool IsLoggableConsole(C8oLogLevel logLevel)
@@ -275,7 +270,7 @@ namespace Convertigo.SDK
                     }
                     catch (Exception e)
                     {
-                        isLogRemote = false;
+                        c8o.LogRemote = false;
                         if (c8o.LogOnFail != null)
                         {
                             c8o.LogOnFail(new C8oException(C8oExceptionMessage.RemoteLogFail(), e), null);

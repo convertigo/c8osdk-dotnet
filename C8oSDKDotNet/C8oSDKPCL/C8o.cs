@@ -513,6 +513,36 @@ namespace Convertigo.SDK
             httpInterface.AddCookie(name, value);
         }
 
+        public new bool LogC8o
+        {
+            get { return logC8o; }
+            set { logC8o = value; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating if logs are sent to the Convertigo server.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if logs are sent to the Convertigo server; otherwise, <c>false</c>.
+        /// </value>
+        public new bool LogRemote
+        {
+            get { return logRemote; }
+            set { logRemote = value; }
+        }
+        
+        /// <summary>
+        /// Sets a value indicating the log level you want in the device console.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if logs are sent to the Convertigo server; otherwise, <c>false</c>.
+        /// </value>
+        public new C8oLogLevel LogLevelLocal
+        {
+            get { return logLevelLocal; }
+            set { logLevelLocal = value; }
+        }
+
         /// <summary>
         /// Logs a message to Convertigo Server. the message will be seen in Convertigo Server Device logger. Logging messages to the server
         /// helps in monitoring Mobile apps in production.
