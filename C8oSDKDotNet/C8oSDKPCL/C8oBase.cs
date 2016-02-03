@@ -93,6 +93,12 @@ namespace Convertigo.SDK
             get { return logRemote; }
         }
 
+        /// <summary>
+        /// Sets a value indicating the log level you want in the device console.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if logs are sent to the Convertigo server; otherwise, <c>false</c>.
+        /// </value>
         public C8oLogLevel LogLevelLocal
         {
             get { return logLevelLocal; }

@@ -127,6 +127,12 @@ namespace Convertigo.SDK
             return this;
         }
 
+        /// <summary>
+        /// Sets a value indicating the log level you want in the device console
+        /// You should use C8oLogLevel constants
+        /// </summary>
+        /// <param name="logLevelLocal"></param>
+        /// <returns>The current<c>C8oSettings</c>, for chaining.</returns>
         public C8oSettings SetLogLevelLocal(C8oLogLevel logLevelLocal)
         {
             this.logLevelLocal = logLevelLocal;

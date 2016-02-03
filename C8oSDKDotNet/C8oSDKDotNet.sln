@@ -15,19 +15,26 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "C8oPlatform", "C8oPlatforms
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKDotNet.Windows", "C8oSDKDotNet.Windows\C8oSDKDotNet.Windows.csproj", "{FAD46F42-E48D-45D3-BA42-A27298F0B63B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3FCB2A24-57B3-4A12-8A25-C16DD29F72B0}"
+	ProjectSection(SolutionItems) = preProject
+		C8oFullSyncExtensions.nuspec = C8oFullSyncExtensions.nuspec
+		C8oSDK-PCL.nuspec = C8oSDK-PCL.nuspec
+		tools\convertigo\component\component.yaml = tools\convertigo\component\component.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
 		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		C8oPlatforms\C8oPlatforms.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
 		C8oFullSyncCbl\C8oFullSyncNet.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
+		C8oPlatforms\C8oPlatforms.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
 		C8oFullSyncCbl\C8oFullSyncNet.projitems*{863ce965-5c79-48f0-9e97-1aadc3241a87}*SharedItemsImports = 13
-		C8oPlatforms\C8oPlatforms.projitems*{9d58d300-2dad-488d-bef1-6f591cf3e401}*SharedItemsImports = 4
 		C8oFullSyncCbl\C8oFullSyncNet.projitems*{9d58d300-2dad-488d-bef1-6f591cf3e401}*SharedItemsImports = 4
-		C8oPlatforms\C8oPlatforms.projitems*{4f9ba553-8252-412d-98c8-c113cc009f82}*SharedItemsImports = 4
+		C8oPlatforms\C8oPlatforms.projitems*{9d58d300-2dad-488d-bef1-6f591cf3e401}*SharedItemsImports = 4
 		C8oFullSyncCbl\C8oFullSyncNet.projitems*{4f9ba553-8252-412d-98c8-c113cc009f82}*SharedItemsImports = 4
+		C8oPlatforms\C8oPlatforms.projitems*{4f9ba553-8252-412d-98c8-c113cc009f82}*SharedItemsImports = 4
 		C8oPlatforms\C8oPlatforms.projitems*{bdf9111d-f09a-4213-9721-114434ca73b6}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
