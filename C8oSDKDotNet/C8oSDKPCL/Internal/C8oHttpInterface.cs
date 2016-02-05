@@ -92,7 +92,19 @@ namespace Convertigo.SDK.Internal
 
                 foreach (KeyValuePair<string, object> parameter in parameters)
                 {
-                    postData += Uri.EscapeDataString(parameter.Key) + "=" + Uri.EscapeDataString("" + parameter.Value) + "&";
+                    var value = parameter.Value;
+
+                    if (value is IEnumerable<object>)
+                    {
+                        foreach (var v in value as IEnumerable<object>)
+                        {
+                            postData += Uri.EscapeDataString(parameter.Key) + "=" + Uri.EscapeDataString("" + v) + "&";
+                        }
+                    }
+                    else
+                    {
+                        postData += Uri.EscapeDataString(parameter.Key) + "=" + Uri.EscapeDataString("" + parameter.Value) + "&";
+                    }
                 }
 
                 postData = postData.Substring(0, postData.Length - 1);
