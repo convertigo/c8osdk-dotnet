@@ -1,6 +1,7 @@
 ﻿using Convertigo.SDK;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Sample05Shared
@@ -382,9 +383,14 @@ namespace Sample05Shared
         {
             Output.Text = "Test14\n";
 
-            var c8o = new C8o("https://tonus.twinsoft.fr:18081/convertigo/projects/Sample05", new C8oSettings().SetTrustAllCertificates(true));
+            //string[] multi2 = new string[] { "m1", "m2", "m3" };
+            List<string> multi2 = new List<string> { "m1", "m2", "m3" };
 
-            c8o.CallXml(".sample05.GetServerInfo").ThenUI((xml, param) =>
+            c8o.CallXml(".MultiVar",
+                "simple1", "simple value",
+                "simple2", multi2,
+                "multi1", "multi1 value",
+                "multi2", multi2).ThenUI((xml, param) =>
             {
                 Output.Text += xml.ToString();
                 Output.Text += "\n==========\n";
