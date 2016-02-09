@@ -734,6 +734,7 @@ C8oSDKDotNet/C8oPlatforms/C8oPlatform.shproj -text
 C8oSDKDotNet/C8oPlatforms/C8oPlatformCommon.cs -text
 C8oSDKDotNet/C8oPlatforms/C8oPlatforms.projitems -text
 C8oSDKDotNet/C8oSDK-PCL.nuspec -text
+C8oSDKDotNet/C8oSDK-PCL.shfbproj -text
 C8oSDKDotNet/C8oSDKDotNet.Android/C8oPlatform.cs -text
 C8oSDKDotNet/C8oSDKDotNet.Android/C8oSDKDotNet.Android.csproj -text
 C8oSDKDotNet/C8oSDKDotNet.Android/Properties/AssemblyInfo.cs -text
