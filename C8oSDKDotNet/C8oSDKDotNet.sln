@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		tools\convertigo\component\component.yaml = tools\convertigo\component\component.yaml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKNUnitWPF", "C8oSDKNUnitWPF\C8oSDKNUnitWPF.csproj", "{1F0D5C6E-D47D-430F-9C7F-76D8B8B3718E}"
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -59,6 +61,10 @@ Global
 		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F0D5C6E-D47D-430F-9C7F-76D8B8B3718E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F0D5C6E-D47D-430F-9C7F-76D8B8B3718E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F0D5C6E-D47D-430F-9C7F-76D8B8B3718E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F0D5C6E-D47D-430F-9C7F-76D8B8B3718E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
