@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Xml.XPath;
 
 namespace C8oSDKNUnitWPF
@@ -20,12 +21,15 @@ namespace C8oSDKNUnitWPF
 
             internal static readonly Stuff C8O = new Stuff(() =>
             {
-                return new C8o("http://" + HOST + ":28080" + PROJECT_PATH);
+                C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH);
+                c8o.LogRemote = false;
+                c8o.LogLevelLocal = C8oLogLevel.TRACE;
+                return c8o;
             });
 
             internal static readonly Stuff C8O_BIS = new Stuff(() =>
             {
-                return new C8o("http://" + HOST + ":28080" + PROJECT_PATH);
+                return C8O.get();
             });
             
             internal static readonly Stuff SetGetInSession = new Stuff(() =>
@@ -232,6 +236,44 @@ namespace C8oSDKNUnitWPF
             var doc = c8o.CallXml(".GetFromSession").Sync();
             var expression = doc.XPathSelectElement("/document/session/expression");
             Assert.IsNull(expression);
+        }
+
+        private void CheckLogRemoteHelper(C8o c8o, string lvl, string msg)
+        {
+            var doc = c8o.CallXml(".GetLogs").Sync();
+            var line = JArray.Parse(doc.XPathSelectElement("/document/line").Value);
+            Assert.AreEqual(lvl, line[2].ToString());
+            var newMsg = line[4].ToString();
+            newMsg = newMsg.Substring(newMsg.IndexOf("logID="));
+            Assert.AreEqual(msg, newMsg);
+        }
+
+        [Test]
+        public void CheckLogRemote()
+        {
+            var c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH);
+            c8o.LogC8o = false;
+            var id = "logID=" + DateTime.Now.Ticks;
+            var doc = c8o.CallXml(".GetLogs", "init", id).Sync();
+            c8o.Log.Error(id);
+            CheckLogRemoteHelper(c8o, "ERROR", id);
+            c8o.Log.Error(id, new C8oException("for test"));
+            CheckLogRemoteHelper(c8o, "ERROR", id + "\nConvertigo.SDK.C8oException: for test");
+            c8o.Log.Warn(id);
+            CheckLogRemoteHelper(c8o, "WARN", id);
+            c8o.Log.Info(id);
+            CheckLogRemoteHelper(c8o, "INFO", id);
+            c8o.Log.Debug(id);
+            CheckLogRemoteHelper(c8o, "DEBUG", id);
+            c8o.Log.Trace(id);
+            CheckLogRemoteHelper(c8o, "TRACE", id);
+            c8o.Log.Fatal(id);
+            CheckLogRemoteHelper(c8o, "FATAL", id);
+            c8o.LogRemote = false;
+            c8o.Log.Info(id);
+            doc = c8o.CallXml(".GetLogs").Sync();
+            object value = doc.XPathSelectElement("/document/line");
+            Assert.IsNull(value);
         }
     }
 }
