@@ -349,10 +349,10 @@ namespace Convertigo.SDK
             return "The C8oListener class " + C8oUtils.GetObjectClassName(c8oListener) + " is not handled";
         }
 
-        //public static string wrongResult(Object result)
-        //{
-        //    return "The response class " + C8oUtils.getObjectClassName(result) + " is not handled";
-        //}
+        public static string WrongResult(Object result)
+        {
+            return "The response class " + C8oUtils.GetObjectClassName(result) + " is not handled";
+        }
 
         public static string toDo()
         {
