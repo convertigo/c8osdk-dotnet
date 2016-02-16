@@ -219,6 +219,16 @@ namespace Convertigo.SDK.Internal
                     c8o.c8oLogger.LogC8oCallJSONResponse(result as JObject, c8oCallUrl, parameters);
                     (c8oResponseListener as C8oResponseJsonListener).OnJsonResponse(result as JObject, parameters);
                 }
+                else if (result is Exception)
+                {
+                    // The result is an Exception
+                    c8o.HandleCallException(c8oExceptionListener, parameters, (Exception) result);
+                }
+                else
+                {
+                    // The result type is unknown
+                    c8o.HandleCallException(c8oExceptionListener, parameters, new C8oException(C8oExceptionMessage.WrongResult(result)));
+                }
                 /*else if (result instanceof com.couchbase.lite.Document) {
                     // TODO log
 
@@ -229,13 +239,7 @@ namespace Convertigo.SDK.Internal
 
                     // The result is a fillSync query response
                     ((C8oFullSyncResponseListener) this.c8oResponseListener).onQueryEnumeratorResponse(this.parameters, (QueryEnumerator) result);
-                } else if (result instanceof Exception){
-                    // The result is an Exception
-                    C8o.handleCallException(this.c8oExceptionListener, this.parameters, (Exception) result);
-                } else {
-                    // The result type is unknown
-                    C8o.handleCallException(this.c8oExceptionListener, this.parameters, new C8oException(C8oExceptionMessage.WrongResult(result)));
-                }*/
+                } */
             }
             catch (Exception e)
             {

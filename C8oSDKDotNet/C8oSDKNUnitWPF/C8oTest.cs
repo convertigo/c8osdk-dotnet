@@ -96,13 +96,13 @@ namespace C8oSDKNUnitWPF
             new Thread(() =>
             {
                 Thread.CurrentThread.Name = "FakeUI";
-                while (uiQueue != null)
+                while (Thread.CurrentThread.IsAlive)
                 {
                     lock (uiQueue)
                     {
                         Monitor.Wait(uiQueue, 1000);
                     }
-                    if (uiQueue != null && uiQueue.Count > 0)
+                    if (uiQueue.Count > 0)
                     {
                         uiQueue.Dequeue()();
                     }
@@ -111,27 +111,13 @@ namespace C8oSDKNUnitWPF
 
             C8oPlatform.Init(action =>
             {
+                uiQueue.Enqueue(action);
                 lock (uiQueue)
                 {
-                    uiQueue.Enqueue(action);
                     Monitor.Pulse(uiQueue);
                 }
             });
         }
-        /*
-        [TearDown]
-        public void Cleanup()
-        {
-            lock (uiQueue)
-            {
-                while (uiQueue.Count > 0)
-                {
-                    Monitor.Wait(uiQueue, 1000);
-                }
-                uiQueue = null;
-            }
-        }
-        */
 
         [Test]
         public void C8oBadEndpoint()
@@ -567,8 +553,41 @@ namespace C8oSDKNUnitWPF
             }
             object value = xjson[0].SelectToken("document.pong.var1").ToString();
             Assert.AreEqual("step 1", value);
-            Assert.IsNull(xjson[1]);
+            Assert.Null(xjson[1]);
+            Assert.NotNull(exception);
             Assert.AreEqual("random failure", exception.Message);
+        }
+
+        [Test]
+        public void C8oSslTrustFail()
+        {
+            Exception exception = null;
+            try
+            {
+                var c8o = new C8o("https://" + HOST + ":443" + PROJECT_PATH);
+                var doc = c8o.CallXml(".Ping", "var1", "value one").Sync();
+                var value = doc.XPathSelectElement("/document/pong/var1").Value;
+                Assert.AreEqual("not possible", value);
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            Assert.NotNull(exception);
+            Assert.AreEqual("Convertigo.SDK.C8oException", exception.GetType().FullName);
+            exception = exception.InnerException;
+            Assert.AreEqual("System.Net.WebException", exception.GetType().FullName);
+            exception = exception.InnerException;
+            Assert.AreEqual("System.Security.Authentication.AuthenticationException", exception.GetType().FullName);
+        }
+
+        [Test]
+        public void C8oSslTrustAll()
+        {
+            var c8o = new C8o("https://" + HOST + ":443" + PROJECT_PATH);
+            var doc = c8o.CallXml(".Ping", "var1", "value one").Sync();
+            var value = doc.XPathSelectElement("/document/pong/var1").Value;
+            Assert.AreEqual("value one", value);
         }
     }
 }
