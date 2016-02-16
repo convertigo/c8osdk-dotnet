@@ -118,12 +118,20 @@ namespace C8oSDKNUnitWPF
                 }
             });
         }
-
+        /*
         [TearDown]
         public void Cleanup()
         {
-            uiQueue = null;
+            lock (uiQueue)
+            {
+                while (uiQueue.Count > 0)
+                {
+                    Monitor.Wait(uiQueue, 1000);
+                }
+                uiQueue = null;
+            }
         }
+        */
 
         [Test]
         public void C8oBadEndpoint()
