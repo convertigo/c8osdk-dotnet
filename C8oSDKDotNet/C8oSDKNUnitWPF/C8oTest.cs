@@ -584,7 +584,7 @@ namespace C8oSDKNUnitWPF
         [Test]
         public void C8oSslTrustAll()
         {
-            var c8o = new C8o("https://" + HOST + ":443" + PROJECT_PATH);
+            var c8o = new C8o("https://" + HOST + ":443" + PROJECT_PATH, new C8oSettings().SetTrustAllCertificates(true));
             var doc = c8o.CallXml(".Ping", "var1", "value one").Sync();
             var value = doc.XPathSelectElement("/document/pong/var1").Value;
             Assert.AreEqual("value one", value);
