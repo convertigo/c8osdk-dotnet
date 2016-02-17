@@ -569,7 +569,7 @@ namespace C8oSDKNUnitWPF
         }
 
         [Test]
-        public void C8oSslTrust1Fail()
+        public void C8oSsl1TrustFail()
         {
             Exception exception = null;
             try
@@ -596,12 +596,77 @@ namespace C8oSDKNUnitWPF
         }
 
         [Test]
-        public void C8oSslTrust2All()
+        public void C8oSsl2TrustAll()
         {
             var c8o = new C8o("https://" + HOST + ":443" + PROJECT_PATH, new C8oSettings().SetTrustAllCertificates(true));
             var doc = c8o.CallXml(".Ping", "var1", "value one").Sync();
             var value = doc.XPathSelectElement("/document/pong/var1").Value;
             Assert.AreEqual("value one", value);
+        }
+
+        [Test]
+        public void C8oFsPostGetDelete()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS);
+            lock (c8o)
+            {
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var myId = "custom-" + DateTime.Now.Ticks;
+                json = c8o.CallJson("fs://.post", "_id", myId).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var id = json["id"].Value<string>();
+                Assert.AreEqual(myId, id);
+                json = c8o.CallJson("fs://.get", "docid", id).Sync();
+                id = json["_id"].Value<string>();
+                Assert.AreEqual(myId, id);
+                json = c8o.CallJson("fs://.delete", "docid", id).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                try
+                {
+                    json = c8o.CallJson("fs://.get", "docid", id).Sync();
+                    Assert.True(false, "not possible");
+                }
+                catch (Exception e)
+                {
+                    Assert.AreEqual("Convertigo.SDK.C8oRessourceNotFoundException", e.GetType().FullName);
+                }
+            }
+        }
+
+        [Test]
+        public void C8oFsPostGetDeleteRev()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS);
+            lock (c8o)
+            {
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var id = "custom-" + DateTime.Now.Ticks;
+                json = c8o.CallJson("fs://.post", "_id", id).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var rev = json["rev"].Value<string>();
+                try
+                {
+                    json = c8o.CallJson("fs://.delete", "docid", id, "rev", "1-123456").Sync();
+                    Assert.True(false, "not possible");
+                }
+                catch (Exception e)
+                {
+                    Assert.AreEqual("Convertigo.SDK.C8oRessourceNotFoundException", e.GetType().FullName);
+                }
+                json = c8o.CallJson("fs://.delete", "docid", id, "rev", rev).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                try
+                {
+                    json = c8o.CallJson("fs://.get", "docid", id).Sync();
+                    Assert.True(false, "not possible");
+                }
+                catch (Exception e)
+                {
+                    Assert.AreEqual("Convertigo.SDK.C8oRessourceNotFoundException", e.GetType().FullName);
+                }
+            }
         }
 
         [Test]
