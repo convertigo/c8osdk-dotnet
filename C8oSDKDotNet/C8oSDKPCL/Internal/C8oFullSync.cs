@@ -67,6 +67,10 @@ namespace Convertigo.SDK.Internal
             {
                 response = await fullSyncRequestable.HandleFullSyncRequest(this, databaseName, parameters, listener);
             }
+            catch (C8oException e)
+            {
+                throw e;
+            }
             catch (Exception e)
             {
                 throw new C8oException(C8oExceptionMessage.FullSyncRequestFail(), e);

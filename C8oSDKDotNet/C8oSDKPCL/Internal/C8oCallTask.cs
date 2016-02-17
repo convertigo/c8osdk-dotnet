@@ -58,6 +58,10 @@ namespace Convertigo.SDK.Internal
                     var fullSyncResult = await c8o.c8oFullSync.HandleFullSyncRequest(parameters, c8oResponseListener);
                     return fullSyncResult;
                 }
+                catch (C8oException e)
+                {
+                    throw e;
+                }
                 catch (Exception e)
                 {
                     throw new C8oException(C8oExceptionMessage.FullSyncRequestFail(), e);
