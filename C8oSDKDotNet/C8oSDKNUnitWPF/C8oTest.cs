@@ -82,10 +82,10 @@ namespace C8oSDKNUnitWPF
                     }
                     if (res is Exception)
                     {
-                        throw (Exception)res;
+                        throw res as Exception;
                     }
 
-                    T t = (T)res;
+                    T t = (T) res;
 
                     return t;
                 }
@@ -605,7 +605,7 @@ namespace C8oSDKNUnitWPF
         }
 
         [Test]
-        public void C8oFsPost()
+        public void C8oFsPostGetDestroyCreate()
         {
             var c8o = Get<C8o>(Stuff.C8O_FS);
             var json = c8o.CallJson("fs://.reset").Sync();
@@ -620,12 +620,15 @@ namespace C8oSDKNUnitWPF
             Assert.True(json["ok"].Value<bool>());
             json = c8o.CallJson("fs://.create").Sync();
             Assert.True(json["ok"].Value<bool>());
-            json = c8o.CallJson("fs://.get", "docid", id).Sync();
-            Assert.AreEqual(ts, json["ts"].Value<string>());
-            json = c8o.CallJson("fs://.post", "ts", ts).Sync();
-            Assert.True(json["ok"].Value<bool>());
-            id = json["id"].Value<string>();
-            json = c8o.CallJson("fs://.get", "docid", id).Sync();
+            try
+            {
+                json = c8o.CallJson("fs://.get", "docid", id).Sync();
+                Assert.AreEqual("not possible", json["ts"].Value<string>());
+            }
+            catch (Exception e)
+            {
+                Assert.AreEqual("Convertigo.SDK.C8oRessourceNotFoundException", e.GetType().FullName);
+            }
         }
     }
 }

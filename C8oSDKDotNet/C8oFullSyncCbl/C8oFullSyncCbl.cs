@@ -194,7 +194,7 @@ namespace Convertigo.SDK.Internal
             }
             else
             {
-                throw new C8oRessourceNotFoundException(C8oExceptionMessage.RessourceNotFound("requested document"));
+                throw new C8oRessourceNotFoundException(C8oExceptionMessage.RessourceNotFound("requested document \"" + docid + "\""));
             }
 
             return document;

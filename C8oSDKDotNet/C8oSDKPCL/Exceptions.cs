@@ -4,17 +4,17 @@ namespace Convertigo.SDK
 {
     public class C8oException : Exception
     {
-        public C8oException(String message)
+        public C8oException(string message)
             : base(message)
         {
         }
 
-        public C8oException(String message, Exception exception)
+        public C8oException(string message, Exception exception)
             : base(C8oException.FilterMessage(message, exception), C8oException.FilterException(exception))
         {
         }
 
-        private static String FilterMessage(String message, Exception exception)
+        private static string FilterMessage(string message, Exception exception)
         {
             if (exception is C8oException)
             {
@@ -35,23 +35,23 @@ namespace Convertigo.SDK
 
     public class C8oHttpException : Exception
     {
-        public C8oHttpException(String message, Exception innerException)
+        public C8oHttpException(string message, Exception innerException)
             : base(message, innerException)
         {
 
         }
     }
 
-    public class C8oRessourceNotFoundException : Exception
+    public class C8oRessourceNotFoundException : C8oException
     {
-        public C8oRessourceNotFoundException(String message) : base(message) { }
-        public C8oRessourceNotFoundException(String message, Exception innerException) : base(message, innerException) { }
+        public C8oRessourceNotFoundException(string message) : base(message) { }
+        public C8oRessourceNotFoundException(string message, Exception innerException) : base(message, innerException) { }
     }
 
     public class C8oUnavailableLocalCacheException : Exception
     {
 
-        public C8oUnavailableLocalCacheException(String message) : base(message) { }
-        public C8oUnavailableLocalCacheException(String message, Exception innerException) : base(message, innerException) { }
+        public C8oUnavailableLocalCacheException(string message) : base(message) { }
+        public C8oUnavailableLocalCacheException(string message, Exception innerException) : base(message, innerException) { }
     }
 }
