@@ -577,7 +577,7 @@ namespace C8oSDKNUnitWPF
                 var c8o = new C8o("https://" + HOST + ":443" + PROJECT_PATH);
                 var doc = c8o.CallXml(".Ping", "var1", "value one").Sync();
                 var value = doc.XPathSelectElement("/document/pong/var1").Value;
-                Assert.AreEqual("not possible", value);
+                Assert.True(false, "not possible");
             }
             catch (AssertionException ex)
             {
@@ -608,26 +608,194 @@ namespace C8oSDKNUnitWPF
         public void C8oFsPostGetDestroyCreate()
         {
             var c8o = Get<C8o>(Stuff.C8O_FS);
-            var json = c8o.CallJson("fs://.reset").Sync();
-            Assert.True(json["ok"].Value<bool>());
-            var ts = "ts=" + DateTime.Now.Ticks;
-            json = c8o.CallJson("fs://.post", "ts", ts).Sync();
-            Assert.True(json["ok"].Value<bool>());
-            var id = json["id"].Value<string>();
-            json = c8o.CallJson("fs://.get", "docid", id).Sync();
-            Assert.AreEqual(ts, json["ts"].Value<string>());
-            json = c8o.CallJson("fs://.destroy").Sync();
-            Assert.True(json["ok"].Value<bool>());
-            json = c8o.CallJson("fs://.create").Sync();
-            Assert.True(json["ok"].Value<bool>());
-            try
+            lock (c8o)
             {
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var ts = "ts=" + DateTime.Now.Ticks;
+                json = c8o.CallJson("fs://.post", "ts", ts).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var id = json["id"].Value<string>();
                 json = c8o.CallJson("fs://.get", "docid", id).Sync();
-                Assert.AreEqual("not possible", json["ts"].Value<string>());
+                Assert.AreEqual(ts, json["ts"].Value<string>());
+                json = c8o.CallJson("fs://.destroy").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://.create").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                try
+                {
+                    json = c8o.CallJson("fs://.get", "docid", id).Sync();
+                    Assert.True(false, "not possible");
+                }
+                catch (Exception e)
+                {
+                    Assert.AreEqual("Convertigo.SDK.C8oRessourceNotFoundException", e.GetType().FullName);
+                }
             }
-            catch (Exception e)
+        }
+
+        [Test]
+        public void C8oFsPostReset()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS);
+            lock (c8o)
             {
-                Assert.AreEqual("Convertigo.SDK.C8oRessourceNotFoundException", e.GetType().FullName);
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://.post").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var id = json["id"].Value<string>();
+                json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                try
+                {
+                    json = c8o.CallJson("fs://.get", "docid", id).Sync();
+                    Assert.True(false, "not possible");
+                }
+                catch (Exception e)
+                {
+                    Assert.AreEqual("Convertigo.SDK.C8oRessourceNotFoundException", e.GetType().FullName);
+                }
+            }
+        }
+
+        [Test]
+        public void C8oFsPostExisting()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS);
+            lock (c8o)
+            {
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://.post").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var id = json["id"].Value<string>();
+                try
+                {
+                    json = c8o.CallJson("fs://.post", "_id", id).Sync();
+                    Assert.True(false, "not possible");
+                }
+                catch (Exception e)
+                {
+                    Assert.AreEqual("Convertigo.SDK.C8oCouchbaseLiteException", e.GetType().FullName);
+                }
+            }
+        }
+
+        [Test]
+        public void C8oFsPostExistingPolicyNone()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS);
+            lock (c8o)
+            {
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://.post", C8o.FS_POLICY, C8o.FS_POLICY_NONE).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var id = json["id"].Value<string>();
+                try
+                {
+                    json = c8o.CallJson("fs://.post",
+                        C8o.FS_POLICY, C8o.FS_POLICY_NONE,
+                        "_id", id
+                    ).Sync();
+                    Assert.True(false, "not possible");
+                }
+                catch (Exception e)
+                {
+                    Assert.AreEqual("Convertigo.SDK.C8oCouchbaseLiteException", e.GetType().FullName);
+                }
+            }
+        }
+
+        [Test]
+        public void C8oFsPostExistingPolicyCreate()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS);
+            lock (c8o)
+            {
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var myId = "custom-" + DateTime.Now.Ticks;
+                json = c8o.CallJson("fs://.post", "_id", myId).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var id = json["id"].Value<string>();
+                Assert.AreEqual(myId, id);
+                json = c8o.CallJson("fs://.post",
+                    C8o.FS_POLICY, C8o.FS_POLICY_CREATE,
+                    "_id", id
+                ).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                id = json["id"].Value<string>();
+                Assert.AreNotSame(myId, id);
+            }
+        }
+
+        [Test]
+        public void C8oFsPostExistingPolicyOverride()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS);
+            lock (c8o)
+            {
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var myId = "custom-" + DateTime.Now.Ticks;
+                json = c8o.CallJson("fs://.post",
+                    C8o.FS_POLICY, C8o.FS_POLICY_OVERRIDE,
+                    "_id", myId,
+                    "a", 1,
+                    "b", 2
+                ).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var id = json["id"].Value<string>();
+                Assert.AreEqual(myId, id);
+                json = c8o.CallJson("fs://.post",
+                    C8o.FS_POLICY, C8o.FS_POLICY_OVERRIDE,
+                    "_id", myId,
+                    "a", 3,
+                    "c", 4
+                ).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                id = json["id"].Value<string>();
+                Assert.AreEqual(myId, id);
+                json = c8o.CallJson("fs://.get", "docid", myId).Sync();
+                Assert.AreEqual(3, json["a"].Value<int>());
+                Assert.Null(json["b"]);
+                Assert.AreEqual(4, json["c"].Value<int>());
+            }
+        }
+
+        [Test]
+        public void C8oFsPostExistingPolicyMerge()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS);
+            lock (c8o)
+            {
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var myId = "custom-" + DateTime.Now.Ticks;
+                json = c8o.CallJson("fs://.post",
+                    C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                    "_id", myId,
+                    "a", 1,
+                    "b", 2
+                ).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var id = json["id"].Value<string>();
+                Assert.AreEqual(myId, id);
+                json = c8o.CallJson("fs://.post",
+                    C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                    "_id", myId,
+                    "a", 3,
+                    "c", 4
+                ).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                id = json["id"].Value<string>();
+                Assert.AreEqual(myId, id);
+                json = c8o.CallJson("fs://.get", "docid", myId).Sync();
+                Assert.AreEqual(3, json["a"].Value<int>());
+                Assert.AreEqual(2, json["b"].Value<int>());
+                Assert.AreEqual(4, json["c"].Value<int>());
             }
         }
     }

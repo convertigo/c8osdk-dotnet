@@ -44,7 +44,7 @@ namespace Convertigo.SDK.Internal
             }
             else
             {
-                throw new ArgumentException(C8oExceptionMessage.InvalidParameterType(requestParameter.name, "" + requestParameter.type, "" + value.GetType()));
+                throw new ArgumentException(C8oExceptionMessage.InvalidArgumentInvalidParameterType(requestParameter.name, "" + requestParameter.type, "" + value.GetType()));
             }
         }
 
@@ -90,7 +90,7 @@ namespace Convertigo.SDK.Internal
             }
             else
             {
-                throw new ArgumentException(C8oExceptionMessage.InvalidParameterType(replicationParameter.name, "" + replicationParameter.type, "" + value.GetType()));
+                throw new ArgumentException(C8oExceptionMessage.InvalidArgumentInvalidParameterType(replicationParameter.name, "" + replicationParameter.type, "" + value.GetType()));
             }           
         }
 
@@ -227,61 +227,47 @@ namespace Convertigo.SDK.Internal
             fullSyncPolicies = new Dictionary<FullSyncPolicy, Func<Database, IDictionary<string, object>, Document>>();
             FullSyncPolicy policy;
             Func<Database, IDictionary<string, object>, Document> func;
-            // CREATE
-            policy = FullSyncPolicy.CREATE;
-            func = (database, newProperties) =>
-            {
-                // Removes specials properties in order to create a new document
-                newProperties.Remove(C8oFullSync.FULL_SYNC__ID);
-                newProperties.Remove(C8oFullSync.FULL_SYNC__REV);
-
-                Document createdDocument = database.CreateDocument();
-                createdDocument.PutProperties(newProperties);
-                return createdDocument;
-            };
-            fullSyncPolicies.Add(policy, func);
-            // MERGE
-            policy = FullSyncPolicy.MERGE;
-            func = (database, newProperties) =>
-            {
-                // Gets the document ID
-                string documentId = C8oUtils.GetParameterStringValue(newProperties, C8oFullSync.FULL_SYNC__ID, false);
-
-                // Removes special properties in order to create a new document
-                newProperties.Remove(C8oFullSync.FULL_SYNC__ID);
-                newProperties.Remove(C8oFullSync.FULL_SYNC__REV);
-
-                // Creates a new document or get an existing one (if the ID is specified)
-                Document createdDocument;
-                if (documentId == null)
-                {
-                    createdDocument = database.CreateDocument();
-                }
-                else
-                {
-                    createdDocument = database.GetDocument(documentId);
-                }
-
-                // Merges old properties with the new ones
-                var oldProperties = createdDocument.Properties;
-                if (oldProperties != null)
-                {
-                    FullSyncUtils.MergeProperties(newProperties, oldProperties);
-                }
-
-                createdDocument.PutProperties(newProperties);
-
-                return createdDocument;
-            };
-            fullSyncPolicies.Add(policy, func);
             // NONE
             policy = FullSyncPolicy.NONE;
             func = (database, newProperties) =>
             {
-                var createdDocument = (newProperties.ContainsKey(C8oFullSync.FULL_SYNC__ID)) ?
-                    database.GetDocument(newProperties[C8oFullSync.FULL_SYNC__ID].ToString()) :
-                    database.CreateDocument();
-                createdDocument.PutProperties(newProperties);
+                Document createdDocument;
+                try
+                {
+                    string documentId = C8oUtils.GetParameterStringValue(newProperties, C8oFullSync.FULL_SYNC__ID, false);
+
+                    // removes special properties
+                    newProperties.Remove(C8oFullSync.FULL_SYNC__ID);
+
+                    // Creates a new document or get an existing one (if the ID is specified)
+                    createdDocument = (documentId == null) ? database.CreateDocument() : database.GetDocument(documentId);
+                    
+                    createdDocument.PutProperties(newProperties);
+                }
+                catch (CouchbaseLiteException e)
+                {
+                    throw new C8oCouchbaseLiteException(C8oExceptionMessage.FullSyncPutProperties(newProperties), e);
+                }
+                return createdDocument;
+            };
+            fullSyncPolicies.Add(policy, func);
+            // CREATE
+            policy = FullSyncPolicy.CREATE;
+            func = (database, newProperties) =>
+            {
+                Document createdDocument;
+                try
+                {
+                    // Removes specials properties in order to create a new document
+                    newProperties.Remove(C8oFullSync.FULL_SYNC__ID);
+                    newProperties.Remove(C8oFullSync.FULL_SYNC__REV);
+                    createdDocument = database.CreateDocument();
+                    createdDocument.PutProperties(newProperties);
+                }
+                catch (CouchbaseLiteException e)
+                {
+                    throw new C8oCouchbaseLiteException(C8oExceptionMessage.FullSyncPutProperties(newProperties), e);
+                }
                 return createdDocument;
             };
             fullSyncPolicies.Add(policy, func);
@@ -289,30 +275,78 @@ namespace Convertigo.SDK.Internal
             policy = FullSyncPolicy.OVERRIDE;
             func = (database, newProperties) =>
             {
-                // Gets the document ID
-                string documentId = C8oUtils.GetParameterStringValue(newProperties, C8oFullSync.FULL_SYNC__ID, false);
-
-                // Removes special properties in order to create a new document
-                newProperties.Remove(C8oFullSync.FULL_SYNC__ID);
-                newProperties.Remove(C8oFullSync.FULL_SYNC__REV);
-
-                // Creates a new document or get an existing one (if the ID is specified)
                 Document createdDocument;
-                if (documentId == null)
+                try
                 {
-                    createdDocument = database.CreateDocument();
-                }
-                else
-                {
-                    createdDocument = database.GetDocument(documentId);
-                    // Must add the current revision to the properties
-                    var currentRevision = createdDocument.CurrentRevision;
-                    if (currentRevision != null)
+                    // Gets the document ID
+                    string documentId = C8oUtils.GetParameterStringValue(newProperties, C8oFullSync.FULL_SYNC__ID, false);
+
+                    // Removes special properties in order to create a new document
+                    newProperties.Remove(C8oFullSync.FULL_SYNC__ID);
+                    newProperties.Remove(C8oFullSync.FULL_SYNC__REV);
+
+                    // Creates a new document or get an existing one (if the ID is specified)
+                    if (documentId == null)
                     {
-                        newProperties[C8oFullSync.FULL_SYNC__REV] = currentRevision.Id;
+                        createdDocument = database.CreateDocument();
                     }
+                    else
+                    {
+                        createdDocument = database.GetDocument(documentId);
+                        // Must add the current revision to the properties
+                        var currentRevision = createdDocument.CurrentRevision;
+                        if (currentRevision != null)
+                        {
+                            newProperties[C8oFullSync.FULL_SYNC__REV] = currentRevision.Id;
+                        }
+                    }
+
+                    createdDocument.PutProperties(newProperties);
                 }
-                createdDocument.PutProperties(newProperties);
+                catch (CouchbaseLiteException e)
+                {
+                    throw new C8oCouchbaseLiteException(C8oExceptionMessage.FullSyncPutProperties(newProperties), e);
+                }
+                return createdDocument;
+            };
+            fullSyncPolicies.Add(policy, func);
+            // MERGE
+            policy = FullSyncPolicy.MERGE;
+            func = (database, newProperties) =>
+            {
+                Document createdDocument;
+                try
+                {
+                    // Gets the document ID
+                    string documentId = C8oUtils.GetParameterStringValue(newProperties, C8oFullSync.FULL_SYNC__ID, false);
+
+                    // Removes special properties in order to create a new document
+                    newProperties.Remove(C8oFullSync.FULL_SYNC__ID);
+                    newProperties.Remove(C8oFullSync.FULL_SYNC__REV);
+
+                    // Creates a new document or get an existing one (if the ID is specified)
+                    if (documentId == null)
+                    {
+                        createdDocument = database.CreateDocument();
+                    }
+                    else
+                    {
+                        createdDocument = database.GetDocument(documentId);
+                    }
+
+                    // Merges old properties with the new ones
+                    var oldProperties = createdDocument.Properties;
+                    if (oldProperties != null)
+                    {
+                        FullSyncUtils.MergeProperties(newProperties, oldProperties);
+                    }
+
+                    createdDocument.PutProperties(newProperties);
+                }
+                catch (CouchbaseLiteException e)
+                {
+                    throw new C8oCouchbaseLiteException(C8oExceptionMessage.FullSyncPutProperties(newProperties), e);
+                }
                 return createdDocument;
             };
             fullSyncPolicies.Add(policy, func);

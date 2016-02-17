@@ -48,6 +48,11 @@ namespace Convertigo.SDK
         public C8oRessourceNotFoundException(string message, Exception innerException) : base(message, innerException) { }
     }
 
+    public class C8oCouchbaseLiteException : C8oException
+    {
+        public C8oCouchbaseLiteException(string message, Exception innerException) : base(message, innerException) { }
+    }
+
     public class C8oUnavailableLocalCacheException : Exception
     {
 
