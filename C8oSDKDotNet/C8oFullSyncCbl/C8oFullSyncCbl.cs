@@ -291,7 +291,6 @@ namespace Convertigo.SDK.Internal
 		    }
 
             var createdDocument = C8oFullSyncCblEnum.PostDocument(fullSyncPolicy, fullSyncDatabase.Database, newProperties);
-            // Document createdDocument = fullSyncPolicy.PostDocument(fullSyncDatabase, newProperties);
             string documentId = createdDocument.Id;
             string currentRevision = createdDocument.CurrentRevisionId;
             return new FullSyncDocumentOperationResponse(documentId, currentRevision, true);

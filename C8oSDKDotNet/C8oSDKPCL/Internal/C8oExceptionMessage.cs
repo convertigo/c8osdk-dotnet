@@ -99,7 +99,7 @@ namespace Convertigo.SDK
             return "'" + requestable + "' is not a valid requestable.";
         }
 
-        public static string InvalidParameterType(string parameterName, string wantedParameterType, string actualParameterType)
+        public static string InvalidArgumentInvalidParameterType(string parameterName, string wantedParameterType, string actualParameterType)
         {
             return "The parameter '" + parameterName + "' must be of type '" + wantedParameterType + "' and not '" + actualParameterType + "'";
         }
@@ -283,10 +283,10 @@ namespace Convertigo.SDK
             return "Delete the Couch document failed";
         }
 
-        //public static string fullSyncPutProperties(Map<string, object> properties)
-        //{
-        //    return "Unable to put the following properties in the fullSync Document : " + properties;
-        //}
+        public static string FullSyncPutProperties(IDictionary<string, object> properties)
+        {
+            return "Unable to put the following properties in the fullSync Document : " + properties;
+        }
 
         public static string fullSyncGetOrCreateDatabase(string databaseName)
         {
