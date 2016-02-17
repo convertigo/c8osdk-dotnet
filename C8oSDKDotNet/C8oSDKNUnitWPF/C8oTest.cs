@@ -569,7 +569,7 @@ namespace C8oSDKNUnitWPF
         }
 
         [Test]
-        public void C8oSslTrustFail()
+        public void C8oSslTrust1Fail()
         {
             Exception exception = null;
             try
@@ -596,7 +596,7 @@ namespace C8oSDKNUnitWPF
         }
 
         [Test]
-        public void C8oSslTrustAll()
+        public void C8oSslTrust2All()
         {
             var c8o = new C8o("https://" + HOST + ":443" + PROJECT_PATH, new C8oSettings().SetTrustAllCertificates(true));
             var doc = c8o.CallXml(".Ping", "var1", "value one").Sync();
@@ -604,7 +604,7 @@ namespace C8oSDKNUnitWPF
             Assert.AreEqual("value one", value);
         }
 
-        //[Test]
+        [Test]
         public void C8oFsPost()
         {
             var c8o = Get<C8o>(Stuff.C8O_FS);
