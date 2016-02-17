@@ -32,7 +32,17 @@ namespace C8oSDKNUnitWPF
             {
                 return C8O.get();
             });
-            
+
+            internal static readonly Stuff C8O_FS = new Stuff(() =>
+            {
+                C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH, new C8oSettings()
+                    .SetDefaultDatabaseName("clientsdktesting")
+                );
+                c8o.LogRemote = false;
+                c8o.LogLevelLocal = C8oLogLevel.TRACE;
+                return c8o;
+            });
+
             internal static readonly Stuff SetGetInSession = new Stuff(() =>
             {
                 C8o c8o = Get<C8o>(C8O_BIS);
@@ -569,6 +579,10 @@ namespace C8oSDKNUnitWPF
                 var value = doc.XPathSelectElement("/document/pong/var1").Value;
                 Assert.AreEqual("not possible", value);
             }
+            catch (AssertionException ex)
+            {
+                throw ex;
+            }
             catch (Exception ex)
             {
                 exception = ex;
@@ -588,6 +602,30 @@ namespace C8oSDKNUnitWPF
             var doc = c8o.CallXml(".Ping", "var1", "value one").Sync();
             var value = doc.XPathSelectElement("/document/pong/var1").Value;
             Assert.AreEqual("value one", value);
+        }
+
+        //[Test]
+        public void C8oFsPost()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS);
+            var json = c8o.CallJson("fs://.reset").Sync();
+            Assert.True(json["ok"].Value<bool>());
+            var ts = "ts=" + DateTime.Now.Ticks;
+            json = c8o.CallJson("fs://.post", "ts", ts).Sync();
+            Assert.True(json["ok"].Value<bool>());
+            var id = json["id"].Value<string>();
+            json = c8o.CallJson("fs://.get", "docid", id).Sync();
+            Assert.AreEqual(ts, json["ts"].Value<string>());
+            json = c8o.CallJson("fs://.destroy").Sync();
+            Assert.True(json["ok"].Value<bool>());
+            json = c8o.CallJson("fs://.create").Sync();
+            Assert.True(json["ok"].Value<bool>());
+            json = c8o.CallJson("fs://.get", "docid", id).Sync();
+            Assert.AreEqual(ts, json["ts"].Value<string>());
+            json = c8o.CallJson("fs://.post", "ts", ts).Sync();
+            Assert.True(json["ok"].Value<bool>());
+            id = json["id"].Value<string>();
+            json = c8o.CallJson("fs://.get", "docid", id).Sync();
         }
     }
 }
