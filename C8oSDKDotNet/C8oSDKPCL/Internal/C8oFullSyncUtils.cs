@@ -11,21 +11,28 @@ namespace Convertigo.SDK.Internal
         public static void MergeProperties(IDictionary<string, object> newProperties, IDictionary<string, object> oldProperties)
         {
             // Iterates on each old properties
-            IEnumerator<KeyValuePair<string, object>> oldPropertiesEnumerator = oldProperties.GetEnumerator();
+            var oldPropertiesEnumerator = oldProperties.GetEnumerator();
             while (oldPropertiesEnumerator.MoveNext())
             {
                 // Gets old document key and value
-                KeyValuePair<string, object> oldProperty = oldPropertiesEnumerator.Current;
-                String oldPropertyKey = oldProperty.Key;
-                Object oldPropertyValue = oldProperty.Value;
+                var oldProperty = oldPropertiesEnumerator.Current;
+                var oldPropertyKey = oldProperty.Key;
+                var oldPropertyValue = oldProperty.Value;
 
                 // Checks if there is a new value to merge with the old one (if the new document contains the same key)
                 Object newPropertyValue;
                 if (newProperties.TryGetValue(oldPropertyKey, out newPropertyValue))
                 {
-                    if (newPropertyValue is IDictionary<string, object> && oldPropertyValue is IDictionary<string, object>)
+                    if (newPropertyValue is IDictionary<string, object>)
                     {
-                        FullSyncUtils.MergeProperties(newPropertyValue as Dictionary<string, object>, oldPropertyValue as Dictionary<string, object>);
+                        if (oldPropertyValue is JObject)
+                        {
+                            oldPropertyValue = (oldPropertyValue as JObject).ToObject<IDictionary<string, object>>();
+                        }
+                        if (oldPropertyValue is IDictionary<string, object>)
+                        {
+                            FullSyncUtils.MergeProperties(newPropertyValue as IDictionary<string, object>, oldPropertyValue as IDictionary<string, object>);
+                        }
                     }
                     else if (newPropertyValue is JObject && oldPropertyValue is JObject)
                     {

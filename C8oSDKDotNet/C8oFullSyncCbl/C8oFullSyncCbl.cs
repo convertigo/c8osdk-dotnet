@@ -285,6 +285,10 @@ namespace Convertigo.SDK.Internal
 					    objectParameterValue = tmpObject;
 					    count--;
 				    }
+                    if (newProperties.ContainsKey(parameterName) && newProperties[parameterName] is IDictionary<string, object>)
+                    {
+                        FullSyncUtils.MergeProperties(objectParameterValue as IDictionary<string, object>, newProperties[parameterName] as IDictionary<string, object>);
+                    }
 			    }
 
 			    newProperties[parameterName] = objectParameterValue;

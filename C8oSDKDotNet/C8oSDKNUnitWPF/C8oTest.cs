@@ -612,7 +612,7 @@ namespace C8oSDKNUnitWPF
             {
                 var json = c8o.CallJson("fs://.reset").Sync();
                 Assert.True(json["ok"].Value<bool>());
-                var myId = "custom-" + DateTime.Now.Ticks;
+                var myId = "C8oFsPostGetDelete-" + DateTime.Now.Ticks;
                 json = c8o.CallJson("fs://.post", "_id", myId).Sync();
                 Assert.True(json["ok"].Value<bool>());
                 var id = json["id"].Value<string>();
@@ -642,7 +642,7 @@ namespace C8oSDKNUnitWPF
             {
                 var json = c8o.CallJson("fs://.reset").Sync();
                 Assert.True(json["ok"].Value<bool>());
-                var id = "custom-" + DateTime.Now.Ticks;
+                var id = "C8oFsPostGetDeleteRev-" + DateTime.Now.Ticks;
                 json = c8o.CallJson("fs://.post", "_id", id).Sync();
                 Assert.True(json["ok"].Value<bool>());
                 var rev = json["rev"].Value<string>();
@@ -678,11 +678,21 @@ namespace C8oSDKNUnitWPF
                 var json = c8o.CallJson("fs://.reset").Sync();
                 Assert.True(json["ok"].Value<bool>());
                 var ts = "ts=" + DateTime.Now.Ticks;
+                var ts2 = ts + "@test";
                 json = c8o.CallJson("fs://.post", "ts", ts).Sync();
                 Assert.True(json["ok"].Value<bool>());
                 var id = json["id"].Value<string>();
+                var rev = json["rev"].Value<string>();
+                json = c8o.CallJson("fs://.post",
+                    "_id", id,
+                    "_rev", rev,
+                    "ts", ts,
+                    "ts2", ts2
+                ).Sync();
+                Assert.True(json["ok"].Value<bool>());
                 json = c8o.CallJson("fs://.get", "docid", id).Sync();
                 Assert.AreEqual(ts, json["ts"].Value<string>());
+                Assert.AreEqual(ts2, json["ts2"].Value<string>());
                 json = c8o.CallJson("fs://.destroy").Sync();
                 Assert.True(json["ok"].Value<bool>());
                 json = c8o.CallJson("fs://.create").Sync();
@@ -781,7 +791,7 @@ namespace C8oSDKNUnitWPF
             {
                 var json = c8o.CallJson("fs://.reset").Sync();
                 Assert.True(json["ok"].Value<bool>());
-                var myId = "custom-" + DateTime.Now.Ticks;
+                var myId = "C8oFsPostExistingPolicyCreate-" + DateTime.Now.Ticks;
                 json = c8o.CallJson("fs://.post", "_id", myId).Sync();
                 Assert.True(json["ok"].Value<bool>());
                 var id = json["id"].Value<string>();
@@ -804,7 +814,7 @@ namespace C8oSDKNUnitWPF
             {
                 var json = c8o.CallJson("fs://.reset").Sync();
                 Assert.True(json["ok"].Value<bool>());
-                var myId = "custom-" + DateTime.Now.Ticks;
+                var myId = "C8oFsPostExistingPolicyOverride-" + DateTime.Now.Ticks;
                 json = c8o.CallJson("fs://.post",
                     C8o.FS_POLICY, C8o.FS_POLICY_OVERRIDE,
                     "_id", myId,
@@ -838,7 +848,7 @@ namespace C8oSDKNUnitWPF
             {
                 var json = c8o.CallJson("fs://.reset").Sync();
                 Assert.True(json["ok"].Value<bool>());
-                var myId = "custom-" + DateTime.Now.Ticks;
+                var myId = "C8oFsPostExistingPolicyMerge-" + DateTime.Now.Ticks;
                 json = c8o.CallJson("fs://.post",
                     C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
                     "_id", myId,
@@ -861,6 +871,53 @@ namespace C8oSDKNUnitWPF
                 Assert.AreEqual(3, json["a"].Value<int>());
                 Assert.AreEqual(2, json["b"].Value<int>());
                 Assert.AreEqual(4, json["c"].Value<int>());
+            }
+        }
+
+        [Test]
+        public void C8oFsPostExistingPolicyMergeSub()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS);
+            lock (c8o)
+            {
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var myId = "C8oFsPostExistingPolicyMergeSub-" + DateTime.Now.Ticks;
+                var sub_c = new JObject();
+                var sub_f = new JObject();
+                sub_c["d"] = 3;
+                sub_c["e"] = "four";
+                sub_c["f"] = sub_f;
+                sub_f["g"] = true;
+                sub_f["h"] = new JArray("one", "two", "three", "four");
+                json = c8o.CallJson("fs://.post",
+                    "_id", myId,
+                    "a", 1,
+                    "b", -2,
+                    "c", sub_c
+                ).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://.post",
+                    C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                    "_id", myId,
+                    "i", new JArray("5", 6, 7.1, null),
+                    "c.f.j", "good",
+                    "c.f.h", new JArray(true, false)
+                ).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://.post",
+                    C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                    C8o.FS_SUBKEY_SEPARATOR, "<>",
+                    "_id", myId,
+                    "c<>i-j", "great"
+                ).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://.get", "docid", myId).Sync();
+                json.Remove("_rev");
+                Assert.AreEqual(myId, json["_id"].Value<string>());
+                json.Remove("_id");
+                var sJson = json.ToString(Newtonsoft.Json.Formatting.None);
+                Assert.AreEqual("{\"a\":1,\"c\":{\"i-j\":\"great\",\"f\":{\"h\":[true,false,\"three\",\"four\"],\"j\":\"good\",\"g\":true},\"d\":3,\"e\":\"four\"},\"i\":[\"5\",6,7.1,null],\"b\":-2}", sJson);
             }
         }
     }
