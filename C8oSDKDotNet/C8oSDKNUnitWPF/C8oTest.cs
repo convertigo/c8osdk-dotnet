@@ -916,8 +916,11 @@ namespace C8oSDKNUnitWPF
                 json.Remove("_rev");
                 Assert.AreEqual(myId, json["_id"].Value<string>());
                 json.Remove("_id");
+                var expectedJson = JObject.Parse(
+                    "{\"a\":1,\"c\":{\"i-j\":\"great\",\"f\":{\"h\":[true,false,\"three\",\"four\"],\"j\":\"good\",\"g\":true},\"d\":3,\"e\":\"four\"},\"i\":[\"5\",6,7.1,null],\"b\":-2}"
+                ).ToString(Newtonsoft.Json.Formatting.None);
                 var sJson = json.ToString(Newtonsoft.Json.Formatting.None);
-                Assert.AreEqual("{\"a\":1,\"c\":{\"i-j\":\"great\",\"f\":{\"h\":[true,false,\"three\",\"four\"],\"j\":\"good\",\"g\":true},\"d\":3,\"e\":\"four\"},\"i\":[\"5\",6,7.1,null],\"b\":-2}", sJson);
+                Assert.AreEqual(expectedJson, sJson);
             }
         }
     }
