@@ -258,40 +258,39 @@ namespace Convertigo.SDK.Internal
 		    var newProperties = new Dictionary<string, object>();
 		    foreach (var parameter in parameters) {
 			    string parameterName = parameter.Key;
-
-                // Ignores parameters beginning with "__" or "_use_" 
-                if (parameterName.StartsWith("__"))
+                
+                if (parameterName.Equals(C8oFullSync.FULL_SYNC__REV))
                 {
-				    continue;
-			    }
-                if (parameterName.StartsWith("_use_"))
+                    newProperties[parameterName] = parameter.Value;
+                }
+                else if (!parameterName.StartsWith("__") && !parameterName.StartsWith("_use_"))
                 {
-				    continue;
-			    }
-			
-                // Retrieves ???
-			    var objectParameterValue = C8oUtils.GetParameterJsonValue(parameter);
+                    // Retrieves ???
+                    var objectParameterValue = C8oUtils.GetParameterJsonValue(parameter);
 
-			    // Checks if the parameter name is splittable
-                var paths = parameterName.Split(new String[] { subkeySeparatorParameterValue }, StringSplitOptions.None); // Regex.Split(parameterName, subkeySeparatorParameterValue);
-			    if (paths.Length > 1) {
-                    // The first substring becomes the key
-                    parameterName = paths[0];
-                    // Next substrings create a hierarchy which will becomes json subkeys  
-				    int count = paths.Length - 1;
-				    while (count > 0) {
-                        var tmpObject = new Dictionary<string, object>();
-					    tmpObject[paths[count]] = objectParameterValue;
-					    objectParameterValue = tmpObject;
-					    count--;
-				    }
-                    if (newProperties.ContainsKey(parameterName) && newProperties[parameterName] is IDictionary<string, object>)
+                    // Checks if the parameter name is splittable
+                    var paths = parameterName.Split(new String[] { subkeySeparatorParameterValue }, StringSplitOptions.None); // Regex.Split(parameterName, subkeySeparatorParameterValue);
+                    if (paths.Length > 1)
                     {
-                        FullSyncUtils.MergeProperties(objectParameterValue as IDictionary<string, object>, newProperties[parameterName] as IDictionary<string, object>);
+                        // The first substring becomes the key
+                        parameterName = paths[0];
+                        // Next substrings create a hierarchy which will becomes json subkeys  
+                        int count = paths.Length - 1;
+                        while (count > 0)
+                        {
+                            var tmpObject = new Dictionary<string, object>();
+                            tmpObject[paths[count]] = objectParameterValue;
+                            objectParameterValue = tmpObject;
+                            count--;
+                        }
+                        if (newProperties.ContainsKey(parameterName) && newProperties[parameterName] is IDictionary<string, object>)
+                        {
+                            FullSyncUtils.MergeProperties(objectParameterValue as IDictionary<string, object>, newProperties[parameterName] as IDictionary<string, object>);
+                        }
                     }
-			    }
 
-			    newProperties[parameterName] = objectParameterValue;
+                    newProperties[parameterName] = objectParameterValue;
+                }
 		    }
 
             var createdDocument = C8oFullSyncCblEnum.PostDocument(fullSyncPolicy, fullSyncDatabase.Database, newProperties);
