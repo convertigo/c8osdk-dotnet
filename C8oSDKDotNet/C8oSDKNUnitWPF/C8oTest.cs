@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
@@ -24,7 +25,7 @@ namespace C8oSDKNUnitWPF
             {
                 C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH);
                 c8o.LogRemote = false;
-                c8o.LogLevelLocal = C8oLogLevel.TRACE;
+                c8o.LogLevelLocal = C8oLogLevel.ERROR;
                 return c8o;
             });
 
@@ -39,7 +40,19 @@ namespace C8oSDKNUnitWPF
                     .SetDefaultDatabaseName("clientsdktesting")
                 );
                 c8o.LogRemote = false;
-                c8o.LogLevelLocal = C8oLogLevel.TRACE;
+                c8o.LogLevelLocal = C8oLogLevel.ERROR;
+                return c8o;
+            });
+
+            internal static readonly Stuff C8O_FS_REMOTE = new Stuff(() =>
+            {
+                C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH, new C8oSettings()
+                    .SetDefaultDatabaseName("client_sdk_testing_fullsync")
+                );
+                c8o.LogRemote = false;
+                c8o.LogLevelLocal = C8oLogLevel.ERROR;
+                var json = c8o.CallJson(".InitFS").Sync();
+                Assert.IsTrue(json.SelectToken("document.ok").Value<bool>());
                 return c8o;
             });
 
@@ -149,6 +162,15 @@ namespace C8oSDKNUnitWPF
         {
             var c8o = Get<C8o>(Stuff.C8O);
             var doc = c8o.CallXml(".Ping").Sync();
+            var pong = doc.XPathSelectElement("/document/pong");
+            Assert.NotNull(pong);
+        }
+
+        [Test]
+        public async Task C8oDefaultPingAsync()
+        {
+            var c8o = Get<C8o>(Stuff.C8O);
+            var doc = await c8o.CallXml(".Ping").Async();
             var pong = doc.XPathSelectElement("/document/pong");
             Assert.NotNull(pong);
         }
@@ -624,7 +646,7 @@ namespace C8oSDKNUnitWPF
                 Assert.True(json["ok"].Value<bool>());
                 try
                 {
-                    json = c8o.CallJson("fs://.get", "docid", id).Sync();
+                    c8o.CallJson("fs://.get", "docid", id).Sync();
                     Assert.True(false, "not possible");
                 }
                 catch (Exception e)
@@ -648,7 +670,7 @@ namespace C8oSDKNUnitWPF
                 var rev = json["rev"].Value<string>();
                 try
                 {
-                    json = c8o.CallJson("fs://.delete", "docid", id, "rev", "1-123456").Sync();
+                    c8o.CallJson("fs://.delete", "docid", id, "rev", "1-123456").Sync();
                     Assert.True(false, "not possible");
                 }
                 catch (Exception e)
@@ -659,7 +681,7 @@ namespace C8oSDKNUnitWPF
                 Assert.True(json["ok"].Value<bool>());
                 try
                 {
-                    json = c8o.CallJson("fs://.get", "docid", id).Sync();
+                    c8o.CallJson("fs://.get", "docid", id).Sync();
                     Assert.True(false, "not possible");
                 }
                 catch (Exception e)
@@ -699,7 +721,7 @@ namespace C8oSDKNUnitWPF
                 Assert.True(json["ok"].Value<bool>());
                 try
                 {
-                    json = c8o.CallJson("fs://.get", "docid", id).Sync();
+                    c8o.CallJson("fs://.get", "docid", id).Sync();
                     Assert.True(false, "not possible");
                 }
                 catch (Exception e)
@@ -724,7 +746,7 @@ namespace C8oSDKNUnitWPF
                 Assert.True(json["ok"].Value<bool>());
                 try
                 {
-                    json = c8o.CallJson("fs://.get", "docid", id).Sync();
+                    c8o.CallJson("fs://.get", "docid", id).Sync();
                     Assert.True(false, "not possible");
                 }
                 catch (Exception e)
@@ -747,7 +769,7 @@ namespace C8oSDKNUnitWPF
                 var id = json["id"].Value<string>();
                 try
                 {
-                    json = c8o.CallJson("fs://.post", "_id", id).Sync();
+                    c8o.CallJson("fs://.post", "_id", id).Sync();
                     Assert.True(false, "not possible");
                 }
                 catch (Exception e)
@@ -770,7 +792,7 @@ namespace C8oSDKNUnitWPF
                 var id = json["id"].Value<string>();
                 try
                 {
-                    json = c8o.CallJson("fs://.post",
+                    c8o.CallJson("fs://.post",
                         C8o.FS_POLICY, C8o.FS_POLICY_NONE,
                         "_id", id
                     ).Sync();
@@ -921,6 +943,79 @@ namespace C8oSDKNUnitWPF
                 ).ToString(Newtonsoft.Json.Formatting.None);
                 var sJson = json.ToString(Newtonsoft.Json.Formatting.None);
                 Assert.AreEqual(expectedJson, sJson);
+            }
+        }
+
+        [Test]
+        public void C8oFsPostGetMultibase()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS);
+            lock (c8o)
+            {
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://notdefault.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var myId = "C8oFsPostGetMultibase-" + DateTime.Now.Ticks;
+                json = c8o.CallJson("fs://.post", "_id", myId).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                try
+                {
+                    c8o.CallJson("fs://notdefault.get", "docid", myId).Sync();
+                    Assert.True(false, "not possible");
+                }
+                catch (Exception e)
+                {
+                    Assert.AreEqual("Convertigo.SDK.C8oRessourceNotFoundException", e.GetType().FullName);
+                }
+                json = c8o.CallJson("fs://notdefault.post", "_id", myId).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://notdefault.get", "docid", myId).Sync();
+                var id = json["_id"].Value<string>();
+                Assert.AreEqual(myId, id);
+            }
+        }
+
+        [Test]
+        public void C8oFsReplicateAnoAndAuth()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS_REMOTE);
+            lock (c8o)
+            {
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                try
+                {
+                    c8o.CallJson("fs://.get", "docid", "258").Sync();
+                    Assert.True(false, "not possible");
+                }
+                catch (Exception e)
+                {
+                    Assert.AreEqual("Convertigo.SDK.C8oRessourceNotFoundException", e.GetType().FullName);
+                }
+                json = c8o.CallJson("fs://.replicate_pull").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://.get", "docid", "258").Sync();
+                var value = json["data"].Value<string>();
+                Assert.AreEqual("258", value);
+                try
+                {
+                    c8o.CallJson("fs://.get", "docid", "456").Sync();
+                    Assert.True(false, "not possible");
+                }
+                catch (Exception e)
+                {
+                    Assert.AreEqual("Convertigo.SDK.C8oRessourceNotFoundException", e.GetType().FullName);
+                }
+                json = c8o.CallJson(".LoginTesting").Sync();
+                value = json.SelectToken("document.authenticatedUserID").Value<string>();
+                Assert.AreEqual("testing_user", value);
+                json = c8o.CallJson("fs://.replicate_pull").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://.get", "docid", "456").Sync();
+                value = json["data"].Value<string>();
+                Assert.AreEqual("456", value);
+                json = c8o.CallJson(".LogoutTesting").Sync();
             }
         }
     }
