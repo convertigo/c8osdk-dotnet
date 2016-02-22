@@ -74,7 +74,7 @@ namespace Convertigo.SDK.Internal
         {
             if (fsReplication.replication != null)
             {
-                fsReplication.replication.Stop();
+                StopReplication(fsReplication.replication);
                 if (fsReplication.changeListener != null)
                 {
                     fsReplication.replication.Changed -= fsReplication.changeListener;
@@ -124,7 +124,7 @@ namespace Convertigo.SDK.Internal
             {
                 if (rep != null)
                 {
-                    rep.Stop();
+                    StopReplication(rep);
                 }
                 return;
             }
@@ -176,7 +176,7 @@ namespace Convertigo.SDK.Internal
                 // Finally starts the replication
                 rep.Start();
                 Monitor.Wait(mutex);
-                rep.Stop();
+                StopReplication(rep);
             }
             
             if (continuous)
@@ -210,6 +210,29 @@ namespace Convertigo.SDK.Internal
                         }
                     });
                 rep.Start();
+            }
+        }
+
+        private void StopReplication(Replication replication)
+        {
+            replication.Stop();
+            int retry = 100;
+
+            // prevent the "Not starting becuse identical puller already exists" bug
+            while (retry-- > 0)
+            {
+                foreach (var rep in replication.LocalDatabase.AllReplications)
+                {
+                    if (rep == replication)
+                    {
+                        Thread.Sleep(10);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
             }
         }
 

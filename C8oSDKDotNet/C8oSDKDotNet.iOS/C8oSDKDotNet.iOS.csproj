@@ -11,7 +11,8 @@
     <RootNamespace>C8oSDKDotNet.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>C8oSDKDotNet.iOS</AssemblyName>
-    <NuGetPackageImportStamp>e510d7bd</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -48,8 +49,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Couchbase.Lite, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Couchbase.Lite.1.1.2.0\lib\Xamarin.iOS10\Couchbase.Lite.dll</HintPath>
+    <Reference Include="Couchbase.Lite, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Couchbase.Lite.1.2.0.3\lib\Xamarin.iOS10\Couchbase.Lite.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib.Portable, Version=0.86.0.51803, Culture=neutral, processorArchitecture=MSIL">
@@ -65,7 +66,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="SQLitePCL.ugly, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SQLitePCL.ugly.0.8.4\lib\portable-net45+netcore45+wp8+MonoAndroid10+MonoTouch10+Xamarin.iOS10\SQLitePCL.ugly.dll</HintPath>
+      <HintPath>..\packages\SQLitePCL.ugly.0.8.6\lib\portable-net45+netcore45+wp8+MonoAndroid10+MonoTouch10+Xamarin.iOS10\SQLitePCL.ugly.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Stateless, Version=2.5.29.0, Culture=neutral, PublicKeyToken=93038f0927583c9a, processorArchitecture=MSIL">
@@ -96,5 +97,13 @@
   <Import Project="..\C8oPlatforms\C8oPlatforms.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
-  <Import Project="..\packages\SQLitePCL.raw.0.8.4\build\Xamarin.iOS10\SQLitePCL.raw.targets" Condition="Exists('..\packages\SQLitePCL.raw.0.8.4\build\Xamarin.iOS10\SQLitePCL.raw.targets')" />
+  <Import Project="..\packages\Couchbase.Lite.Storage.SystemSQLite.1.2\build\Xamarin.iOS10\Couchbase.Lite.Storage.SystemSQLite.targets" Condition="Exists('..\packages\Couchbase.Lite.Storage.SystemSQLite.1.2\build\Xamarin.iOS10\Couchbase.Lite.Storage.SystemSQLite.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Ce projet fait référence à des packages NuGet qui sont manquants sur cet ordinateur. Utilisez l'option de restauration des packages NuGet pour les télécharger. Pour plus d'informations, consultez http://go.microsoft.com/fwlink/?LinkID=322105. Le fichier manquant est : {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Couchbase.Lite.Storage.SystemSQLite.1.2\build\Xamarin.iOS10\Couchbase.Lite.Storage.SystemSQLite.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Couchbase.Lite.Storage.SystemSQLite.1.2\build\Xamarin.iOS10\Couchbase.Lite.Storage.SystemSQLite.targets'))" />
+    <Error Condition="!Exists('..\packages\SQLitePCL.raw.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SQLitePCL.raw.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw.targets'))" />
+  </Target>
+  <Import Project="..\packages\SQLitePCL.raw.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw.targets" Condition="Exists('..\packages\SQLitePCL.raw.0.8.6\build\Xamarin.iOS10\SQLitePCL.raw.targets')" />
 </Project>
