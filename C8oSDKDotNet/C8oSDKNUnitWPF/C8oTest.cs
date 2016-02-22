@@ -69,6 +69,11 @@ namespace C8oSDKNUnitWPF
                 return new object();
             });
 
+            internal static readonly Stuff SSL_LOCK = new Stuff(() =>
+            {
+                return new object();
+            });
+
             private Stuff(Func<object> get)
             {
                 this.get = get;
@@ -593,37 +598,45 @@ namespace C8oSDKNUnitWPF
         [Test]
         public void C8oSsl1TrustFail()
         {
-            Exception exception = null;
-            try
+            object sslLock = Get<object>(Stuff.SSL_LOCK);
+            lock (sslLock)
             {
-                var c8o = new C8o("https://" + HOST + ":443" + PROJECT_PATH);
-                var doc = c8o.CallXml(".Ping", "var1", "value one").Sync();
-                var value = doc.XPathSelectElement("/document/pong/var1").Value;
-                Assert.True(false, "not possible");
+                Exception exception = null;
+                try
+                {
+                    var c8o = new C8o("https://" + HOST + ":443" + PROJECT_PATH);
+                    var doc = c8o.CallXml(".Ping", "var1", "value one").Sync();
+                    var value = doc.XPathSelectElement("/document/pong/var1").Value;
+                    Assert.True(false, "not possible");
+                }
+                catch (AssertionException ex)
+                {
+                    throw ex;
+                }
+                catch (Exception ex)
+                {
+                    exception = ex;
+                }
+                Assert.NotNull(exception);
+                Assert.AreEqual("Convertigo.SDK.C8oException", exception.GetType().FullName);
+                exception = exception.InnerException;
+                Assert.AreEqual("System.Net.WebException", exception.GetType().FullName);
+                exception = exception.InnerException;
+                Assert.AreEqual("System.Security.Authentication.AuthenticationException", exception.GetType().FullName);
             }
-            catch (AssertionException ex)
-            {
-                throw ex;
-            }
-            catch (Exception ex)
-            {
-                exception = ex;
-            }
-            Assert.NotNull(exception);
-            Assert.AreEqual("Convertigo.SDK.C8oException", exception.GetType().FullName);
-            exception = exception.InnerException;
-            Assert.AreEqual("System.Net.WebException", exception.GetType().FullName);
-            exception = exception.InnerException;
-            Assert.AreEqual("System.Security.Authentication.AuthenticationException", exception.GetType().FullName);
         }
 
         [Test]
         public void C8oSsl2TrustAll()
         {
-            var c8o = new C8o("https://" + HOST + ":443" + PROJECT_PATH, new C8oSettings().SetTrustAllCertificates(true));
-            var doc = c8o.CallXml(".Ping", "var1", "value one").Sync();
-            var value = doc.XPathSelectElement("/document/pong/var1").Value;
-            Assert.AreEqual("value one", value);
+            object sslLock = Get<object>(Stuff.SSL_LOCK);
+            lock (sslLock)
+            {
+                var c8o = new C8o("https://" + HOST + ":443" + PROJECT_PATH, new C8oSettings().SetTrustAllCertificates(true));
+                var doc = c8o.CallXml(".Ping", "var1", "value one").Sync();
+                var value = doc.XPathSelectElement("/document/pong/var1").Value;
+                Assert.AreEqual("value one", value);
+            }
         }
 
         [Test]
