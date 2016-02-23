@@ -26,21 +26,10 @@ namespace Convertigo.SDK.Internal
         internal static void AddToQuery(Query query, FullSyncRequestParameter requestParameter, object value)
         {
             Init();
-            // Checks if the value type is String and the request parameter type is not
-            if (typeof(string).IsAssignableFrom(value.GetType()) && !typeof(string).IsAssignableFrom(requestParameter.type))
-            {
-                // Tries to convert the string to the request parameter type
-                value = C8oTranslator.StringToObject(value as string, requestParameter.type);
-            }
             // Checks if the type is valid
             if (requestParameter.type.IsAssignableFrom(value.GetType()))
             {
-                // No reasons to fail
-                Action<Query, object> addToQueryOp = null;
-                if (fullSyncRequestParameters.TryGetValue(requestParameter, out addToQueryOp))
-                {
-                    addToQueryOp(query, value);
-                }
+                fullSyncRequestParameters[requestParameter](query, value);
             }
             else
             {
