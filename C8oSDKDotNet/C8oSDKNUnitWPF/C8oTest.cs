@@ -1123,8 +1123,8 @@ namespace C8oSDKNUnitWPF
                 json = c8o.CallJson("fs://.view",
                     "ddoc", "design",
                     "view", "reverse",
-                    "startkey", "\"0\"",
-                    "endkey", "\"9\""
+                    "startkey", "0",
+                    "endkey", "9"
                 ).Sync();
                 value = json["rows"][0]["value"].Value<float>();
                 Assert.AreEqual(405.0, value);
@@ -1154,8 +1154,8 @@ namespace C8oSDKNUnitWPF
                 json = c8o.CallJson("fs://.view",
                     "ddoc", "design",
                     "view", "reverse",
-                    "startkey", "\"0\"",
-                    "endkey", "\"9\""
+                    "startkey", "0",
+                    "endkey", "9"
                 ).Sync();
                 value = json["rows"][0]["value"].Value<float>();
                 Assert.AreEqual(1000.0, value);

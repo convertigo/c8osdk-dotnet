@@ -362,7 +362,7 @@ namespace Convertigo.SDK.Internal
             }
             if (view == null)
             {
-                // Error
+                throw new C8oRessourceNotFoundException(C8oExceptionMessage.IllegalArgumentNotFoundFullSyncView(viewName, fullSyncDatabase.DatabaseName));
             }
 
             // Creates the fullSync query and add parameters to it
@@ -605,6 +605,11 @@ namespace Convertigo.SDK.Internal
                 if (fullSyncRequestParameter != null)
                 {
                     object parameterValue = parameter.Value;
+                    Type type = fullSyncRequestParameter.type;
+                    if (type != typeof(object) && parameterValue is string)
+                    {
+                        parameterValue = C8oTranslator.StringToObject(parameterValue as string, type);
+                    }
                     //object objectParameterValue = parameterValue;
                     //if (parameterValue is String)
                     //{

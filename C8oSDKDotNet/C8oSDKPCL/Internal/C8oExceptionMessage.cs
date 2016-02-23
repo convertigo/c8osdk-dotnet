@@ -327,7 +327,7 @@ namespace Convertigo.SDK
 
         //*** TAG Not found ***//
 
-        public static string illegalArgumentNotFoundFullSyncView(string viewName, string databaseName)
+        public static string IllegalArgumentNotFoundFullSyncView(string viewName, string databaseName)
         {
             return "Cannot found the view '" + viewName + "' in database '" + databaseName + "'";
         }
