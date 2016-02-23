@@ -981,7 +981,7 @@ namespace C8oSDKNUnitWPF
         }
 
         [Test]
-        public void C8oFsReplicateAnoAndAuth()
+        public void C8oFsReplicatePullAnoAndAuth()
         {
             var c8o = Get<C8o>(Stuff.C8O_FS_REMOTE);
             lock (c8o)
@@ -1024,7 +1024,7 @@ namespace C8oSDKNUnitWPF
         }
 
         [Test]
-        public void C8oFsReplicateProgress()
+        public void C8oFsReplicatePullProgress()
         {
             var c8o = Get<C8o>(Stuff.C8O_FS_REMOTE);
             lock (c8o)
@@ -1054,13 +1054,13 @@ namespace C8oSDKNUnitWPF
                 Assert.AreEqual("456", value);
                 Assert.False(uiThread, "uiThread must be False");
                 Assert.AreEqual("pull: 0/0 (running)", first);
-                Assert.AreEqual("pull: 7/7 (done)", last);
+                Assert.AreEqual("pull: 8/8 (done)", last);
                 Assert.True(count > 5, "count > 5");
             }
         }
 
         [Test]
-        public void C8oFsReplicateProgressUI()
+        public void C8oFsReplicatePullProgressUI()
         {
             var c8o = Get<C8o>(Stuff.C8O_FS_REMOTE);
             lock (c8o)
@@ -1090,8 +1090,75 @@ namespace C8oSDKNUnitWPF
                 Assert.AreEqual("456", value);
                 Assert.True(uiThread, "uiThread must be True");
                 Assert.AreEqual("pull: 0/0 (running)", first);
-                Assert.AreEqual("pull: 7/7 (done)", last);
+                Assert.AreEqual("pull: 8/8 (done)", last);
                 Assert.True(count > 5, "count > 5");
+            }
+        }
+
+        [Test]
+        public void C8oFsReplicatePullAnoAndAuthView()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS_REMOTE);
+            lock (c8o)
+            {
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://.replicate_pull").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://.view",
+                    "ddoc", "design",
+                    "view", "reverse"
+                ).Sync();
+                object value = json["rows"][0]["value"].Value<float>();
+                Assert.AreEqual(774.0, value);
+                json = c8o.CallJson("fs://.view",
+                    "ddoc", "design",
+                    "view", "reverse",
+                    "reduce", false
+                ).Sync();
+                value = json["count"].Value<int>();
+                Assert.AreEqual(3, value);
+                value = json["rows"][1]["key"].Value<string>();
+                Assert.AreEqual("852", value);
+                json = c8o.CallJson("fs://.view",
+                    "ddoc", "design",
+                    "view", "reverse",
+                    "startkey", "\"0\"",
+                    "endkey", "\"9\""
+                ).Sync();
+                value = json["rows"][0]["value"].Value<float>();
+                Assert.AreEqual(405.0, value);
+                json = c8o.CallJson(".LoginTesting").Sync();
+                value = json.SelectToken("document.authenticatedUserID").Value<string>();
+                Assert.AreEqual("testing_user", value);
+                json = c8o.CallJson("fs://.replicate_pull").Sync();
+                c8o.CallJson(".LogoutTesting").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://.view",
+                    "ddoc", "design",
+                    "view", "reverse"
+                ).Sync();
+                value = json["rows"][0]["value"].Value<float>();
+                Assert.AreEqual(2142.0, value);
+                json = c8o.CallJson("fs://.view",
+                    "ddoc", "design",
+                    "view", "reverse",
+                    "reduce", false
+                ).Sync();
+                value = json["count"].Value<int>();
+                Assert.AreEqual(6, value);
+                value = json["rows"][1]["key"].Value<string>();
+                Assert.AreEqual("654", value);
+                json = c8o.CallJson("fs://.post", "_id", "111", "data", "16").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://.view",
+                    "ddoc", "design",
+                    "view", "reverse",
+                    "startkey", "\"0\"",
+                    "endkey", "\"9\""
+                ).Sync();
+                value = json["rows"][0]["value"].Value<float>();
+                Assert.AreEqual(1000.0, value);
             }
         }
     }
