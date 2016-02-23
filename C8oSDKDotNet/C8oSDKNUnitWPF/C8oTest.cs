@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -1014,11 +1015,83 @@ namespace C8oSDKNUnitWPF
                 value = json.SelectToken("document.authenticatedUserID").Value<string>();
                 Assert.AreEqual("testing_user", value);
                 json = c8o.CallJson("fs://.replicate_pull").Sync();
+                c8o.CallJson(".LogoutTesting").Sync();
                 Assert.True(json["ok"].Value<bool>());
                 json = c8o.CallJson("fs://.get", "docid", "456").Sync();
                 value = json["data"].Value<string>();
                 Assert.AreEqual("456", value);
-                json = c8o.CallJson(".LogoutTesting").Sync();
+            }
+        }
+
+        [Test]
+        public void C8oFsReplicateProgress()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS_REMOTE);
+            lock (c8o)
+            {
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson(".LoginTesting").Sync();
+                var value = json.SelectToken("document.authenticatedUserID").Value<string>();
+                Assert.AreEqual("testing_user", value);
+                int count = 0;
+                string first = null;
+                string last = null;
+                bool uiThread = false;
+                json = c8o.CallJson("fs://.replicate_pull").Progress(progress =>
+                {
+                    count++;
+                    uiThread |= "FakeUI".Equals(Thread.CurrentThread.Name);
+                    if (first == null)
+                    {
+                        first = progress.ToString();
+                    }
+                    last = progress.ToString();
+                }).Sync();
+                c8o.CallJson(".LogoutTesting").Sync();
+                json = c8o.CallJson("fs://.get", "docid", "456").Sync();
+                value = json["data"].Value<string>();
+                Assert.AreEqual("456", value);
+                Assert.False(uiThread, "uiThread must be False");
+                Assert.AreEqual("pull: 0/0 (running)", first);
+                Assert.AreEqual("pull: 7/7 (done)", last);
+                Assert.True(count > 5, "count > 5");
+            }
+        }
+
+        [Test]
+        public void C8oFsReplicateProgressUI()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS_REMOTE);
+            lock (c8o)
+            {
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson(".LoginTesting").Sync();
+                var value = json.SelectToken("document.authenticatedUserID").Value<string>();
+                Assert.AreEqual("testing_user", value);
+                int count = 0;
+                string first = null;
+                string last = null;
+                bool uiThread = true;
+                json = c8o.CallJson("fs://.replicate_pull").ProgressUI(progress =>
+                {
+                    count++;
+                    uiThread &= "FakeUI".Equals(Thread.CurrentThread.Name);
+                    if (first == null)
+                    {
+                        first = progress.ToString();
+                    }
+                    last = progress.ToString();
+                }).Sync();
+                c8o.CallJson(".LogoutTesting").Sync();
+                json = c8o.CallJson("fs://.get", "docid", "456").Sync();
+                value = json["data"].Value<string>();
+                Assert.AreEqual("456", value);
+                Assert.True(uiThread, "uiThread must be True");
+                Assert.AreEqual("pull: 0/0 (running)", first);
+                Assert.AreEqual("pull: 7/7 (done)", last);
+                Assert.True(count > 5, "count > 5");
             }
         }
     }
