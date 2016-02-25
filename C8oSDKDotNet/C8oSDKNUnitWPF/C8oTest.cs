@@ -1310,7 +1310,7 @@ namespace C8oSDKNUnitWPF
             }
         }
 
-        //[Test]
+        [Test]
         public void C8oFsReplicateSyncContinuousProgress()
         {
             var c8o = Get<C8o>(Stuff.C8O_FS_PUSH);
@@ -1400,7 +1400,7 @@ namespace C8oSDKNUnitWPF
                     value = json["custom"].Value<string>();
                     Assert.AreEqual(id, value);
                     json = c8o.CallJson(".qa_fs_push.GetDocument", "_use_docid", "def").Sync();
-                    value = json.SelectToken("document.couchdb_output.cutom").Value<string>();
+                    value = json.SelectToken("document.couchdb_output.custom").Value<string>();
                     Assert.AreEqual(id, value);
                     //Assert.True(Regex.IsMatch(livePull, "pull: \\d+/\\d+ \\(live\\)"), "pull: \\d+/\\d+ \\(live\\)");
                     //Assert.True(Regex.IsMatch(livePush, "push: \\d+/\\d+ \\(live\\)"), "push: \\d+/\\d+ \\(live\\)");
