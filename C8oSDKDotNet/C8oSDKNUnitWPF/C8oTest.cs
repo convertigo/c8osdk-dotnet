@@ -4,7 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -53,7 +53,7 @@ namespace C8oSDKNUnitWPF
                 );
                 c8o.LogRemote = false;
                 c8o.LogLevelLocal = C8oLogLevel.ERROR;
-                var json = c8o.CallJson(".InitFS").Sync();
+                var json = c8o.CallJson(".InitFsPull").Sync();
                 Assert.IsTrue(json.SelectToken("document.ok").Value<bool>());
                 return c8o;
             });
@@ -65,6 +65,8 @@ namespace C8oSDKNUnitWPF
                 );
                 c8o.LogRemote = false;
                 c8o.LogLevelLocal = C8oLogLevel.ERROR;
+                var json = c8o.CallJson(".InitFsPush").Sync();
+                Assert.IsTrue(json.SelectToken("document.ok").Value<bool>());
                 return c8o;
             });
 
@@ -1246,7 +1248,7 @@ namespace C8oSDKNUnitWPF
                 {
                     var json = c8o.CallJson("fs://.reset").Sync();
                     Assert.True(json["ok"].Value<bool>());
-                    var id = "C8oFsReplicatePushAnoAndAuth-" + DateTime.Now.Ticks;
+                    var id = "C8oFsReplicatePushAuthProgress-" + DateTime.Now.Ticks;
                     for (int i = 0; i < 10; i++)
                     {
                         json = c8o.CallJson("fs://.post",
@@ -1273,7 +1275,6 @@ namespace C8oSDKNUnitWPF
                         last = progress.ToString();
                     }).Sync();
                     Assert.True(json["ok"].Value<bool>());
-
                     json = c8o.CallJson(".qa_fs_push.AllDocs",
                         "startkey", id,
                         "endkey", id + "z"
@@ -1293,6 +1294,109 @@ namespace C8oSDKNUnitWPF
                     Assert.AreEqual("push: 0/0 (running)", first);
                     Assert.AreEqual("push: 10/10 (done)", last);
                     Assert.True(count > 3, "count > 3");
+                }
+                finally
+                {
+                    c8o.CallJson(".LogoutTesting").Sync();
+                }
+            }
+        }
+
+        //[Test]
+        public void C8oFsReplicateSyncContinuousProgress()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS_PUSH);
+            lock (c8o)
+            {
+                try
+                {
+                    var json = c8o.CallJson("fs://.reset").Sync();
+                    Assert.True(json["ok"].Value<bool>());
+                    var id = "C8oFsReplicateSyncContinuousProgress-" + DateTime.Now.Ticks;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        json = c8o.CallJson("fs://.post",
+                            "_id", id + "-" + i,
+                            "index", i
+                        ).Sync();
+                        Assert.True(json["ok"].Value<bool>());
+                    }
+                    json = c8o.CallJson(".LoginTesting").Sync();
+                    object value = json.SelectToken("document.authenticatedUserID").Value<string>();
+                    Assert.AreEqual("testing_user", value);
+                    string firstPush = null;
+                    string lastPush = null;
+                    string livePush = null;
+                    string firstPull = null;
+                    string lastPull = null;
+                    string livePull = null;
+                    json = c8o.CallJson("fs://.sync", "continuous", true).Progress(progress =>
+                    {
+                        if (progress.Continuous)
+                        {
+                            if (progress.Push)
+                            {
+                                livePush = progress.ToString();
+                            }
+                            if (progress.Pull)
+                            {
+                                livePull = progress.ToString();
+                            }
+                        }
+                        else
+                        {
+                            if (progress.Push)
+                            {
+                                if (firstPush == null)
+                                {
+                                    firstPush = progress.ToString();
+                                }
+                                lastPush = progress.ToString();
+                            }
+                            if (progress.Pull)
+                            {
+                                if (firstPull == null)
+                                {
+                                    firstPull = progress.ToString();
+                                }
+                                lastPull = progress.ToString();
+                            }
+                        }
+                    }).Sync();
+                    Assert.True(json["ok"].Value<bool>());
+                    Assert.AreEqual("push: 0/0 (running)", firstPush);
+                    Assert.True(Regex.IsMatch(lastPush, "push: \\d+/\\d+ \\(done\\)"), "push: \\d+/\\d+ \\(done\\)");
+                    Assert.AreEqual("pull: 0/0 (running)", firstPull);
+                    Assert.True(Regex.IsMatch(lastPull, "pull: \\d+/\\d+ \\(done\\)"), "pull: \\d+/\\d+ \\(done\\)");
+                    json = c8o.CallJson(".qa_fs_push.AllDocs",
+                        "startkey", id,
+                        "endkey", id + "z"
+                    ).Sync();
+                    var array = json.SelectToken("document.couchdb_output.rows.item").Value<JArray>();
+                    Assert.AreEqual(3, array.Count);
+                    for (int i = 0; i < 3; i++)
+                    {
+                        value = array[i].SelectToken("doc._id").Value<string>();
+                        Assert.AreEqual(id + "-" + i, value);
+                    }
+                    json = c8o.CallJson("fs://.get", "docid", "def").Sync();
+                    value = json["_id"].Value<string>();
+                    Assert.AreEqual("def", value);
+                    json["custom"] = id;
+                    json = c8o.CallJson("fs://.post", json).Sync();
+                    Assert.True(json["ok"].Value<bool>());
+                    json = c8o.CallJson(".qa_fs_push.PostDocument", "_id", "ghi", "custom", id).Sync();
+                    Assert.True(json.SelectToken("document.couchdb_output.ok").Value<bool>());
+                    Thread.Sleep(2000);
+                    json = c8o.CallJson("fs://.get", "docid", "ghi").Sync();
+                    value = json["custom"].Value<string>();
+                    Assert.AreEqual(id, value);
+                    json = c8o.CallJson(".qa_fs_push.GetDocument", "_use_docid", "def").Sync();
+                    value = json.SelectToken("document.couchdb_output.cutom").Value<string>();
+                    Assert.AreEqual(id, value);
+                    //Assert.True(Regex.IsMatch(livePull, "pull: \\d+/\\d+ \\(live\\)"), "pull: \\d+/\\d+ \\(live\\)");
+                    //Assert.True(Regex.IsMatch(livePush, "push: \\d+/\\d+ \\(live\\)"), "push: \\d+/\\d+ \\(live\\)");
+
                 }
                 finally
                 {
