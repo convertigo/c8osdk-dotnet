@@ -174,6 +174,10 @@ namespace Convertigo.SDK.Internal
                 if (c8oResponseListener is C8oResponseXmlListener)
                 {
                     response = C8oTranslator.StreamToXml(responseStream);
+                    if (localCacheEnabled)
+                    {
+                        responseString = C8oTranslator.XmlToString(response as XDocument);
+                    }
                 }
                 else if (c8oResponseListener is C8oResponseJsonListener)
                 {
