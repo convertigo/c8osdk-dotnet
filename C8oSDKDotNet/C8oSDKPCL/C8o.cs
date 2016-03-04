@@ -34,7 +34,7 @@ namespace Convertigo.SDK
         /// <summary>
         /// The regex used to get the part of the endpoint before '/projects/'
         /// </summary>
-        private static readonly Regex RE_ENDPOINT = new Regex(@"^(http(s)?://([^:]+)(:[0-9]+)?/?.*?)/projects/[^/]+$", RegexOptions.IgnoreCase);
+        private static readonly Regex RE_ENDPOINT = new Regex(@"^(http(s)?://([^:]+)(:[0-9]+)?/?.*?)/projects/([^/]+)$", RegexOptions.IgnoreCase);
 
         //*** Engine reserved parameters ***//
 
@@ -89,6 +89,7 @@ namespace Convertigo.SDK
         private bool endpointIsSecure;
         private string endpointHost;
         private string endpointPort;
+        private string endpointProject;
 
 
         /// <summary>
@@ -142,6 +143,7 @@ namespace Convertigo.SDK
             endpointIsSecure = matches.Groups[2].Value != null;
             endpointHost = matches.Groups[3].Value;
             endpointPort = matches.Groups[4].Value;
+            endpointProject = matches.Groups[5].Value;
 
             if (c8oSettings != null)
             {
@@ -611,7 +613,7 @@ namespace Convertigo.SDK
         }
 
         /// <summary>
-        /// The target server hostname ,coming from the endpoint url.
+        /// The target server hostname, coming from the endpoint url.
         /// </summary>
         public string EndpointHost
         {
@@ -619,11 +621,19 @@ namespace Convertigo.SDK
         }
 
         /// <summary>
-        /// The target server hostname ,coming from the endpoint url.
+        /// The target server hostname, coming from the endpoint url.
         /// </summary>
         public string EndpointPort
         {
             get { return endpointPort; }
+        }
+
+        /// <summary>
+        /// The target project name, coming from the endpoint url.
+        /// </summary>
+        public string EndpointProject
+        {
+            get { return endpointProject; }
         }
 
         /// <summary>

@@ -63,6 +63,8 @@ namespace Convertigo.SDK
         private DateTime startTimeRemoteLog;
         private C8o c8o;
 
+        private String env;
+
         internal C8oLogger(C8o c8o)
         {
             this.c8o = c8o;
@@ -76,6 +78,11 @@ namespace Convertigo.SDK
             var currentTime = DateTime.Now;
             startTimeRemoteLog = currentTime;
             uidRemoteLogs = C8oTranslator.DoubleToHexString(C8oUtils.GetUnixEpochTime(currentTime));
+            env = new JObject() {
+                {"uid", uidRemoteLogs},
+                {"uuid", c8o.DeviceUUID},
+                {"project", c8o.EndpointProject}
+            }.ToString();
         }
 
         private bool IsLoggableRemote(C8oLogLevel logLevel)
@@ -257,7 +264,7 @@ namespace Convertigo.SDK
                     var parameters = new Dictionary<string, object>()
                     {
                         { JSON_KEY_LOGS, JsonConvert.SerializeObject(logsArray)},
-                        { JSON_KEY_ENV, "{\"uid\":\"" + uidRemoteLogs + "\"}"},
+                        { JSON_KEY_ENV, env},
                         { C8o.ENGINE_PARAMETER_DEVICE_UUID, c8o.DeviceUUID }
                     };
 
