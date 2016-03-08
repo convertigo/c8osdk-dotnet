@@ -162,7 +162,7 @@ namespace Convertigo.SDK.Internal
             requestParameter = FullSyncRequestParameter.INCLUDE_DOCS;
             action = (query, value) =>
             {
-                // missing include_docs !
+                query.Prefetch = (bool) value;
             };
             fullSyncRequestParameters[requestParameter] = action;
             // REDUCE
@@ -177,13 +177,6 @@ namespace Convertigo.SDK.Internal
             action = (query, value) =>
             {
                 query.GroupLevel = (bool) value ? 99 : 0;
-            };
-            fullSyncRequestParameters[requestParameter] = action;
-            // PREFETCH
-            requestParameter = FullSyncRequestParameter.PREFETCH;
-            action = (query, value) =>
-            {
-                query.Prefetch = (bool) value;
             };
             fullSyncRequestParameters[requestParameter] = action;
             // SKIP

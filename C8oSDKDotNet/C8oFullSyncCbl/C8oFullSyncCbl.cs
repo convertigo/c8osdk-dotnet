@@ -305,41 +305,14 @@ namespace Convertigo.SDK.Internal
         {
             var fullSyncDatabase = await GetOrCreateFullSyncDatabase(databaseName);
 
-            /*
-            // !!! TMP !!!
-            if (parameters.ContainsKey("count"))
-            {
-                IDictionary<string, object> json = new Dictionary<string, object>();
-                json.Add("count", database.DocumentCount);
-                return json;
-            }
-            // !!! TMP !!!
-            */
-
             // Creates the fullSync query and add parameters to it
             var query = fullSyncDatabase.Database.CreateAllDocumentsQuery();
             
             AddParametersToQuery(query, parameters);
 
             var result = query.Run();
-            /*
-            if (parameters["include_docs"] == (true as Object))
-            {
-                IEnumerator<QueryRow> queryRows = queryEnumerator.GetEnumerator();
-                while (queryRows.MoveNext())
-                {
-                    QueryRow queryRow = queryRows.Current;
-                    IDictionary<string, object> queryRowJson = FullSyncTranslator.DictionaryToJson(queryRow.AsJSONDictionary());
-                    rowsArray.Add(queryRowJson);
-                }
-            }
-            */
 
-            var obj = C8oFullSyncCblTranslator.QueryEnumeratorToJson(result);
-            obj["total_rows"] = fullSyncDatabase.Database.DocumentCount;
-
-
-            return obj;
+            return result;
         }
 
         //*** GetView ***//
