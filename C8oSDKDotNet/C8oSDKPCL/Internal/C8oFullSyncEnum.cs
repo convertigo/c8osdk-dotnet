@@ -216,7 +216,6 @@ namespace Convertigo.SDK.Internal
         public static readonly FullSyncRequestParameter INCLUDE_DOCS = new FullSyncRequestParameter("include_docs", typeof(bool));
         public static readonly FullSyncRequestParameter REDUCE = new FullSyncRequestParameter("reduce", typeof(bool));
         public static readonly FullSyncRequestParameter GROUP = new FullSyncRequestParameter("group", typeof(bool));
-        public static readonly FullSyncRequestParameter PREFETCH = new FullSyncRequestParameter("prefetch", typeof(bool));
         public static readonly FullSyncRequestParameter SKIP = new FullSyncRequestParameter("skip", typeof(int));
         public static readonly FullSyncRequestParameter STARTKEY = new FullSyncRequestParameter("startkey", typeof(object));
         public static readonly FullSyncRequestParameter STARTKEY_DOCID = new FullSyncRequestParameter("startkey_docid", typeof(string));
@@ -232,7 +231,7 @@ namespace Convertigo.SDK.Internal
 
         public static FullSyncRequestParameter[] Values()
         {
-            return new FullSyncRequestParameter[] { DESCENDING, ENDKEY, ENDKEY_DOCID, GROUP_LEVEL, INCLUDE_DELETED, INDEX_UPDATE_MODE, KEYS, LIMIT, REDUCE, GROUP, PREFETCH, SKIP, STARTKEY, STARTKEY_DOCID };
+            return new FullSyncRequestParameter[] { DESCENDING, ENDKEY, ENDKEY_DOCID, GROUP_LEVEL, INCLUDE_DELETED, INDEX_UPDATE_MODE, KEYS, LIMIT, REDUCE, GROUP, SKIP, STARTKEY, STARTKEY_DOCID, INCLUDE_DOCS };
         }
 
         public static FullSyncRequestParameter GetFullSyncRequestParameter(string name)

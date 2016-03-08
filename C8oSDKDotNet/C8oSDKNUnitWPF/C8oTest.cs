@@ -1209,6 +1209,57 @@ namespace C8oSDKNUnitWPF
         }
 
         [Test]
+        public void C8oFsReplicatePullGetAll()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS_PULL);
+            lock (c8o)
+            {
+                try
+                {
+                    var json = c8o.CallJson("fs://.reset").Sync();
+                    Assert.True(json["ok"].Value<bool>());
+                    json = c8o.CallJson(".LoginTesting").Sync();
+                    object value = json.SelectToken("document.authenticatedUserID").Value<string>();
+                    Assert.AreEqual("testing_user", value);
+                    json = c8o.CallJson("fs://.replicate_pull").Sync();
+                    Assert.True(json["ok"].Value<bool>());
+                    json = c8o.CallJson("fs://.all").Sync();
+                    Assert.AreEqual(8, json["count"].Value<int>());
+                    Assert.AreEqual(8, json["rows"].Value<JArray>().Count);
+                    Assert.AreEqual("789", json["rows"][5]["key"].Value<string>());
+                    Assert.Null(json["rows"][5]["doc"]);
+                    json = c8o.CallJson("fs://.all",
+                        "include_docs", true
+                    ).Sync();
+                    Assert.AreEqual(8, json["count"].Value<int>());
+                    Assert.AreEqual(8, json["rows"].Value<JArray>().Count);
+                    Assert.AreEqual("789", json["rows"][5]["key"].Value<string>());
+                    Assert.AreEqual("testing_user", json["rows"][5]["doc"]["~c8oAcl"].Value<string>());
+                    json = c8o.CallJson("fs://.all",
+                        "limit", 2
+                    ).Sync();
+                    Assert.AreEqual(2, json["count"].Value<int>());
+                    Assert.AreEqual(2, json["rows"].Value<JArray>().Count);
+                    Assert.AreEqual("147", json["rows"][1]["key"].Value<string>());
+                    Assert.Null(json["rows"][1]["doc"]);
+                    json = c8o.CallJson("fs://.all",
+                        "include_docs", true,
+                        "limit", 3,
+                        "skip", 2
+                    ).Sync();
+                    Assert.AreEqual(3, json["count"].Value<int>());
+                    Assert.AreEqual(3, json["rows"].Value<JArray>().Count);
+                    Assert.AreEqual("369", json["rows"][1]["key"].Value<string>());
+                    Assert.AreEqual("doc", json["rows"][1]["doc"]["type"].Value<string>());
+                }
+                finally
+                {
+                    c8o.CallJson(".LogoutTesting").Sync();
+                }
+            }
+        }
+
+        [Test]
         public void C8oFsReplicatePushAuth()
         {
             var c8o = Get<C8o>(Stuff.C8O_FS_PUSH);

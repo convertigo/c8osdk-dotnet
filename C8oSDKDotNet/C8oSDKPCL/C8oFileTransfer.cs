@@ -195,7 +195,7 @@ namespace Convertigo.SDK
 
                     Debug("SelectUuid:\n" + json.ToString());
 
-                    if (json.SelectToken("document.selected").ToString() != "true")
+                    if (!"true".Equals(json.SelectToken("document.selected").Value<string>()))
                     {
                         if (!task["replicated"].Value<bool>())
                         {
@@ -235,12 +235,12 @@ namespace Convertigo.SDK
                     Notify(transferStatus);
 
                     var allOptions = new Dictionary<string, object> {
-                        { "startkey", '"' + transferStatus.Uuid + "_\"" },
-                        { "endkey", '"' + transferStatus.Uuid + "__\"" }
+                        { "startkey", transferStatus.Uuid + "_" },
+                        { "endkey", transferStatus.Uuid + "__" }
                     };
 
                     // Waits the end of the replication if it is not finished
-                    while (!locker[0])
+                    do
                     {
                         try
                         {
@@ -266,6 +266,7 @@ namespace Convertigo.SDK
                             Debug(e.ToString());
                         }
                     }
+                    while (!locker[0]);
 
                     if (transferStatus.Current < transferStatus.Total)
                     {
