@@ -198,6 +198,39 @@ namespace C8oSDKNUnitWPF
         }
 
         [Test]
+        public void C8oUnknownHostCallAndLog()
+        {
+            var exception = null as Exception;
+            var exceptionLog = null as Exception;
+            var c8o = new C8o("http://" + HOST + "ee:28080" + PROJECT_PATH, new C8oSettings()
+                .SetLogOnFail((ex, parameters) =>
+                {
+                    exceptionLog = ex;
+                })
+            );
+            try
+            {
+                c8o.CallXml(".Ping").Sync();
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            Assert.NotNull(exception);
+            Assert.AreEqual("Convertigo.SDK.C8oException", exception.GetType().FullName);
+            exception = exception.InnerException;
+            Assert.AreEqual("System.AggregateException", exception.GetType().FullName);
+            exception = exception.InnerException;
+            Assert.AreEqual("System.Net.WebException", exception.GetType().FullName);
+            Assert.NotNull(exceptionLog);
+            Assert.AreEqual("Convertigo.SDK.C8oException", exceptionLog.GetType().FullName);
+            exceptionLog = exceptionLog.InnerException;
+            Assert.AreEqual("System.AggregateException", exceptionLog.GetType().FullName);
+            exceptionLog = exceptionLog.InnerException;
+            Assert.AreEqual("System.Net.WebException", exceptionLog.GetType().FullName);
+        }
+
+        [Test]
         public void C8oDefaultPingOneSingleValue()
         {
             var c8o = Get<C8o>(Stuff.C8O);
@@ -1476,7 +1509,7 @@ namespace C8oSDKNUnitWPF
             var value = doc.XPathSelectElement("/document/pong/var1").Value;
             Assert.AreEqual(id, value);
             var signature = doc.XPathSelectElement("/document").Attribute("signature").Value;
-            Thread.Sleep(500);
+            Thread.Sleep(100);
             doc = c8o.CallXml(".Ping",
                 C8oLocalCache.PARAM, new C8oLocalCache(C8oLocalCache.Priority.LOCAL, 3000),
                 "var1", id + "bis"
@@ -1485,7 +1518,7 @@ namespace C8oSDKNUnitWPF
             Assert.AreEqual(id + "bis", value);
             var signature2 = doc.XPathSelectElement("/document").Attribute("signature").Value;
             Assert.AreNotEqual(signature, signature2);
-            Thread.Sleep(500);
+            Thread.Sleep(100);
             doc = c8o.CallXml(".Ping",
                  C8oLocalCache.PARAM, new C8oLocalCache(C8oLocalCache.Priority.LOCAL, 3000),
                  "var1", id
@@ -1494,7 +1527,7 @@ namespace C8oSDKNUnitWPF
             Assert.AreEqual(id, value);
             signature2 = doc.XPathSelectElement("/document").Attribute("signature").Value;
             Assert.AreEqual(signature, signature2);
-            Thread.Sleep(2500);
+            Thread.Sleep(2800);
             doc = c8o.CallXml(".Ping",
                  C8oLocalCache.PARAM, new C8oLocalCache(C8oLocalCache.Priority.LOCAL, 3000),
                  "var1", id
@@ -1517,7 +1550,7 @@ namespace C8oSDKNUnitWPF
             var value = json.SelectToken("document.pong.var1").Value<string>();
             Assert.AreEqual(id, value);
             var signature = json.SelectToken("document.attr.signature").Value<string>();
-            Thread.Sleep(500);
+            Thread.Sleep(100);
             json = c8o.CallJson(".Ping",
                 C8oLocalCache.PARAM, new C8oLocalCache(C8oLocalCache.Priority.LOCAL, 3000),
                 "var1", id + "bis"
@@ -1526,7 +1559,7 @@ namespace C8oSDKNUnitWPF
             Assert.AreEqual(id + "bis", value);
             var signature2 = json.SelectToken("document.attr.signature").Value<string>();
             Assert.AreNotEqual(signature, signature2);
-            Thread.Sleep(500);
+            Thread.Sleep(100);
             json = c8o.CallJson(".Ping",
                  C8oLocalCache.PARAM, new C8oLocalCache(C8oLocalCache.Priority.LOCAL, 3000),
                  "var1", id
@@ -1535,7 +1568,7 @@ namespace C8oSDKNUnitWPF
             Assert.AreEqual(id, value);
             signature2 = json.SelectToken("document.attr.signature").Value<string>();
             Assert.AreEqual(signature, signature2);
-            Thread.Sleep(2500);
+            Thread.Sleep(2800);
             json = c8o.CallJson(".Ping",
                  C8oLocalCache.PARAM, new C8oLocalCache(C8oLocalCache.Priority.LOCAL, 3000),
                  "var1", id
