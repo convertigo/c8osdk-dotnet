@@ -189,6 +189,17 @@ namespace C8oSDKNUnitWPF
         }
 
         [Test]
+        public void C8oDefaultPingWait()
+        {
+            var c8o = Get<C8o>(Stuff.C8O);
+            var promise = c8o.CallXml(".Ping");
+            Thread.Sleep(500);
+            var doc = promise.Sync();
+            var pong = doc.XPathSelectElement("/document/pong");
+            Assert.NotNull(pong);
+        }
+
+        [Test]
         public async Task C8oDefaultPingAsync()
         {
             var c8o = Get<C8o>(Stuff.C8O);
@@ -228,6 +239,29 @@ namespace C8oSDKNUnitWPF
             Assert.AreEqual("System.AggregateException", exceptionLog.GetType().FullName);
             exceptionLog = exceptionLog.InnerException;
             Assert.AreEqual("System.Net.WebException", exceptionLog.GetType().FullName);
+        }
+
+        [Test]
+        public void C8oUnknownHostCallWait()
+        {
+            var exception = null as Exception;
+            var c8o = new C8o("http://" + HOST + "ee:28080" + PROJECT_PATH);
+            try
+            {
+                var promise = c8o.CallXml(".Ping");
+                Thread.Sleep(500);
+                promise.Sync();
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            Assert.NotNull(exception);
+            Assert.AreEqual("Convertigo.SDK.C8oException", exception.GetType().FullName);
+            exception = exception.InnerException;
+            Assert.AreEqual("System.AggregateException", exception.GetType().FullName);
+            exception = exception.InnerException;
+            Assert.AreEqual("System.Net.WebException", exception.GetType().FullName);
         }
 
         [Test]
@@ -354,9 +388,11 @@ namespace C8oSDKNUnitWPF
 
         private void CheckLogRemoteHelper(C8o c8o, string lvl, string msg)
         {
-            Thread.Sleep(50);
+            Thread.Sleep(100);
             var doc = c8o.CallXml(".GetLogs").Sync();
-            var line = JArray.Parse(doc.XPathSelectElement("/document/line").Value);
+            var elt = doc.XPathSelectElement("/document/line");
+            Assert.NotNull(elt, lvl);
+            var line = JArray.Parse(elt.Value);
             Assert.AreEqual(lvl, line[2].ToString());
             var newMsg = line[4].ToString();
             newMsg = newMsg.Substring(newMsg.IndexOf("logID="));
@@ -389,7 +425,7 @@ namespace C8oSDKNUnitWPF
             Thread.Sleep(50);
             var doc = c8o.CallXml(".GetLogs").Sync();
             object value = doc.XPathSelectElement("/document/line");
-            Assert.IsNull(value);
+            Assert.Null(value);
         }
 
         [Test]
@@ -486,7 +522,7 @@ namespace C8oSDKNUnitWPF
                     }
                     return null;
                 });
-                Monitor.Wait(xjson, 30000);
+                Monitor.Wait(xjson, 5000);
             }
             object value = xjson[0].SelectToken("document.pong.var1").ToString();
             Assert.AreEqual("step 1", value);
@@ -645,6 +681,119 @@ namespace C8oSDKNUnitWPF
             Assert.Null(xjson[1]);
             Assert.NotNull(exception);
             Assert.AreEqual("random failure", exception.Message);
+        }
+
+        [Test]
+        public void C8oDefaultPromiseNested()
+        {
+            var c8o = Get<C8o>(Stuff.C8O);
+            var xjson = new JObject[6];
+            xjson[5] = c8o.CallJson(".Ping", "var1", "step 1").Then((json, param) =>
+            {
+                xjson[0] = json;
+                return c8o.CallJson(".Ping", "var1", "step 2").Then((json2, param2) =>
+                {
+                    xjson[1] = json2;
+                    return c8o.CallJson(".Ping", "var1", "step 3").Then((json3, param3) =>
+                    {
+                        xjson[2] = json3;
+                        return c8o.CallJson(".Ping", "var1", "step 4");
+                    });
+                });
+            }).Then((json, param) =>
+            {
+                xjson[3] = json;
+                return c8o.CallJson(".Ping", "var1", "step 5").Then((json2, param2) =>
+                {
+                    xjson[4] = json2;
+                    return null;
+                });
+            }).Sync();
+            object value = xjson[0].SelectToken("document.pong.var1").ToString();
+            Assert.AreEqual("step 1", value);
+            value = xjson[1].SelectToken("document.pong.var1").ToString();
+            Assert.AreEqual("step 2", value);
+            value = xjson[2].SelectToken("document.pong.var1").ToString();
+            Assert.AreEqual("step 3", value);
+            value = xjson[3].SelectToken("document.pong.var1").ToString();
+            Assert.AreEqual("step 4", value);
+            value = xjson[4].SelectToken("document.pong.var1").ToString();
+            Assert.AreEqual("step 5", value);
+            value = xjson[5].SelectToken("document.pong.var1").ToString();
+            Assert.AreEqual("step 5", value);
+        }
+
+        [Test]
+        public void C8oDefaultPromiseNestedFail()
+        {
+            var c8o = Get<C8o>(Stuff.C8O);
+            var xjson = new JObject[6];
+            var xfail = new Exception[2];
+            try {
+                xjson[5] = c8o.CallJson(".Ping", "var1", "step 1").Then((json, param) =>
+                {
+                    xjson[0] = json;
+                    return c8o.CallJson(".Ping", "var1", "step 2").Then((json2, param2) =>
+                    {
+                        xjson[1] = json2;
+                        return c8o.CallJson(".Ping", "var1", "step 3").Then((json3, param3) =>
+                        {
+                            xjson[2] = json3;
+                            throw new C8oException("random failure");
+                        });
+                    });
+                }).Then((json, param) =>
+                {
+                    xjson[3] = json;
+                    return c8o.CallJson(".Ping", "var1", "step 5").Then((json2, param2) =>
+                    {
+                        xjson[4] = json2;
+                        return null;
+                    });
+                }).Fail((e, param) =>
+                {
+                    xfail[0] = e;
+                }).Sync();
+            } catch (Exception e) {
+                xfail[1] = e;
+            }
+            object value = xjson[0].SelectToken("document.pong.var1").ToString();
+            Assert.AreEqual("step 1", value);
+            value = xjson[1].SelectToken("document.pong.var1").ToString();
+            Assert.AreEqual("step 2", value);
+            value = xjson[2].SelectToken("document.pong.var1").ToString();
+            Assert.AreEqual("step 3", value);
+            value = xjson[4];
+            Assert.Null(value);
+            value = xjson[5];
+            Assert.Null(value);
+            Assert.AreEqual("random failure", xfail[0].Message);
+            Assert.AreEqual(xfail[0], xfail[1]);
+        }
+
+        [Test]
+        public void C8oDefaultPromiseInVar()
+        {
+            var c8o = Get<C8o>(Stuff.C8O);
+            var xjson = new JObject[3];
+            var promise = c8o.CallJson(".Ping", "var1", "step 1");
+            promise.Then((json, param) =>
+            {
+                xjson[0] = json;
+                return c8o.CallJson(".Ping", "var1", "step 2");
+            });
+            promise.Then((json, param) =>
+            {
+                xjson[1] = json;
+                return c8o.CallJson(".Ping", "var1", "step 3");
+            });
+            xjson[2] = promise.Sync();
+            object value = xjson[0].SelectToken("document.pong.var1").ToString();
+            Assert.AreEqual("step 1", value);
+            value = xjson[1].SelectToken("document.pong.var1").ToString();
+            Assert.AreEqual("step 2", value);
+            value = xjson[2].SelectToken("document.pong.var1").ToString();
+            Assert.AreEqual("step 3", value);
         }
 
         [Test]

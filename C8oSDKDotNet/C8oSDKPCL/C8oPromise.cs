@@ -28,17 +28,41 @@ namespace Convertigo.SDK
     public class C8oPromise<T> : C8oPromiseFailSync<T>
     {
         private C8o c8o;
-        private readonly List<KeyValuePair<C8oOnResponse<T>, bool>> c8oOnResponses = new List<KeyValuePair<C8oOnResponse<T>, bool>>();
+        private KeyValuePair<C8oOnResponse<T>, bool> c8oResponse;
         private KeyValuePair<C8oOnProgress, bool> c8oProgress;
         private KeyValuePair<C8oOnFail, bool> c8oFail;
-        private readonly object syncMutex = new object();
+        private C8oPromise<T> nextPromise = null;
 
-        private T lastResult;
+        private T lastResponse;
         private Exception lastException;
+        private IDictionary<string, object> lastParameters;
 
         internal C8oPromise(C8o c8o)
         {
             this.c8o = c8o;
+        }
+
+        private C8oPromise<T> Then(C8oOnResponse<T> c8oOnResponse, bool ui)
+        {
+            if (nextPromise != null)
+            {
+                return nextPromise.Then(c8oOnResponse, ui);
+            }
+            else
+            {
+                c8oResponse = new KeyValuePair<C8oOnResponse<T>, bool>(c8oOnResponse, ui);
+                nextPromise = new C8oPromise<T>(c8o);
+                if (lastException != null)
+                {
+                    nextPromise.lastException = lastException;
+                    nextPromise.lastParameters = lastParameters;
+                }
+                if (lastResponse != null)
+                {
+                    OnResponse();
+                }
+                return nextPromise;
+            }
         }
 
         /// <summary>
@@ -48,11 +72,7 @@ namespace Convertigo.SDK
         /// <returns>the same C8oPromise object to chain for other calls</returns>
         public C8oPromise<T> Then(C8oOnResponse<T> c8oOnResponse)
         {
-            lock (c8oOnResponses)
-            {
-                c8oOnResponses.Add(new KeyValuePair<C8oOnResponse<T>, bool>(c8oOnResponse, false));
-            }
-            return this;
+            return Then(c8oOnResponse, false);
         }
 
         /// <summary>
@@ -62,11 +82,21 @@ namespace Convertigo.SDK
         /// <returns>the same C8oPromise object to chain for other calls</returns>
         public C8oPromise<T> ThenUI(C8oOnResponse<T> c8oOnResponse)
         {
-            lock (c8oOnResponses)
+            return Then(c8oOnResponse, true);
+        }
+
+        private C8oPromiseFailSync<T> Progress(C8oOnProgress c8oOnProgress, bool ui)
+        {
+            if (nextPromise != null)
             {
-                c8oOnResponses.Add(new KeyValuePair<C8oOnResponse<T>, bool>(c8oOnResponse, true));
+                return nextPromise.Progress(c8oOnProgress, ui);
             }
-            return this;
+            else
+            {
+                c8oProgress = new KeyValuePair<C8oOnProgress, bool>(c8oOnProgress, ui);
+                nextPromise = new C8oPromise<T>(c8o);
+                return nextPromise;
+            }
         }
 
         /// <summary>
@@ -77,8 +107,7 @@ namespace Convertigo.SDK
         /// <returns>C8oPromiseFailSync object to chain for other calls</returns>
         public C8oPromiseFailSync<T> Progress(C8oOnProgress c8oOnProgress)
         {
-            c8oProgress = new KeyValuePair<C8oOnProgress, bool>(c8oOnProgress, false);
-            return this;
+            return Progress(c8oOnProgress, false);
         }
 
         /// <summary>
@@ -89,8 +118,25 @@ namespace Convertigo.SDK
         /// <returns>C8oPromiseFailSync object to chain for other calls</returns>
         public C8oPromiseFailSync<T> ProgressUI(C8oOnProgress c8oOnProgress)
         {
-            c8oProgress = new KeyValuePair<C8oOnProgress, bool>(c8oOnProgress, true);
-            return this;
+            return Progress(c8oOnProgress, true);
+        }
+
+        private C8oPromiseSync<T> Fail(C8oOnFail c8oOnFail, bool ui)
+        {
+            if (nextPromise != null)
+            {
+                return nextPromise.Fail(c8oOnFail, ui);
+            }
+            else
+            {
+                c8oFail = new KeyValuePair<C8oOnFail, bool>(c8oOnFail, ui);
+                nextPromise = new C8oPromise<T>(c8o);
+                if (lastException != null)
+                {
+                    OnFailure(lastException, lastParameters);
+                }
+                return nextPromise;
+            }
         }
 
         /// <summary>
@@ -101,8 +147,7 @@ namespace Convertigo.SDK
         /// <returns>the same C8oPromise object to chain for other calls</returns>
         public C8oPromiseSync<T> Fail(C8oOnFail c8oOnFail)
         {
-            c8oFail = new KeyValuePair<C8oOnFail, bool>(c8oOnFail, false);
-            return this;
+            return Fail(c8oOnFail, false);
         }
 
         /// <summary>
@@ -113,8 +158,7 @@ namespace Convertigo.SDK
         /// <returns>the same C8oPromise object to chain for other calls</returns>
         public C8oPromiseSync<T> FailUI(C8oOnFail c8oOnFail)
         {
-            c8oFail = new KeyValuePair<C8oOnFail, bool>(c8oOnFail, true);
-            return this;
+            return Fail(c8oOnFail, true);
         }
 
         /// <summary>
@@ -124,18 +168,31 @@ namespace Convertigo.SDK
         /// <returns>The data from the last call</returns>
         public T Sync()
         {
+            var syncMutex = new bool[] { false };
             lock (syncMutex)
             {
                 Then((response, parameters) =>
                 {
                     lock (syncMutex)
                     {
-                        lastResult = response;
+                        syncMutex[0] = true;
+                        lastResponse = response;
                         Monitor.Pulse(syncMutex);
                     }
                     return null;
+                }).Fail((exception, parameters) =>
+                {
+                    lock (syncMutex)
+                    {
+                        syncMutex[0] = true;
+                        lastException = exception;
+                        Monitor.Pulse(syncMutex);
+                    }
                 });
-                Monitor.Wait(syncMutex);
+                if (!syncMutex[0])
+                {
+                    Monitor.Wait(syncMutex);
+                }
             }
 
             if (lastException != null)
@@ -143,7 +200,7 @@ namespace Convertigo.SDK
                 throw lastException;
             }
 
-            return lastResult;
+            return lastResponse;
         }
 
         /// <summary>
@@ -172,77 +229,96 @@ namespace Convertigo.SDK
             return task.Task;
         }
 
-        internal void OnResponse(T response, IDictionary<string, object> parameters)
+        private void OnResponse()
         {
             try
             {
-                lock (c8oOnResponses)
+                if (!c8oResponse.Equals(default(KeyValuePair<C8oOnResponse<T>, bool>)))
                 {
-                    if (c8oOnResponses.Count > 0)
+                    var promise = new C8oPromise<T>[1];
+                    if (c8oResponse.Value)
                     {
-                        var handler = c8oOnResponses[0];
-                        c8oOnResponses.RemoveAt(0);
-
-                        var promise = new C8oPromise<T>[1];
-
-                        if (handler.Value)
+                        Exception exception = null;
+                        lock (promise)
                         {
-                            Exception exception = null;
-                            lock (promise)
+                            c8o.RunUI(() =>
                             {
-                                c8o.RunUI(() =>
+                                lock (promise)
                                 {
-                                    lock (promise)
+                                    try
                                     {
-                                        try
-                                        {
-                                            promise[0] = handler.Key.Invoke(response, parameters);
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            exception = e;
-                                        }
-                                        Monitor.Pulse(promise);
+                                        promise[0] = c8oResponse.Key.Invoke(lastResponse, lastParameters);
                                     }
-                                });
-                                Monitor.Wait(promise);
-                                if (exception != null)
-                                {
-                                    throw exception;
+                                    catch (Exception e)
+                                    {
+                                        exception = e;
+                                    }
+                                    Monitor.Pulse(promise);
                                 }
-                            }
-                        }
-                        else
-                        {
-                            promise[0] = handler.Key.Invoke(response, parameters);
-                        }
-
-                        if (promise[0] != null)
-                        {
-                            if (promise[0].c8oFail.Equals(default(KeyValuePair<C8oOnFail, bool>)))
-                            {
-                                promise[0].c8oFail = c8oFail;
-                            }
-                            if (promise[0].c8oProgress.Equals(default(KeyValuePair<C8oOnProgress, bool>)))
-                            {
-                                promise[0].c8oProgress = c8oProgress;
-                            }
-                            promise[0].Then((resp, param) =>
-                            {
-                                OnResponse(resp, param);
-                                return null;
                             });
+                            Monitor.Wait(promise);
+                            if (exception != null)
+                            {
+                                throw exception;
+                            }
                         }
                     }
                     else
                     {
-                        lastResult = response;
+                        promise[0] = c8oResponse.Key.Invoke(lastResponse, lastParameters);
                     }
+
+                    if (promise[0] != null)
+                    {
+                        if (nextPromise != null)
+                        {
+                            var lastPromise = promise[0];
+                            while (lastPromise.nextPromise != null)
+                            {
+                                lastPromise = lastPromise.nextPromise;
+                            }
+                            lastPromise.nextPromise = nextPromise;
+                        }
+                        nextPromise = promise[0];
+                    }
+                    else if (nextPromise != null)
+                    {
+                        nextPromise.OnResponse(lastResponse, lastParameters);
+                    }
+                }
+                else if (nextPromise != null)
+                {
+                    nextPromise.OnResponse(lastResponse, lastParameters);
+                }
+                else
+                {
+                    // Response received and no handler.
                 }
             }
             catch (Exception exception)
             {
-                OnFailure(exception, parameters);
+                OnFailure(exception, lastParameters);
+            }
+        }
+
+        internal void OnResponse(T response, IDictionary<string, object> parameters)
+        {
+            if (lastResponse != null)
+            {
+                if (nextPromise != null)
+                {
+                    nextPromise.OnResponse(response, parameters);
+                }
+                else
+                {
+                    c8o.Log._Trace("Another response received.");
+                }
+            }
+            else
+            {
+                lastResponse = response;
+                lastParameters = parameters;
+                OnResponse();
             }
         }
 
@@ -282,11 +358,16 @@ namespace Convertigo.SDK
                     c8oProgress.Key.Invoke(progress);
                 }
             }
+            else if (nextPromise != null)
+            {
+                nextPromise.OnProgress(progress);
+            }
         }
 
         internal void OnFailure(Exception exception, IDictionary<string, object> parameters)
         {
             lastException = exception;
+            lastParameters = parameters;
 
             if (!c8oFail.Equals(default(KeyValuePair<C8oOnFail, bool>)))
             {
@@ -322,10 +403,9 @@ namespace Convertigo.SDK
                     c8oFail.Key.Invoke(exception, parameters);
                 }
             }
-
-            lock (syncMutex)
+            if (nextPromise != null)
             {
-                Monitor.Pulse(syncMutex);
+                nextPromise.OnFailure(exception, parameters);
             }
         }
     }
