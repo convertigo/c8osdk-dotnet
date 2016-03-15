@@ -31,10 +31,10 @@ namespace Convertigo.SDK
         private KeyValuePair<C8oOnResponse<T>, bool> c8oResponse;
         private KeyValuePair<C8oOnProgress, bool> c8oProgress;
         private KeyValuePair<C8oOnFail, bool> c8oFail;
-        private C8oPromise<T> nextPromise = null;
+        private C8oPromise<T> nextPromise;
 
         private T lastResponse;
-        private Exception lastException;
+        private Exception lastFailure;
         private IDictionary<string, object> lastParameters;
 
         internal C8oPromise(C8o c8o)
@@ -52,9 +52,9 @@ namespace Convertigo.SDK
             {
                 c8oResponse = new KeyValuePair<C8oOnResponse<T>, bool>(c8oOnResponse, ui);
                 nextPromise = new C8oPromise<T>(c8o);
-                if (lastException != null)
+                if (lastFailure != null)
                 {
-                    nextPromise.lastException = lastException;
+                    nextPromise.lastFailure = lastFailure;
                     nextPromise.lastParameters = lastParameters;
                 }
                 if (lastResponse != null)
@@ -131,9 +131,9 @@ namespace Convertigo.SDK
             {
                 c8oFail = new KeyValuePair<C8oOnFail, bool>(c8oOnFail, ui);
                 nextPromise = new C8oPromise<T>(c8o);
-                if (lastException != null)
+                if (lastFailure != null)
                 {
-                    OnFailure(lastException, lastParameters);
+                    OnFailure(lastFailure, lastParameters);
                 }
                 return nextPromise;
             }
@@ -185,7 +185,7 @@ namespace Convertigo.SDK
                     lock (syncMutex)
                     {
                         syncMutex[0] = true;
-                        lastException = exception;
+                        lastFailure = exception;
                         Monitor.Pulse(syncMutex);
                     }
                 });
@@ -195,9 +195,9 @@ namespace Convertigo.SDK
                 }
             }
 
-            if (lastException != null)
+            if (lastFailure != null)
             {
-                throw lastException;
+                throw lastFailure;
             }
 
             return lastResponse;
@@ -238,7 +238,7 @@ namespace Convertigo.SDK
                     var promise = new C8oPromise<T>[1];
                     if (c8oResponse.Value)
                     {
-                        Exception exception = null;
+                        Exception failure = null;
                         lock (promise)
                         {
                             c8o.RunUI(() =>
@@ -251,15 +251,15 @@ namespace Convertigo.SDK
                                     }
                                     catch (Exception e)
                                     {
-                                        exception = e;
+                                        failure = e;
                                     }
                                     Monitor.Pulse(promise);
                                 }
                             });
                             Monitor.Wait(promise);
-                            if (exception != null)
+                            if (failure != null)
                             {
-                                throw exception;
+                                throw failure;
                             }
                         }
                     }
@@ -366,7 +366,7 @@ namespace Convertigo.SDK
 
         internal void OnFailure(Exception exception, IDictionary<string, object> parameters)
         {
-            lastException = exception;
+            lastFailure = exception;
             lastParameters = parameters;
 
             if (!c8oFail.Equals(default(KeyValuePair<C8oOnFail, bool>)))
@@ -386,7 +386,7 @@ namespace Convertigo.SDK
                                 }
                                 catch (Exception e)
                                 {
-                                    exception = e;
+                                    lastFailure = e;
                                 }
                                 finally
                                 {
@@ -400,12 +400,12 @@ namespace Convertigo.SDK
                 }
                 else
                 {
-                    c8oFail.Key.Invoke(exception, parameters);
+                    c8oFail.Key.Invoke(lastFailure, parameters);
                 }
             }
             if (nextPromise != null)
             {
-                nextPromise.OnFailure(exception, parameters);
+                nextPromise.OnFailure(lastFailure, parameters);
             }
         }
     }
