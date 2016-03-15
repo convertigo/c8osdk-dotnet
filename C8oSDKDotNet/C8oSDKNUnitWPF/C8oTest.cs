@@ -763,6 +763,8 @@ namespace C8oSDKNUnitWPF
             Assert.AreEqual("step 2", value);
             value = xjson[2].SelectToken("document.pong.var1").ToString();
             Assert.AreEqual("step 3", value);
+            value = xjson[3];
+            Assert.Null(value);
             value = xjson[4];
             Assert.Null(value);
             value = xjson[5];
@@ -787,6 +789,34 @@ namespace C8oSDKNUnitWPF
                 xjson[1] = json;
                 return c8o.CallJson(".Ping", "var1", "step 3");
             });
+            xjson[2] = promise.Sync();
+            object value = xjson[0].SelectToken("document.pong.var1").ToString();
+            Assert.AreEqual("step 1", value);
+            value = xjson[1].SelectToken("document.pong.var1").ToString();
+            Assert.AreEqual("step 2", value);
+            value = xjson[2].SelectToken("document.pong.var1").ToString();
+            Assert.AreEqual("step 3", value);
+        }
+
+        [Test]
+        public void C8oDefaultPromiseInVarSleep()
+        {
+            var c8o = Get<C8o>(Stuff.C8O);
+            var xjson = new JObject[3];
+            var promise = c8o.CallJson(".Ping", "var1", "step 1");
+            Thread.Sleep(500);
+            promise.Then((json, param) =>
+            {
+                xjson[0] = json;
+                return c8o.CallJson(".Ping", "var1", "step 2");
+            });
+            Thread.Sleep(500);
+            promise.Then((json, param) =>
+            {
+                xjson[1] = json;
+                return c8o.CallJson(".Ping", "var1", "step 3");
+            });
+            Thread.Sleep(500);
             xjson[2] = promise.Sync();
             object value = xjson[0].SelectToken("document.pong.var1").ToString();
             Assert.AreEqual("step 1", value);
