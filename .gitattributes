@@ -54,6 +54,10 @@ C8oSDKDotNet/C8oSDKNUnitWPF/Properties/Resources.resx -text
 C8oSDKDotNet/C8oSDKNUnitWPF/Properties/Settings.Designer.cs -text
 C8oSDKDotNet/C8oSDKNUnitWPF/Properties/Settings.settings -text
 C8oSDKDotNet/C8oSDKNUnitWPF/packages.config -text
+C8oSDKDotNet/C8oSDKNUnitWPF_nuget/App.config -text
+C8oSDKDotNet/C8oSDKNUnitWPF_nuget/C8oSDKNUnitWPF_nuget.csproj -text
+C8oSDKDotNet/C8oSDKNUnitWPF_nuget/Properties/AssemblyInfo.cs -text
+C8oSDKDotNet/C8oSDKNUnitWPF_nuget/packages.config -text
 C8oSDKDotNet/C8oSDKPCL/C8o.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oBase.cs -text
 C8oSDKDotNet/C8oSDKPCL/C8oExceptionListener.cs -text
