@@ -27,10 +27,10 @@ namespace Convertigo.SDK.Internal
 
         public void Execute()
         {
-            Task.Run((Action) DoInBackground);
+            Task.Run((Action) Run);
         }
 
-        async private void DoInBackground()
+        async private void Run()
         {
             try
             {
