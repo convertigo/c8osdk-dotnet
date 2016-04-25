@@ -200,6 +200,18 @@ namespace C8oSDKNUnitWPF
         }
 
         [Test]
+        public void C8oCallInAsyncTask()
+        {
+            XDocument doc = null;
+            Task.Run(() => {
+                var c8o = Get<C8o>(Stuff.C8O);
+                doc = c8o.CallXml(".Ping").Sync();
+            }).Wait();
+            var pong = doc.XPathSelectElement("/document/pong");
+            Assert.NotNull(pong);
+        }
+
+        [Test]
         public async Task C8oDefaultPingAsync()
         {
             var c8o = Get<C8o>(Stuff.C8O);
@@ -392,7 +404,8 @@ namespace C8oSDKNUnitWPF
             var doc = c8o.CallXml(".GetLogs").Sync();
             var elt = doc.XPathSelectElement("/document/line");
             Assert.NotNull(elt, lvl);
-            var line = JArray.Parse(elt.Value);
+            var sLine = elt.Value;
+            var line = JArray.Parse(sLine);
             Assert.AreEqual(lvl, line[2].ToString());
             var newMsg = line[4].ToString();
             newMsg = newMsg.Substring(newMsg.IndexOf("logID="));
