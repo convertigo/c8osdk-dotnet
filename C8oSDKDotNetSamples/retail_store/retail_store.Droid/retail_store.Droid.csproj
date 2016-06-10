@@ -49,11 +49,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="C8oSDKDotNet.Android, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\C8oFullSyncExtensions.2.0.1\lib\MonoAndroid\C8oSDKDotNet.Android.dll</HintPath>
+      <HintPath>..\..\packages\C8oFullSyncExtensions.2.0.3\lib\MonoAndroid\C8oSDKDotNet.Android.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="C8oSDKPCL, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\C8oSDK-PCL.2.0.1\lib\C8oSDKPCL.dll</HintPath>
+      <HintPath>..\..\packages\C8oSDK-PCL.2.0.3\lib\C8oSDKPCL.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Couchbase.Lite, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -197,6 +197,14 @@
     <AndroidResource Include="Resources\drawable\del.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\C8oSDKDotNet\C8oSDKDotNet.Android\C8oSDKDotNet.Android.csproj">
+      <Project>{4f9ba553-8252-412d-98c8-c113cc009f82}</Project>
+      <Name>C8oSDKDotNet.Android</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\C8oSDKDotNet\C8oSDKPCL\C8oSDKPCL.csproj">
+      <Project>{1764723d-85b1-4fde-accf-88bb7a3b62a8}</Project>
+      <Name>C8oSDKPCL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\retail_store\retail_store.csproj">
       <Name>retail_store</Name>
     </ProjectReference>
