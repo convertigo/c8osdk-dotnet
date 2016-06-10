@@ -6,6 +6,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Convertigo.SDK
 {
@@ -23,7 +24,9 @@ namespace Convertigo.SDK
 
         private bool tasksDbCreated = false;
         private bool alive = true;
-        
+
+        private int chunkSize = 1000 * 1024;
+
         private C8o c8oTask;
         private Dictionary<string, C8oFileTransferStatus> tasks = null;
         public event EventHandler<C8oFileTransferStatus> RaiseTransferStatus;
@@ -78,7 +81,7 @@ namespace Convertigo.SDK
             if (tasks == null)
             {
                 tasks = new Dictionary<string, C8oFileTransferStatus>();
-                
+
                 Task.Factory.StartNew(async () =>
                 {
                     await CheckTaskDb();
@@ -108,14 +111,26 @@ namespace Convertigo.SDK
                                 }
                                 string uuid = task["_id"].ToString();
 
-                                if (!tasks.ContainsKey(uuid))
+                                // If this document id is not already in the tasks list
+                                if (!tasks.ContainsKey(uuid) && (task["download"] != null || task["upload"] != null))
                                 {
+
+                                    // await c8oTask.CallJson("fs://.delete", "docid", uuid).Async();
+
                                     string filePath = task["filePath"].Value<string>();
 
+                                    // Add the document id to the tasks list
                                     var transferStatus = tasks[uuid] = new C8oFileTransferStatus(uuid, filePath);
                                     Notify(transferStatus);
 
-                                    DownloadFile(transferStatus, task).GetAwaiter();
+                                    if (task["download"] != null)
+                                    {
+                                        DownloadFile(transferStatus, task).GetAwaiter();
+                                    }
+                                    else if (task["upload"] != null)
+                                    {
+                                        UploadFile(transferStatus, task).GetAwaiter();
+                                    }
 
                                     skip = 0;
                                 }
@@ -166,7 +181,8 @@ namespace Convertigo.SDK
                 "filePath", filePath,
                 "replicated", false,
                 "assembled", false,
-                "remoteDeleted", false
+                "remoteDeleted", false,
+                "download", 0
             ).Async();
 
             lock (this)
@@ -225,8 +241,8 @@ namespace Convertigo.SDK
                     {
                         lock (locker)
                         {
-                                locker[0] = true;
-                                Monitor.Pulse(locker);
+                            locker[0] = true;
+                            Monitor.Pulse(locker);
                         }
                         return null;
                     });
@@ -312,7 +328,7 @@ namespace Convertigo.SDK
                 {
                     transferStatus.State = C8oFileTransferStatus.StateCleaning;
                     Notify(transferStatus);
-                    
+
                     var res = await c8o.CallJson("fs://" + fsConnector + ".destroy").Async();
                     Debug("destroy local true:\n" + res.ToString());
 
@@ -348,7 +364,7 @@ namespace Convertigo.SDK
             }
 
             tasks.Remove(transferStatus.Uuid);
-            
+
             lock (this)
             {
                 Monitor.Pulse(this);
@@ -412,6 +428,290 @@ namespace Convertigo.SDK
             if (RaiseDebug != null)
             {
                 RaiseDebug(this, debug);
+            }
+        }
+
+        /// <summary>
+        /// Called by the UI to add an upload file request to the queue.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public async Task UploadFile(String filePath)
+        {
+            // Creates the database if it doesn't exist
+            await CheckTaskDb();
+
+            // Initializes the uuid ending with the number of chunks
+            string uuid = System.Guid.NewGuid().ToString();
+            Stream fileStream = fileManager.OpenFile(filePath);
+            long fileSize = fileStream.Length;
+            fileStream.Dispose();
+            double d = (double)fileSize / chunkSize;
+            double numberOfChunks = Math.Ceiling(d);
+            uuid = uuid + "-" + numberOfChunks;
+
+            // Posts a document describing the state of the upload in the task db
+            await c8oTask.CallJson("fs://.post",
+                 "_id", uuid,
+                 "filePath", filePath,
+                 "splitted", false,
+                 "replicated", false,
+                 "localDeleted", false,
+                 "assemblingRequest", false,
+                 "upload", 0
+             ).Async();
+
+            lock (this)
+            {
+                Monitor.Pulse(this);
+            }
+        }
+
+        /// <summary>
+        /// Called 
+        /// </summary>
+        /// <returns></returns>
+        async Task UploadFile(C8oFileTransferStatus transferStatus, JObject task)
+        {
+
+            C8o c8o = null;
+
+            try
+            {
+
+                // await c8oTask.CallJson("fs://.delete", "docid", transferStatus.Uuid).Async();
+                // return;
+
+                JObject tmp = null;
+                JObject res = null;
+                bool[] locker = null;
+
+                // Creates a c8o instance with a specific fullsync local suffix in order to store chunks in a specific database
+                c8o = new C8o(c8oTask.Endpoint, new C8oSettings(c8oTask).SetFullSyncLocalSuffix("_" + transferStatus.Uuid).SetDefaultDatabaseName("c8ofiletransfer"));
+                c8o.LogLevelLocal = C8oLogLevel.WARN;
+
+                tmp = await c8o.CallJson("fs://.create").Async();
+                // tmp = await c8o.CallJson("fs://.all").Async();
+
+                // If the file is not already splitted and stored in the local database
+                if (!task["splitted"].Value<bool>())
+                {
+                    // Retrieves the file
+                    string filePath = transferStatus.Filepath;
+                    string fileName = Path.GetFileName(filePath);
+                    Stream fileStream = fileManager.OpenFile(filePath);
+                    MemoryStream chunk = new MemoryStream(chunkSize);
+                    fileStream.Position = 0;
+
+                    //
+                    // 1 : Split the file and store it locally
+                    //
+                    try
+                    {               
+                        string uuid = transferStatus.Uuid;
+
+                       // DateTime Start = DateTime.Now;
+
+                        for (int chunkId = 0; chunkId < transferStatus.Total; chunkId++)
+                        {
+                            string docid = uuid + "_" + chunkId;
+
+                            // Checks if the chunk is not already stored to avoid conflicts
+                            bool documentAlreadyExists = false;
+                            bool chunkAlreadyExists = false;
+                            try
+                            {
+                                tmp = await c8o.CallJson("fs://.get",
+                                    "docid", docid
+                                ).Async();
+                                documentAlreadyExists = true;
+                            }
+                            catch (Exception e)
+                            {
+                                documentAlreadyExists = false;
+                            }
+
+                            if (!documentAlreadyExists)
+                            {
+                               tmp = await c8o.CallJson("fs://.post",
+                                    "_id", docid,
+                                    "fileName", fileName,
+                                    "type", "chunk",
+                                    "uuid", uuid
+                                ).Async();
+                            }
+
+                            if (!chunkAlreadyExists)
+                            {
+                                byte[] buffer = new byte[chunkSize];
+                                // fileStream.Position = chunkSize * chunkId;                                
+                                int read = fileStream.Read(buffer, 0, chunkSize);
+
+                                chunk = new MemoryStream(chunkSize);
+                                chunk.Position = 0;
+                                chunk.Write(buffer, 0, read);
+
+                                tmp = await c8o.CallJson("fs://.put_attachment",
+                                    "docid", docid,
+                                    "name", "chunk",
+                                    "content_type", "application/octet-stream",
+                                    "content", chunk).Async();
+
+                                // await chunk.FlushAsync();
+                                chunk.Dispose();
+                            }
+                        }
+
+                        /*DateTime Stop = DateTime.Now;
+                        TimeSpan elapsed = Stop - Start;
+                        c8o.c8oLogger.Error("Time elapsed : " + elapsed.ToString());*/
+
+                    }
+                    catch (Exception e)
+                    {
+                        throw e;
+                    }
+                    finally
+                    {
+                        if (fileStream != null)
+                        {
+                            fileStream.Dispose();
+                        }
+                        if (chunk != null)
+                        {
+                            chunk.Dispose();
+                        }
+                    }
+
+
+                    // Updates the state document in the c8oTask database
+                    res = await c8oTask.CallJson("fs://.post",
+                        C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                        "_id", task["_id"].Value<string>(),
+                        "splitted", task["splitted"] = true
+                    ).Async();
+                    Debug("splitted true:\n" + res);
+                }
+
+                // tmp = await c8o.CallJson("fs://.all").Async();
+
+                // If the local database is not replecated to the server
+                if (!task["replicated"].Value<bool>())
+                {
+                    //
+                    // 2 : Authenticates
+                    //
+                    tmp = await c8o.CallJson(".SetAuthenticatedUser", "userId", transferStatus.Uuid).Async();
+
+                    //
+                    // 3 : Replicates to server
+                    //
+                    bool launchreplication = true;
+
+                    // Relaunch replication while all docupments are not replicated to the server
+                    while (launchreplication)
+                    {
+                        locker = new bool[] { false };
+                        c8o.CallJson("fs://.replicate_push").Progress((c8oOnProgress) =>
+                        {
+                            if (c8oOnProgress.Finished)
+                            {
+                                if (c8oOnProgress.Total == 0)
+                                {
+                                    launchreplication = false;
+                                }
+
+                                lock (locker)
+                                {
+                                    locker[0] = true;
+                                    Monitor.Pulse(locker);
+                                }
+                            }    
+                        });
+
+                        // Waits the end of the replication if it is not finished
+                        do
+                        {
+                            lock (locker)
+                            {
+                                Monitor.Wait(locker, 500);
+                            }
+                        } while (!locker[0]);
+                    }
+
+                    // tmp = await c8o.CallJson("lib_FileTransfer.c8ofiletransfer.AllChunks", "uuid", transferStatus.Uuid).Async();
+
+                    // Updates the state document in the c8oTask database
+                    res = await c8oTask.CallJson("fs://.post",
+                        C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                        "_id", task["_id"].Value<string>(),
+                        "replicated", task["replicated"] = true
+                    ).Async();
+                    Debug("replicated true:\n" + res);
+                }
+
+                // return;
+
+                // If the local database containing chunks is not deleted
+                locker = new bool[] { true };
+                if (!task["localDeleted"].Value<bool>())
+                {
+                    locker[0] = false;
+                    //
+                    // 4 : Delete the local database containing chunks
+                    //
+                    c8o.CallJson("fs://.reset").Then((json, param) =>
+                    {
+                        c8oTask.CallJson("fs://.post",
+                            C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                            "_id", task["_id"].Value<string>(),
+                            "localDeleted", task["localDeleted"] = true
+                        );
+                        Debug("localDeleted true:\n" + res);
+
+                        lock (locker)
+                        {
+                            locker[0] = true;
+                            Monitor.Pulse(locker);
+                        }
+
+                        return null;
+                    });
+                }
+
+                // If the file is not assembled in the server
+                if (!task["assemblingRequest"].Value<bool>())
+                {
+                    //
+                    // 5 : Request the server to assemble chunks to the initial file
+                    //
+                    tmp = await c8o.CallJson(".StoreDatabaseFileToLocal", "uuid", transferStatus.Uuid).Async();
+                    c8oTask.CallJson("fs://.post",
+                            C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                            "_id", task["_id"].Value<string>(),
+                            "assemblingRequest", task["assemblingRequest"] = true
+                        );
+                    Debug("assemblingRequest true:\n" + res);
+                }
+
+                // Waits the local database is deleted
+                do
+                {
+                    lock (locker)
+                    {
+                        Monitor.Wait(locker, 500);
+                    }
+                } while (!locker[0]);
+
+                //
+                // 6 : Remove the task document
+                //
+                res = await c8oTask.CallJson("fs://.delete", "docid", transferStatus.Uuid).Async();
+                Debug("task document delete:\n" + res.ToString());
+            }
+            catch (Exception e)
+            {
+                Notify(e);
             }
         }
     }

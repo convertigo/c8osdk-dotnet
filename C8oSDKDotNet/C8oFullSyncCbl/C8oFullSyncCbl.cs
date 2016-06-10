@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -297,6 +298,30 @@ namespace Convertigo.SDK.Internal
             string documentId = createdDocument.Id;
             string currentRevision = createdDocument.CurrentRevisionId;
             return new FullSyncDocumentOperationResponse(documentId, currentRevision, true);
+        }
+
+        //*** PutAttachment ***//
+
+        public async override Task<object> HandlePutAttachmentRequest(string databaseName, string docid, string attachmentName, string attachmentContentType, Stream attachmentContent)
+        {
+            var fullSyncDatabase = await GetOrCreateFullSyncDatabase(databaseName);
+
+            // Gets the document form the local database
+            var document = fullSyncDatabase.Database.GetExistingDocument(docid);
+
+            if (document != null)
+            {
+                var newRev = document.CurrentRevision.CreateRevision();
+                attachmentContent.Position = 0;
+                newRev.SetAttachment(attachmentName, attachmentContentType, attachmentContent);
+                var savedRev = newRev.Save();
+            }
+            else
+            {
+                throw new C8oRessourceNotFoundException(C8oExceptionMessage.RessourceNotFound("requested document \"" + docid + "\""));
+            }
+
+            return new FullSyncDocumentOperationResponse(document.Id, document.CurrentRevisionId, true);
         }
 
         //*** GetAllDocuments ***//

@@ -108,9 +108,9 @@ namespace Convertigo.SDK.Internal
             bool continuous = false;
             bool cancel = false;
 
-            if (parameters.ContainsKey("continuous"))
+            if (parameters.ContainsKey("live"))
             {
-                continuous = parameters["continuous"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
+                continuous = parameters["live"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
             }
 
             if (parameters.ContainsKey("cancel"))
