@@ -25,9 +25,9 @@ namespace Sample04Wpf.Win
             //var cert = File.ReadAllBytes("D:\\COMMON\\C8O\\7.3.3_srv_win\\tomcat\\conf\\client.p12");
 
             c8o = new C8o(
-                 // "https://tonus.twinsoft.fr:28443/convertigo/projects/BigFileTransferSample",
-                 // "http://localhost:18080/convertigo/projects/BigFileTransferSample",
-                 "https://192.168.100.156/convertigo/projects/BigFileTransferSample",
+            // "https://tonus.twinsoft.fr:28443/convertigo/projects/BigFileTransferSample",
+            // "http://localhost:18080/convertigo/projects/BigFileTransferSample",
+            "http://192.168.100.69:18080/convertigo/projects/BigFileTransferSample",
             // "http://192.168.100.156:28080/convertigo/projects/BigFileTransferSample",
             //"http://nicolasa.convertigo.net/cems/projects/BigFileTransferSample"
             new C8oSettings()

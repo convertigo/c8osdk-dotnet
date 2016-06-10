@@ -2,18 +2,19 @@
 {
     public class C8oFileTransferStatus
     {
-        public static readonly DownloadState StateQueued = new DownloadState("queued");
+        public static readonly C8oFileTransferState StateQueued = new C8oFileTransferState("queued");
+
         public static readonly DownloadState StateAuthenticated = new DownloadState("authenticated");
         public static readonly DownloadState StateReplicate = new DownloadState("replicating");
         public static readonly DownloadState StateAssembling = new DownloadState("assembling");
         public static readonly DownloadState StateCleaning = new DownloadState("cleaning");
         public static readonly DownloadState StateFinished = new DownloadState("finished");
-        
-        public class DownloadState
+
+        public class C8oFileTransferState
         {
             string toString;
 
-            internal DownloadState(string toString)
+            internal C8oFileTransferState(string toString)
             {
                 this.toString = toString;
             }
@@ -24,9 +25,16 @@
             }
         }
 
-        private DownloadState state = StateQueued;
+        public class DownloadState : C8oFileTransferState
+        {
+            public DownloadState(string toString) : base(toString)
+            {
+            }
+        }
 
-        public DownloadState State
+        private C8oFileTransferState state = StateQueued;
+
+        public C8oFileTransferState State
         {
             get
             {

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 
@@ -125,6 +126,10 @@ namespace Convertigo.SDK.Internal
         //*** PostDocument ***//
 
         public abstract Task<object> HandlePostDocumentRequest(string fullSyncDatatbaseName, FullSyncPolicy fullSyncPolicy, IDictionary<string, object> parameters);
+
+        //*** PutAttachment ***//
+
+        public abstract Task<object> HandlePutAttachmentRequest(string fullSyncDatatbaseName, string docid, string attachmentName, string attachmentContentType, Stream attachmentContent);
 
         //*** GetAllDocuments ***//
 

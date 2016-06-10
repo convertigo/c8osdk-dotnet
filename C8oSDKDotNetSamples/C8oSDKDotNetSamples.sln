@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleBigFileTransfer.WPF", "Sample04Wpf.Win\SampleBigFileTransfer.WPF.csproj", "{DBB00C2F-E30D-45EE-BDF1-6A36C4C6BA83}"
 EndProject
@@ -43,10 +43,12 @@ Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
 		..\C8oSDKDotNet\C8oPlatforms\C8oPlatforms.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
-		Sample05XamarinForms\Sample05XamarinForms\Sample05XamarinForms.projitems*{70b42f88-dca4-408f-b024-6cd90c9363d2}*SharedItemsImports = 4
 		Sample05Shared\Sample05Shared.projitems*{70b42f88-dca4-408f-b024-6cd90c9363d2}*SharedItemsImports = 4
+		Sample05XamarinForms\Sample05XamarinForms\Sample05XamarinForms.projitems*{70b42f88-dca4-408f-b024-6cd90c9363d2}*SharedItemsImports = 4
 		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{863ce965-5c79-48f0-9e97-1aadc3241a87}*SharedItemsImports = 13
 		SampleBigFileTransfer\SampleBigFileTransfer\SampleBigFileTransfer.projitems*{5a4a37fc-cee5-4054-aa45-44d14919eb7c}*SharedItemsImports = 4
+		Sample05Shared\Sample05Shared.projitems*{bb4fe28c-a790-45dc-8eec-c00f04e7e4a7}*SharedItemsImports = 4
+		Sample05XamarinForms\Sample05XamarinForms\Sample05XamarinForms.projitems*{bb4fe28c-a790-45dc-8eec-c00f04e7e4a7}*SharedItemsImports = 4
 		..\C8oSDKDotNet\C8oFullSyncCbl\C8oFullSyncNet.projitems*{9d58d300-2dad-488d-bef1-6f591cf3e401}*SharedItemsImports = 4
 		..\C8oSDKDotNet\C8oPlatforms\C8oPlatforms.projitems*{9d58d300-2dad-488d-bef1-6f591cf3e401}*SharedItemsImports = 4
 		SampleBigFileTransfer\SampleBigFileTransfer\SampleBigFileTransfer.projitems*{73f8f5f6-7918-4d5b-9e78-f0812e73478a}*SharedItemsImports = 4
@@ -55,8 +57,8 @@ Global
 		Sample05Shared\Sample05Shared.projitems*{fe33aef2-2a2e-48fc-ad4b-d9d6b04e8c0e}*SharedItemsImports = 4
 		Sample05Shared\Sample05Shared.projitems*{e18e0aab-5ce8-4dd8-91de-afd1cef64181}*SharedItemsImports = 13
 		Sample05XamarinForms\Sample05XamarinForms\Sample05XamarinForms.projitems*{02bb11bd-bbf8-4438-9813-a6871f8351f3}*SharedItemsImports = 13
-		Sample05XamarinForms\Sample05XamarinForms\Sample05XamarinForms.projitems*{e4964171-7e88-4e81-b063-d1c0eabd9141}*SharedItemsImports = 4
 		Sample05Shared\Sample05Shared.projitems*{e4964171-7e88-4e81-b063-d1c0eabd9141}*SharedItemsImports = 4
+		Sample05XamarinForms\Sample05XamarinForms\Sample05XamarinForms.projitems*{e4964171-7e88-4e81-b063-d1c0eabd9141}*SharedItemsImports = 4
 		..\C8oSDKDotNet\C8oPlatforms\C8oPlatforms.projitems*{bdf9111d-f09a-4213-9721-114434ca73b6}*SharedItemsImports = 13
 		SampleBigFileTransfer\SampleBigFileTransfer\SampleBigFileTransfer.projitems*{e96ec615-cd01-4507-ac88-43e32b1e42e8}*SharedItemsImports = 13
 	EndGlobalSection

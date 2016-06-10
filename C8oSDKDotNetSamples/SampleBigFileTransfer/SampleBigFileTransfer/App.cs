@@ -17,8 +17,9 @@ namespace SampleBigFileTransfer
             MainPage = new Login(this);
             
             c8o = new C8o(
-                "http://tonus.twinsoft.fr:18080/convertigo/projects/BigFileTransferSample"
+            //"http://tonus.twinsoft.fr:18080/convertigo/projects/BigFileTransferSample"
             //"http://nicolasa.convertigo.net/cems/projects/BigFileTransferSample"
+            "http://192.168.100.69:18080/convertigo/projects/BigFileTransferSample"
             );
 
             fileTransfer = new C8oFileTransfer(c8o);

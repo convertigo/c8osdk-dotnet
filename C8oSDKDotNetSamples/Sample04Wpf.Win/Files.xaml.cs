@@ -1,4 +1,5 @@
 ﻿using Convertigo.SDK;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.XPath;
@@ -139,6 +140,33 @@ namespace Sample04Wpf.Win
             {
                 file.uuid = uuid.Value;
                 await app.fileTransfer.DownloadFile(file.uuid, "C:\\TMP\\" + file.uuid + "_" + file.name);
+            }
+        }
+
+        private async void Upload_Click(object sender, RoutedEventArgs e)
+        {
+
+            string filePath = FilteToUpload.Text; // "C:\\TMP\\vs_langpack.exe";  // "C:\\TMP\\test001.png";
+
+            await app.fileTransfer.UploadFile(filePath);
+
+        }
+
+        private void Browse_Click(object sender, RoutedEventArgs e)
+        {
+            // Configure open file dialog box
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.FileName = "File"; // Default file name
+            dlg.DefaultExt = ".*"; // Default file extension
+            dlg.Filter = "All files (*.*)|*.*"; // Filter files by extension
+
+            // Show open file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+
+            // Process open file dialog box results
+            if (result == true)
+            {
+                FilteToUpload.Text = dlg.FileName;
             }
         }
     }

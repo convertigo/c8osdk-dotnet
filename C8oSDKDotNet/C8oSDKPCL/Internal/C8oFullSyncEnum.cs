@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -35,6 +36,33 @@ namespace Convertigo.SDK.Internal
 
             return c8oFullSync.HandlePostDocumentRequest(databaseName, fullSyncPolicy, parameters);
         });
+
+
+
+
+
+
+        public static readonly FullSyncRequestable PUT_ATTACHMENT = new FullSyncRequestable("put_attachment", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
+        {
+            // Gets the docid parameter
+            string docid = C8oUtils.GetParameterStringValue(parameters, FullSyncPutAttachmentParameter.DOCID.name, false);
+
+            // Gets the attachment name parameter
+            string name = C8oUtils.GetParameterStringValue(parameters, FullSyncPutAttachmentParameter.NAME.name, false);
+
+            // Gets the attachment content_type parameter
+            string contentType = C8oUtils.GetParameterStringValue(parameters, FullSyncPutAttachmentParameter.CONTENT_TYPE.name, false);
+
+            // Gets the attachment stream parameter
+            Stream content = (Stream)C8oUtils.GetParameterObjectValue(parameters, FullSyncPutAttachmentParameter.CONTENT.name, false);
+
+            return c8oFullSync.HandlePutAttachmentRequest(databaseName, docid, name, contentType, content);
+        });
+
+
+
+
+
 
         public static readonly FullSyncRequestable ALL = new FullSyncRequestable("all", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
@@ -194,7 +222,7 @@ namespace Convertigo.SDK.Internal
 
         public static FullSyncRequestable[] Values()
         {
-            return new FullSyncRequestable[] { GET, DELETE, POST, ALL, VIEW, SYNC, REPLICATE_PULL, REPLICATE_PUSH, RESET, CREATE, DESTROY };
+            return new FullSyncRequestable[] { GET, DELETE, POST, PUT_ATTACHMENT, ALL, VIEW, SYNC, REPLICATE_PULL, REPLICATE_PUSH, RESET, CREATE, DESTROY };
         }
     }
 
@@ -309,6 +337,21 @@ namespace Convertigo.SDK.Internal
         }
 
 	}
+
+    public class FullSyncPutAttachmentParameter
+    {
+        public static readonly FullSyncPutAttachmentParameter DOCID = new FullSyncPutAttachmentParameter("docid");
+        public static readonly FullSyncPutAttachmentParameter NAME = new FullSyncPutAttachmentParameter("name");
+        public static readonly FullSyncPutAttachmentParameter CONTENT_TYPE = new FullSyncPutAttachmentParameter("content_type");
+        public static readonly FullSyncPutAttachmentParameter CONTENT = new FullSyncPutAttachmentParameter("content");
+
+        public readonly String name;
+
+        private FullSyncPutAttachmentParameter(String name)
+        {
+            this.name = name;
+        }
+    }
 
     /// <summary>
     /// Specific parameters for the fullSync's replicateDatabase request (push or pull).
