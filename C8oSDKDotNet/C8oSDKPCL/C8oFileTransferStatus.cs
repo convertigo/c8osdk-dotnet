@@ -3,12 +3,13 @@
     public class C8oFileTransferStatus
     {
         public static readonly C8oFileTransferState StateQueued = new C8oFileTransferState("queued");
-
-        public static readonly DownloadState StateAuthenticated = new DownloadState("authenticated");
-        public static readonly DownloadState StateReplicate = new DownloadState("replicating");
-        public static readonly DownloadState StateAssembling = new DownloadState("assembling");
-        public static readonly DownloadState StateCleaning = new DownloadState("cleaning");
-        public static readonly DownloadState StateFinished = new DownloadState("finished");
+        
+        public static readonly C8oFileTransferState StateAuthenticated = new C8oFileTransferState("authenticated");
+        public static readonly C8oFileTransferState StateSplitting = new C8oFileTransferState("splitting");
+        public static readonly C8oFileTransferState StateReplicate = new C8oFileTransferState("replicating");
+        public static readonly C8oFileTransferState StateAssembling = new C8oFileTransferState("assembling");
+        public static readonly C8oFileTransferState StateCleaning = new C8oFileTransferState("cleaning");
+        public static readonly C8oFileTransferState StateFinished = new C8oFileTransferState("finished");
 
         public class C8oFileTransferState
         {
@@ -22,13 +23,6 @@
             public override string ToString()
             {
                 return toString;
-            }
-        }
-
-        public class DownloadState : C8oFileTransferState
-        {
-            public DownloadState(string toString) : base(toString)
-            {
             }
         }
 
@@ -96,6 +90,16 @@
             get
             {
                 return total > 0 ? current * 1.0f / total : 0;
+            }
+        }
+
+        public bool isDownload;
+
+        public bool IsDownload
+        {
+            get
+            {
+                return isDownload;
             }
         }
 

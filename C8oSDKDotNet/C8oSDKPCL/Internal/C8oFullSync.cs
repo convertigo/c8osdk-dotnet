@@ -131,6 +131,10 @@ namespace Convertigo.SDK.Internal
 
         public abstract Task<object> HandlePutAttachmentRequest(string fullSyncDatatbaseName, string docid, string attachmentName, string attachmentContentType, Stream attachmentContent);
 
+        //*** DeleteAttachment ***//
+
+        public abstract Task<object> HandleDeleteAttachmentRequest(string fullSyncDatatbaseName, string docid, string attachmentName);
+
         //*** GetAllDocuments ***//
 
         public abstract Task<object> HandleAllDocumentsRequest(string fullSyncDatatbaseName, IDictionary<string, object> parameters);

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Convertigo.SDK
 {
     /// <summary>
-    /// A Promise object for Convertigo SDK calls. CallJSON or CallXML will return a C8oPromis object you can use to chain several calls. a typical use would be :
+    /// A Promise object for Convertigo SDK calls. CallJSON or CallXML will return a C8oPromise object you can use to chain several calls. a typical use would be :
     /// <code>
     ///    myC8o.CallJson (".sequ1", "shopCode", "42")
     ///     .Then((response, parameters) => {					

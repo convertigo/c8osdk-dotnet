@@ -125,10 +125,12 @@ namespace Convertigo.SDK
 
                                     if (task["download"] != null)
                                     {
+                                        transferStatus.isDownload = true;
                                         DownloadFile(transferStatus, task).GetAwaiter();
                                     }
                                     else if (task["upload"] != null)
                                     {
+                                        transferStatus.isDownload = false;
                                         UploadFile(transferStatus, task).GetAwaiter();
                                     }
 
@@ -432,13 +434,12 @@ namespace Convertigo.SDK
         }
 
         /// <summary>
-        /// Called by the UI to add an upload file request to the queue.
+        /// Add a file to transfer to the upload queue. 
         /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
+        /// <param name="filepath">a path where the file will be assembled when the transfer is finished</param>
         public async Task UploadFile(String filePath)
         {
-            // Creates the database if it doesn't exist
+            // Creates the task database if it doesn't exist
             await CheckTaskDb();
 
             // Initializes the uuid ending with the number of chunks
@@ -457,45 +458,40 @@ namespace Convertigo.SDK
                  "splitted", false,
                  "replicated", false,
                  "localDeleted", false,
-                 "assemblingRequest", false,
+                 "assembled", false,
                  "upload", 0
              ).Async();
 
+            // ???
             lock (this)
             {
                 Monitor.Pulse(this);
             }
         }
-
-        /// <summary>
-        /// Called 
-        /// </summary>
-        /// <returns></returns>
+        
         async Task UploadFile(C8oFileTransferStatus transferStatus, JObject task)
         {
-
-            C8o c8o = null;
-
             try
             {
-
                 // await c8oTask.CallJson("fs://.delete", "docid", transferStatus.Uuid).Async();
                 // return;
 
-                JObject tmp = null;
+                // JObject tmp = null;
                 JObject res = null;
-                bool[] locker = null;
+                bool[] locker = new bool[] { false };
 
                 // Creates a c8o instance with a specific fullsync local suffix in order to store chunks in a specific database
-                c8o = new C8o(c8oTask.Endpoint, new C8oSettings(c8oTask).SetFullSyncLocalSuffix("_" + transferStatus.Uuid).SetDefaultDatabaseName("c8ofiletransfer"));
-                c8o.LogLevelLocal = C8oLogLevel.WARN;
-
-                tmp = await c8o.CallJson("fs://.create").Async();
-                // tmp = await c8o.CallJson("fs://.all").Async();
+                var c8o = new C8o(c8oTask.Endpoint, new C8oSettings(c8oTask).SetFullSyncLocalSuffix("_" + transferStatus.Uuid).SetDefaultDatabaseName("c8ofiletransfer"));
+                
+                // Creates the local db
+                await c8o.CallJson("fs://.create").Async();
 
                 // If the file is not already splitted and stored in the local database
                 if (!task["splitted"].Value<bool>())
                 {
+                    transferStatus.State = C8oFileTransferStatus.StateSplitting;
+                    Notify(transferStatus);
+
                     // Retrieves the file
                     string filePath = transferStatus.Filepath;
                     string fileName = Path.GetFileName(filePath);
@@ -510,8 +506,6 @@ namespace Convertigo.SDK
                     {               
                         string uuid = transferStatus.Uuid;
 
-                       // DateTime Start = DateTime.Now;
-
                         for (int chunkId = 0; chunkId < transferStatus.Total; chunkId++)
                         {
                             string docid = uuid + "_" + chunkId;
@@ -521,10 +515,15 @@ namespace Convertigo.SDK
                             bool chunkAlreadyExists = false;
                             try
                             {
-                                tmp = await c8o.CallJson("fs://.get",
+                                res = await c8o.CallJson("fs://.get",
                                     "docid", docid
                                 ).Async();
                                 documentAlreadyExists = true;
+                                // Checks if there is the attachment
+                                if (res.SelectToken("_attachments.chunk") != null)
+                                {
+                                    chunkAlreadyExists = true;
+                                }
                             }
                             catch (Exception e)
                             {
@@ -533,7 +532,7 @@ namespace Convertigo.SDK
 
                             if (!documentAlreadyExists)
                             {
-                               tmp = await c8o.CallJson("fs://.post",
+                               await c8o.CallJson("fs://.post",
                                     "_id", docid,
                                     "fileName", fileName,
                                     "type", "chunk",
@@ -548,24 +547,18 @@ namespace Convertigo.SDK
                                 int read = fileStream.Read(buffer, 0, chunkSize);
 
                                 chunk = new MemoryStream(chunkSize);
-                                chunk.Position = 0;
+                                // chunk.Position = 0;
                                 chunk.Write(buffer, 0, read);
 
-                                tmp = await c8o.CallJson("fs://.put_attachment",
+                                await c8o.CallJson("fs://.put_attachment",
                                     "docid", docid,
                                     "name", "chunk",
                                     "content_type", "application/octet-stream",
                                     "content", chunk).Async();
-
-                                // await chunk.FlushAsync();
+                                
                                 chunk.Dispose();
                             }
                         }
-
-                        /*DateTime Stop = DateTime.Now;
-                        TimeSpan elapsed = Stop - Start;
-                        c8o.c8oLogger.Error("Time elapsed : " + elapsed.ToString());*/
-
                     }
                     catch (Exception e)
                     {
@@ -583,17 +576,14 @@ namespace Convertigo.SDK
                         }
                     }
 
-
                     // Updates the state document in the c8oTask database
                     res = await c8oTask.CallJson("fs://.post",
                         C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
                         "_id", task["_id"].Value<string>(),
                         "splitted", task["splitted"] = true
                     ).Async();
-                    Debug("splitted true:\n" + res);
+                    Debug("splitted true:\n" + res.ToString());
                 }
-
-                // tmp = await c8o.CallJson("fs://.all").Async();
 
                 // If the local database is not replecated to the server
                 if (!task["replicated"].Value<bool>())
@@ -601,24 +591,33 @@ namespace Convertigo.SDK
                     //
                     // 2 : Authenticates
                     //
-                    tmp = await c8o.CallJson(".SetAuthenticatedUser", "userId", transferStatus.Uuid).Async();
+                    res = await c8o.CallJson(".SetAuthenticatedUser", "userId", transferStatus.Uuid).Async();
+                    Debug("SetAuthenticatedUser:\n" + res.ToString());
+
+                    transferStatus.State = C8oFileTransferStatus.StateAuthenticated;
+                    Notify(transferStatus);
 
                     //
                     // 3 : Replicates to server
                     //
-                    bool launchreplication = true;
+                    transferStatus.State = C8oFileTransferStatus.StateReplicate;
+                    Notify(transferStatus);
 
-                    // Relaunch replication while all docupments are not replicated to the server
-                    while (launchreplication)
+                    bool launchReplication = true;
+
+                    // Relaunch replication while all documents are not replicated to the server
+                    while (launchReplication)
                     {
-                        locker = new bool[] { false };
+                        locker[0] = false;
                         c8o.CallJson("fs://.replicate_push").Progress((c8oOnProgress) =>
                         {
                             if (c8oOnProgress.Finished)
                             {
+                                // Checks if there is no more documents to replicate
                                 if (c8oOnProgress.Total == 0)
                                 {
-                                    launchreplication = false;
+                                    // Then the replication won't be launch again
+                                    launchReplication = false;
                                 }
 
                                 lock (locker)
@@ -636,12 +635,25 @@ namespace Convertigo.SDK
                             {
                                 Monitor.Wait(locker, 500);
                             }
+
+                            // Asks how many documents are in the server database with this uuid
+                            JObject json = await c8o.CallJson(".c8ofiletransfer.GetViewCountByUuid", "_use_key", transferStatus.Uuid).Async();
+                            var item = json.SelectToken("document.couchdb_output.rows.item");
+                            if (item != null)
+                            {
+                                int current = item.Value<int>("value");
+                                // If the number of documents has changed since the last time then notify
+                                if (current != transferStatus.Current)
+                                {
+                                    transferStatus.Current = current;
+                                    Notify(transferStatus);
+                                }
+                            }
+
                         } while (!locker[0]);
                     }
 
-                    // tmp = await c8o.CallJson("lib_FileTransfer.c8ofiletransfer.AllChunks", "uuid", transferStatus.Uuid).Async();
-
-                    // Updates the state document in the c8oTask database
+                    // Updates the state document in the task database
                     res = await c8oTask.CallJson("fs://.post",
                         C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
                         "_id", task["_id"].Value<string>(),
@@ -650,12 +662,13 @@ namespace Convertigo.SDK
                     Debug("replicated true:\n" + res);
                 }
 
-                // return;
-
                 // If the local database containing chunks is not deleted
-                locker = new bool[] { true };
+                locker[0] = true;
                 if (!task["localDeleted"].Value<bool>())
                 {
+                    transferStatus.State = C8oFileTransferStatus.StateCleaning;
+                    Notify(transferStatus);
+
                     locker[0] = false;
                     //
                     // 4 : Delete the local database containing chunks
@@ -680,18 +693,21 @@ namespace Convertigo.SDK
                 }
 
                 // If the file is not assembled in the server
-                if (!task["assemblingRequest"].Value<bool>())
+                if (!task["assembled"].Value<bool>())
                 {
+                    transferStatus.State = C8oFileTransferStatus.StateAssembling;
+                    Notify(transferStatus);
+
                     //
                     // 5 : Request the server to assemble chunks to the initial file
                     //
-                    tmp = await c8o.CallJson(".StoreDatabaseFileToLocal", "uuid", transferStatus.Uuid).Async();
+                    res = await c8o.CallJson(".StoreDatabaseFileToLocal", "uuid", transferStatus.Uuid).Async();
                     c8oTask.CallJson("fs://.post",
                             C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
                             "_id", task["_id"].Value<string>(),
                             "assemblingRequest", task["assemblingRequest"] = true
                         );
-                    Debug("assemblingRequest true:\n" + res);
+                    Debug("assembled true:\n" + res.ToString());
                 }
 
                 // Waits the local database is deleted
@@ -707,7 +723,10 @@ namespace Convertigo.SDK
                 // 6 : Remove the task document
                 //
                 res = await c8oTask.CallJson("fs://.delete", "docid", transferStatus.Uuid).Async();
-                Debug("task document delete:\n" + res.ToString());
+                Debug("local delete:\n" + res.ToString());
+
+                transferStatus.State = C8oFileTransferStatus.StateFinished;
+                Notify(transferStatus);
             }
             catch (Exception e)
             {

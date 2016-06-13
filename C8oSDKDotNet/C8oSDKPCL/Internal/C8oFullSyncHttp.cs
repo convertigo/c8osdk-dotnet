@@ -160,16 +160,15 @@ namespace Convertigo.SDK.Internal
             return await Execute(request, postData);
         }
 
-
-
-
         public async override Task<object> HandlePutAttachmentRequest(string fullSyncDatatbaseName, string docid, string attachmentName, string attachmentContentType, Stream attachmentContent)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
-
-
+        public override Task<object> HandleDeleteAttachmentRequest(string fullSyncDatatbaseName, string docid, string attachmentName)
+        {
+            throw new NotImplementedException();
+        }
 
         public async override Task<object> HandleAllDocumentsRequest(string fullSyncDatatbaseName, IDictionary<string, object> parameters)
         {
