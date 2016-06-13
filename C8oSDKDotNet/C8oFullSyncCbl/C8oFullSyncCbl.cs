@@ -324,6 +324,29 @@ namespace Convertigo.SDK.Internal
             return new FullSyncDocumentOperationResponse(document.Id, document.CurrentRevisionId, true);
         }
 
+        //*** DeleteAttachment ***//
+        
+        public async override Task<object> HandleDeleteAttachmentRequest(string databaseName, string docid, string attachmentName)
+        {
+            var fullSyncDatabase = await GetOrCreateFullSyncDatabase(databaseName);
+
+            // Gets the document form the local database
+            var document = fullSyncDatabase.Database.GetExistingDocument(docid);
+
+            if (document != null)
+            {
+                var newRev = document.CurrentRevision.CreateRevision();
+                newRev.RemoveAttachment(attachmentName);
+                var savedRev = newRev.Save();
+            }
+            else
+            {
+                throw new C8oRessourceNotFoundException(C8oExceptionMessage.RessourceNotFound("requested document \"" + docid + "\""));
+            }
+
+            return new FullSyncDocumentOperationResponse(document.Id, document.CurrentRevisionId, true);
+        }
+
         //*** GetAllDocuments ***//
 
         public async override Task<object> HandleAllDocumentsRequest(string databaseName, IDictionary<string, object> parameters)
@@ -629,7 +652,6 @@ namespace Convertigo.SDK.Internal
         {
             C8o.C8oFullSyncUsed = Type.GetType("Convertigo.SDK.Internal.C8oFullSyncCbl", true);
         }
-
     }
 
 }

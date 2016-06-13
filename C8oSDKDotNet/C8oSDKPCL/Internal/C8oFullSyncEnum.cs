@@ -37,11 +37,6 @@ namespace Convertigo.SDK.Internal
             return c8oFullSync.HandlePostDocumentRequest(databaseName, fullSyncPolicy, parameters);
         });
 
-
-
-
-
-
         public static readonly FullSyncRequestable PUT_ATTACHMENT = new FullSyncRequestable("put_attachment", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
             // Gets the docid parameter
@@ -59,10 +54,16 @@ namespace Convertigo.SDK.Internal
             return c8oFullSync.HandlePutAttachmentRequest(databaseName, docid, name, contentType, content);
         });
 
+        public static readonly FullSyncRequestable DELETE_ATTACHMENT = new FullSyncRequestable("delete_attachment", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
+        {
+            // Gets the docid parameter
+            string docid = C8oUtils.GetParameterStringValue(parameters, FullSyncPutAttachmentParameter.DOCID.name, false);
 
+            // Gets the attachment name parameter
+            string name = C8oUtils.GetParameterStringValue(parameters, FullSyncPutAttachmentParameter.NAME.name, false);
 
-
-
+            return c8oFullSync.HandleDeleteAttachmentRequest(databaseName, docid, name);
+        });
 
         public static readonly FullSyncRequestable ALL = new FullSyncRequestable("all", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
@@ -222,7 +223,7 @@ namespace Convertigo.SDK.Internal
 
         public static FullSyncRequestable[] Values()
         {
-            return new FullSyncRequestable[] { GET, DELETE, POST, PUT_ATTACHMENT, ALL, VIEW, SYNC, REPLICATE_PULL, REPLICATE_PUSH, RESET, CREATE, DESTROY };
+            return new FullSyncRequestable[] { GET, DELETE, POST, PUT_ATTACHMENT, DELETE_ATTACHMENT, ALL, VIEW, SYNC, REPLICATE_PULL, REPLICATE_PUSH, RESET, CREATE, DESTROY };
         }
     }
 

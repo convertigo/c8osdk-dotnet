@@ -113,7 +113,7 @@ namespace Sample04Wpf.Win
 
         private async void Download_Click(object sender, RoutedEventArgs e)
         {
-            var file = FilesList.SelectedItem as File;
+            File file = FilesList.SelectedItem as File;
 
             file.progress = "preparing";
 
