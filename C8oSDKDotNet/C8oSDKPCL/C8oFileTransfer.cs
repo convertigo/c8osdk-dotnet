@@ -459,7 +459,8 @@ namespace Convertigo.SDK
                  "replicated", false,
                  "localDeleted", false,
                  "assembled", false,
-                 "upload", 0
+                 "upload", 0,
+                 "serverFilePath", ""
              ).Async();
 
             // ???
@@ -702,13 +703,38 @@ namespace Convertigo.SDK
                     // 5 : Request the server to assemble chunks to the initial file
                     //
                     res = await c8o.CallJson(".StoreDatabaseFileToLocal", "uuid", transferStatus.Uuid).Async();
+                    if (res.SelectToken("document.serverFilePath") == null)
+                    {
+                        throw new Exception("Can't find the serverFilePath in JSON response : " + res.ToString());
+                    }
+                    string serverFilePath = res.SelectToken("document").Value<string>("serverFilePath");
                     c8oTask.CallJson("fs://.post",
                             C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
                             "_id", task["_id"].Value<string>(),
-                            "assemblingRequest", task["assemblingRequest"] = true
+                            "assembled", task["assembled"] = true,
+                            "serverFilePath", task["serverFilePath"] = serverFilePath
                         );
                     Debug("assembled true:\n" + res.ToString());
                 }
+
+                transferStatus.ServerFilepath = task["serverFilePath"].ToString();
+
+                /*if (task["serverFilePath"].Value<string>().Equals(""))
+                {
+                    res = await c8o.CallJson(".GetServerFilePath", 
+                        "uuid", transferStatus.Uuid, 
+                        "fileName", Path.GetFileName(transferStatus.Filepath)).Async();
+                    if (res.SelectToken("document.serverFilePath") == null)
+                    {
+                        throw new Exception("Can't find the serverFilePath in JSON response : " + res.ToString());
+                    }
+                    string serverFilePath = res.SelectToken("document").Value<string>("serverFilePath");
+                    c8oTask.CallJson("fs://.post",
+                            C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                            "_id", task["_id"].Value<string>(),
+                            "serverFilePath", task["serverFilePath"] = serverFilePath
+                        );
+                }*/
 
                 // Waits the local database is deleted
                 do
