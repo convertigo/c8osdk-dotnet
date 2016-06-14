@@ -60,6 +60,20 @@
             }
         }
 
+        private string serverFilepath;
+
+        public string ServerFilepath
+        {
+            get
+            {
+                return serverFilepath;
+            }
+            internal set
+            {
+                serverFilepath = value;
+            }
+        }
+
         public int current;
 
         public int Current
