@@ -33,6 +33,8 @@ namespace Convertigo.SDK
         public event EventHandler<string> RaiseDebug;
         public event EventHandler<Exception> RaiseException;
 
+        private Dictionary<string, Stream> streamToUpload;
+
         /// <summary>
         /// Initialize a File transfer. This will prepare everything needed to transfer a file. The name of the backend project and
         /// the name of the FullSync status database will be set by default to <b>lib_FileTransfer</b> and to <b>c8ofiletransfer_tasks</b> but
@@ -74,6 +76,7 @@ namespace Convertigo.SDK
         public C8oFileTransfer(C8o c8o, string projectName = "lib_FileTransfer", string taskDb = "c8ofiletransfer_tasks")
         {
             c8oTask = new C8o(c8o.EndpointConvertigo + "/projects/" + projectName, new C8oSettings(c8o).SetDefaultDatabaseName(taskDb));
+            streamToUpload = new Dictionary<string, Stream>();
         }
 
         public void Start()
@@ -115,7 +118,8 @@ namespace Convertigo.SDK
                                 if (!tasks.ContainsKey(uuid) && (task["download"] != null || task["upload"] != null))
                                 {
 
-                                    // await c8oTask.CallJson("fs://.delete", "docid", uuid).Async();
+                                    //await c8oTask.CallJson("fs://.delete", "docid", uuid).Async();
+                                    //continue;
 
                                     string filePath = task["filePath"].Value<string>();
 
@@ -437,16 +441,16 @@ namespace Convertigo.SDK
         /// Add a file to transfer to the upload queue. 
         /// </summary>
         /// <param name="filepath">a path where the file will be assembled when the transfer is finished</param>
-        public async Task UploadFile(String filePath)
+        public async Task UploadFile(String fileName, Stream fileStream)// String filePath)
         {
             // Creates the task database if it doesn't exist
             await CheckTaskDb();
 
             // Initializes the uuid ending with the number of chunks
             string uuid = System.Guid.NewGuid().ToString();
-            Stream fileStream = fileManager.OpenFile(filePath);
+            // Stream fileStream = fileManager.OpenFile(filePath);
             long fileSize = fileStream.Length;
-            fileStream.Dispose();
+            // fileStream.Dispose();
             double d = (double)fileSize / chunkSize;
             double numberOfChunks = Math.Ceiling(d);
             uuid = uuid + "-" + numberOfChunks;
@@ -454,7 +458,7 @@ namespace Convertigo.SDK
             // Posts a document describing the state of the upload in the task db
             await c8oTask.CallJson("fs://.post",
                  "_id", uuid,
-                 "filePath", filePath,
+                 "filePath", fileName,
                  "splitted", false,
                  "replicated", false,
                  "localDeleted", false,
@@ -462,6 +466,8 @@ namespace Convertigo.SDK
                  "upload", 0,
                  "serverFilePath", ""
              ).Async();
+
+            streamToUpload.Add(uuid, fileStream);
 
             // ???
             lock (this)
@@ -480,6 +486,7 @@ namespace Convertigo.SDK
                 // JObject tmp = null;
                 JObject res = null;
                 bool[] locker = new bool[] { false };
+                string fileName = transferStatus.Filepath; // task["fileName"].ToString();
 
                 // Creates a c8o instance with a specific fullsync local suffix in order to store chunks in a specific database
                 var c8o = new C8o(c8oTask.Endpoint, new C8oSettings(c8oTask).SetFullSyncLocalSuffix("_" + transferStatus.Uuid).SetDefaultDatabaseName("c8ofiletransfer"));
@@ -493,10 +500,16 @@ namespace Convertigo.SDK
                     transferStatus.State = C8oFileTransferStatus.StateSplitting;
                     Notify(transferStatus);
 
-                    // Retrieves the file
-                    string filePath = transferStatus.Filepath;
-                    string fileName = Path.GetFileName(filePath);
-                    Stream fileStream = fileManager.OpenFile(filePath);
+                    Stream fileStream;
+                    if (!streamToUpload.TryGetValue(transferStatus.Uuid, out fileStream))
+                    {
+                        // Removes the local database
+                        await c8o.CallJson("fs://.reset").Async();
+                        // Removes the task doc
+                        await c8oTask.CallJson("fs://.delete", "docid", transferStatus.Uuid).Async();
+                        throw new Exception("The file '" + task["fileName"] + "' can't be upload because it was stopped before the file content was handled");
+                    }
+                    
                     MemoryStream chunk = new MemoryStream(chunkSize);
                     fileStream.Position = 0;
 
@@ -544,7 +557,7 @@ namespace Convertigo.SDK
                             if (!chunkAlreadyExists)
                             {
                                 byte[] buffer = new byte[chunkSize];
-                                // fileStream.Position = chunkSize * chunkId;                                
+                                fileStream.Position = chunkSize * chunkId;                                
                                 int read = fileStream.Read(buffer, 0, chunkSize);
 
                                 chunk = new MemoryStream(chunkSize);
@@ -585,6 +598,8 @@ namespace Convertigo.SDK
                     ).Async();
                     Debug("splitted true:\n" + res.ToString());
                 }
+
+                streamToUpload.Remove(transferStatus.Uuid);
 
                 // If the local database is not replecated to the server
                 if (!task["replicated"].Value<bool>())
@@ -718,23 +733,6 @@ namespace Convertigo.SDK
                 }
 
                 transferStatus.ServerFilepath = task["serverFilePath"].ToString();
-
-                /*if (task["serverFilePath"].Value<string>().Equals(""))
-                {
-                    res = await c8o.CallJson(".GetServerFilePath", 
-                        "uuid", transferStatus.Uuid, 
-                        "fileName", Path.GetFileName(transferStatus.Filepath)).Async();
-                    if (res.SelectToken("document.serverFilePath") == null)
-                    {
-                        throw new Exception("Can't find the serverFilePath in JSON response : " + res.ToString());
-                    }
-                    string serverFilePath = res.SelectToken("document").Value<string>("serverFilePath");
-                    c8oTask.CallJson("fs://.post",
-                            C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
-                            "_id", task["_id"].Value<string>(),
-                            "serverFilePath", task["serverFilePath"] = serverFilePath
-                        );
-                }*/
 
                 // Waits the local database is deleted
                 do
