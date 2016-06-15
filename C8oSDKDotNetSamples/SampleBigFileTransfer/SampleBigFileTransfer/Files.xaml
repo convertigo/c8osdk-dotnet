@@ -4,11 +4,18 @@
              x:Class="SampleBigFileTransfer.Files">
   <ScrollView Orientation="Vertical">
     <StackLayout Orientation="Vertical" Spacing="5">
+      
       <Label Text="Files" XAlign="Center" FontAttributes="Bold" FontSize="22"/>
       <ListView x:Name="FilesList"/>
+      
       <Button x:Name="Download" Text="Download" Clicked="DownloadButtonClick"/>
+
+      <Button x:Name="Upload" Text="Upload" Clicked="UploadButtonClick"/>
+      
       <Label Text="In Progress" XAlign="Center" FontAttributes="Bold" FontSize="22"/>
+      
       <ListView x:Name="FilesListProgress"/>
+      
     </StackLayout>
   </ScrollView>
 </ContentPage>

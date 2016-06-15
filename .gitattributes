@@ -349,6 +349,8 @@ C8oSDKDotNetSamples/SampleBigFileTransfer/SampleBigFileTransfer.iOS/iTunesArtwor
 C8oSDKDotNetSamples/SampleBigFileTransfer/SampleBigFileTransfer.iOS/iTunesArtwork@2x -text
 C8oSDKDotNetSamples/SampleBigFileTransfer/SampleBigFileTransfer.iOS/packages.config -text
 C8oSDKDotNetSamples/SampleBigFileTransfer/SampleBigFileTransfer/App.cs -text
+C8oSDKDotNetSamples/SampleBigFileTransfer/SampleBigFileTransfer/FileToUpload10M.gif -text
+C8oSDKDotNetSamples/SampleBigFileTransfer/SampleBigFileTransfer/FileToUpload1K.txt -text
 C8oSDKDotNetSamples/SampleBigFileTransfer/SampleBigFileTransfer/Files.xaml -text
 C8oSDKDotNetSamples/SampleBigFileTransfer/SampleBigFileTransfer/Files.xaml.cs -text
 C8oSDKDotNetSamples/SampleBigFileTransfer/SampleBigFileTransfer/Login.xaml -text

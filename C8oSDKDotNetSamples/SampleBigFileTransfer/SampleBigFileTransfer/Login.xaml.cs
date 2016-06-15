@@ -11,11 +11,11 @@ namespace SampleBigFileTransfer
 
         public Login (App app)
 		{
-			InitializeComponent ();
+			InitializeComponent();
 
             this.app = app;
         }
-
+        
         private async void LoginButtonClick(Object sender, EventArgs args)
         {
             string username = UsernameField.Text;

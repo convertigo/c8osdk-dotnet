@@ -4,16 +4,24 @@
              x:Class="SampleBigFileTransfer.Login">
   <ScrollView Orientation="Vertical">
     <StackLayout Orientation="Vertical" Spacing="5">
+      
       <Label Text="Login" XAlign="Center" FontAttributes="Bold" FontSize="22"/>
+      
       <StackLayout Orientation="Horizontal" Spacing="5">
+        
         <Label Text="Username"/>
         <Entry x:Name="UsernameField" Text="Jim" HorizontalOptions="FillAndExpand"/>
+        
       </StackLayout>
       <StackLayout Orientation="Horizontal" Spacing="5">
+        
         <Label Text="Password"/>
         <Entry IsPassword="True" x:Name="PasswordField" Text="Jim" HorizontalOptions="FillAndExpand"/>
+        
       </StackLayout>
+      
       <Button x:Name="LoginButton" Text="Login" Clicked="LoginButtonClick"/>
+      
     </StackLayout>
   </ScrollView>
 </ContentPage>

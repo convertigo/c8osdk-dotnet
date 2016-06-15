@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using Xamarin.Forms;
 
 namespace SampleBigFileTransfer
@@ -64,53 +66,58 @@ namespace SampleBigFileTransfer
                 {
                     app.c8o.RunUI(() =>
                     {
-                        File file = null;
-
-                        foreach (File item in progressFiles)
+                        if (transferStatus.isDownload)
                         {
-                            if (transferStatus.Uuid == item.uuid)
+                            File file = null;
+                            foreach (File item in progressFiles)
                             {
-                                file = item;
-                                progressFiles.Remove(item);
-                                FilesListProgress.ItemsSource = null;
-                                FilesListProgress.ItemsSource = progressFiles;
-                                break;
-                            }
-                        }
-
-                        if (file == null)
-                        {
-                            foreach (File item in files)
-                            {
-                                if (transferStatus.Filepath.EndsWith(item.name))
+                                if (transferStatus.Uuid == item.uuid)
                                 {
                                     file = item;
-                                    file.uuid = transferStatus.Uuid;
-                                    files.Remove(item);
-                                    FilesList.ItemsSource = null;
-                                    FilesList.ItemsSource = files;
+                                    progressFiles.Remove(item);
+                                    FilesListProgress.ItemsSource = null;
+                                    FilesListProgress.ItemsSource = progressFiles;
                                     break;
                                 }
                             }
-                        }
 
-                        if (transferStatus.State == C8oFileTransferStatus.StateFinished)
-                        {
-                            file.progress = "";
-                            files.Add(file);
-                            FilesList.ItemsSource = null;
-                            FilesList.ItemsSource = files;
-                        }
-                        else
-                        {
-                            file.progress = transferStatus.State.ToString();
-                            if (transferStatus.State == C8oFileTransferStatus.StateReplicate)
+                            if (file == null)
                             {
-                                file.progress += " " + transferStatus.Current + "/" + transferStatus.Total + " (" + transferStatus.Progress + ")";
+                                foreach (File item in files)
+                                {
+                                    if (transferStatus.Filepath.EndsWith(item.name))
+                                    {
+                                        file = item;
+                                        file.uuid = transferStatus.Uuid;
+                                        files.Remove(item);
+                                        FilesList.ItemsSource = null;
+                                        FilesList.ItemsSource = files;
+                                        break;
+                                    }
+                                }
                             }
-                            progressFiles.Add(file);
-                            FilesListProgress.ItemsSource = null;
-                            FilesListProgress.ItemsSource = progressFiles;
+
+                            if (transferStatus.State == C8oFileTransferStatus.StateFinished)
+                            {
+                                file.progress = "";
+                                files.Add(file);
+                                FilesList.ItemsSource = null;
+                                FilesList.ItemsSource = files;
+                            }
+                            else
+                            {
+                                file.progress = transferStatus.State.ToString();
+                                if (transferStatus.State == C8oFileTransferStatus.StateReplicate)
+                                {
+                                    file.progress += " " + transferStatus.Current + "/" + transferStatus.Total + " (" + transferStatus.Progress + ")";
+                                }
+                                progressFiles.Add(file);
+                                FilesListProgress.ItemsSource = null;
+                                FilesListProgress.ItemsSource = progressFiles;
+                            }
+                        } else
+                        {
+                            var i = 0;
                         }
                     });
                 };
@@ -163,6 +170,16 @@ namespace SampleBigFileTransfer
                 string path = Device.OS == TargetPlatform.Android ? "/sdcard/Download/" : "/tmp/";
                 await app.fileTransfer.DownloadFile(file.uuid, path + file.uuid + "_" + file.name);
             }
+        }
+
+        private async void UploadButtonClick(Object sender, EventArgs args)
+        {
+            Assembly assembly = this.GetType().Assembly;
+            string projectName =  assembly.GetName().Name;
+            string fileName = "FileToUpload10M.gif";
+            Stream fileStream = assembly.GetManifestResourceStream(projectName + "." + fileName);
+            
+            await app.fileTransfer.UploadFile(fileName, fileStream);
         }
     }
 }
