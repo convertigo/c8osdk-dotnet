@@ -1,5 +1,6 @@
 ﻿using Convertigo.SDK;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.XPath;
@@ -145,11 +146,10 @@ namespace Sample04Wpf.Win
 
         private async void Upload_Click(object sender, RoutedEventArgs e)
         {
-
             string filePath = FilteToUpload.Text; // "C:\\TMP\\vs_langpack.exe";  // "C:\\TMP\\test001.png";
-
-            await app.fileTransfer.UploadFile(filePath);
-
+            string fileName = Path.GetFileName(filePath);
+            Stream fileStream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read);            
+            await app.fileTransfer.UploadFile(fileName, fileStream);
         }
 
         private void Browse_Click(object sender, RoutedEventArgs e)
