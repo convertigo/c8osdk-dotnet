@@ -231,6 +231,8 @@ namespace C8oSDKNUnitWPF
                     exceptionLog = ex;
                 })
             );
+            c8o.Log.Warn("must fail log");
+            Thread.Sleep(250);
             try
             {
                 c8o.CallXml(".Ping").Sync();
@@ -400,11 +402,12 @@ namespace C8oSDKNUnitWPF
 
         private void CheckLogRemoteHelper(C8o c8o, string lvl, string msg)
         {
-            Thread.Sleep(100);
+            Thread.Sleep(333);
             var doc = c8o.CallXml(".GetLogs").Sync();
             var elt = doc.XPathSelectElement("/document/line");
             Assert.NotNull(elt, lvl);
             var sLine = elt.Value;
+            Assert.True(sLine != null && sLine.Length > 0, "[" + lvl + "] sLine='" + sLine + "'");
             var line = JArray.Parse(sLine);
             Assert.AreEqual(lvl, line[2].ToString());
             var newMsg = line[4].ToString();
@@ -419,6 +422,7 @@ namespace C8oSDKNUnitWPF
             c8o.LogC8o = false;
             var id = "logID=" + DateTime.Now.Ticks;
             c8o.CallXml(".GetLogs", "init", id).Sync();
+            Thread.Sleep(333);
             c8o.Log.Error(id);
             CheckLogRemoteHelper(c8o, "ERROR", id);
             c8o.Log.Error(id, new C8oException("for test"));
@@ -435,7 +439,7 @@ namespace C8oSDKNUnitWPF
             CheckLogRemoteHelper(c8o, "FATAL", id);
             c8o.LogRemote = false;
             c8o.Log.Info(id);
-            Thread.Sleep(50);
+            Thread.Sleep(333);
             var doc = c8o.CallXml(".GetLogs").Sync();
             object value = doc.XPathSelectElement("/document/line");
             Assert.Null(value);
@@ -1197,6 +1201,95 @@ namespace C8oSDKNUnitWPF
             }
         }
 
+        public class PlainObjectA
+        {
+            public string name;
+            public List<PlainObjectB> bObjects;
+            public PlainObjectB bObject;
+        }
+
+        public class PlainObjectB
+        {
+            public string name;
+            public int num;
+            public bool enabled;
+        }
+
+        [Test]
+        public void C8oFsMergeObject()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS);
+            lock (c8o)
+            {
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                var myId = "C8oFsMergeObject-" + DateTime.Now.Ticks;
+
+                var plainObjectA = new PlainObjectA();
+                plainObjectA.name = "plain A";
+                plainObjectA.bObjects = new List<PlainObjectB>();
+
+                plainObjectA.bObject = new PlainObjectB();
+                plainObjectA.bObject.name = "plain B 1";
+                plainObjectA.bObject.num = 1;
+                plainObjectA.bObject.enabled = true;
+                plainObjectA.bObjects.Add(plainObjectA.bObject);
+
+                plainObjectA.bObject = new PlainObjectB();
+                plainObjectA.bObject.name = "plain B 2";
+                plainObjectA.bObject.num = 2;
+                plainObjectA.bObject.enabled = false;
+                plainObjectA.bObjects.Add(plainObjectA.bObject);
+
+                plainObjectA.bObject = new PlainObjectB();
+                plainObjectA.bObject.name = "plain B -777";
+                plainObjectA.bObject.num = -777;
+                plainObjectA.bObject.enabled = true;
+
+                json = c8o.CallJson("fs://.post",
+                    "_id", myId,
+                    "a obj", plainObjectA
+                ).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                plainObjectA.bObjects[1].name = "plain B 2 bis";
+                
+                json = c8o.CallJson("fs://.post",
+                    C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                    "_id", myId,
+                    "a obj.bObjects", plainObjectA.bObjects
+                ).Sync();
+                Assert.True(json["ok"].Value<bool>());
+
+                plainObjectA.bObject = new PlainObjectB();
+                plainObjectA.bObject.name = "plain B -666";
+                plainObjectA.bObject.num = -666;
+                plainObjectA.bObject.enabled = false;
+
+                json = c8o.CallJson("fs://.post",
+                    C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                    "_id", myId,
+                    "a obj.bObject", plainObjectA.bObject
+                ).Sync();
+                Assert.True(json["ok"].Value<bool>());
+
+                json = c8o.CallJson("fs://.post",
+                    C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                    "_id", myId,
+                    "a obj.bObject.enabled", true
+                ).Sync();
+                Assert.True(json["ok"].Value<bool>());
+
+                json = c8o.CallJson("fs://.get", "docid", myId).Sync();
+                json.Remove("_rev");
+                Assert.AreEqual(myId, json["_id"].Value<string>());
+                json.Remove("_id");
+                var expectedJson = JObject.Parse(
+                    "{\"a obj\":{\"name\":\"plain A\",\"bObjects\":[{\"enabled\":true,\"name\":\"plain B 1\",\"num\":1},{\"enabled\":false,\"name\":\"plain B 2 bis\",\"num\":2}],\"bObject\":{\"name\":\"plain B -666\",\"enabled\":true,\"num\":-666}}}"
+                 );
+                assertEquals(expectedJson, json);
+            }
+        }
+
         [Test]
         public void C8oFsPostGetMultibase()
         {
@@ -1649,9 +1742,9 @@ namespace C8oSDKNUnitWPF
                     }).Sync();
                     Assert.True(json["ok"].Value<bool>());
                     Assert.AreEqual("push: 0/0 (running)", firstPush);
-                    Assert.True(Regex.IsMatch(lastPush, "push: \\d+/\\d+ \\(done\\)"), "push: \\d+/\\d+ \\(done\\)");
+                    Assert.True(Regex.IsMatch(lastPush, "push: \\d+/\\d+ \\(done\\)"), "push: \\d+/\\d+ \\(done\\) for " + lastPush);
                     Assert.AreEqual("pull: 0/0 (running)", firstPull);
-                    Assert.True(Regex.IsMatch(lastPull, "pull: \\d+/\\d+ \\(done\\)"), "pull: \\d+/\\d+ \\(done\\)");
+                    Assert.True(Regex.IsMatch(lastPull, "pull: \\d+/\\d+ \\(done\\)"), "pull: \\d+/\\d+ \\(done\\) for " + lastPull);
                     json = c8o.CallJson(".qa_fs_push.AllDocs",
                         "startkey", id,
                         "endkey", id + "z"
@@ -1678,9 +1771,8 @@ namespace C8oSDKNUnitWPF
                     json = c8o.CallJson(".qa_fs_push.GetDocument", "_use_docid", "def").Sync();
                     value = json.SelectToken("document.couchdb_output.custom").Value<string>();
                     Assert.AreEqual(id, value);
-                    //Assert.True(Regex.IsMatch(livePull, "pull: \\d+/\\d+ \\(live\\)"), "pull: \\d+/\\d+ \\(live\\)");
-                    //Assert.True(Regex.IsMatch(livePush, "push: \\d+/\\d+ \\(live\\)"), "push: \\d+/\\d+ \\(live\\)");
-
+                    Assert.True(Regex.IsMatch(livePull, "pull: \\d+/\\d+ \\(live\\)"), "pull: \\d+/\\d+ \\(live\\) for " + livePull);
+                    Assert.True(Regex.IsMatch(livePush, "push: \\d+/\\d+ \\(live\\)"), "push: \\d+/\\d+ \\(live\\) for " + livePush);
                 }
                 finally
                 {
@@ -1769,6 +1861,50 @@ namespace C8oSDKNUnitWPF
             Assert.AreEqual(id, value);
             signature2 = json.SelectToken("document.attr.signature").Value<string>();
             Assert.AreNotEqual(signature, signature2);
+        }
+
+        private void assertEqualsJsonChild(JToken expectedToken, JToken actualToken)
+        {
+            var expectedObject = expectedToken.Value<object>();
+            var actualObject = actualToken.Value<object>();
+            if (expectedObject != null)
+            {
+                Assert.NotNull(actualObject, "must not be null");
+                Assert.AreEqual(expectedObject.GetType(), actualObject.GetType());
+                if (expectedObject is JObject) {
+                    assertEquals(expectedObject as JObject, actualObject as JObject);
+                } else if (expectedObject is JArray) {
+                    assertEquals(expectedObject as JArray, actualObject as JArray);
+                } else {
+                    Assert.AreEqual(expectedObject, actualObject);
+                }
+            }
+            else
+            {
+                Assert.Null(actualObject, "must be null");
+            }
+        }
+
+        private void assertEquals(JObject expected, JObject actual)
+        {
+            Assert.AreEqual(expected.Count, actual.Count, "missing keys: " + expected.Count + " and " + actual.Count);
+
+            foreach (var entry in expected)
+            {
+                String expectedName = entry.Key;
+                Assert.NotNull(actual[expectedName], "missing key: " + expectedName);
+                assertEqualsJsonChild(expected[expectedName], actual[expectedName]);
+            }
+        }
+
+        private void assertEquals(JArray expected, JArray actual)
+        {
+            Assert.AreEqual(expected.Count, actual.Count, "missing entries");
+
+            for (int i = 0; i < expected.Count; i++)
+            {
+                assertEqualsJsonChild(expected[i], actual[i]);
+            }
         }
     }
 }

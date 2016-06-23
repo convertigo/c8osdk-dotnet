@@ -1,4 +1,5 @@
 using Couchbase.Lite;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -268,7 +269,13 @@ namespace Convertigo.SDK.Internal
                 {
                     // Retrieves ???
                     var objectParameterValue = C8oUtils.GetParameterJsonValue(parameter);
-
+                    //Manager.SharedInstance. ow = null;
+                    
+                    if (objectParameterValue is JObject)
+                    {
+                        objectParameterValue = (objectParameterValue as JObject).ToObject<Dictionary<string, object>> ();
+                    }
+                    
                     // Checks if the parameter name is splittable
                     var paths = parameterName.Split(new String[] { subkeySeparatorParameterValue }, StringSplitOptions.None); // Regex.Split(parameterName, subkeySeparatorParameterValue);
                     if (paths.Length > 1)

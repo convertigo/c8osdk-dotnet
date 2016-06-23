@@ -1,5 +1,6 @@
 ﻿using Convertigo.SDK.Internal;
 using System;
+using System.Threading;
 using System.Windows;
 
 namespace Convertigo.SDK
@@ -15,6 +16,11 @@ namespace Convertigo.SDK
                 C8o.defaultUiDispatcher = code =>
                 {
                     dispatcher.BeginInvoke(code);
+                };
+
+                C8o.defaultIsUi = () =>
+                {
+                    return Thread.CurrentThread == dispatcher.Thread;
                 };
             }
             else

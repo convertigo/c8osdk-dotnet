@@ -21,7 +21,7 @@ namespace Convertigo.SDK.Internal
         public readonly static string FULL_SYNC_DDOC_PREFIX = "_design";
         public readonly static string FULL_SYNC_VIEWS = "views";
 
-        protected C8o c8o;
+        internal C8o c8o;
         protected string fullSyncDatabaseUrlBase;
         protected string localSuffix;
 

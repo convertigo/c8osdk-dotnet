@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 // TODO
@@ -71,7 +72,9 @@ namespace Convertigo.SDK
         //*** Static configuration ***//
         internal static Type C8oHttpInterfaceUsed;
         internal static Type C8oFullSyncUsed;
+        internal static Func<bool> defaultIsUi;
         internal static Action<Action> defaultUiDispatcher;
+        internal static Action<Action> defaultBgDispatcher;
         internal static string deviceUUID;
 
         public static string GetSdkVersion()
@@ -566,6 +569,18 @@ namespace Convertigo.SDK
             get { return c8oLogger; }
         }
 
+        public bool IsUI
+        {
+            get
+            {
+                if (defaultIsUi != null)
+                {
+                    return defaultIsUi();
+                }
+                return false;
+            }
+        }
+
         /// <summary>
         /// An utility method to run a worker thread on UI. This method is Cross-platform and works on all the supported
         /// platforms (iOS, Android, WPF)
@@ -580,6 +595,18 @@ namespace Convertigo.SDK
             else
             {
                 code.Invoke();
+            }
+        }
+
+        public void RunBG(Action code)
+        {
+            if (defaultBgDispatcher != null)
+            {
+                defaultBgDispatcher(code);
+            }
+            else
+            {
+                Task.Factory.StartNew(code, TaskCreationOptions.LongRunning);
             }
         }
 

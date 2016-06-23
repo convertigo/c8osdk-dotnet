@@ -27,7 +27,7 @@ namespace Convertigo.SDK.Internal
 
         public void Execute()
         {
-            Task.Run((Action) Run);
+            c8o.RunBG((Action) Run);
         }
 
         async private void Run()

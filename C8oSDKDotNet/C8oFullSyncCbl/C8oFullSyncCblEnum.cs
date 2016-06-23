@@ -144,6 +144,13 @@ namespace Convertigo.SDK.Internal
                 }
             };
             fullSyncRequestParameters[requestParameter] = action;
+            // KEY
+            requestParameter = FullSyncRequestParameter.KEY;
+            action = (query, value) =>
+            {
+                query.Keys = new Object[] { value };
+            };
+            fullSyncRequestParameters[requestParameter] = action;
             // KEYS
             requestParameter = FullSyncRequestParameter.KEYS;
             action = (query, value) =>
