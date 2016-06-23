@@ -82,42 +82,57 @@ namespace Convertigo.SDK.Internal
 
         public static readonly FullSyncRequestable SYNC = new FullSyncRequestable("sync", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
-            var mutex = new object();
+            bool[] mutex = { false };
             bool pullFinished = false;
             bool pushFinished = false;
+
+            c8oFullSync.c8o.Log._Debug("handleFullSyncRequest enter: " + databaseName);
             lock (mutex)
             {
                 c8oFullSync.HandleSyncRequest(databaseName, parameters, new C8oResponseProgressListener((progress, param) =>
                 {
-                    if (progress.Pull && progress.Finished)
+                    if (!mutex[0])
                     {
-                        pullFinished = true;
-                    }
-
-                    if (progress.Push && progress.Finished)
-                    {
-                        pushFinished = true;
-                    }
-
-                    if (pullFinished && pushFinished)
-                    {
-                        lock (mutex)
+                        if (!pullFinished && progress.Pull && progress.Finished)
                         {
-                            Monitor.Pulse(mutex);
+                            pullFinished = true;
+                            c8oFullSync.c8o.Log._Debug("handleFullSyncRequest pullFinish = true: " + progress);
+                        }
+
+                        if (!pushFinished && progress.Push && progress.Finished)
+                        {
+                            pushFinished = true;
+                            c8oFullSync.c8o.Log._Debug("handleFullSyncRequest pushFinish = true: " + progress);
                         }
                     }
 
                     if (c8oResponseListener is C8oResponseJsonListener)
                     {
+                        c8oFullSync.c8o.Log._Trace("handleFullSyncRequest onJsonResponse: " + progress);
                         (c8oResponseListener as C8oResponseJsonListener).OnJsonResponse(null, param);
                     }
                     else if (c8oResponseListener is C8oResponseXmlListener)
                     {
+                        c8oFullSync.c8o.Log._Trace("handleFullSyncRequest onXmlResponse: " + progress);
                         (c8oResponseListener as C8oResponseXmlListener).OnXmlResponse(null, param);
                     }
+
+                    if (!mutex[0] && pullFinished && pushFinished)
+                    {
+                        lock (mutex)
+                        {
+                            mutex[0] = true;
+                            c8oFullSync.c8o.Log._Debug("handleFullSyncRequest notify: " + progress);
+                            Monitor.Pulse(mutex);
+                        }
+                    }
                 }));
+
+                var response = new JObject();
                 Monitor.Wait(mutex);
-                return Task.FromResult<object>(new JObject() { { "ok", true } });
+                c8oFullSync.c8o.Log._Debug("handleFullSyncRequest after wait");
+                response["ok"] = true;
+                return Task.FromResult<object>(response);
             }
         });
 
@@ -240,6 +255,7 @@ namespace Convertigo.SDK.Internal
         public static readonly FullSyncRequestParameter GROUP_LEVEL = new FullSyncRequestParameter("group_level", typeof(int));
         public static readonly FullSyncRequestParameter INCLUDE_DELETED = new FullSyncRequestParameter("include_deleted", typeof(bool));
         public static readonly FullSyncRequestParameter INDEX_UPDATE_MODE = new FullSyncRequestParameter("index_update_mode", typeof(string));
+        public static readonly FullSyncRequestParameter KEY = new FullSyncRequestParameter("key", typeof(IEnumerable<object>));
         public static readonly FullSyncRequestParameter KEYS = new FullSyncRequestParameter("keys", typeof(IEnumerable<object>));
         public static readonly FullSyncRequestParameter LIMIT = new FullSyncRequestParameter("limit", typeof(int));
         public static readonly FullSyncRequestParameter INCLUDE_DOCS = new FullSyncRequestParameter("include_docs", typeof(bool));
@@ -260,7 +276,7 @@ namespace Convertigo.SDK.Internal
 
         public static FullSyncRequestParameter[] Values()
         {
-            return new FullSyncRequestParameter[] { DESCENDING, ENDKEY, ENDKEY_DOCID, GROUP_LEVEL, INCLUDE_DELETED, INDEX_UPDATE_MODE, KEYS, LIMIT, REDUCE, GROUP, SKIP, STARTKEY, STARTKEY_DOCID, INCLUDE_DOCS };
+            return new FullSyncRequestParameter[] { DESCENDING, ENDKEY, ENDKEY_DOCID, GROUP_LEVEL, INCLUDE_DELETED, INDEX_UPDATE_MODE, KEY, KEYS, LIMIT, REDUCE, GROUP, SKIP, STARTKEY, STARTKEY_DOCID, INCLUDE_DOCS };
         }
 
         public static FullSyncRequestParameter GetFullSyncRequestParameter(string name)

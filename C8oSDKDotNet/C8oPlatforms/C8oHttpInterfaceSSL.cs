@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 
 namespace Convertigo.SDK.Internal
 {
@@ -106,6 +107,20 @@ namespace Convertigo.SDK.Internal
                     requests[request] = c8o.TrustAllCetificates;
                 }
             }
+        }
+        
+        protected override Task<HttpWebResponse> HandleFirstRequest(HttpWebRequest request)
+        {
+            lock (firstCallMutex)
+            {
+                if (!firstCallEnd)
+                {
+                    var response = request.GetResponse() as HttpWebResponse;
+                    firstCallEnd = true;
+                    return Task.FromResult<HttpWebResponse>(response);
+                }
+            }
+            return Task.FromResult<HttpWebResponse>(null);
         }
 
         public static void Init()

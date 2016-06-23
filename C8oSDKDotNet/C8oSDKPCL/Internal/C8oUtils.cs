@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 
@@ -104,11 +105,14 @@ namespace Convertigo.SDK.Internal
 
         public static object GetParameterJsonValue(KeyValuePair<string, object> parameter)
         {
-            if (parameter.Value is string)
+            var obj = parameter.Value;
+            if (obj is JValue || obj is string)
             {
-                return C8oTranslator.StringToJson(parameter.Value as string);
+                return obj;
             }
-            return parameter.Value;
+
+            var str = JsonConvert.SerializeObject(obj);
+            return C8oTranslator.StringToJson(str);
         }
 
         public static bool TryGetParameterObjectValue<T>(IDictionary<string, object> parameters, string name, out T value, bool useName = false, T defaultValue = default(T))

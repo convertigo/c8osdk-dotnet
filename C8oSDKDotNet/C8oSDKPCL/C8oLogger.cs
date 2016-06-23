@@ -247,61 +247,65 @@ namespace Convertigo.SDK
 
             if (canLog)
             {
-                Task.Run(async () =>
+                c8o.RunBG(async () =>
                 {
-                    // Take logs in the queue and add it to a json array
-                    int count = 0;
-                    int listSize = remoteLogs.Count;
-                    var logsArray = new JArray();
-
-                    while (count < listSize && count < REMOTE_LOG_LIMIT)
+                    try
                     {
-                        logsArray.Add(remoteLogs.Dequeue());
-                        count++;
-                    }
+                        // Take logs in the queue and add it to a json array
+                        int count = 0;
+                        int listSize = remoteLogs.Count;
+                        var logsArray = new JArray();
 
-                    // Initializes request paramters
-                    var parameters = new Dictionary<string, object>()
+                        while (count < listSize && count < REMOTE_LOG_LIMIT)
+                        {
+                            logsArray.Add(remoteLogs.Dequeue());
+                            count++;
+                        }
+
+                        // Initializes request paramters
+                        var parameters = new Dictionary<string, object>()
                     {
                         { JSON_KEY_LOGS, JsonConvert.SerializeObject(logsArray)},
                         { JSON_KEY_ENV, env},
                         { C8o.ENGINE_PARAMETER_DEVICE_UUID, c8o.DeviceUUID }
                     };
 
-                    JObject jsonResponse;
-                    try
-                    {
-                        var webResponse = await c8o.httpInterface.HandleRequest(remoteLogUrl, parameters);
-                        var streamResponse = webResponse.GetResponseStream();
-                        jsonResponse = C8oTranslator.StreamToJson(streamResponse);
-                    }
-                    catch (Exception e)
-                    {
-                        c8o.LogRemote = false;
-                        if (c8o.LogOnFail != null)
+                        JObject jsonResponse;
+                        try
                         {
-                            c8o.LogOnFail(new C8oException(C8oExceptionMessage.RemoteLogFail(), e), null);
+                            var webResponse = await c8o.httpInterface.HandleRequest(remoteLogUrl, parameters);
+                            var streamResponse = webResponse.GetResponseStream();
+                            jsonResponse = C8oTranslator.StreamToJson(streamResponse);
                         }
-                        return;
-                    }
-
-                    var logLevelResponse = jsonResponse.GetValue(C8oLogger.JSON_KEY_REMOTE_LOG_LEVEL);
-                    if (logLevelResponse != null)
-                    {
-                        string logLevelResponseStr = logLevelResponse.Value<string>();
-                        var c8oLogLevel = C8oLogLevel.GetC8oLogLevel(logLevelResponseStr);
-
-                        if (c8oLogLevel != null)
+                        catch (Exception e)
                         {
-                            remoteLogLevel = c8oLogLevel;
+                            c8o.LogRemote = false;
+                            if (c8o.LogOnFail != null)
+                            {
+                                c8o.LogOnFail(new C8oException(C8oExceptionMessage.RemoteLogFail(), e), null);
+                            }
+                            return;
                         }
-                        LogRemote();
+
+                        var logLevelResponse = jsonResponse.GetValue(C8oLogger.JSON_KEY_REMOTE_LOG_LEVEL);
+                        if (logLevelResponse != null)
+                        {
+                            string logLevelResponseStr = logLevelResponse.Value<string>();
+                            var c8oLogLevel = C8oLogLevel.GetC8oLogLevel(logLevelResponseStr);
+
+                            if (c8oLogLevel != null)
+                            {
+                                remoteLogLevel = c8oLogLevel;
+                            }
+                            LogRemote();
+                        }
                     }
-                }).ContinueWith((completedTask) => 
-                {
-                    lock (alreadyRemoteLogging)
+                    finally
                     {
-                        alreadyRemoteLogging[0] = false;
+                        lock (alreadyRemoteLogging)
+                        {
+                            alreadyRemoteLogging[0] = false;
+                        }
                     }
                 });
             }

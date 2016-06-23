@@ -59,7 +59,7 @@ namespace Convertigo.SDK
                 }
                 if (lastResponse != null)
                 {
-                    OnResponse();
+                    c8o.RunBG(OnResponse);
                 }
                 return nextPromise;
             }
@@ -133,7 +133,9 @@ namespace Convertigo.SDK
                 nextPromise = new C8oPromise<T>(c8o);
                 if (lastFailure != null)
                 {
-                    OnFailure(lastFailure, lastParameters);
+                    c8o.RunBG(() => {
+                        OnFailure(lastFailure, lastParameters);
+                    });
                 }
                 return nextPromise;
             }

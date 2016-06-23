@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Convertigo.SDK.Internal
@@ -10,8 +11,10 @@ namespace Convertigo.SDK.Internal
     internal class C8oHttpInterface
     {
         protected C8o c8o;
-        CookieContainer cookieContainer;
-        private int timeout;
+        protected CookieContainer cookieContainer;
+        protected int timeout;
+        protected bool firstCallEnd = false;
+        protected SemaphoreSlim firstCallMutex = new SemaphoreSlim(1);
 
         public C8oHttpInterface(C8o c8o)
         {
@@ -29,20 +32,30 @@ namespace Convertigo.SDK.Internal
 
         internal virtual void OnRequestCreate(HttpWebRequest request)
         {
+        }
+        
+        protected virtual async Task<HttpWebResponse> HandleFirstRequest(HttpWebRequest request)
+        {
+            await firstCallMutex.WaitAsync();
 
+            try
+            {
+                if (!firstCallEnd)
+                {
+                    var response = await HandleRequest(request);
+                    firstCallEnd = true;
+                    return response;
+                }
+            }
+            finally
+            {
+                firstCallMutex.Release();
+            }
+            return null;
         }
 
-        public async Task<HttpWebResponse> HandleRequest(string url, IDictionary<string, object> parameters)
+        protected async Task<HttpWebResponse> HandleRequest(HttpWebRequest request)
         {
-            var request = (HttpWebRequest) HttpWebRequest.Create(url);
-            OnRequestCreate(request);
-
-            request.Method = "POST";
-            request.Headers["x-convertigo-sdk"] = C8o.GetSdkVersion();
-            request.CookieContainer = cookieContainer;
-
-            SetRequestEntity(request, parameters);
-
             var task = Task<WebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request);
             if (timeout > -1)
             {
@@ -57,6 +70,25 @@ namespace Convertigo.SDK.Internal
             {
                 return await task as HttpWebResponse;
             }
+        }
+
+        public async Task<HttpWebResponse> HandleRequest(string url, IDictionary<string, object> parameters)
+        {
+            var request = HttpWebRequest.Create(url) as HttpWebRequest;
+            OnRequestCreate(request);
+
+            request.Method = "POST";
+            request.Headers["x-convertigo-sdk"] = C8o.GetSdkVersion();
+            request.CookieContainer = cookieContainer;
+
+            SetRequestEntity(request, parameters);
+            HttpWebResponse response = await HandleFirstRequest(request);
+            if (response == null)
+            {
+                response = await HandleRequest(request);
+            }
+
+            return response;            
         }
 
         public async Task<HttpWebResponse> HandleC8oCallRequest(string url, IDictionary<string, object> parameters)
@@ -81,7 +113,7 @@ namespace Convertigo.SDK.Internal
             get { return cookieContainer;  }
         }
 
-        private void SetRequestEntity(HttpWebRequest request, IDictionary<string, object> parameters)
+        protected void SetRequestEntity(HttpWebRequest request, IDictionary<string, object> parameters)
         {
             request.ContentType = "application/x-www-form-urlencoded";
 

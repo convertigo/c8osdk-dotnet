@@ -9,9 +9,14 @@ namespace Convertigo.SDK
         {
             Handler mainLooperHandler = new Handler(Looper.MainLooper);
 
+            C8o.defaultIsUi = () =>
+            {
+                return Looper.MyLooper() == Looper.MainLooper;
+            };
+
             C8o.defaultUiDispatcher = code =>
             {
-                if (Looper.MyLooper() == Looper.MainLooper)
+                if (C8o.defaultIsUi())
                 {
                     code.Invoke();
                 }
