@@ -1527,6 +1527,34 @@ namespace C8oSDKNUnitWPF
         }
 
         [Test]
+        public void C8oFsViewArrayKey()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS_PULL);
+            lock (c8o)
+            {
+                try
+                {
+                    var json = c8o.CallJson("fs://.reset").Sync();
+                    Assert.True(json["ok"].Value<bool>());
+                    json = c8o.CallJson(".LoginTesting").Sync();
+                    object value = json.SelectToken("document.authenticatedUserID").Value<string>();
+                    Assert.AreEqual("testing_user", value);
+                    json = c8o.CallJson("fs://.replicate_pull").Sync();
+                    Assert.True(json["ok"].Value<bool>());
+                    json = c8o.CallJson("fs://.view",
+                            "ddoc", "design",
+                            "view", "array",
+                            "startkey", "[\"1\"]"
+                    ).Sync();
+                }
+                finally
+                {
+                    c8o.CallJson(".LogoutTesting").Sync();
+                }
+            }
+        }
+
+        [Test]
         public void C8oFsReplicatePullGetAll()
         {
             var c8o = Get<C8o>(Stuff.C8O_FS_PULL);
