@@ -295,7 +295,7 @@ namespace Convertigo.SDK
                         throw new Exception("replication not completed");
                     }
 
-                    var res = await c8oTask.CallJson("fs://" + fsConnector + ".post",
+                    var res = await c8oTask.CallJson("fs://.post",
                         C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
                         "_id", task["_id"].Value<string>(),
                         "replicated", task["replicated"] = true

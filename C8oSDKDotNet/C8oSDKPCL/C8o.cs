@@ -22,7 +22,10 @@ using System.Xml.Linq;
 namespace Convertigo.SDK
 {
     /// <summary>
-    /// This base class for Convertigo SDK.  A C8o object represents a Convertigo MBaaS Server endpoint.
+    /// Allows to send requests to a Convertigo Server (or Studio), these requests are called c8o calls.<para/>
+    /// C8o calls are done thanks to a HTTP request or a CouchbaseLite usage.<para/>
+    /// An instance of C8o is connected to only one Convertigo and can't change it.<para/>
+    /// To use it, you have to first initialize the C8o instance with the Convertigo endpoint, then use call methods with Convertigo variables as parameter.
     /// </summary>
     public class C8o : C8oBase
     {
@@ -48,12 +51,43 @@ namespace Convertigo.SDK
         internal static readonly string ENGINE_PARAMETER_PROGRESS = "__progress";
 
         //*** FULLSYNC parameters ***//
-
+        /// <summary>
+        /// Constant to use as a parameter for a Call of "fs://.post" and must be followed by a FS_POLICY_* constant.
+        /// </summary>
+        /// <example>
+        /// <code>
+        /// c8o.CallJson("fs://.post",
+        ///   C8o.FS_POLICY, C8O.FS_POLICY_MERGE,
+        ///   "docid", myid,
+        ///   "mykey", myvalue
+        /// ).Sync();
+        /// </code>
+        /// </example>
         public static readonly string FS_POLICY = "_use_policy";
+        /// <summary>
+        /// Use it with "fs://.post" and C8o.FS_POLICY.<para/>
+        /// This is the default post policy that don't alter the document before the CouchbaseLite's insertion.
+        /// </summary>
         public static readonly string FS_POLICY_NONE = "none";
+        /// <summary>
+        /// Use it with "fs://.post" and C8o.FS_POLICY.<para/>
+        /// This post policy remove the "_id" and "_rev" of the document before the CouchbaseLite's insertion.
+        /// </summary>
         public static readonly string FS_POLICY_CREATE = "create";
+        /// <summary>
+        /// Use it with "fs://.post" and C8o.FS_POLICY.<para/>
+        /// This post policy inserts the document in CouchbaseLite even if a document with the same "_id" already exists.
+        /// </summary>
         public static readonly string FS_POLICY_OVERRIDE = "override";
+        /// <summary>
+        /// Use it with "fs://.post" and C8o.FS_POLICY.<para/>
+        /// This post policy merge the document with an existing document with the same "_id" before the CouchbaseLite's insertion.
+        /// </summary>
         public static readonly string FS_POLICY_MERGE = "merge";
+        /// <summary>
+        /// Use it with "fs://.post". Default value is ".".<para/>
+        /// This key allow to override the sub key separator in case of document depth modification.
+        /// </summary>
         public static readonly string FS_SUBKEY_SEPARATOR = "_use_subkey_separator";
 
         //*** Local cache keys ***//
@@ -62,7 +96,7 @@ namespace Convertigo.SDK
         internal static readonly string LOCAL_CACHE_DOCUMENT_KEY_RESPONSE_TYPE = "responseType";
         internal static readonly string LOCAL_CACHE_DOCUMENT_KEY_EXPIRATION_DATE = "expirationDate";
 
-        public static readonly string LOCAL_CACHE_DATABASE_NAME = "c8olocalcache";
+        internal static readonly string LOCAL_CACHE_DATABASE_NAME = "c8olocalcache";
 
 	    //*** Response type ***//
 
@@ -77,6 +111,10 @@ namespace Convertigo.SDK
         internal static Action<Action> defaultBgDispatcher;
         internal static string deviceUUID;
 
+        /// <summary>
+        /// Returns the current version of the SDK as "x.y.z".
+        /// </summary>
+        /// <returns>Current version of the SDK as "x.y.z".</returns>
         public static string GetSdkVersion()
         {
             return "2.0.4";
@@ -114,16 +152,14 @@ namespace Convertigo.SDK
 
         /// <summary>
         /// This is the base object representing a Convertigo Server end point. This object should be instanciated
-        /// when the apps starts and be accessible from any class of the app. Although this is not common , you may have
-        /// several C8o objects instanciated in your app.    
+        /// when the apps starts and be accessible from any class of the app. Although this is not common, you may have
+        /// several C8o objects instantiated in your app.    
         /// </summary>
-        /// <param name="endpoint">The End point url to you convertigo server. Can be :
-        ///     - http(s)://your_server_address/convertigo/projects/your_project_name (if using an on premises server)
-        ///     - http(s)://your_cloud_server.convertigo.net/cems/projects/your_project_name (if using a Convertigo cloud server)
+        /// <param name="endpoint">The Convertigo endpoint, syntax : &lt;protocol&gt;://&lt;server&gt;:&lt;port&gt;/&lt;Convertigo web app path&gt;/projects/&lt;project name&gt;<para/>
+        /// Example : http://computerName:18080/convertigo/projects/MyProject
         /// </param>
-        /// <param name="c8oSettings">
-        /// A C8oSettings object describing the endpoint configuration parameters such as authorizations credentials,
-        /// cookies, client certificates and various other settings.
+        /// <param name="c8oSettings">Initialization options.<para/>
+        /// Example : new C8oSettings().setLogRemote(false).setDefaultDatabaseName("sample")
         /// </param>
         public C8o(string endpoint, C8oSettings c8oSettings = null)
         {
