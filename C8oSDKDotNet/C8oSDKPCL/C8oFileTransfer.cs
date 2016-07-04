@@ -129,12 +129,12 @@ namespace Convertigo.SDK
 
                                     if (task["download"] != null)
                                     {
-                                        transferStatus.isDownload = true;
+                                        transferStatus.IsDownload = true;
                                         DownloadFile(transferStatus, task).GetAwaiter();
                                     }
                                     else if (task["upload"] != null)
                                     {
-                                        transferStatus.isDownload = false;
+                                        transferStatus.IsDownload = false;
                                         UploadFile(transferStatus, task).GetAwaiter();
                                     }
 
@@ -448,13 +448,7 @@ namespace Convertigo.SDK
 
             // Initializes the uuid ending with the number of chunks
             string uuid = System.Guid.NewGuid().ToString();
-            // Stream fileStream = fileManager.OpenFile(filePath);
-            long fileSize = fileStream.Length;
-            // fileStream.Dispose();
-            double d = (double)fileSize / chunkSize;
-            double numberOfChunks = Math.Ceiling(d);
-            uuid = uuid + "-" + numberOfChunks;
-
+           
             // Posts a document describing the state of the upload in the task db
             await c8oTask.CallJson("fs://.post",
                  "_id", uuid,
@@ -517,48 +511,27 @@ namespace Convertigo.SDK
                     // 1 : Split the file and store it locally
                     //
                     try
-                    {               
+                    {
                         string uuid = transferStatus.Uuid;
-
-                        for (int chunkId = 0; chunkId < transferStatus.Total; chunkId++)
+                        fileStream = streamToUpload[uuid];
+                        byte[] buffer = new byte[chunkSize];
+                        int countTot = -1;
+                        int read = 1;
+                        while(read > 0)
                         {
-                            string docid = uuid + "_" + chunkId;
-
-                            // Checks if the chunk is not already stored to avoid conflicts
-                            bool documentAlreadyExists = false;
-                            bool chunkAlreadyExists = false;
-                            try
+                            countTot ++;
+                            
+                            //fileStream.Position = chunkSize * countTot;
+                            read = fileStream.Read(buffer, 0, chunkSize);
+                            if(read > 0)
                             {
-                                res = await c8o.CallJson("fs://.get",
-                                    "docid", docid
-                                ).Async();
-                                documentAlreadyExists = true;
-                                // Checks if there is the attachment
-                                if (res.SelectToken("_attachments.chunk") != null)
-                                {
-                                    chunkAlreadyExists = true;
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                documentAlreadyExists = false;
-                            }
-
-                            if (!documentAlreadyExists)
-                            {
-                               await c8o.CallJson("fs://.post",
+                                string docid = uuid + "_" + countTot;
+                                await c8o.CallJson("fs://.post",
                                     "_id", docid,
                                     "fileName", fileName,
                                     "type", "chunk",
                                     "uuid", uuid
                                 ).Async();
-                            }
-
-                            if (!chunkAlreadyExists)
-                            {
-                                byte[] buffer = new byte[chunkSize];
-                                fileStream.Position = chunkSize * chunkId;                                
-                                int read = fileStream.Read(buffer, 0, chunkSize);
 
                                 chunk = new MemoryStream(chunkSize);
                                 // chunk.Position = 0;
@@ -569,10 +542,12 @@ namespace Convertigo.SDK
                                     "name", "chunk",
                                     "content_type", "application/octet-stream",
                                     "content", chunk).Async();
-                                
+
                                 chunk.Dispose();
                             }
+                            
                         }
+                        transferStatus.total = countTot;
                     }
                     catch (Exception e)
                     {
@@ -589,7 +564,6 @@ namespace Convertigo.SDK
                             chunk.Dispose();
                         }
                     }
-
                     // Updates the state document in the c8oTask database
                     res = await c8oTask.CallJson("fs://.post",
                         C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
@@ -717,7 +691,9 @@ namespace Convertigo.SDK
                     //
                     // 5 : Request the server to assemble chunks to the initial file
                     //
-                    res = await c8o.CallJson(".StoreDatabaseFileToLocal", "uuid", transferStatus.Uuid).Async();
+                    res = await c8o.CallJson(".StoreDatabaseFileToLocal",
+                                             "uuid", transferStatus.Uuid,
+                                             "numberOfChunks", transferStatus.total).Async();
                     if (res.SelectToken("document.serverFilePath") == null)
                     {
                         throw new Exception("Can't find the serverFilePath in JSON response : " + res.ToString());

@@ -107,7 +107,7 @@
             }
         }
 
-        public bool isDownload;
+        private bool isDownload;
 
         public bool IsDownload
         {
@@ -115,12 +115,25 @@
             {
                 return isDownload;
             }
+            set
+            {
+                isDownload = value;
+                if (value)
+                {
+                    tot();
+                }
+            }
         }
 
         internal C8oFileTransferStatus(string uuid, string filepath)
         {
             this.uuid = uuid;
             this.filepath = filepath;
+            total = 0;
+            //total = int.Parse(uuid.Substring(uuid.LastIndexOf('-') + 1));
+        }
+        private void tot()
+        {
             total = int.Parse(uuid.Substring(uuid.LastIndexOf('-') + 1));
         }
     }
