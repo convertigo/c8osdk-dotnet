@@ -30,7 +30,6 @@ namespace Convertigo.SDK.Internal
             c8oFullSyncDatabaseUrl = new Uri(fullSyncDatabases + databaseName + "/");
 
             this.databaseName = (databaseName += localSuffix);
-
             try
             {
                 database = manager.GetDatabase(databaseName);
@@ -209,21 +208,28 @@ namespace Convertigo.SDK.Internal
             replication.Stop();
             int retry = 100;
 
-            // prevent the "Not starting because identical puller already exists" bug
-            while (retry-- > 0)
+            try
             {
-                foreach (var rep in replication.LocalDatabase.AllReplications)
+                // prevent the "Not starting because identical puller already exists" bug
+                while (retry-- > 0)
                 {
-                    if (rep == replication)
+                    foreach (var rep in replication.LocalDatabase.AllReplications)
                     {
-                        Thread.Sleep(10);
+                        if (rep == replication)
+                        {
+                            Thread.Sleep(10);
+                        }
+                        else
+                        {
+                            return;
+                        }
                     }
-                    else
-                    {
-                        return;
-                    }
-                }
 
+                }
+            }
+            catch
+            {
+                // ignore 
             }
         }
 
