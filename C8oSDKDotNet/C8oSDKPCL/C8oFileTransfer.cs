@@ -27,6 +27,8 @@ namespace Convertigo.SDK
 
         private int chunkSize = 1000 * 1024;
 
+        private int[] maxRunning = { 4 };
+
         private C8o c8oTask;
         private Dictionary<string, C8oFileTransferStatus> tasks = null;
         public event EventHandler<C8oFileTransferStatus> RaiseTransferStatus;
@@ -204,6 +206,15 @@ namespace Convertigo.SDK
             C8o c8o = null;
             try
             {
+                lock (maxRunning)
+                {
+                    if (maxRunning[0] <= 0)
+                    {
+                        Monitor.Wait(maxRunning);
+                    }
+                    maxRunning[0]--;
+                }
+
                 c8o = new C8o(c8oTask.Endpoint, new C8oSettings(c8oTask).SetFullSyncLocalSuffix("_" + transferStatus.Uuid));
                 string fsConnector = null;
 
@@ -363,6 +374,14 @@ namespace Convertigo.SDK
             {
                 Notify(e);
             }
+            finally
+            {
+                lock (maxRunning)
+                {
+                    maxRunning[0]++;
+                    Monitor.Pulse(maxRunning);
+                }
+            }
 
             if (needRemoveSession && c8o != null)
             {
@@ -474,6 +493,14 @@ namespace Convertigo.SDK
         {
             try
             {
+                lock (maxRunning)
+                {
+                    if (maxRunning[0] <= 0)
+                    {
+                        Monitor.Wait(maxRunning);
+                    }
+                    maxRunning[0]--;
+                }
                 // await c8oTask.CallJson("fs://.delete", "docid", transferStatus.Uuid).Async();
                 // return;
 
@@ -731,6 +758,14 @@ namespace Convertigo.SDK
             catch (Exception e)
             {
                 Notify(e);
+            }
+            finally
+            {
+                lock (maxRunning)
+                {
+                    maxRunning[0]++;
+                    Monitor.Pulse(maxRunning);
+                }
             }
         }
     }
