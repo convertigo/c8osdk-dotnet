@@ -39,7 +39,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Couchbase.Lite.Storage.ForestDB, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\C8oSDKDotNetSamples\packages\Couchbase.Lite.Storage.ForestDB.1.2.1.1\lib\net45\Couchbase.Lite.Storage.ForestDB.dll</HintPath>
+      <HintPath>..\packages\Couchbase.Lite.Storage.ForestDB.1.2.1.1\lib\net45\Couchbase.Lite.Storage.ForestDB.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Couchbase.Lite.Storage.SystemSQLite, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -121,7 +121,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Couchbase.Lite.Storage.SystemSQLite.1.2\build\net35\Couchbase.Lite.Storage.SystemSQLite.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Couchbase.Lite.Storage.SystemSQLite.1.2\build\net35\Couchbase.Lite.Storage.SystemSQLite.targets'))" />
     <Error Condition="!Exists('..\packages\SQLitePCL.raw.0.8.6\build\net45\SQLitePCL.raw.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SQLitePCL.raw.0.8.6\build\net45\SQLitePCL.raw.targets'))" />
-    <Error Condition="!Exists('..\..\C8oSDKDotNetSamples\packages\Couchbase.Lite.Storage.ForestDB.1.2.1.1\build\net45\Couchbase.Lite.Storage.ForestDB.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\C8oSDKDotNetSamples\packages\Couchbase.Lite.Storage.ForestDB.1.2.1.1\build\net45\Couchbase.Lite.Storage.ForestDB.targets'))" />
   </Target>
   <Import Project="..\packages\SQLitePCL.raw.0.8.6\build\net45\SQLitePCL.raw.targets" Condition="Exists('..\packages\SQLitePCL.raw.0.8.6\build\net45\SQLitePCL.raw.targets')" />
   <Import Project="..\..\C8oSDKDotNetSamples\packages\Couchbase.Lite.Storage.ForestDB.1.2.1.1\build\net45\Couchbase.Lite.Storage.ForestDB.targets" Condition="Exists('..\..\C8oSDKDotNetSamples\packages\Couchbase.Lite.Storage.ForestDB.1.2.1.1\build\net45\Couchbase.Lite.Storage.ForestDB.targets')" />
