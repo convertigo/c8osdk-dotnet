@@ -44,6 +44,8 @@
   <ItemGroup>
     <Compile Include="C8oFileTransfer.cs" />
     <Compile Include="C8o.cs" />
+    <Compile Include="C8oFileTransferBase.cs" />
+    <Compile Include="C8oFileTransferSettings.cs" />
     <Compile Include="C8oLocalCache.cs" />
     <Compile Include="Internal\C8oCallTask.cs" />
     <Compile Include="C8oExceptionListener.cs" />

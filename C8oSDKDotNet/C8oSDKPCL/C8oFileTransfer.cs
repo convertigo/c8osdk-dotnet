@@ -18,16 +18,16 @@ namespace Convertigo.SDK
     /// will cut the file in chunks, then will insert the chunks in a FullSync database, the Database will replicate and the file will be reassembled
     /// on the client side.
     /// </summary>
-    public class C8oFileTransfer
+    public class C8oFileTransfer : C8oFileTransferBase
     {
         static internal C8oFileManager fileManager;
-
+        
         private bool tasksDbCreated = false;
         private bool alive = true;
 
         private int chunkSize = 1000 * 1024;
-
-        private int[] maxRunning = { 4 };
+        
+        //private int[] maxRunning = { 4 };
 
         private C8o c8oTask;
         private Dictionary<string, C8oFileTransferStatus> tasks = null;
@@ -75,10 +75,26 @@ namespace Convertigo.SDK
         ///         fileTransfer.DownloadFile(uuid, "c:\\temp\\MyTransferredFile.data");
         ///     </code>
         /// </sample>
-        public C8oFileTransfer(C8o c8o, string projectName = "lib_FileTransfer", string taskDb = "c8ofiletransfer_tasks")
+        public C8oFileTransfer(C8o c8o, string projectName = "lib_FileTransfer", string taskDb = "c8ofiletransfer_tasks", C8oFileTransferSettings c8oFileTransferSettings = null)
         {
+            if (c8oFileTransferSettings != null)
+            {
+                Copy(c8oFileTransferSettings);
+            }
             c8oTask = new C8o(c8o.EndpointConvertigo + "/projects/" + projectName, new C8oSettings(c8o).SetDefaultDatabaseName(taskDb));
             streamToUpload = new Dictionary<string, Stream>();
+
+        }
+
+        public C8oFileTransfer(C8o c8o, C8oFileTransferSettings c8oFileTransferSettings = null, string projectName = "lib_FileTransfer", string taskDb = "c8ofiletransfer_tasks")
+        {
+            if (c8oFileTransferSettings != null)
+            {
+                Copy(c8oFileTransferSettings);
+            }
+            c8oTask = new C8o(c8o.EndpointConvertigo + "/projects/" + projectName, new C8oSettings(c8o).SetDefaultDatabaseName(taskDb));
+            streamToUpload = new Dictionary<string, Stream>();
+
         }
 
         public void Start()
