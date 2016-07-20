@@ -75,7 +75,7 @@ namespace Convertigo.SDK
         ///         fileTransfer.DownloadFile(uuid, "c:\\temp\\MyTransferredFile.data");
         ///     </code>
         /// </sample>
-        public C8oFileTransfer(C8o c8o, string projectName = "lib_FileTransfer", string taskDb = "c8ofiletransfer_tasks", C8oFileTransferSettings c8oFileTransferSettings = null)
+        /*public C8oFileTransfer(C8o c8o, string projectName = "lib_FileTransfer", string taskDb = "c8ofiletransfer_tasks", C8oFileTransferSettings c8oFileTransferSettings = null)
         {
             if (c8oFileTransferSettings != null)
             {
@@ -84,7 +84,7 @@ namespace Convertigo.SDK
             c8oTask = new C8o(c8o.EndpointConvertigo + "/projects/" + projectName, new C8oSettings(c8o).SetDefaultDatabaseName(taskDb));
             streamToUpload = new Dictionary<string, Stream>();
 
-        }
+        }*/
 
         public C8oFileTransfer(C8o c8o, C8oFileTransferSettings c8oFileTransferSettings = null, string projectName = "lib_FileTransfer", string taskDb = "c8ofiletransfer_tasks")
         {
