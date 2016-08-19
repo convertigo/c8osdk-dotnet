@@ -40,6 +40,12 @@ namespace Convertigo.SDK.Internal
             fullSyncDatabases = new Dictionary<string, C8oFullSyncDatabase>();
             manager = Manager.SharedInstance;
 
+            Couchbase.Lite.Storage.SystemSQLite.Plugin.Register();
+            Couchbase.Lite.Storage.ForestDB.Plugin.Register();
+            manager.StorageType = StorageEngineTypes.ForestDB;
+            
+            /*manager.StorageType = StorageEngineTypes.SQLite;*/
+
             Debug.Listeners.Remove("Couchbase");
         }
 
