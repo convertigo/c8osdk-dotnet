@@ -125,6 +125,7 @@ namespace Convertigo.SDK.Internal
 
         public static void Init()
         {
+            System.Net.ServicePointManager.Expect100Continue = false;
             C8o.C8oHttpInterfaceUsed = Type.GetType("Convertigo.SDK.Internal.C8oHttpInterfaceSSL", true);
         }
     }

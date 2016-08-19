@@ -1633,7 +1633,7 @@ namespace C8oSDKNUnitWPF
                     Assert.AreEqual("777", value);
                     value = json.SelectToken("document.couchdb_output.int").Value<int>();
                     Assert.AreEqual(777, value);
-                    value = json.SelectToken("document.couchdb_output._c8oAcl").Value<string>();
+                    value = json.SelectToken("document.couchdb_output.~c8oAcl").Value<string>();
                     Assert.AreEqual("testing_user", value);
                 }
                 finally
@@ -1684,7 +1684,7 @@ namespace C8oSDKNUnitWPF
                         "startkey", id,
                         "endkey", id + "z"
                     ).Sync();
-                    var array = json.SelectToken("document.couchdb_output.rows.item").Value<JArray>();
+                    var array = json.SelectToken("document.couchdb_output.rows").Value<JArray>();
                     Assert.AreEqual(10, array.Count);
                     for (int i = 0; i < 10; i++)
                     {
@@ -1692,7 +1692,7 @@ namespace C8oSDKNUnitWPF
                         Assert.AreEqual(id + "-" + i, value);
                         value = array[i].SelectToken("doc.index").Value<int>();
                         Assert.AreEqual(i, value);
-                        value = array[i].SelectToken("doc._c8oAcl").Value<string>();
+                        value = array[i].SelectToken("doc.~c8oAcl").Value<string>();
                         Assert.AreEqual("testing_user", value);
                     }
                     Assert.False(uiThread, "uiThread must be False");
@@ -1777,7 +1777,7 @@ namespace C8oSDKNUnitWPF
                         "startkey", id,
                         "endkey", id + "z"
                     ).Sync();
-                    var array = json.SelectToken("document.couchdb_output.rows.item").Value<JArray>();
+                    var array = json.SelectToken("document.couchdb_output.rows").Value<JArray>();
                     Assert.AreEqual(3, array.Count);
                     for (int i = 0; i < 3; i++)
                     {
