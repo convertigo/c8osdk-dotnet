@@ -26,9 +26,9 @@ libraries:
   - ../../../C8oSDKPCL/bin/Release/C8oSDKPCL.dll
 packages:
   "":
-  - Newtonsoft.Json, Version=7.0.1  
-  - Couchbase.Lite, Version=1.1.2.0  
-  - UnicodeNormalization, Version=1.0.1
-  - Jint, Version=2.7.1   
-version: "2.0.4"
+  - Newtonsoft.Json, Version=9.0.1  
+  - Couchbase.Lite, Version=1.3.0.0  
+  - UnicodeNormalization, Version=1.0.4
+  - Jint, Version=2.9.1   
+version: "2.0.5"
 ...
