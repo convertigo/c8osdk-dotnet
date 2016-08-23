@@ -27,6 +27,8 @@ namespace Convertigo.SDK
         protected string defaultDatabaseName = null;
         protected string authenticationCookieValue = null;
         protected string fullSyncLocalSuffix = null;
+        protected string fullSyncStorageEngine = C8o.FS_STORAGE_SQL;
+        protected string fullSyncEncryptionKey = null;
 
         protected string fullSyncServerUrl = "http://localhost:5984";
         protected string fullSyncUsername = null;
@@ -127,6 +129,16 @@ namespace Convertigo.SDK
         public string FullSyncLocalSuffix
         {
             get { return fullSyncLocalSuffix; }
+        }
+
+        public string FullSyncStorageEngine
+        {
+            get { return fullSyncStorageEngine; }
+        }
+
+        public string FullSyncEncryptionKey
+        {
+            get { return fullSyncEncryptionKey; }
         }
 
         public string FullSyncServerUrl

@@ -194,6 +194,32 @@ namespace Convertigo.SDK
             return this;
         }
 
+        /// <summary>
+        /// Set the storage engine for local FullSync databases. Use C8o.FS_STORAGE_SQL or C8o.FS_STORAGE_FORESTDB.
+        /// </summary>
+        /// <param name="fullSyncStorageEngine">C8o.FS_STORAGE_SQL or C8o.FS_STORAGE_FORESTDB.</param>
+        /// <returns>The current<c>C8oSettings</c>, for chaining.</returns>
+        public C8oSettings SetFullSyncStorageEngine(string fullSyncStorageEngine)
+        {
+            if (C8o.FS_STORAGE_SQL.Equals(fullSyncStorageEngine) ||
+                    C8o.FS_STORAGE_FORESTDB.Equals(fullSyncStorageEngine))
+            {
+                this.fullSyncStorageEngine = fullSyncStorageEngine;
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Set the encryption key for local FullSync databases encryption.
+        /// </summary>
+        /// <param name="fullSyncEncryptionKey">The encryption key to use.</param>
+        /// <returns>The current<c>C8oSettings</c>, for chaining.</returns>
+        public C8oSettings SetFullSyncEncryptionKey(string fullSyncEncryptionKey)
+        {
+            this.fullSyncEncryptionKey = fullSyncEncryptionKey;
+            return this;
+        }
+
         public C8oSettings SetUiDispatcher(Action<Action> uiDispatcher)
         {
             this.uiDispatcher = uiDispatcher;
