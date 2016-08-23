@@ -40,12 +40,6 @@ namespace Convertigo.SDK.Internal
             fullSyncDatabases = new Dictionary<string, C8oFullSyncDatabase>();
             manager = Manager.SharedInstance;
 
-            Couchbase.Lite.Storage.SystemSQLite.Plugin.Register();
-            Couchbase.Lite.Storage.ForestDB.Plugin.Register();
-            manager.StorageType = StorageEngineTypes.ForestDB;
-            
-            /*manager.StorageType = StorageEngineTypes.SQLite;*/
-
             Debug.Listeners.Remove("Couchbase");
         }
 
@@ -465,20 +459,16 @@ namespace Convertigo.SDK.Internal
             return new FullSyncDefaultResponse(true);
         }
 
-        public override Task<object> HandleDestroyDatabaseRequest(string databaseName)
+        public async override Task<object> HandleDestroyDatabaseRequest(string databaseName)
         {
+            (await GetOrCreateFullSyncDatabase(databaseName)).Delete();
+
             string localDatabaseName = databaseName + localSuffix;
             if (fullSyncDatabases.ContainsKey(localDatabaseName))
             {
                 fullSyncDatabases.Remove(localDatabaseName);
             }
-
-            var db = manager.GetDatabase(databaseName + localSuffix);
-            if (db != null)
-            {
-                db.Delete();
-                manager.ForgetDatabase(db);
-            }
+            
             return Task.FromResult<object>(new FullSyncDefaultResponse(true));
         }
 

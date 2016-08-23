@@ -18,6 +18,23 @@ namespace Convertigo.SDK.Internal
 
             C8oFullSyncCbl.Init();
             C8oHttpInterfaceSSL.Init();
+
+            try
+            {
+                Couchbase.Lite.Storage.SystemSQLite.Plugin.Register();
+            }
+            catch
+            {
+
+            }
+            try
+            {
+
+            }
+            catch
+            {
+                Couchbase.Lite.Storage.ForestDB.Plugin.Register();
+            }
         }
     }
 }

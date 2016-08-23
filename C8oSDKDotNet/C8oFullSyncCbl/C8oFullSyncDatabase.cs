@@ -32,11 +32,27 @@ namespace Convertigo.SDK.Internal
             this.databaseName = (databaseName += localSuffix);
             try
             {
-                database = manager.GetDatabase(databaseName);
+                var options = new DatabaseOptions();
+                options.Create = true;
+                if (c8o.FullSyncEncryptionKey != null)
+                {
+                    var key = new Couchbase.Lite.Store.SymmetricKey(c8o.FullSyncEncryptionKey);
+                    options.EncryptionKey = key;
+                }
+                if (C8o.FS_STORAGE_SQL.Equals(c8o.FullSyncStorageEngine))
+                {
+                    options.StorageType = StorageEngineTypes.SQLite;
+                }
+                else
+                {
+                    options.StorageType = StorageEngineTypes.ForestDB;
+                }
+
+                database = manager.OpenDatabase(databaseName, options);
                 for (int i = 0; i < 6 && database == null; i++)
                 {
                     Task.Delay(500).Wait();
-                    database = manager.GetDatabase(databaseName);
+                    database = manager.OpenDatabase(databaseName, options);
                 }
                 if (database == null)
                 {
@@ -68,6 +84,27 @@ namespace Convertigo.SDK.Internal
 
             return replication;
         };
+
+        internal void Delete()
+        {
+            if (database != null)
+            {
+                try
+                {
+                    var manager = database.Manager;
+                    database.Delete();
+                    manager.ForgetDatabase(database);
+                }
+                catch (CouchbaseLiteException e)
+                {
+                    c8o.Log._Info("Failed to close database", e);
+                }
+                finally
+                {
+                    database = null;
+                }
+            }
+        }
 
         private Replication getReplication(FullSyncReplication fsReplication)
         {

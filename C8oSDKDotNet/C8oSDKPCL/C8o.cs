@@ -90,8 +90,11 @@ namespace Convertigo.SDK
         /// </summary>
         public static readonly string FS_SUBKEY_SEPARATOR = "_use_subkey_separator";
 
+        public static readonly string FS_STORAGE_SQL = "SQL";
+        public static readonly string FS_STORAGE_FORESTDB = "FORESTDB";
+
         //*** Local cache keys ***//
-        
+
         internal static readonly string LOCAL_CACHE_DOCUMENT_KEY_RESPONSE = "response";
         internal static readonly string LOCAL_CACHE_DOCUMENT_KEY_RESPONSE_TYPE = "responseType";
         internal static readonly string LOCAL_CACHE_DOCUMENT_KEY_EXPIRATION_DATE = "expirationDate";
@@ -584,6 +587,31 @@ namespace Convertigo.SDK
             set { logLevelLocal = value; }
         }
 
+
+        /// <summary>
+        /// Set the storage engine for local FullSync databases. Use C8o.FS_STORAGE_SQL or C8o.FS_STORAGE_FORESTDB.
+        /// </summary>
+        public new string FullSyncStorageEngine
+        {
+            get { return fullSyncStorageEngine; }
+            set
+            {
+                if (C8o.FS_STORAGE_SQL.Equals(value) ||
+                        C8o.FS_STORAGE_FORESTDB.Equals(value))
+                {
+                    fullSyncStorageEngine = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Set the encryption key for local FullSync databases encryption.
+        /// </summary>
+        public new string FullSyncEncryptionKey
+        {
+            get { return fullSyncEncryptionKey; }
+            set { fullSyncEncryptionKey = value; }
+        }
         /// <summary>
         /// Logs a message to Convertigo Server. the message will be seen in Convertigo Server Device logger. Logging messages to the server
         /// helps in monitoring Mobile apps in production.
