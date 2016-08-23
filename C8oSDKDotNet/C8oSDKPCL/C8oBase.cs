@@ -219,6 +219,8 @@ namespace Convertigo.SDK
             defaultDatabaseName = c8oBase.defaultDatabaseName;
             authenticationCookieValue = c8oBase.authenticationCookieValue;
             fullSyncLocalSuffix = c8oBase.fullSyncLocalSuffix;
+            fullSyncStorageEngine = c8oBase.fullSyncStorageEngine;
+            fullSyncEncryptionKey = c8oBase.fullSyncEncryptionKey;
 
             fullSyncServerUrl = c8oBase.fullSyncServerUrl;
             fullSyncUsername = c8oBase.fullSyncUsername;
