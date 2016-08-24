@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Convertigo.SDK
+﻿namespace Convertigo.SDK
 {
     public class C8oFileTransferSettings : C8oFileTransferBase
     {
@@ -20,21 +14,29 @@ namespace Convertigo.SDK
             Copy(c8oFileTransferSettings);
         }
 
-        public C8oFileTransferSettings Clone()
+        public C8oFileTransferSettings SetProjectName(string projectName)
         {
-            return new C8oFileTransferSettings(this);
+            if (projectName != null)
+            {
+                this.projectName = projectName;
+            }
+            return this;
         }
 
+        public C8oFileTransferSettings SetTaskDb(string taskDb)
+        {
+            if (taskDb != null)
+            {
+                this.taskDb = taskDb;
+            }
+            return this;
+        }
 
         public C8oFileTransferSettings SetMaxRunning(int maxRunning)
         {
-            if(maxRunning <= 0 || maxRunning > 4)
+            if (maxRunning > 0)
             {
-                throw new C8oException("maxRunning must be between 1 and 4");
-            }
-            else
-            {
-                this.maxRunning[0] = maxRunning;
+                this.maxRunning = maxRunning;
             }
             return this;
         }
