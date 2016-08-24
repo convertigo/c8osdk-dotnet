@@ -469,7 +469,7 @@ namespace Convertigo.SDK.Internal
                 fullSyncDatabases.Remove(localDatabaseName);
             }
             
-            return Task.FromResult<object>(new FullSyncDefaultResponse(true));
+            return new FullSyncDefaultResponse(true);
         }
 
         //*** JavaScript View ***//

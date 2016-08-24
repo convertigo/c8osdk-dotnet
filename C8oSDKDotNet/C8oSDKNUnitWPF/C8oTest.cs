@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -1888,6 +1889,66 @@ namespace C8oSDKNUnitWPF
             Assert.AreEqual(id, value);
             signature2 = json.SelectToken("document.attr.signature").Value<string>();
             Assert.AreNotEqual(signature, signature2);
+        }
+
+        [Test]
+        public void C8oFileTransferDownloadSimple()
+        {
+            var c8o = Get<C8o>(Stuff.C8O);
+            lock (c8o)
+            {
+                Couchbase.Lite.Storage.ForestDB.Plugin.Register();
+                c8o.FullSyncStorageEngine = C8o.FS_STORAGE_FORESTDB;
+                C8oFileTransfer ft = new C8oFileTransfer(c8o, new C8oFileTransferSettings());
+                c8o.CallJson(ft.TaskDb + ".destroy").Sync();
+                var status = new C8oFileTransferStatus[] { null };
+                var error = new Exception[] { null };
+                ft.RaiseTransferStatus += (sender, statusEvent) =>
+                {
+                    if (statusEvent.State == C8oFileTransferStatus.StateFinished)
+                    {
+                        lock (status)
+                        {
+                            status[0] = statusEvent;
+                            Monitor.Pulse(status);
+                        }
+                    }
+                };
+                ft.RaiseException += (sender, errorEvent) =>
+                {
+                    lock (status)
+                    {
+                        error[0] = errorEvent;
+                        Monitor.Pulse(status);
+                    }
+                };
+                ft.Start();
+                var uuid = c8o.CallXml(".PrepareDownload4M").Sync().XPathSelectElement("/document/uuid").Value;
+                Assert.NotNull(uuid);
+                var filepath = Path.GetTempFileName();
+                var fileInfo = new FileInfo(filepath);
+                try
+                {
+                    lock (status)
+                    {
+                        ft.DownloadFile(uuid, filepath).ConfigureAwait(false).GetAwaiter().GetResult();
+                        Monitor.Wait(status, 20000);
+                    }
+                    if (error[0] != null)
+                    {
+                        throw error[0];
+                    }
+                    Assert.NotNull(status[0]);
+                    Assert.True(fileInfo.Exists);
+                    var length = fileInfo.Length;
+                    Assert.AreEqual(4237409, length);
+
+                }
+                finally
+                {
+                    fileInfo.Delete();
+                }
+            }
         }
 
         private void assertEqualsJsonChild(JToken expectedToken, JToken actualToken)

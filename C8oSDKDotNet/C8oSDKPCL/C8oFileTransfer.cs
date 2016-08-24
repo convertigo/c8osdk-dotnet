@@ -26,8 +26,7 @@ namespace Convertigo.SDK
         private bool alive = true;
 
         private int chunkSize = 1000 * 1024;
-        
-        //private int[] maxRunning = { 4 };
+        private int[] _maxRunning;
 
         private C8o c8oTask;
         private Dictionary<string, C8oFileTransferStatus> tasks = null;
@@ -85,16 +84,16 @@ namespace Convertigo.SDK
             streamToUpload = new Dictionary<string, Stream>();
 
         }*/
-
-        public C8oFileTransfer(C8o c8o, C8oFileTransferSettings c8oFileTransferSettings = null, string projectName = "lib_FileTransfer", string taskDb = "c8ofiletransfer_tasks")
+        
+        public C8oFileTransfer(C8o c8o, C8oFileTransferSettings c8oFileTransferSettings = null)
         {
             if (c8oFileTransferSettings != null)
             {
                 Copy(c8oFileTransferSettings);
             }
+            _maxRunning = new int[] { maxRunning };
             c8oTask = new C8o(c8o.EndpointConvertigo + "/projects/" + projectName, new C8oSettings(c8o).SetDefaultDatabaseName(taskDb));
             streamToUpload = new Dictionary<string, Stream>();
-
         }
 
         public void Start()
@@ -222,13 +221,13 @@ namespace Convertigo.SDK
             C8o c8o = null;
             try
             {
-                lock (maxRunning)
+                lock (_maxRunning)
                 {
-                    if (maxRunning[0] <= 0)
+                    if (_maxRunning[0] <= 0)
                     {
-                        Monitor.Wait(maxRunning);
+                        Monitor.Wait(_maxRunning);
                     }
-                    maxRunning[0]--;
+                    _maxRunning[0]--;
                 }
 
                 c8o = new C8o(c8oTask.Endpoint, new C8oSettings(c8oTask).SetFullSyncLocalSuffix("_" + transferStatus.Uuid));
@@ -392,10 +391,10 @@ namespace Convertigo.SDK
             }
             finally
             {
-                lock (maxRunning)
+                lock (_maxRunning)
                 {
-                    maxRunning[0]++;
-                    Monitor.Pulse(maxRunning);
+                    _maxRunning[0]++;
+                    Monitor.Pulse(_maxRunning);
                 }
             }
 
@@ -509,13 +508,13 @@ namespace Convertigo.SDK
         {
             try
             {
-                lock (maxRunning)
+                lock (_maxRunning)
                 {
-                    if (maxRunning[0] <= 0)
+                    if (_maxRunning[0] <= 0)
                     {
-                        Monitor.Wait(maxRunning);
+                        Monitor.Wait(_maxRunning);
                     }
-                    maxRunning[0]--;
+                    _maxRunning[0]--;
                 }
                 // await c8oTask.CallJson("fs://.delete", "docid", transferStatus.Uuid).Async();
                 // return;
@@ -777,10 +776,10 @@ namespace Convertigo.SDK
             }
             finally
             {
-                lock (maxRunning)
+                lock (_maxRunning)
                 {
-                    maxRunning[0]++;
-                    Monitor.Pulse(maxRunning);
+                    _maxRunning[0]++;
+                    Monitor.Pulse(_maxRunning);
                 }
             }
         }

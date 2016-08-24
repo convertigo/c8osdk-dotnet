@@ -1,23 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Convertigo.SDK
+﻿namespace Convertigo.SDK
 {
     public class C8oFileTransferBase
     {
-        protected int[] maxRunning = { 4 };
+        protected string projectName = "lib_FileTransfer";
+        protected string taskDb = "c8ofiletransfer_tasks";
+        protected int maxRunning = 4;
 
-        public int[] MaxRunning
+        public string ProjectName
+        {
+            get { return projectName; }
+        }
+
+        public string TaskDb
+        {
+            get { return taskDb; }
+        }
+
+        public int MaxRunning
         {
             get { return maxRunning; }
         }
 
-        public void Copy(C8oFileTransferSettings c8oFileTransferSettings)
+        public void Copy(C8oFileTransferSettings settings)
         {
-            maxRunning = c8oFileTransferSettings.MaxRunning;
+            projectName = settings.projectName;
+            taskDb = settings.taskDb;
+            maxRunning = settings.MaxRunning;
         }
     }
 }
