@@ -49,10 +49,9 @@ C8oSDKDotNet/C8oSDKNUnitWPF/CrossThreadTestRunner.cs -text
 C8oSDKDotNet/C8oSDKNUnitWPF/MainWindow.xaml -text
 C8oSDKDotNet/C8oSDKNUnitWPF/MainWindow.xaml.cs -text
 C8oSDKDotNet/C8oSDKNUnitWPF/Properties/AssemblyInfo.cs -text
-C8oSDKDotNet/C8oSDKNUnitWPF/Properties/Resources.Designer.cs -text
-C8oSDKDotNet/C8oSDKNUnitWPF/Properties/Resources.resx -text
 C8oSDKDotNet/C8oSDKNUnitWPF/Properties/Settings.Designer.cs -text
 C8oSDKDotNet/C8oSDKNUnitWPF/Properties/Settings.settings -text
+C8oSDKDotNet/C8oSDKNUnitWPF/Resources/4m.jpg -text
 C8oSDKDotNet/C8oSDKNUnitWPF/packages.config -text
 C8oSDKDotNet/C8oSDKNUnitWPF_nuget/App.config -text
 C8oSDKDotNet/C8oSDKNUnitWPF_nuget/C8oSDKNUnitWPF_nuget.csproj -text

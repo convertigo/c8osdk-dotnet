@@ -5,9 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
@@ -1948,6 +1950,56 @@ namespace C8oSDKNUnitWPF
                 {
                     fileInfo.Delete();
                 }
+            }
+        }
+
+        [Test]
+        public void C8oFileTransferUploadSimple()
+        {
+            var c8o = Get<C8o>(Stuff.C8O);
+            lock (c8o)
+            {
+                Couchbase.Lite.Storage.ForestDB.Plugin.Register();
+                c8o.FullSyncStorageEngine = C8o.FS_STORAGE_FORESTDB;
+                C8oFileTransfer ft = new C8oFileTransfer(c8o, new C8oFileTransferSettings());
+                c8o.CallJson(ft.TaskDb + ".destroy").Sync();
+                var status = new C8oFileTransferStatus[] { null };
+                var error = new Exception[] { null };
+                ft.RaiseTransferStatus += (sender, statusEvent) =>
+                {
+                    if (statusEvent.State == C8oFileTransferStatus.StateFinished)
+                    {
+                        lock (status)
+                        {
+                            status[0] = statusEvent;
+                            Monitor.Pulse(status);
+                        }
+                    }
+                };
+                ft.RaiseException += (sender, errorEvent) =>
+                {
+                    lock (status)
+                    {
+                        error[0] = errorEvent;
+                        Monitor.Pulse(status);
+                    }
+                };
+                ft.Start();
+                lock (status)
+                {
+                    var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                    var stream = new FileStream(path + @"\Resources\4m.jpg", FileMode.Open);
+                    ft.UploadFile("4m.jpg", stream).ConfigureAwait(false).GetAwaiter().GetResult();
+                    Monitor.Wait(status, 20000);
+                }
+                if (error[0] != null)
+                {
+                    throw error[0];
+                }
+                Assert.NotNull(status[0]);
+                var filepath = status[0].ServerFilepath;
+                var length = c8o.CallXml(".GetSizeAndDelete", "filepath", filepath).Sync().XPathSelectElement("/document/length").Value;
+                Assert.AreEqual("4237409", length);
             }
         }
 
