@@ -45,6 +45,7 @@ namespace C8oSDKNUnitWPF
                     .SetDefaultDatabaseName("clientsdktesting")
                     .SetLogRemote(false)
                     .SetLogLevelLocal(C8oLogLevel.ERROR)
+                    .SetFullSyncStorageEngine(C8o.FS_STORAGE_FORESTDB)
                 );
                 return c8o;
             });
@@ -55,6 +56,7 @@ namespace C8oSDKNUnitWPF
                     .SetDefaultDatabaseName("qa_fs_pull")
                     .SetLogRemote(false)
                     .SetLogLevelLocal(C8oLogLevel.ERROR)
+                    .SetFullSyncStorageEngine(C8o.FS_STORAGE_FORESTDB)
                 );
                 var json = c8o.CallJson(".InitFsPull").Sync();
                 Assert.IsTrue(json.SelectToken("document.ok").Value<bool>());
@@ -67,6 +69,7 @@ namespace C8oSDKNUnitWPF
                     .SetDefaultDatabaseName("qa_fs_push")
                     .SetLogRemote(false)
                     .SetLogLevelLocal(C8oLogLevel.ERROR)
+                    .SetFullSyncStorageEngine(C8o.FS_STORAGE_FORESTDB)
                 );
                 var json = c8o.CallJson(".InitFsPush").Sync();
                 Assert.IsTrue(json.SelectToken("document.ok").Value<bool>());
@@ -78,7 +81,8 @@ namespace C8oSDKNUnitWPF
                 C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH,
                     new C8oSettings()
                     .SetLogRemote(false)
-                    .SetLogLevelLocal(C8oLogLevel.ERROR));
+                    .SetLogLevelLocal(C8oLogLevel.ERROR)
+                    .SetFullSyncStorageEngine(C8o.FS_STORAGE_FORESTDB));
                 return c8o;
             });
 
