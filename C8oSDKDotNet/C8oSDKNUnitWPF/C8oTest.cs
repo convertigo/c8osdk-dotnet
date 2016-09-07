@@ -27,9 +27,10 @@ namespace C8oSDKNUnitWPF
 
             internal static readonly Stuff C8O = new Stuff(() =>
             {
-                C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH);
-                c8o.LogRemote = false;
-                c8o.LogLevelLocal = C8oLogLevel.ERROR;
+                C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH,
+                    new C8oSettings()
+                    .SetLogRemote(false)
+                    .SetLogLevelLocal(C8oLogLevel.ERROR));
                 return c8o;
             });
 
@@ -42,9 +43,9 @@ namespace C8oSDKNUnitWPF
             {
                 C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH, new C8oSettings()
                     .SetDefaultDatabaseName("clientsdktesting")
+                    .SetLogRemote(false)
+                    .SetLogLevelLocal(C8oLogLevel.ERROR)
                 );
-                c8o.LogRemote = false;
-                c8o.LogLevelLocal = C8oLogLevel.ERROR;
                 return c8o;
             });
 
@@ -52,9 +53,9 @@ namespace C8oSDKNUnitWPF
             {
                 C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH, new C8oSettings()
                     .SetDefaultDatabaseName("qa_fs_pull")
+                    .SetLogRemote(false)
+                    .SetLogLevelLocal(C8oLogLevel.ERROR)
                 );
-                c8o.LogRemote = false;
-                c8o.LogLevelLocal = C8oLogLevel.ERROR;
                 var json = c8o.CallJson(".InitFsPull").Sync();
                 Assert.IsTrue(json.SelectToken("document.ok").Value<bool>());
                 return c8o;
@@ -64,9 +65,9 @@ namespace C8oSDKNUnitWPF
             {
                 C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH, new C8oSettings()
                     .SetDefaultDatabaseName("qa_fs_push")
+                    .SetLogRemote(false)
+                    .SetLogLevelLocal(C8oLogLevel.ERROR)
                 );
-                c8o.LogRemote = false;
-                c8o.LogLevelLocal = C8oLogLevel.ERROR;
                 var json = c8o.CallJson(".InitFsPush").Sync();
                 Assert.IsTrue(json.SelectToken("document.ok").Value<bool>());
                 return c8o;
@@ -74,9 +75,10 @@ namespace C8oSDKNUnitWPF
 
             internal static readonly Stuff C8O_LC = new Stuff(() =>
             {
-                C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH);
-                c8o.LogRemote = false;
-                c8o.LogLevelLocal = C8oLogLevel.ERROR;
+                C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH,
+                    new C8oSettings()
+                    .SetLogRemote(false)
+                    .SetLogLevelLocal(C8oLogLevel.ERROR));
                 return c8o;
             });
 
@@ -91,6 +93,16 @@ namespace C8oSDKNUnitWPF
                 newTs = doc.XPathSelectElement("/document/session/expression").Value;
                 Assert.AreEqual(ts, newTs);
                 return new object();
+            });
+
+            internal static readonly Stuff C8O_FT = new Stuff(() =>
+            {
+                C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH,
+                    new C8oSettings()
+                    .SetLogRemote(false)
+                    .SetLogLevelLocal(C8oLogLevel.ERROR)
+                    .SetFullSyncStorageEngine(C8o.FS_STORAGE_FORESTDB));
+                return c8o;
             });
 
             private Stuff(Func<object> get)
@@ -1895,7 +1907,7 @@ namespace C8oSDKNUnitWPF
         [Test]
         public void C8oFileTransferDownloadSimple()
         {
-            var c8o = Get<C8o>(Stuff.C8O);
+            var c8o = Get<C8o>(Stuff.C8O_FT);
             lock (c8o)
             {
                 C8oFileTransfer ft = new C8oFileTransfer(c8o, new C8oFileTransferSettings());
@@ -1953,11 +1965,9 @@ namespace C8oSDKNUnitWPF
         [Test]
         public void C8oFileTransferUploadSimple()
         {
-            var c8o = Get<C8o>(Stuff.C8O);
+            var c8o = Get<C8o>(Stuff.C8O_FT);
             lock (c8o)
             {
-                Couchbase.Lite.Storage.ForestDB.Plugin.Register();
-                c8o.FullSyncStorageEngine = C8o.FS_STORAGE_FORESTDB;
                 C8oFileTransfer ft = new C8oFileTransfer(c8o, new C8oFileTransferSettings());
                 c8o.CallJson(ft.TaskDb + ".destroy").Sync();
                 var status = new C8oFileTransferStatus[] { null };
