@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
@@ -1899,8 +1898,6 @@ namespace C8oSDKNUnitWPF
             var c8o = Get<C8o>(Stuff.C8O);
             lock (c8o)
             {
-                Couchbase.Lite.Storage.ForestDB.Plugin.Register();
-                c8o.FullSyncStorageEngine = C8o.FS_STORAGE_FORESTDB;
                 C8oFileTransfer ft = new C8oFileTransfer(c8o, new C8oFileTransferSettings());
                 c8o.CallJson(ft.TaskDb + ".destroy").Sync();
                 var status = new C8oFileTransferStatus[] { null };

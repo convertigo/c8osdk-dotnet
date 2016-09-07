@@ -29,11 +29,11 @@ namespace Convertigo.SDK.Internal
             }
             try
             {
-
+                Couchbase.Lite.Storage.ForestDB.Plugin.Register();
             }
             catch
             {
-                Couchbase.Lite.Storage.ForestDB.Plugin.Register();
+
             }
         }
     }
