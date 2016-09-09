@@ -1915,7 +1915,7 @@ namespace C8oSDKNUnitWPF
             lock (c8o)
             {
                 C8oFileTransfer ft = new C8oFileTransfer(c8o, new C8oFileTransferSettings());
-                c8o.CallJson(ft.TaskDb + ".destroy").Sync();
+                c8o.CallJson("fs://" + ft.TaskDb + ".destroy").Sync();
                 var status = new C8oFileTransferStatus[] { null };
                 var error = new Exception[] { null };
                 ft.RaiseTransferStatus += (sender, statusEvent) =>
@@ -1973,7 +1973,7 @@ namespace C8oSDKNUnitWPF
             lock (c8o)
             {
                 C8oFileTransfer ft = new C8oFileTransfer(c8o, new C8oFileTransferSettings());
-                c8o.CallJson(ft.TaskDb + ".destroy").Sync();
+                c8o.CallJson("fs://" + ft.TaskDb + ".destroy").Sync();
                 var status = new C8oFileTransferStatus[] { null };
                 var error = new Exception[] { null };
                 ft.RaiseTransferStatus += (sender, statusEvent) =>
