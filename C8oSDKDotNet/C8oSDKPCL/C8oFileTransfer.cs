@@ -670,7 +670,7 @@ namespace Convertigo.SDK
 
                             // Asks how many documents are in the server database with this uuid
                             JObject json = await c8o.CallJson(".c8ofiletransfer.GetViewCountByUuid", "_use_key", transferStatus.Uuid).Async();
-                            var item = json.SelectToken("document.couchdb_output.rows.item");
+                            var item = json.SelectToken("document.couchdb_output.rows[0]");
                             if (item != null)
                             {
                                 int current = item.Value<int>("value");
