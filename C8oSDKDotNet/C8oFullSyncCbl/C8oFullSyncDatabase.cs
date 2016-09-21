@@ -76,7 +76,7 @@ namespace Convertigo.SDK.Internal
                 database.CreatePushReplication(c8oFullSyncDatabaseUrl);
 
             // Cookies
-            var cookies = c8o.CookieStore.GetCookies(new Uri(c8o.Endpoint));
+            var cookies = c8o.CookieStore.GetCookies(new Uri(c8o.EndpointConvertigo));
             foreach (Cookie cookie in cookies)
             {
                 replication.SetCookie(cookie.Name, cookie.Value, cookie.Path, cookie.Expires, cookie.Secure, false);

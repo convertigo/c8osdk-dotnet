@@ -134,13 +134,18 @@ namespace Convertigo.SDK.Internal
                 // Build the c8o call URL
                 c8oCallUrl = c8o.Endpoint + "/." + responseType;
 
-                HttpWebResponse httpResponse;
-
+                HttpWebResponse httpResponse = null;
+                Exception exception = null;
                 try
                 {
                     httpResponse = await c8o.httpInterface.HandleC8oCallRequest(c8oCallUrl, parameters);
                 }
                 catch (Exception e)
+                {
+                    exception = e;
+                }
+
+                if (exception != null)
                 {
                     if (localCacheEnabled)
                     {
@@ -164,7 +169,7 @@ namespace Convertigo.SDK.Internal
                             // no entry
                         }
                     }
-                    return new C8oException(C8oExceptionMessage.handleC8oCallRequest(), e);
+                    return new C8oException(C8oExceptionMessage.handleC8oCallRequest(), exception);
                 }
 
                 var responseStream = httpResponse.GetResponseStream();

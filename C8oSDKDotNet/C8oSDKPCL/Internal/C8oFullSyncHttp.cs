@@ -247,7 +247,7 @@ namespace Convertigo.SDK.Internal
                 var headers = new JObject();
                 var cookieHeader = new StringBuilder();
 
-                foreach (Cookie cookie in cookies.GetCookies(new Uri(c8o.Endpoint)))
+                foreach (Cookie cookie in cookies.GetCookies(new Uri(c8o.EndpointConvertigo)))
                 {
                     cookieHeader.Append(cookie.Name).Append("=").Append(cookie.Value).Append("; ");
                 }
