@@ -26,7 +26,7 @@ namespace Convertigo.SDK.Internal
 
             if (c8o.Cookies != null)
             {
-                cookieContainer.Add(new Uri(c8o.EndpointConvertigo), c8o.Cookies);
+                cookieContainer.Add(new Uri(c8o.EndpointConvertigo + '/'), c8o.Cookies);
             }
         }
 
@@ -105,7 +105,7 @@ namespace Convertigo.SDK.Internal
         /// <param name="value">The value.</param>
         public void AddCookie(string name, string value)
         {
-            cookieContainer.Add(new Uri(c8o.EndpointConvertigo), new Cookie(name, value));
+            cookieContainer.Add(new Uri(c8o.EndpointConvertigo + '/'), new Cookie(name, value));
         }
 
         public CookieContainer CookieStore

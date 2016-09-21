@@ -51,7 +51,7 @@ namespace Convertigo.SDK.Internal
                         database.CreatePushReplication(uri);
 
                     // Cookies
-                    var cookies = c8o.CookieStore.GetCookies(new Uri(c8o.EndpointConvertigo));
+                    var cookies = c8o.CookieStore.GetCookies(new Uri(c8o.EndpointConvertigo + '/'));
                     foreach (Cookie cookie in cookies)
                     {
                         replication.SetCookie(cookie.Name, cookie.Value, "/", cookie.Expires, false, false);
@@ -101,6 +101,10 @@ namespace Convertigo.SDK.Internal
                                     else if ("Content-Type".Equals(name, StringComparison.OrdinalIgnoreCase))
                                     {
                                         request.ContentType = context.Request.Headers[name];
+                                    }
+                                    else if ("User-Agent".Equals(name, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        request.UserAgent = context.Request.Headers[name];
                                     }
                                     else if (!"Host".Equals(name, StringComparison.OrdinalIgnoreCase)
                                         && !"Connection".Equals(name, StringComparison.OrdinalIgnoreCase)
