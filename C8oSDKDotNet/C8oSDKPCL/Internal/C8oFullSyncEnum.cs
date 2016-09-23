@@ -106,15 +106,18 @@ namespace Convertigo.SDK.Internal
                         }
                     }
 
-                    if (c8oResponseListener is C8oResponseJsonListener)
+                    if (progress.Total != -1)
                     {
-                        c8oFullSync.c8o.Log._Trace("handleFullSyncRequest onJsonResponse: " + progress);
-                        (c8oResponseListener as C8oResponseJsonListener).OnJsonResponse(null, param);
-                    }
-                    else if (c8oResponseListener is C8oResponseXmlListener)
-                    {
-                        c8oFullSync.c8o.Log._Trace("handleFullSyncRequest onXmlResponse: " + progress);
-                        (c8oResponseListener as C8oResponseXmlListener).OnXmlResponse(null, param);
+                        if (c8oResponseListener is C8oResponseJsonListener)
+                        {
+                            c8oFullSync.c8o.Log._Trace("handleFullSyncRequest onJsonResponse: " + progress);
+                            (c8oResponseListener as C8oResponseJsonListener).OnJsonResponse(null, param);
+                        }
+                        else if (c8oResponseListener is C8oResponseXmlListener)
+                        {
+                            c8oFullSync.c8o.Log._Trace("handleFullSyncRequest onXmlResponse: " + progress);
+                            (c8oResponseListener as C8oResponseXmlListener).OnXmlResponse(null, param);
+                        }
                     }
 
                     if (!mutex[0] && pullFinished && pushFinished)
@@ -129,7 +132,10 @@ namespace Convertigo.SDK.Internal
                 }));
 
                 var response = new JObject();
-                Monitor.Wait(mutex);
+                if (!mutex[0])
+                {
+                    Monitor.Wait(mutex);
+                }
                 c8oFullSync.c8o.Log._Debug("handleFullSyncRequest after wait");
                 response["ok"] = true;
                 return Task.FromResult<object>(response);
@@ -138,7 +144,7 @@ namespace Convertigo.SDK.Internal
 
         public static readonly FullSyncRequestable REPLICATE_PULL = new FullSyncRequestable("replicate_pull", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
-            var mutex = new object();
+            bool[] mutex = { false };
             lock (mutex)
             {
                 c8oFullSync.HandleReplicatePullRequest(databaseName, parameters, new C8oResponseProgressListener((progress, param) =>
@@ -147,27 +153,35 @@ namespace Convertigo.SDK.Internal
                     {
                         lock (mutex)
                         {
+                            mutex[0] = true;
                             Monitor.Pulse(mutex);
                         }
                     }
 
-                    if (c8oResponseListener is C8oResponseJsonListener)
+                    if (progress.Total != -1)
                     {
-                        (c8oResponseListener as C8oResponseJsonListener).OnJsonResponse(null, param);
-                    }
-                    else if (c8oResponseListener is C8oResponseXmlListener)
-                    {
-                        (c8oResponseListener as C8oResponseXmlListener).OnXmlResponse(null, param);
+                        if (c8oResponseListener is C8oResponseJsonListener)
+                        {
+                            (c8oResponseListener as C8oResponseJsonListener).OnJsonResponse(null, param);
+                        }
+                        else if (c8oResponseListener is C8oResponseXmlListener)
+                        {
+                            (c8oResponseListener as C8oResponseXmlListener).OnXmlResponse(null, param);
+                        }
                     }
                 }));
-                Monitor.Wait(mutex);
+
+                if (!mutex[0])
+                {
+                    Monitor.Wait(mutex);
+                }
                 return Task.FromResult<object>(new JObject() { { "ok", true } });
             }
         });
 
         public static readonly FullSyncRequestable REPLICATE_PUSH = new FullSyncRequestable("replicate_push", (c8oFullSync, databaseName, parameters, c8oResponseListener) =>
         {
-            var mutex = new object();
+            bool[] mutex = { false };
             lock (mutex)
             {
                 c8oFullSync.HandleReplicatePushRequest(databaseName, parameters, new C8oResponseProgressListener((progress, param) =>
@@ -176,20 +190,28 @@ namespace Convertigo.SDK.Internal
                     {
                         lock (mutex)
                         {
+                            mutex[0] = true;
                             Monitor.Pulse(mutex);
                         }
                     }
 
-                    if (c8oResponseListener is C8oResponseJsonListener)
+                    if (progress.Total != -1)
                     {
-                        (c8oResponseListener as C8oResponseJsonListener).OnJsonResponse(null, param);
-                    }
-                    else if (c8oResponseListener is C8oResponseXmlListener)
-                    {
-                        (c8oResponseListener as C8oResponseXmlListener).OnXmlResponse(null, param);
+                        if (c8oResponseListener is C8oResponseJsonListener)
+                        {
+                            (c8oResponseListener as C8oResponseJsonListener).OnJsonResponse(null, param);
+                        }
+                        else if (c8oResponseListener is C8oResponseXmlListener)
+                        {
+                            (c8oResponseListener as C8oResponseXmlListener).OnXmlResponse(null, param);
+                        }
                     }
                 }));
-                Monitor.Wait(mutex);
+
+                if (!mutex[0])
+                {
+                    Monitor.Wait(mutex);
+                }
                 return Task.FromResult<object>(new JObject() { { "ok", true } });
             }
         });

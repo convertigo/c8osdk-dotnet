@@ -1827,6 +1827,23 @@ namespace C8oSDKNUnitWPF
         }
 
         [Test]
+        public void C8oFsReplicationCancel()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS);
+            lock (c8o)
+            {
+                var json = c8o.CallJson("fs://.reset").Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://.replicate_push", "cancel", true).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://.replicate_pull", "cancel", true).Sync();
+                Assert.True(json["ok"].Value<bool>());
+                json = c8o.CallJson("fs://.sync", "cancel", true).Sync();
+                Assert.True(json["ok"].Value<bool>());
+            }
+        }
+
+        [Test]
         public void C8oLocalCacheXmlPriorityLocal()
         {
             var c8o = Get<C8o>(Stuff.C8O_LC);
