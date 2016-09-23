@@ -106,7 +106,7 @@ namespace Convertigo.SDK.Internal
             }
         }
 
-        private Replication getReplication(FullSyncReplication fsReplication)
+        private void StopReplication(FullSyncReplication fsReplication)
         {
             if (fsReplication.replication != null)
             {
@@ -114,8 +114,15 @@ namespace Convertigo.SDK.Internal
                 if (fsReplication.changeListener != null)
                 {
                     fsReplication.replication.Changed -= fsReplication.changeListener;
+                    fsReplication.changeListener = null;
                 }
+                fsReplication.replication = null;
             }
+        }
+
+        private Replication GetReplication(FullSyncReplication fsReplication)
+        {
+            StopReplication(fsReplication);
             var replication = fsReplication.replication = createReplication(c8o, fsReplication.pull, database, c8oFullSyncDatabaseUrl);
 
             return replication;
@@ -162,21 +169,25 @@ namespace Convertigo.SDK.Internal
                 cancel = parameters["cancel"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
             }
 
-            var rep = getReplication(fullSyncReplication);
-
-            if (cancel)
-            {
-                if (rep != null)
-                {
-                    StopReplication(rep);
-                }
-                return;
-            }
-            
-            var param = new Dictionary<string, object>(parameters);
+            var rep = GetReplication(fullSyncReplication);
             var _progress = new C8oProgress();
             _progress.Raw = rep;
             _progress.Pull = rep.IsPull;
+
+            if (cancel)
+            {
+                StopReplication(fullSyncReplication);
+                _progress.Finished = true;
+
+                if (c8oResponseListener != null && c8oResponseListener is C8oResponseProgressListener)
+                {
+                    (c8oResponseListener as C8oResponseProgressListener).OnProgressResponse(_progress, null);
+                }
+
+                return;
+            }
+
+            var param = new Dictionary<string, object>(parameters);
 
             rep.Changed +=
                 fullSyncReplication.changeListener =
@@ -202,11 +213,11 @@ namespace Convertigo.SDK.Internal
 
                     if (progress.Finished)
                     {
-                        StopReplication(rep);
+                        StopReplication(fullSyncReplication);
                         if (continuous)
                         {
                             long lastCurrent = progress.Current;
-                            rep = getReplication(fullSyncReplication);
+                            rep = GetReplication(fullSyncReplication);
                             _progress.Raw = rep;
                             _progress.Continuous = true;
                             rep.Continuous = true;
