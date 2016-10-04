@@ -10,6 +10,9 @@ namespace Convertigo.SDK.Internal
 {
     internal class C8oHTTPsProxy
     {
+        static private long ridc = 0;
+        static private long rcpt = 0;
+
         static private int GetRandomUnusedPort()
         {
             var listener = new TcpListener(IPAddress.Loopback, 0);
@@ -23,6 +26,7 @@ namespace Convertigo.SDK.Internal
         {
             int randomPort = GetRandomUnusedPort();
             string proxyUrl = "http://localhost:" + randomPort + "/";
+            Debug.WriteLine("HTTPS LOCAL PROXY URL: " + proxyUrl);
             var map = new Dictionary<string, Dictionary<string, object>>();
             int cpt = 0;
             var reUrl = new Regex("/(.*?)/(.*)");
@@ -57,6 +61,13 @@ namespace Convertigo.SDK.Internal
                         replication.SetCookie(cookie.Name, cookie.Value, "/", cookie.Expires, false, false);
                     }
 
+                    var options = replication.ReplicationOptions;
+                    var heartbeat = TimeSpan.FromSeconds(30);
+                    var timeout = TimeSpan.FromMinutes(10);
+                    replication.ReplicationOptions.UseWebSocket = false;
+                    replication.ReplicationOptions.Heartbeat = heartbeat;
+                    replication.ReplicationOptions.SocketTimeout = timeout;
+                    replication.ReplicationOptions.RequestTimeout = timeout;
                     return replication;
                 }
                 else
@@ -76,6 +87,9 @@ namespace Convertigo.SDK.Internal
                     var context = await listener.GetContextAsync();
                     Task.Run(async () =>
                     {
+                        long rid = ++ridc;
+                        rcpt++;
+                        Uri url = null;
                         try
                         {
                             var matches = reUrl.Match(context.Request.RawUrl);
@@ -83,17 +97,16 @@ namespace Convertigo.SDK.Internal
                             string c8oFsUrl = map[index]["FSURL"] as string;
                             var c8o = map[index]["C8O"] as C8o;
                             map[index]["TTL"] = DateTime.Now.AddHours(1);
-                            var url = new Uri(c8oFsUrl + matches.Groups[2].Value);
+                            url = new Uri(c8oFsUrl + matches.Groups[2].Value);
                             var request = HttpWebRequest.Create(url) as HttpWebRequest;
                             c8o.httpInterface.OnRequestCreate(request);
                             request.Method = context.Request.HttpMethod;
-
-                            Debug.WriteLine("\n<<< " + context.Request.HttpMethod + " " + url);
+                            Debug.WriteLine("\n<<< " + rid + " << " + rcpt + " " + context.Request.HttpMethod + " " + url);
                             foreach (var name in context.Request.Headers.AllKeys)
                             {
                                 try
                                 {
-                                    Debug.WriteLine("<<< " + name + "=" + context.Request.Headers[name]);
+                                    Debug.WriteLine("<<< " + rid + " << " + name + "=" + context.Request.Headers[name]);
                                     if ("Accept".Equals(name, StringComparison.OrdinalIgnoreCase))
                                     {
                                         request.Accept = context.Request.Headers[name];
@@ -116,7 +129,7 @@ namespace Convertigo.SDK.Internal
                                 }
                                 catch (Exception ex)
                                 {
-                                    Debug.WriteLine(name + " > add failed: " + ex);
+                                    Debug.WriteLine("<<< " + rid + " << " + name + " > add failed: " + ex);
                                 }
                             }
 
@@ -128,6 +141,15 @@ namespace Convertigo.SDK.Internal
                             HttpWebResponse response;
                             try
                             {
+                                var heartbeat = Regex.Match(url.Query, "heartbeat=(\\d+)");
+                                if (heartbeat.Success)
+                                {
+                                    request.Timeout = Int32.Parse(heartbeat.Groups[1].Value);
+                                }
+                                else
+                                {
+                                    request.Timeout = 600000;
+                                }
                                 response = await request.GetResponseAsync() as HttpWebResponse;
                             }
                             catch (Exception e)
@@ -150,7 +172,7 @@ namespace Convertigo.SDK.Internal
                             {
                                 try
                                 {
-                                    Debug.WriteLine(">>> " + name + "=" + response.Headers[name]);
+                                    Debug.WriteLine(">>> " + rid + " >> " + name + "=" + response.Headers[name]);
                                     if (!"Transfer-Encoding".Equals(name, StringComparison.OrdinalIgnoreCase)
                                         && !"Content-Length".Equals(name, StringComparison.OrdinalIgnoreCase))
                                     {
@@ -162,7 +184,7 @@ namespace Convertigo.SDK.Internal
                                 }
                                 catch (Exception ex)
                                 {
-                                    Debug.WriteLine(name + "< add failed: " + ex);
+                                    Debug.WriteLine(">>> " + rid + " >> " + name + "< add failed: " + ex);
                                 }
                             }
 
@@ -173,8 +195,22 @@ namespace Convertigo.SDK.Internal
                         }
                         catch (Exception ex)
                         {
-                            ex.ToString();
+                            Debug.WriteLine(">>> " + rid + " >> Exception: " + ex.ToString());
                         }
+                        finally
+                        {
+                            try
+                            {
+                                context.Response.Close();
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(">>> " + rid + " >> Response Close: " + ex.ToString());
+                            }
+                        }
+
+                        rcpt--;
+                        Debug.WriteLine(">>> " + rid + " >> " + rcpt + " " + context.Request.HttpMethod + " " + url);
 
                         var now = DateTime.Now;
                         if (now > nextCheck)

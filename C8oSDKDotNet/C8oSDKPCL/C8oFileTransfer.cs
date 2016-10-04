@@ -294,7 +294,7 @@ namespace Convertigo.SDK
                         {
                             lock (locker)
                             {
-                                Monitor.Wait(locker, 500);
+                                Monitor.Wait(locker, 5000);
                             }
 
                             var all = await c8o.CallJson("fs://" + fsConnector + ".all", allOptions).Async();
@@ -315,6 +315,8 @@ namespace Convertigo.SDK
                         }
                     }
                     while (!locker[0]);
+
+                    c8o.CallJson("fs://" + fsConnector + ".replicate_pull", "cancel", true).Sync();
 
                     if (transferStatus.Current < transferStatus.Total)
                     {
@@ -665,7 +667,7 @@ namespace Convertigo.SDK
                         {
                             lock (locker)
                             {
-                                Monitor.Wait(locker, 500);
+                                Monitor.Wait(locker, 1000);
                             }
 
                             // Asks how many documents are in the server database with this uuid
@@ -683,6 +685,8 @@ namespace Convertigo.SDK
                             }
 
                         } while (!locker[0]);
+
+                        c8o.CallJson("fs://.replicate_push", "cancel", true).Sync();
                     }
 
                     // Updates the state document in the task database
