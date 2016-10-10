@@ -287,17 +287,20 @@ namespace Convertigo.SDK
                             return;
                         }
 
-                        var logLevelResponse = jsonResponse.GetValue(C8oLogger.JSON_KEY_REMOTE_LOG_LEVEL);
-                        if (logLevelResponse != null)
+                        if (jsonResponse != null)
                         {
-                            string logLevelResponseStr = logLevelResponse.Value<string>();
-                            var c8oLogLevel = C8oLogLevel.GetC8oLogLevel(logLevelResponseStr);
-
-                            if (c8oLogLevel != null)
+                            var logLevelResponse = jsonResponse.GetValue(C8oLogger.JSON_KEY_REMOTE_LOG_LEVEL);
+                            if (logLevelResponse != null)
                             {
-                                remoteLogLevel = c8oLogLevel;
+                                string logLevelResponseStr = logLevelResponse.Value<string>();
+                                var c8oLogLevel = C8oLogLevel.GetC8oLogLevel(logLevelResponseStr);
+
+                                if (c8oLogLevel != null)
+                                {
+                                    remoteLogLevel = c8oLogLevel;
+                                }
+                                LogRemote();
                             }
-                            LogRemote();
                         }
                     }
                     finally

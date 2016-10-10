@@ -34,6 +34,13 @@ namespace Convertigo.SDK
         protected string fullSyncUsername = null;
         protected string fullSyncPassword = null;
 
+        protected TimeSpan fullSyncReplicationHeartbeat = TimeSpan.FromSeconds(30);
+        protected TimeSpan fullSyncReplicationSocketTimeout = TimeSpan.FromMinutes(10);
+        protected TimeSpan fullSyncReplicationRequestTimeout = TimeSpan.FromMinutes(5);
+        protected int fullSyncReplicationMaxOpenHttpConnections = 8;
+        protected int fullSyncReplicationMaxRevsToGetInBulk = 50;
+        protected TimeSpan fullSyncReplicationRetryDelay = TimeSpan.FromMinutes(1);
+
         //*** Getter ***//
 
         protected Action<Action> uiDispatcher = null;
@@ -155,7 +162,38 @@ namespace Convertigo.SDK
         {
             get { return fullSyncPassword; }
         }
-        
+
+        public TimeSpan FullSyncReplicationHeartbeat
+        {
+            get { return fullSyncReplicationHeartbeat; }
+        }
+
+        public TimeSpan FullSyncReplicationSocketTimeout
+        {
+            get { return fullSyncReplicationSocketTimeout; }
+        }
+
+        public TimeSpan FullSyncReplicationRequestTimeout
+        {
+            get { return fullSyncReplicationRequestTimeout; }
+        }
+
+        public int FullSyncReplicationMaxOpenHttpConnections
+        {
+            get { return fullSyncReplicationMaxOpenHttpConnections; }
+        }
+
+        public int FullSyncReplicationMaxRevsToGetInBulk
+        {
+            get { return fullSyncReplicationMaxRevsToGetInBulk; }
+        }
+
+        public TimeSpan FullSyncReplicationRetryDelay
+        {
+            get { return fullSyncReplicationRetryDelay; }
+        }
+
+
         public Action<Action> UiDispatcher
         {
             get { return uiDispatcher; }
@@ -226,7 +264,14 @@ namespace Convertigo.SDK
             fullSyncUsername = c8oBase.fullSyncUsername;
             fullSyncPassword = c8oBase.fullSyncPassword;
 
-            uiDispatcher = c8oBase.uiDispatcher;
+            fullSyncReplicationHeartbeat = c8oBase.fullSyncReplicationHeartbeat;
+            fullSyncReplicationSocketTimeout = c8oBase.fullSyncReplicationSocketTimeout;
+            fullSyncReplicationRequestTimeout = c8oBase.fullSyncReplicationRequestTimeout;
+            fullSyncReplicationMaxOpenHttpConnections = c8oBase.fullSyncReplicationMaxOpenHttpConnections;
+            fullSyncReplicationMaxRevsToGetInBulk = c8oBase.fullSyncReplicationMaxRevsToGetInBulk;
+            fullSyncReplicationRetryDelay = c8oBase.fullSyncReplicationRetryDelay;
+
+        uiDispatcher = c8oBase.uiDispatcher;
         }
     }
 }

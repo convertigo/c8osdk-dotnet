@@ -82,6 +82,14 @@ namespace Convertigo.SDK.Internal
                 replication.SetCookie(cookie.Name, cookie.Value, cookie.Path, cookie.Expires, cookie.Secure, false);
             }
 
+            replication.ReplicationOptions.UseWebSocket = false;
+            replication.ReplicationOptions.Heartbeat = c8o.FullSyncReplicationHeartbeat;
+            replication.ReplicationOptions.SocketTimeout = c8o.FullSyncReplicationSocketTimeout;
+            replication.ReplicationOptions.RequestTimeout = c8o.FullSyncReplicationRequestTimeout;
+            replication.ReplicationOptions.MaxOpenHttpConnections = c8o.FullSyncReplicationMaxOpenHttpConnections;
+            replication.ReplicationOptions.MaxRevsToGetInBulk = c8o.FullSyncReplicationMaxRevsToGetInBulk;
+            replication.ReplicationOptions.ReplicationRetryDelay = c8o.FullSyncReplicationRetryDelay;
+
             return replication;
         };
 
