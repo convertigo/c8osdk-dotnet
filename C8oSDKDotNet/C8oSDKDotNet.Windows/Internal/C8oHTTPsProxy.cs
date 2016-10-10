@@ -61,13 +61,14 @@ namespace Convertigo.SDK.Internal
                         replication.SetCookie(cookie.Name, cookie.Value, "/", cookie.Expires, false, false);
                     }
 
-                    var options = replication.ReplicationOptions;
-                    var heartbeat = TimeSpan.FromSeconds(30);
-                    var timeout = TimeSpan.FromMinutes(10);
                     replication.ReplicationOptions.UseWebSocket = false;
-                    replication.ReplicationOptions.Heartbeat = heartbeat;
-                    replication.ReplicationOptions.SocketTimeout = timeout;
-                    replication.ReplicationOptions.RequestTimeout = timeout;
+                    replication.ReplicationOptions.Heartbeat = c8o.FullSyncReplicationHeartbeat;
+                    replication.ReplicationOptions.SocketTimeout = c8o.FullSyncReplicationSocketTimeout;
+                    replication.ReplicationOptions.RequestTimeout = c8o.FullSyncReplicationRequestTimeout;
+                    replication.ReplicationOptions.MaxOpenHttpConnections = c8o.FullSyncReplicationMaxOpenHttpConnections;
+                    replication.ReplicationOptions.MaxRevsToGetInBulk = c8o.FullSyncReplicationMaxRevsToGetInBulk;
+                    replication.ReplicationOptions.ReplicationRetryDelay = c8o.FullSyncReplicationRetryDelay;
+
                     return replication;
                 }
                 else
@@ -148,7 +149,7 @@ namespace Convertigo.SDK.Internal
                                 }
                                 else
                                 {
-                                    request.Timeout = 600000;
+                                    request.Timeout = (int) c8o.FullSyncReplicationRequestTimeout.TotalSeconds;
                                 }
                                 response = await request.GetResponseAsync() as HttpWebResponse;
                             }

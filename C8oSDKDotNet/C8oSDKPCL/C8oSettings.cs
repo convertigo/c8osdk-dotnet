@@ -220,6 +220,77 @@ namespace Convertigo.SDK
             return this;
         }
 
+        /// <summary>
+        /// Set the FullSync replication heartbeat for long running request (def: 30 secondes).
+        /// </summary>
+        /// <param name="fullSyncReplicationHeartbeat">Heartbeat duration for FullSync replication.</param>
+        /// <returns>The current<c>C8oSettings</c>, for chaining.</returns>
+        public C8oSettings SetFullSyncReplicationHeartbeat(TimeSpan fullSyncReplicationHeartbeat)
+        {
+            this.fullSyncReplicationHeartbeat = fullSyncReplicationHeartbeat;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the FullSync replication socket timeout (def: 10 minutes).
+        /// </summary>
+        /// <param name="fullSyncReplicationSocketTimeout">Socket max duration for FullSync replication.</param>
+        /// <returns>The current<c>C8oSettings</c>, for chaining.</returns>
+        public C8oSettings SetFullSyncReplicationSocketTimeout(TimeSpan fullSyncReplicationSocketTimeout)
+        {
+            this.fullSyncReplicationSocketTimeout = fullSyncReplicationSocketTimeout;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the FullSync replication request timeout (def: 5 minutes).
+        /// </summary>
+        /// <param name="fullSyncReplicationRequestTimeout">Socket max duration for FullSync replication.</param>
+        /// <returns>The current<c>C8oSettings</c>, for chaining.</returns>
+        public C8oSettings SetFullSyncReplicationRequestTimeout(TimeSpan fullSyncReplicationRequestTimeout)
+        {
+            this.fullSyncReplicationRequestTimeout = fullSyncReplicationRequestTimeout;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the FullSync replication max open HTTP connections (def: 8).
+        /// </summary>
+        /// <param name="fullSyncReplicationMaxOpenHttpConnections">Max number of open HTTP connections.</param>
+        /// <returns>The current<c>C8oSettings</c>, for chaining.</returns>
+        public C8oSettings SetFullSyncReplicationMaxOpenHttpConnections(int fullSyncReplicationMaxOpenHttpConnections)
+        {
+            this.fullSyncReplicationMaxOpenHttpConnections = fullSyncReplicationMaxOpenHttpConnections;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the FullSync replication max revision to get in bulk replication.
+        /// </summary>
+        /// <param name="fullSyncReplicationMaxRevsToGetInBulk">Max number of revision for bulk.</param>
+        /// <returns>The current<c>C8oSettings</c>, for chaining.</returns>
+        public C8oSettings SetFullSyncReplicationMaxRevsToGetInBulk(int fullSyncReplicationMaxRevsToGetInBulk)
+        {
+            this.fullSyncReplicationMaxRevsToGetInBulk = fullSyncReplicationMaxRevsToGetInBulk;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the FullSync replication delay between replication retries.
+        /// </summary>
+        /// <param name="fullSyncReplicationRetryDelay">Delay between replication retries.</param>
+        /// <returns>The current<c>C8oSettings</c>, for chaining.</returns>
+        public C8oSettings SetFullSyncReplicationRetryDelay(TimeSpan fullSyncReplicationRetryDelay)
+        {
+            this.fullSyncReplicationRetryDelay = fullSyncReplicationRetryDelay;
+            return this;
+        }
+
+        /// <summary>
+        /// Set the encryption key for local FullSync databases encryption.
+        /// </summary>
+        /// <param name="uiDispatcher">The encryption key to use.</param>
+        /// <returns>The current<c>C8oSettings</c>, for chaining.</returns>
         public C8oSettings SetUiDispatcher(Action<Action> uiDispatcher)
         {
             this.uiDispatcher = uiDispatcher;

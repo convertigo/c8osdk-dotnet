@@ -1,9 +1,12 @@
-﻿namespace Convertigo.SDK
+﻿using System;
+
+namespace Convertigo.SDK
 {
     public class C8oFileTransferBase
     {
         protected string projectName = "lib_FileTransfer";
         protected string taskDb = "c8ofiletransfer_tasks";
+        protected TimeSpan maxDurationForTransferAttempt = TimeSpan.FromMinutes(20);
         protected int maxRunning = 4;
 
         public string ProjectName
@@ -21,11 +24,17 @@
             get { return maxRunning; }
         }
 
+        public TimeSpan MaxDurationForTransferAttempt
+        {
+            get { return maxDurationForTransferAttempt; }
+        }
+
         public void Copy(C8oFileTransferSettings settings)
         {
             projectName = settings.projectName;
             taskDb = settings.taskDb;
-            maxRunning = settings.MaxRunning;
+            maxRunning = settings.maxRunning;
+            maxDurationForTransferAttempt = settings.maxDurationForTransferAttempt;
         }
     }
 }

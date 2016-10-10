@@ -2,6 +2,7 @@
 {
     public class C8oFileTransferStatus
     {
+        public static readonly C8oFileTransferState StateNotQueued = new C8oFileTransferState("not queued");
         public static readonly C8oFileTransferState StateQueued = new C8oFileTransferState("queued");
         
         public static readonly C8oFileTransferState StateAuthenticated = new C8oFileTransferState("authenticated");
@@ -10,6 +11,7 @@
         public static readonly C8oFileTransferState StateAssembling = new C8oFileTransferState("assembling");
         public static readonly C8oFileTransferState StateCleaning = new C8oFileTransferState("cleaning");
         public static readonly C8oFileTransferState StateFinished = new C8oFileTransferState("finished");
+        public static readonly C8oFileTransferState StateCanceled = new C8oFileTransferState("canceled");
 
         public class C8oFileTransferState
         {
@@ -26,7 +28,7 @@
             }
         }
 
-        private C8oFileTransferState state = StateQueued;
+        private C8oFileTransferState state = StateNotQueued;
 
         public C8oFileTransferState State
         {

@@ -1,4 +1,6 @@
-﻿namespace Convertigo.SDK
+﻿using System;
+
+namespace Convertigo.SDK
 {
     public class C8oFileTransferSettings : C8oFileTransferBase
     {
@@ -40,5 +42,12 @@
             }
             return this;
         }
+
+        public C8oFileTransferSettings SetMaxDurationForTransferAttempt(TimeSpan maxDurationForTransferAttempt)
+        {
+            this.maxDurationForTransferAttempt = maxDurationForTransferAttempt;
+            return this;
+        }
+        
     }
 }

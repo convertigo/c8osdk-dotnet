@@ -30,6 +30,7 @@ namespace Convertigo.SDK
 
         private C8o c8oTask;
         private Dictionary<string, C8oFileTransferStatus> tasks = null;
+        private ISet<string> canceledTasks = new HashSet<string>();
         public event EventHandler<C8oFileTransferStatus> RaiseTransferStatus;
         public event EventHandler<string> RaiseDebug;
         public event EventHandler<Exception> RaiseException;
@@ -142,6 +143,7 @@ namespace Convertigo.SDK
 
                                     // Add the document id to the tasks list
                                     var transferStatus = tasks[uuid] = new C8oFileTransferStatus(uuid, filePath);
+                                    transferStatus.State = C8oFileTransferStatus.StateQueued;
                                     Notify(transferStatus);
 
                                     if (task["download"] != null)
@@ -217,6 +219,7 @@ namespace Convertigo.SDK
 
         async Task DownloadFile(C8oFileTransferStatus transferStatus, JObject task)
         {
+            var uuid = transferStatus.Uuid;
             bool needRemoveSession = false;
             C8o c8o = null;
             try
@@ -230,7 +233,7 @@ namespace Convertigo.SDK
                     _maxRunning[0]--;
                 }
 
-                c8o = new C8o(c8oTask.Endpoint, new C8oSettings(c8oTask).SetFullSyncLocalSuffix("_" + transferStatus.Uuid));
+                c8o = new C8o(c8oTask.Endpoint, new C8oSettings(c8oTask).SetFullSyncLocalSuffix("_" + uuid));
                 string fsConnector = null;
 
                 //
@@ -239,7 +242,7 @@ namespace Convertigo.SDK
                 if (!task["replicated"].Value<bool>() || !task["remoteDeleted"].Value<bool>())
                 {
                     needRemoveSession = true;
-                    var json = await c8o.CallJson(".SelectUuid", "uuid", transferStatus.Uuid).Async();
+                    var json = await c8o.CallJson(".SelectUuid", "uuid", uuid).Async();
 
                     Debug("SelectUuid:\n" + json.ToString());
 
@@ -262,9 +265,10 @@ namespace Convertigo.SDK
                 // 1 : Replicate the document discribing the chunks ids list
                 //
 
-                if (!task["replicated"].Value<bool>() && fsConnector != null)
+                if (!task["replicated"].Value<bool>() && fsConnector != null && !canceledTasks.Contains(uuid))
                 {
                     var locker = new bool[] { false };
+                    var expireTransfer = DateTime.Now.Add(MaxDurationForTransferAttempt);
 
                     await c8o.CallJson("fs://" + fsConnector + ".create").Async();
 
@@ -283,8 +287,8 @@ namespace Convertigo.SDK
                     Notify(transferStatus);
 
                     var allOptions = new Dictionary<string, object> {
-                        { "startkey", transferStatus.Uuid + "_" },
-                        { "endkey", transferStatus.Uuid + "__" }
+                        { "startkey", uuid + "_" },
+                        { "endkey", uuid + "__" }
                     };
 
                     // Waits the end of the replication if it is not finished
@@ -294,7 +298,12 @@ namespace Convertigo.SDK
                         {
                             lock (locker)
                             {
-                                Monitor.Wait(locker, 5000);
+                                if (DateTime.Now > expireTransfer)
+                                {
+                                    locker[0] = true;
+                                    throw new Exception("expireTransfer of " + MaxDurationForTransferAttempt + " : retry soon");
+                                }
+                                Monitor.Wait(locker, 1000);
                             }
 
                             var all = await c8o.CallJson("fs://" + fsConnector + ".all", allOptions).Async();
@@ -311,27 +320,33 @@ namespace Convertigo.SDK
                         }
                         catch (Exception e)
                         {
+                            Notify(e);
                             Debug(e.ToString());
                         }
                     }
-                    while (!locker[0]);
+                    while (!locker[0] && !canceledTasks.Contains(uuid));
 
                     c8o.CallJson("fs://" + fsConnector + ".replicate_pull", "cancel", true).Sync();
 
-                    if (transferStatus.Current < transferStatus.Total)
+                    if (!canceledTasks.Contains(uuid))
                     {
-                        throw new Exception("replication not completed");
-                    }
+                        if (transferStatus.Current < transferStatus.Total)
+                        {
+                            throw new Exception("replication not completed");
+                        }
 
-                    var res = await c8oTask.CallJson("fs://.post",
-                        C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
-                        "_id", task["_id"].Value<string>(),
-                        "replicated", task["replicated"] = true
-                    ).Async();
-                    Debug("replicated true:\n" + res);
+                        var res = await c8oTask.CallJson("fs://.post",
+                            C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                            "_id", task["_id"].Value<string>(),
+                            "replicated", task["replicated"] = true
+                        ).Async();
+                        Debug("replicated true:\n" + res);
+                    }
                 }
 
-                if (!task["assembled"].Value<bool>() && fsConnector != null)
+                var isCanceling = canceledTasks.Contains(uuid);
+
+                if (!task["assembled"].Value<bool>() && fsConnector != null && !isCanceling)
                 {
                     transferStatus.State = C8oFileTransferStatus.StateAssembling;
                     Notify(transferStatus);
@@ -341,9 +356,9 @@ namespace Convertigo.SDK
                     var createdFileStream = fileManager.CreateFile(transferStatus.Filepath);
                     createdFileStream.Position = 0;
 
-                    for (int i = 0; i < transferStatus.Total; i++)
+                    for (int i = 0; i < transferStatus.Total && !canceledTasks.Contains(uuid); i++)
                     {
-                        var meta = await c8o.CallJson("fs://" + fsConnector + ".get", "docid", transferStatus.Uuid + "_" + i).Async();
+                        var meta = await c8o.CallJson("fs://" + fsConnector + ".get", "docid", uuid + "_" + i).Async();
                         Debug(meta.ToString());
 
                         AppendChunk(createdFileStream, meta.SelectToken("_attachments.chunk.content_url").ToString());
@@ -367,7 +382,7 @@ namespace Convertigo.SDK
                     Debug("destroy local true:\n" + res.ToString());
 
                     needRemoveSession = true;
-                    res = await c8o.CallJson(".DeleteUuid", "uuid", transferStatus.Uuid).Async();
+                    res = await c8o.CallJson(".DeleteUuid", "uuid", uuid).Async();
                     Debug("deleteUuid:\n" + res);
 
                     res = await c8oTask.CallJson("fs://.post",
@@ -378,13 +393,20 @@ namespace Convertigo.SDK
                     Debug("remoteDeleted true:\n" + res);
                 }
 
-                if (task["replicated"].Value<bool>() && task["assembled"].Value<bool>() && task["remoteDeleted"].Value<bool>())
+                if ((task["replicated"].Value<bool>() && task["assembled"].Value<bool>() && task["remoteDeleted"].Value<bool>()) || isCanceling)
                 {
-                    var res = await c8oTask.CallJson("fs://.delete", "docid", transferStatus.Uuid).Async();
+                    var res = await c8oTask.CallJson("fs://.delete", "docid", uuid).Async();
                     Debug("local delete:\n" + res.ToString());
 
                     transferStatus.State = C8oFileTransferStatus.StateFinished;
                     Notify(transferStatus);
+                }
+
+                if (isCanceling)
+                {
+                    transferStatus.State = C8oFileTransferStatus.StateCanceled;
+                    Notify(transferStatus);
+                    canceledTasks.Remove(uuid);
                 }
             }
             catch (Exception e)
@@ -405,7 +427,7 @@ namespace Convertigo.SDK
                 c8o.CallJson(".RemoveSession");
             }
 
-            tasks.Remove(transferStatus.Uuid);
+            tasks.Remove(uuid);
 
             lock (this)
             {
@@ -508,6 +530,7 @@ namespace Convertigo.SDK
         
         async Task UploadFile(C8oFileTransferStatus transferStatus, JObject task)
         {
+            var uuid = transferStatus.Uuid;
             try
             {
                 lock (_maxRunning)
@@ -518,33 +541,30 @@ namespace Convertigo.SDK
                     }
                     _maxRunning[0]--;
                 }
-                // await c8oTask.CallJson("fs://.delete", "docid", transferStatus.Uuid).Async();
-                // return;
 
-                // JObject tmp = null;
                 JObject res = null;
                 bool[] locker = new bool[] { false };
                 string fileName = transferStatus.Filepath; // task["fileName"].ToString();
 
                 // Creates a c8o instance with a specific fullsync local suffix in order to store chunks in a specific database
-                var c8o = new C8o(c8oTask.Endpoint, new C8oSettings(c8oTask).SetFullSyncLocalSuffix("_" + transferStatus.Uuid).SetDefaultDatabaseName("c8ofiletransfer"));
+                var c8o = new C8o(c8oTask.Endpoint, new C8oSettings(c8oTask).SetFullSyncLocalSuffix("_" + uuid).SetDefaultDatabaseName("c8ofiletransfer"));
                 
                 // Creates the local db
                 await c8o.CallJson("fs://.create").Async();
 
                 // If the file is not already splitted and stored in the local database
-                if (!task["splitted"].Value<bool>())
+                if (!task["splitted"].Value<bool>() && !canceledTasks.Contains(uuid))
                 {
                     transferStatus.State = C8oFileTransferStatus.StateSplitting;
                     Notify(transferStatus);
 
                     Stream fileStream;
-                    if (!streamToUpload.TryGetValue(transferStatus.Uuid, out fileStream))
+                    if (!streamToUpload.TryGetValue(uuid, out fileStream))
                     {
                         // Removes the local database
                         await c8o.CallJson("fs://.reset").Async();
                         // Removes the task doc
-                        await c8oTask.CallJson("fs://.delete", "docid", transferStatus.Uuid).Async();
+                        await c8oTask.CallJson("fs://.delete", "docid", uuid).Async();
                         throw new Exception("The file '" + task["fileName"] + "' can't be upload because it was stopped before the file content was handled");
                     }
                     
@@ -556,7 +576,6 @@ namespace Convertigo.SDK
                     //
                     try
                     {
-                        string uuid = transferStatus.Uuid;
                         fileStream = streamToUpload[uuid];
                         byte[] buffer = new byte[chunkSize];
                         int countTot = -1;
@@ -617,15 +636,15 @@ namespace Convertigo.SDK
                     Debug("splitted true:\n" + res.ToString());
                 }
 
-                streamToUpload.Remove(transferStatus.Uuid);
+                streamToUpload.Remove(uuid);
 
                 // If the local database is not replecated to the server
-                if (!task["replicated"].Value<bool>())
+                if (!task["replicated"].Value<bool>() && !canceledTasks.Contains(uuid))
                 {
                     //
                     // 2 : Authenticates
                     //
-                    res = await c8o.CallJson(".SetAuthenticatedUser", "userId", transferStatus.Uuid).Async();
+                    res = await c8o.CallJson(".SetAuthenticatedUser", "userId", uuid).Async();
                     Debug("SetAuthenticatedUser:\n" + res.ToString());
 
                     transferStatus.State = C8oFileTransferStatus.StateAuthenticated;
@@ -671,7 +690,7 @@ namespace Convertigo.SDK
                             }
 
                             // Asks how many documents are in the server database with this uuid
-                            JObject json = await c8o.CallJson(".c8ofiletransfer.GetViewCountByUuid", "_use_key", transferStatus.Uuid).Async();
+                            JObject json = await c8o.CallJson(".c8ofiletransfer.GetViewCountByUuid", "_use_key", uuid).Async();
                             var item = json.SelectToken("document.couchdb_output.rows[0]");
                             if (item != null)
                             {
@@ -684,18 +703,21 @@ namespace Convertigo.SDK
                                 }
                             }
 
-                        } while (!locker[0]);
+                        } while (!locker[0] && !canceledTasks.Contains(uuid));
 
                         c8o.CallJson("fs://.replicate_push", "cancel", true).Sync();
                     }
 
-                    // Updates the state document in the task database
-                    res = await c8oTask.CallJson("fs://.post",
-                        C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
-                        "_id", task["_id"].Value<string>(),
-                        "replicated", task["replicated"] = true
-                    ).Async();
-                    Debug("replicated true:\n" + res);
+                    if (!canceledTasks.Contains(uuid))
+                    {
+                        // Updates the state document in the task database
+                        res = await c8oTask.CallJson("fs://.post",
+                            C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                            "_id", task["_id"].Value<string>(),
+                            "replicated", task["replicated"] = true
+                        ).Async();
+                        Debug("replicated true:\n" + res);
+                    }
                 }
 
                 // If the local database containing chunks is not deleted
@@ -728,8 +750,10 @@ namespace Convertigo.SDK
                     });
                 }
 
+                var isCanceling = !canceledTasks.Contains(uuid);
+
                 // If the file is not assembled in the server
-                if (!task["assembled"].Value<bool>())
+                if (!task["assembled"].Value<bool>() && !isCanceling)
                 {
                     transferStatus.State = C8oFileTransferStatus.StateAssembling;
                     Notify(transferStatus);
@@ -738,7 +762,7 @@ namespace Convertigo.SDK
                     // 5 : Request the server to assemble chunks to the initial file
                     //
                     res = await c8o.CallJson(".StoreDatabaseFileToLocal",
-                                             "uuid", transferStatus.Uuid,
+                                             "uuid", uuid,
                                              "numberOfChunks", transferStatus.total).Async();
                     if (res.SelectToken("document.serverFilePath") == null)
                     {
@@ -754,25 +778,36 @@ namespace Convertigo.SDK
                     Debug("assembled true:\n" + res.ToString());
                 }
 
-                transferStatus.ServerFilepath = task["serverFilePath"].ToString();
-
-                // Waits the local database is deleted
-                do
+                if (!isCanceling)
                 {
-                    lock (locker)
-                    {
-                        Monitor.Wait(locker, 500);
-                    }
-                } while (!locker[0]);
+                    transferStatus.ServerFilepath = task["serverFilePath"].ToString();
 
+                    // Waits the local database is deleted
+                    do
+                    {
+                        lock (locker)
+                        {
+                            Monitor.Wait(locker, 500);
+                        }
+                    } while (!locker[0]);
+                }
                 //
                 // 6 : Remove the task document
                 //
-                res = await c8oTask.CallJson("fs://.delete", "docid", transferStatus.Uuid).Async();
+                res = await c8oTask.CallJson("fs://.delete", "docid", uuid).Async();
                 Debug("local delete:\n" + res.ToString());
 
-                transferStatus.State = C8oFileTransferStatus.StateFinished;
-                Notify(transferStatus);
+                if (isCanceling)
+                {
+                    canceledTasks.Remove(uuid);
+                    transferStatus.State = C8oFileTransferStatus.StateCanceled;
+                    Notify(transferStatus);
+                }
+                else
+                {
+                    transferStatus.State = C8oFileTransferStatus.StateFinished;
+                    Notify(transferStatus);
+                }
             }
             catch (Exception e)
             {
@@ -785,6 +820,49 @@ namespace Convertigo.SDK
                     _maxRunning[0]++;
                     Monitor.Pulse(_maxRunning);
                 }
+            }
+        }
+
+        public async Task<List<C8oFileTransferStatus>> GetAllFiletransferStatus()
+        {
+            var list = new List<C8oFileTransferStatus>();
+            var res = await c8oTask.CallJson("fs://.all", "include_docs", true).Async();
+
+            foreach (var row in (res["rows"] as JArray))
+            {
+                var task = row["doc"] as JObject;
+                string uuid = task["_id"].ToString();
+
+                // If this document id is not already in the tasks list
+                if (tasks.ContainsKey(uuid))
+                {
+                    list.Add(tasks[uuid]);
+                }
+                else
+                {
+                    string filePath = task["filePath"].Value<string>();
+                    list.Add(new C8oFileTransferStatus(uuid, filePath));
+                }
+            }
+            return list;
+        }
+
+        public async Task CancelFiletransfer(C8oFileTransferStatus filetransferStatus)
+        {
+            await CancelFiletransfer(filetransferStatus.Uuid);
+        }
+
+        public async Task CancelFiletransfer(string uuid)
+        {
+            var res = await c8oTask.CallJson("fs://.get", "docid", uuid).Async();
+            canceledTasks.Add(uuid);
+        }
+
+        public async Task CancelFiletransfers()
+        {
+            foreach (var filetransferStatus in await GetAllFiletransferStatus())
+            {
+                await CancelFiletransfer(filetransferStatus);
             }
         }
     }
