@@ -2018,7 +2018,7 @@ namespace C8oSDKNUnitWPF
                     var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                     var stream = new FileStream(path + @"\Resources\4m.jpg", FileMode.Open);
                     ft.UploadFile("4m.jpg", stream).ConfigureAwait(false).GetAwaiter().GetResult();
-                    Monitor.Wait(status, 20000);
+                    Monitor.Wait(status, 200000);
                 }
                 if (error[0] != null)
                 {
