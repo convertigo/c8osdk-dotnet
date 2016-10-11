@@ -750,7 +750,7 @@ namespace Convertigo.SDK
                     });
                 }
 
-                var isCanceling = !canceledTasks.Contains(uuid);
+                var isCanceling = canceledTasks.Contains(uuid);
 
                 // If the file is not assembled in the server
                 if (!task["assembled"].Value<bool>() && !isCanceling)
