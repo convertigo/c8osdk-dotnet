@@ -232,7 +232,7 @@ namespace Convertigo.SDK
         }
 
         /// <summary>
-        /// Set the FullSync replication socket timeout (def: 10 minutes).
+        /// Set the FullSync replication socket timeout (def: 5 minutes).
         /// </summary>
         /// <param name="fullSyncReplicationSocketTimeout">Socket max duration for FullSync replication.</param>
         /// <returns>The current<c>C8oSettings</c>, for chaining.</returns>
@@ -245,7 +245,7 @@ namespace Convertigo.SDK
         /// <summary>
         /// Set the FullSync replication request timeout (def: 5 minutes).
         /// </summary>
-        /// <param name="fullSyncReplicationRequestTimeout">Socket max duration for FullSync replication.</param>
+        /// <param name="fullSyncReplicationRequestTimeout">Request max duration for FullSync replication.</param>
         /// <returns>The current<c>C8oSettings</c>, for chaining.</returns>
         public C8oSettings SetFullSyncReplicationRequestTimeout(TimeSpan fullSyncReplicationRequestTimeout)
         {

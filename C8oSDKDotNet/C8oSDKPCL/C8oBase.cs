@@ -35,7 +35,7 @@ namespace Convertigo.SDK
         protected string fullSyncPassword = null;
 
         protected TimeSpan fullSyncReplicationHeartbeat = TimeSpan.FromSeconds(30);
-        protected TimeSpan fullSyncReplicationSocketTimeout = TimeSpan.FromMinutes(10);
+        protected TimeSpan fullSyncReplicationSocketTimeout = TimeSpan.FromMinutes(5);
         protected TimeSpan fullSyncReplicationRequestTimeout = TimeSpan.FromMinutes(5);
         protected int fullSyncReplicationMaxOpenHttpConnections = 8;
         protected int fullSyncReplicationMaxRevsToGetInBulk = 50;
