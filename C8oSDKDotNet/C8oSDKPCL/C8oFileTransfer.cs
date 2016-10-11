@@ -356,7 +356,7 @@ namespace Convertigo.SDK
                     var createdFileStream = fileManager.CreateFile(transferStatus.Filepath);
                     createdFileStream.Position = 0;
 
-                    for (int i = 0; i < transferStatus.Total && !canceledTasks.Contains(uuid); i++)
+                    for (int i = 0; i < transferStatus.Total; i++)
                     {
                         var meta = await c8o.CallJson("fs://" + fsConnector + ".get", "docid", uuid + "_" + i).Async();
                         Debug(meta.ToString());
@@ -801,13 +801,12 @@ namespace Convertigo.SDK
                 {
                     canceledTasks.Remove(uuid);
                     transferStatus.State = C8oFileTransferStatus.StateCanceled;
-                    Notify(transferStatus);
                 }
                 else
                 {
                     transferStatus.State = C8oFileTransferStatus.StateFinished;
-                    Notify(transferStatus);
                 }
+                Notify(transferStatus);
             }
             catch (Exception e)
             {
@@ -854,7 +853,6 @@ namespace Convertigo.SDK
 
         public async Task CancelFiletransfer(string uuid)
         {
-            var res = await c8oTask.CallJson("fs://.get", "docid", uuid).Async();
             canceledTasks.Add(uuid);
         }
 
