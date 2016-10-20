@@ -120,7 +120,7 @@ namespace Convertigo.SDK
         /// <returns>Current version of the SDK as "x.y.z".</returns>
         public static string GetSdkVersion()
         {
-            return "2.0.7";
+            return "2.0.8";
         }
 
         //*** Attributes ***//
