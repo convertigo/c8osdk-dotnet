@@ -305,7 +305,7 @@ namespace Convertigo.SDK
 
         internal void OnResponse(T response, IDictionary<string, object> parameters)
         {
-            if (lastResponse != null)
+            if (lastResponse != null && !parameters.ContainsKey(C8o.ENGINE_PARAMETER_FROM_LIVE))
             {
                 if (nextPromise != null)
                 {

@@ -28,6 +28,13 @@ namespace Convertigo.SDK
                 C8o.defaultUiDispatcher = uiDispatcher;
             }
 
+            C8o.defaultBgDispatcher = (code) => {
+                new Thread(() =>
+                {
+                    code();
+                }).Start();
+            };
+
             C8o.deviceUUID = new HardwareHelper().GetHardwareID();
 
             C8oHTTPsProxy.Init();

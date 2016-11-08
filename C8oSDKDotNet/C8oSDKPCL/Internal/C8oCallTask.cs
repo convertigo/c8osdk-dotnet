@@ -30,6 +30,13 @@ namespace Convertigo.SDK.Internal
             c8o.RunBG((Action) Run);
         }
 
+        public void ExecuteFromLive()
+        {
+            parameters.Remove(C8o.FS_LIVE);
+            parameters[C8o.ENGINE_PARAMETER_FROM_LIVE] = true;
+            Execute();
+        }
+
         async private void Run()
         {
             try
@@ -47,10 +54,17 @@ namespace Convertigo.SDK.Internal
         async private Task<object> HandleRequest()
         {
             bool isFullSyncRequest = C8oFullSync.IsFullSyncRequest(parameters);
-
             if (isFullSyncRequest)
             {
                 c8o.Log._Debug("Is FullSync request");
+
+                var liveid = C8oUtils.GetParameterStringValue(parameters, C8o.FS_LIVE, false);
+                if (liveid != null)
+                {
+                    var dbName = C8oUtils.GetParameterStringValue(parameters, C8o.ENGINE_PARAMETER_PROJECT, true).Substring(C8oFullSync.FULL_SYNC_PROJECT.Length);
+                    c8o.AddLive(liveid, dbName, this);
+                }
+
                 // The result cannot be handled here because it can be different depending to the platform
                 // But it can be useful bor debug
                 try

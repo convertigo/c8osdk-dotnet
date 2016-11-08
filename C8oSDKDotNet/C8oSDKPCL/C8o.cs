@@ -49,6 +49,7 @@ namespace Convertigo.SDK
         internal static readonly string ENGINE_PARAMETER_ENCODED = "__encoded";
         internal static readonly string ENGINE_PARAMETER_DEVICE_UUID = "__uuid";
         internal static readonly string ENGINE_PARAMETER_PROGRESS = "__progress";
+        internal static readonly string ENGINE_PARAMETER_FROM_LIVE = "__fromLive";
 
         //*** FULLSYNC parameters ***//
         /// <summary>
@@ -92,6 +93,8 @@ namespace Convertigo.SDK
 
         public static readonly string FS_STORAGE_SQL = "SQL";
         public static readonly string FS_STORAGE_FORESTDB = "FORESTDB";
+
+        public static readonly string FS_LIVE = "__live";
 
         //*** Local cache keys ***//
 
@@ -150,6 +153,9 @@ namespace Convertigo.SDK
         /// Allows to make fullSync calls.
         /// </summary>
         internal C8oFullSync c8oFullSync;
+
+        internal IDictionary<string, C8oCallTask> lives = new Dictionary<string, C8oCallTask>();
+        internal IDictionary<string, string> livesDb = new Dictionary<string, string>();
 
         //*** Constructors ***//
 
@@ -222,12 +228,12 @@ namespace Convertigo.SDK
                 if (C8oFullSyncUsed != null)
                 {
                     c8oFullSync = C8oFullSyncUsed.GetTypeInfo().DeclaredConstructors.ElementAt(0).Invoke(new object[0]) as C8oFullSync;
+                    c8oFullSync.Init(this);
                 }
                 else
                 {
-                    c8oFullSync = new C8oFullSyncHttp(FullSyncServerUrl, FullSyncUsername, FullSyncPassword);
+                    c8oFullSync = null; // new C8oFullSyncHttp(FullSyncServerUrl, FullSyncUsername, FullSyncPassword);
                 }
-                c8oFullSync.Init(this);
             }
             catch (Exception e)
             {
@@ -744,6 +750,58 @@ namespace Convertigo.SDK
             get { return httpInterface.CookieStore; }
         }
 
+        public void AddFullSyncChangeListener(string db, FullSyncChangeListener listener)
+        {
+            c8oFullSync.AddFullSyncChangeListener(db, listener);
+        }
+
+        public void RemoveFullSyncChangeListener(string db, FullSyncChangeListener listener)
+        {
+            c8oFullSync.RemoveFullSyncChangeListener(db, listener);
+        }
+
+        internal void AddLive(string liveid, string db, C8oCallTask task)
+        {
+            CancelLive(liveid);
+            lock (lives)
+            {
+                lives[liveid] = task;
+            }
+
+            lock (livesDb)
+            {
+                livesDb[liveid] = db;
+            }
+
+            AddFullSyncChangeListener(db, HandleFullSyncLive);
+        }
+
+        public void CancelLive(string liveid)
+        {
+            if (livesDb.ContainsKey(liveid))
+            {
+                string db;
+                lock (livesDb)
+                {
+                    db = livesDb[liveid];
+                    livesDb.Remove(liveid);
+                    if (livesDb.Values.Contains(db))
+                    {
+                        db = null;
+                    }
+                }
+
+                if (db != null)
+                {
+                    RemoveFullSyncChangeListener(db, HandleFullSyncLive);
+                }
+            }
+            lock (lives)
+            {
+                lives.Remove(liveid);
+            }
+        }
+
         private static IDictionary<string, object> ToParameters(object[] parameters)
         {
             if (parameters.Length % 2 != 0)
@@ -768,6 +826,17 @@ namespace Convertigo.SDK
             if (c8oExceptionListener != null)
             {
                 c8oExceptionListener.OnException(exception, requestParameters);
+            }
+        }
+
+        internal void HandleFullSyncLive(JObject changes)
+        {
+            lock (lives)
+            {
+                foreach (var task in lives.Values)
+                {
+                    task.ExecuteFromLive();
+                }
             }
         }
     }

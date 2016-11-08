@@ -36,6 +36,8 @@ namespace Convertigo.SDK.Internal
 
         public async Task<object> HandleFullSyncRequest(IDictionary<string, object> parameters, C8oResponseListener listener)
         {
+            parameters = new Dictionary<string, object>(parameters);
+
             // Gets the project and the sequence parameter in order to know which database and which fullSyncrequestable to use
             string projectParameterValue = C8oUtils.PeekParameterStringValue(parameters, C8o.ENGINE_PARAMETER_PROJECT, true);
 
@@ -44,7 +46,7 @@ namespace Convertigo.SDK.Internal
                 throw new ArgumentException(C8oExceptionMessage.InvalidParameterValue(projectParameterValue, "its don't start with " + FULL_SYNC_PROJECT));
             }
 
-            String fullSyncRequestableValue = C8oUtils.PeekParameterStringValue(parameters, C8o.ENGINE_PARAMETER_SEQUENCE, true);
+            string fullSyncRequestableValue = C8oUtils.PeekParameterStringValue(parameters, C8o.ENGINE_PARAMETER_SEQUENCE, true);
             // Gets the fullSync requestable and gets the response from this requestable
             FullSyncRequestable fullSyncRequestable = FullSyncRequestable.GetFullSyncRequestable(fullSyncRequestableValue);
             if (fullSyncRequestable == null)
@@ -53,7 +55,7 @@ namespace Convertigo.SDK.Internal
             }
 
             // Gets the database name if this is not specified then if takes the default database name
-            String databaseName = projectParameterValue.Substring(C8oFullSync.FULL_SYNC_PROJECT.Length);
+            string databaseName = projectParameterValue.Substring(C8oFullSync.FULL_SYNC_PROJECT.Length);
             if (databaseName.Length < 1)
             {
                 databaseName = c8o.DefaultDatabaseName;
@@ -192,5 +194,8 @@ namespace Convertigo.SDK.Internal
             }
             return false;
         }
+
+        public abstract void AddFullSyncChangeListener(string db, FullSyncChangeListener listener);
+        public abstract void RemoveFullSyncChangeListener(string db, FullSyncChangeListener listener);
     }
 }
