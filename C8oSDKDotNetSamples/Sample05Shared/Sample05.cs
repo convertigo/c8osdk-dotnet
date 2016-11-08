@@ -32,6 +32,12 @@ namespace Sample05Shared
 
         public async Task OnTest01(object sender, EventArgs args)
         {
+            C8oPlatform.Init();
+            C8oSettings c8oSettings = new C8oSettings();
+
+            // TODO: Cette ligne doit être supprimée
+            c8oSettings.SetTrustAllCertificates(true);
+            var c8o = new C8o("http://192.168.100.95:18080/convertigo/projects/Sample05", c8oSettings);
             Output.Text = "Test01\n";
             Output.Text += "==========\n";
             var xml = await c8o.CallXml(".sample05.GetServerInfo").Async();
@@ -126,7 +132,7 @@ namespace Sample05Shared
                 return c8o.CallJson("fs://.all");
             }).ThenUI((json, parameters) =>
             {
-                Output.Text += json["total_rows"].ToString();
+                Output.Text += json["count"].ToString();
                 Output.Text += "\n========== sync ==\n";
                 return c8o.CallJson("fs://.sync", "continuous", true);
             }).ThenUI((json, parameters) =>
@@ -136,7 +142,7 @@ namespace Sample05Shared
                 return c8o.CallJson("fs://.all");
             }).ThenUI((json, parameters) =>
             {
-                Output.Text += json["total_rows"].ToString();
+                Output.Text += json["count"].ToString();
                 Output.Text += "\n==========\n";
                 return null;
             }).Progress(progress =>
@@ -151,19 +157,29 @@ namespace Sample05Shared
         public void OnTest05(object sender, EventArgs args)
         {
             Output.Text = "Test05\n";
-            Output.Text += "========== get 1 ==\n";
-            c8o.CallJson("fs://.get", "docid", "1").ThenUI((json, parameters) =>
+            Output.Text += "========== dev live ==\n";
+            //c8o.CallJson("fs://.get", "docid", "1", C8o.FS_LIVE_ON, "test").ThenUI((json, parameters) =>
+            c8o.CallJson("fs://.all", C8o.FS_LIVE, "test").ThenUI((json, parameters) =>
             {
-                Output.Text += json.ToString();
+                Output.Text += " > " + json["count"].ToString() + " < ";
                 return null;
             }).FailUI((e, parameters) =>
             {
                 Output.Text += "\n========== fail ==\n" + e;
             });
+            /*
+            c8o.CallJson("fs://.get", "docid", "00", C8o.FS_LIVE_ON, "toto").ThenUI((json, parameter) =>
+            {
+                Output.Text += " ## " + json + " ## ";
+                return null;
+            });
+            */
+            //c8o.CallJson("fs://.post", "_id", "1", "data", DateTime.Now.ToString(), C8o.FS_POLICY, C8o.FS_POLICY_OVERRIDE);
         }
 
         public void OnTest06(object sender, EventArgs args)
         {
+            /*
             Output.Text = "Test06\n";
 
             var c8o = new C8o("https://tonus.twinsoft.fr:18081/convertigo/projects/Sample05", new C8oSettings().SetTrustAllCertificates(false));
@@ -177,10 +193,14 @@ namespace Sample05Shared
             {
                 Output.Text += "\n========== fail ==\n" + e;
             });
+            */
+
+            c8o.CallJson("fs://.post", "_id", "1", "data", DateTime.Now.ToString(), C8o.FS_POLICY, C8o.FS_POLICY_OVERRIDE);
         }
 
         public void OnTest07(object sender, EventArgs args)
         {
+            /*
             Output.Text = "Test07\n";
 
             var c8o = new C8o("https://tonus.twinsoft.fr:18081/convertigo/projects/Sample05", new C8oSettings().SetTrustAllCertificates(true));
@@ -194,10 +214,26 @@ namespace Sample05Shared
             {
                 Output.Text += "\n========== fail ==\n" + e;
             });
+            */
+            /*
+            c8o.CallJson("fs://.get", C8o.FS_LIVE_OFF, "test").ThenUI((json, parameters) =>
+            {
+                Output.Text += json.ToString();
+                return null;
+            });*/
+            
+            c8o.AddFullSyncChangeListener("", (changes) =>
+            {
+                c8o.RunUI(() =>
+                {
+                    Output.Text += " [[ count: " + changes["changes"].Value<JArray>().Count + ", ext: " + changes["isExternal"] + " ]] ";
+                });
+            });
         }
 
         public void OnTest08(object sender, EventArgs args)
         {
+            /*
             Output.Text = "Test08\n";
 
             var c8o = new C8o("https://tonus.twinsoft.fr:28443/convertigo/projects/Sample05", new C8oSettings()
@@ -245,6 +281,8 @@ namespace Sample05Shared
             {
                 Output.Text += "\n========== fail ==\n" + e;
             });
+            */
+            c8o.CancelLive("test");
         }
 
         public void OnTest09(object sender, EventArgs args)
