@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
@@ -67,7 +67,6 @@
     <Compile Include="C8oFileTransferStatus.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Internal\C8oFullSyncEnum.cs" />
-    <Compile Include="Internal\C8oFullSyncHttp.cs" />
     <Compile Include="Internal\C8oFullSync.cs" />
     <Compile Include="C8oFullSyncTranslator.cs" />
     <Compile Include="Internal\C8oFullSyncUtils.cs" />

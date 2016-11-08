@@ -26,6 +26,8 @@ namespace Convertigo.SDK.Internal
         /// </summary>
         private Manager manager;
         private IDictionary<string, C8oFullSyncDatabase> fullSyncDatabases;
+        private IDictionary<string, ISet<FullSyncChangeListener>> fullSyncChangeListeners;
+        private IDictionary<string, EventHandler<DatabaseChangeEventArgs>> cblChangeListeners;
 
         //*** Constructors / Initializations ***//
 
@@ -38,6 +40,8 @@ namespace Convertigo.SDK.Internal
             base.Init(c8o);
 
             fullSyncDatabases = new Dictionary<string, C8oFullSyncDatabase>();
+            fullSyncChangeListeners = new Dictionary<string, ISet<FullSyncChangeListener>>();
+            cblChangeListeners = new Dictionary<string, EventHandler<DatabaseChangeEventArgs>>();
             manager = Manager.SharedInstance;
 
             Debug.Listeners.Remove("Couchbase");
@@ -49,6 +53,10 @@ namespace Convertigo.SDK.Internal
             if (!fullSyncDatabases.ContainsKey(localDatabaseName))
             {
                 fullSyncDatabases[localDatabaseName] = new C8oFullSyncDatabase(c8o, manager, databaseName, fullSyncDatabaseUrlBase, localSuffix);
+                if (cblChangeListeners.ContainsKey(databaseName))
+                {
+                    fullSyncDatabases[localDatabaseName].Database.Changed += cblChangeListeners[databaseName];
+                }
             }
             return Task.FromResult<C8oFullSyncDatabase>(fullSyncDatabases[localDatabaseName]);
         }
@@ -613,8 +621,77 @@ namespace Convertigo.SDK.Internal
             localCacheDocument.PutProperties(properties);
         }
 
+        public override void AddFullSyncChangeListener(string db, FullSyncChangeListener listener)
+        {
+            if (db == null || db.Length == 0)
+            {
+                db = c8o.DefaultDatabaseName;
+            }
+
+            ISet<FullSyncChangeListener> listeners;
+
+            if (fullSyncChangeListeners.ContainsKey(db))
+            {
+                listeners = fullSyncChangeListeners[db];
+            }
+            else
+            {
+                listeners = new HashSet<FullSyncChangeListener>();
+                fullSyncChangeListeners[db] = listeners;
+                EventHandler<DatabaseChangeEventArgs> evtHandler = (sender, e) => {
+                    c8o.RunBG(() =>
+                    {
+                        var changes = new JObject();
+                        var docs = new JArray();
+
+                        changes["changes"] = docs;
+                        changes["isExternal"] = e.IsExternal;
+                        
+                        foreach (var change in e.Changes)
+                        {
+                            var doc = new JObject();
+                            doc["id"] = change.DocumentId;
+                            doc["isConflict"] = change.IsConflict;
+                            doc["isCurrentRevision"] = change.IsCurrentRevision;
+                            doc["isExpiration"] = change.IsExpiration;
+                            doc["revisionId"] = change.RevisionId;
+                            doc["sourceUrl"] = change.SourceUrl;
+                            docs.Add(doc);
+                        }
+                        foreach (var handler in listeners)
+                        {
+                            handler(changes);
+                        }
+                    });
+                };
+                GetOrCreateFullSyncDatabase(db).Result.Database.Changed += evtHandler;
+                cblChangeListeners[db] = evtHandler;
+            }
+            listeners.Add(listener);
+        }
+
+        public override void RemoveFullSyncChangeListener(string db, FullSyncChangeListener listener)
+        {
+            if (db == null || db.Length == 0)
+            {
+                db = c8o.DefaultDatabaseName;
+            }
+
+            if (fullSyncChangeListeners.ContainsKey(db))
+            {
+                var listeners = fullSyncChangeListeners[db];
+                listeners.Remove(listener);
+                if (listeners.Count == 0)
+                {
+                    GetOrCreateFullSyncDatabase(db).Result.Database.Changed -= cblChangeListeners[db];
+                    fullSyncChangeListeners.Remove(db);
+                    cblChangeListeners.Remove(db);
+                }
+            }
+        }
+
         //*** Other ***//
-        
+
         /// <summary>
         /// Adds known parameters to the fullSync query.
         /// </summary>
