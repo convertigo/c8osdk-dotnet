@@ -19,6 +19,7 @@ namespace C8oSDKNUnitWPF
     class C8oTest
     {
         static readonly string HOST = "buildus.twinsoft.fr";
+        static readonly string PORT = "28080";
         static readonly string PROJECT_PATH = "/convertigo/projects/ClientSDKtesting";
 
         class Stuff
@@ -27,7 +28,7 @@ namespace C8oSDKNUnitWPF
 
             internal static readonly Stuff C8O = new Stuff(() =>
             {
-                C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH,
+                C8o c8o = new C8o("http://" + HOST + ":" + PORT + PROJECT_PATH,
                     new C8oSettings()
                     .SetLogRemote(false)
                     .SetLogLevelLocal(C8oLogLevel.ERROR));
@@ -41,7 +42,7 @@ namespace C8oSDKNUnitWPF
 
             internal static readonly Stuff C8O_FS = new Stuff(() =>
             {
-                C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH, new C8oSettings()
+                C8o c8o = new C8o("http://" + HOST + ":" + PORT + PROJECT_PATH, new C8oSettings()
                     .SetDefaultDatabaseName("clientsdktesting")
                     .SetLogRemote(false)
                     .SetLogLevelLocal(C8oLogLevel.ERROR)
@@ -52,7 +53,7 @@ namespace C8oSDKNUnitWPF
 
             internal static readonly Stuff C8O_FS_PULL = new Stuff(() =>
             {
-                C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH, new C8oSettings()
+                C8o c8o = new C8o("http://" + HOST + ":" + PORT + PROJECT_PATH, new C8oSettings()
                     .SetDefaultDatabaseName("qa_fs_pull")
                     .SetLogRemote(false)
                     .SetLogLevelLocal(C8oLogLevel.ERROR)
@@ -65,7 +66,7 @@ namespace C8oSDKNUnitWPF
 
             internal static readonly Stuff C8O_FS_PUSH = new Stuff(() =>
             {
-                C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH, new C8oSettings()
+                C8o c8o = new C8o("http://" + HOST + ":" + PORT + PROJECT_PATH, new C8oSettings()
                     .SetDefaultDatabaseName("qa_fs_push")
                     .SetLogRemote(false)
                     .SetLogLevelLocal(C8oLogLevel.ERROR)
@@ -78,7 +79,7 @@ namespace C8oSDKNUnitWPF
 
             internal static readonly Stuff C8O_LC = new Stuff(() =>
             {
-                C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH,
+                C8o c8o = new C8o("http://" + HOST + ":" + PORT + PROJECT_PATH,
                     new C8oSettings()
                     .SetLogRemote(false)
                     .SetLogLevelLocal(C8oLogLevel.ERROR)
@@ -101,7 +102,7 @@ namespace C8oSDKNUnitWPF
 
             internal static readonly Stuff C8O_FT = new Stuff(() =>
             {
-                C8o c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH,
+                C8o c8o = new C8o("http://" + HOST + ":" + PORT + PROJECT_PATH,
                     new C8oSettings()
                     .SetLogRemote(false)
                     .SetLogLevelLocal(C8oLogLevel.ERROR)
@@ -187,7 +188,7 @@ namespace C8oSDKNUnitWPF
         {
             Assert.Throws<ArgumentException>(() =>
             {
-                new C8o("http://" + HOST + ":28080");
+                new C8o("http://" + HOST + ":" + PORT + "");
             });
         }
 
@@ -243,7 +244,7 @@ namespace C8oSDKNUnitWPF
         {
             var exception = null as Exception;
             var exceptionLog = null as Exception;
-            var c8o = new C8o("http://" + HOST + "ee:28080" + PROJECT_PATH, new C8oSettings()
+            var c8o = new C8o("http://" + HOST + "ee:" + PORT + PROJECT_PATH, new C8oSettings()
                 .SetLogOnFail((ex, parameters) =>
                 {
                     exceptionLog = ex;
@@ -277,7 +278,7 @@ namespace C8oSDKNUnitWPF
         public void C8oUnknownHostCallWait()
         {
             var exception = null as Exception;
-            var c8o = new C8o("http://" + HOST + "ee:28080" + PROJECT_PATH);
+            var c8o = new C8o("http://" + HOST + "ee:" + PORT + PROJECT_PATH);
             try
             {
                 var promise = c8o.CallXml(".Ping");
@@ -436,7 +437,7 @@ namespace C8oSDKNUnitWPF
         [Test]
         public void CheckLogRemote()
         {
-            var c8o = new C8o("http://" + HOST + ":28080" + PROJECT_PATH);
+            var c8o = new C8o("http://" + HOST + ":" + PORT + PROJECT_PATH);
             c8o.LogC8o = false;
             var id = "logID=" + DateTime.Now.Ticks;
             c8o.CallXml(".GetLogs", "init", id).Sync();
@@ -1403,7 +1404,7 @@ namespace C8oSDKNUnitWPF
                     string first = null;
                     string last = null;
                     bool uiThread = false;
-                    json = c8o.CallJson("fs://.replicate_pull").Progress(progress =>
+                    var doc = c8o.CallXml("fs://.replicate_pull").Progress(progress =>
                     {
                         count++;
                         uiThread |= "FakeUI".Equals(Thread.CurrentThread.Name);
@@ -1413,6 +1414,7 @@ namespace C8oSDKNUnitWPF
                         }
                         last = progress.ToString();
                     }).Sync();
+                    Assert.AreEqual("True", doc.XPathSelectElement("/document/couchdb_output/ok").Value);
                     json = c8o.CallJson("fs://.get", "docid", "456").Sync();
                     value = json["data"].Value<string>();
                     Assert.AreEqual("456", value);
@@ -1455,6 +1457,7 @@ namespace C8oSDKNUnitWPF
                         }
                         last = progress.ToString();
                     }).Sync();
+                    Assert.True(json["ok"].Value<bool>());
                     json = c8o.CallJson("fs://.get", "docid", "456").Sync();
                     value = json["data"].Value<string>();
                     Assert.AreEqual("456", value);
@@ -2028,6 +2031,89 @@ namespace C8oSDKNUnitWPF
                 var filepath = status[0].ServerFilepath;
                 var length = c8o.CallXml(".GetSizeAndDelete", "filepath", filepath).Sync().XPathSelectElement("/document/length").Value;
                 Assert.AreEqual("4237409", length);
+            }
+        }
+        
+        [Test]
+        public void C8oFsLiveChanges()
+        {
+            var c8o = Get<C8o>(Stuff.C8O_FS_PUSH);
+            var lastChanges = new JObject[] { null };
+            FullSyncChangeListener changeListener = (changes) =>
+            {
+                lock (lastChanges)
+                {
+                    lastChanges[0] = changes;
+                    Monitor.Pulse(lastChanges);
+                }
+            };
+
+            lock (c8o)
+            {
+                try
+                {
+                    var json = c8o.CallJson("fs://.reset").Sync();
+                    Assert.True(json["ok"].Value<bool>());
+                    json = c8o.CallJson("fs://.replicate_pull", "continuous", true).Sync();
+                    Assert.True(json["ok"].Value<bool>());
+                    var cptlive = new int[] { 0 };
+                    c8o.CallJson("fs://.get", "docid", "abc", C8o.FS_LIVE, "getabc").Then((obj, param) =>
+                    {
+                        lock (cptlive)
+                        {
+                            if (obj["_id"].Value<String>().Equals("abc"))
+                            {
+                                cptlive[0]++;
+                            }
+                            Monitor.Pulse(cptlive);
+                        }
+                        return null;
+                    }).Sync();
+                    Assert.AreEqual(1, cptlive[0]);
+                    lock (cptlive)
+                    {
+                        json = c8o.CallJson(".qa_fs_push.PostDocument", "_id", "ghi").Sync();
+                        Assert.True(json.SelectToken("document.couchdb_output.ok").Value<bool>());
+                        Monitor.Wait(cptlive, 1000);
+                        Assert.AreEqual(2, cptlive[0]);
+                    }
+                    c8o.AddFullSyncChangeListener("", changeListener);
+                    lock (lastChanges)
+                    {
+                        lock (cptlive)
+                        {
+                            json = c8o.CallJson(".qa_fs_push.PostDocument", "_id", "jkl").Sync();
+                            Assert.True(json.SelectToken("document.couchdb_output.ok").Value<bool>());
+                            Monitor.Wait(lastChanges, 3000);
+                            Monitor.Wait(cptlive, 1000);
+                            Assert.AreEqual(3, cptlive[0]);
+                            Assert.NotNull(lastChanges[0]);
+                            Assert.AreEqual(1, lastChanges[0]["changes"].Value<JArray>().Count);
+                            Assert.AreEqual("jkl", lastChanges[0]["changes"][0]["id"].Value<string>());
+                        }
+                    }
+
+                    lock (lastChanges)
+                    {
+                        lock (cptlive)
+                        {
+                            c8o.CancelLive("getabc");
+                            json = c8o.CallJson(".qa_fs_push.PostDocument", "_id", "mno").Sync();
+                            Assert.True(json.SelectToken("document.couchdb_output.ok").Value<bool>());
+                            Monitor.Wait(lastChanges, 3000);
+                            Monitor.Wait(cptlive, 1000);
+                            Assert.AreEqual(3, cptlive[0]);
+                            Assert.NotNull(lastChanges[0]);
+                            Assert.AreEqual(1, lastChanges[0]["changes"].Value<JArray>().Count);
+                            Assert.AreEqual("mno", lastChanges[0]["changes"][0]["id"].Value<string>());
+                        }
+                    }
+                }
+                finally
+                {
+                    c8o.CancelLive("getabc");
+                    c8o.RemoveFullSyncChangeListener("", changeListener);
+                }
             }
         }
 
