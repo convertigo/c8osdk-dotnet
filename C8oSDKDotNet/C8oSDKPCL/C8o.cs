@@ -750,12 +750,12 @@ namespace Convertigo.SDK
             get { return httpInterface.CookieStore; }
         }
 
-        public void AddFullSyncChangeListener(string db, FullSyncChangeListener listener)
+        public void AddFullSyncChangeListener(string db, C8oFullSyncChangeListener listener)
         {
             c8oFullSync.AddFullSyncChangeListener(db, listener);
         }
 
-        public void RemoveFullSyncChangeListener(string db, FullSyncChangeListener listener)
+        public void RemoveFullSyncChangeListener(string db, C8oFullSyncChangeListener listener)
         {
             c8oFullSync.RemoveFullSyncChangeListener(db, listener);
         }

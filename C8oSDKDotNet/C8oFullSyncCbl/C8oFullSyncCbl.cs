@@ -26,7 +26,7 @@ namespace Convertigo.SDK.Internal
         /// </summary>
         private Manager manager;
         private IDictionary<string, C8oFullSyncDatabase> fullSyncDatabases;
-        private IDictionary<string, ISet<FullSyncChangeListener>> fullSyncChangeListeners;
+        private IDictionary<string, ISet<C8oFullSyncChangeListener>> fullSyncChangeListeners;
         private IDictionary<string, EventHandler<DatabaseChangeEventArgs>> cblChangeListeners;
 
         //*** Constructors / Initializations ***//
@@ -40,7 +40,7 @@ namespace Convertigo.SDK.Internal
             base.Init(c8o);
 
             fullSyncDatabases = new Dictionary<string, C8oFullSyncDatabase>();
-            fullSyncChangeListeners = new Dictionary<string, ISet<FullSyncChangeListener>>();
+            fullSyncChangeListeners = new Dictionary<string, ISet<C8oFullSyncChangeListener>>();
             cblChangeListeners = new Dictionary<string, EventHandler<DatabaseChangeEventArgs>>();
             manager = Manager.SharedInstance;
 
@@ -621,14 +621,14 @@ namespace Convertigo.SDK.Internal
             localCacheDocument.PutProperties(properties);
         }
 
-        public override void AddFullSyncChangeListener(string db, FullSyncChangeListener listener)
+        public override void AddFullSyncChangeListener(string db, C8oFullSyncChangeListener listener)
         {
             if (db == null || db.Length == 0)
             {
                 db = c8o.DefaultDatabaseName;
             }
 
-            ISet<FullSyncChangeListener> listeners;
+            ISet<C8oFullSyncChangeListener> listeners;
 
             if (fullSyncChangeListeners.ContainsKey(db))
             {
@@ -636,7 +636,7 @@ namespace Convertigo.SDK.Internal
             }
             else
             {
-                listeners = new HashSet<FullSyncChangeListener>();
+                listeners = new HashSet<C8oFullSyncChangeListener>();
                 fullSyncChangeListeners[db] = listeners;
                 EventHandler<DatabaseChangeEventArgs> evtHandler = (sender, e) => {
                     c8o.RunBG(() =>
@@ -670,7 +670,7 @@ namespace Convertigo.SDK.Internal
             listeners.Add(listener);
         }
 
-        public override void RemoveFullSyncChangeListener(string db, FullSyncChangeListener listener)
+        public override void RemoveFullSyncChangeListener(string db, C8oFullSyncChangeListener listener)
         {
             if (db == null || db.Length == 0)
             {

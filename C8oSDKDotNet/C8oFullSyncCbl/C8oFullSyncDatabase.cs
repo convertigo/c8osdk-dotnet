@@ -99,6 +99,8 @@ namespace Convertigo.SDK.Internal
             {
                 try
                 {
+                    StopReplication(pullFullSyncReplication);
+                    StopReplication(pushFullSyncReplication);
                     var manager = database.Manager;
                     database.Delete();
                     manager.ForgetDatabase(database);
@@ -261,26 +263,35 @@ namespace Convertigo.SDK.Internal
 
         private void StopReplication(Replication replication)
         {
+            var str = "" + replication.ActiveTaskInfo;
+            replication.Continuous = false;
             replication.Stop();
+            str += "\n" + replication.ActiveTaskInfo;
+            
             int retry = 100;
 
+            while (replication.IsRunning && retry-- > 0)
+            {
+                replication.Stop();
+                Thread.Sleep(10);
+            }
+
+            str += "\n" + replication.ActiveTaskInfo;
             try
             {
+                Replication dbRep = null;
                 // prevent the "Not starting because identical puller already exists" bug
-                while (retry-- > 0)
+                while (dbRep == null && retry-- > 0)
                 {
                     foreach (var rep in replication.LocalDatabase.AllReplications)
                     {
+
                         if (rep == replication)
                         {
+                            dbRep = rep;
                             Thread.Sleep(10);
                         }
-                        else
-                        {
-                            return;
-                        }
                     }
-
                 }
             }
             catch

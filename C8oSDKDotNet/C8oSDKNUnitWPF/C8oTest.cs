@@ -2039,7 +2039,7 @@ namespace C8oSDKNUnitWPF
         {
             var c8o = Get<C8o>(Stuff.C8O_FS_PUSH);
             var lastChanges = new JObject[] { null };
-            FullSyncChangeListener changeListener = (changes) =>
+            C8oFullSyncChangeListener changeListener = (changes) =>
             {
                 lock (lastChanges)
                 {
