@@ -91,9 +91,21 @@ namespace Convertigo.SDK
         /// </summary>
         public static readonly string FS_SUBKEY_SEPARATOR = "_use_subkey_separator";
 
+        /// <summary>
+        /// Use it with "fs://.post". Default value is ".".<para/>
+        /// This key allow to override the sub key separator in case of document depth modification.
+        /// </summary>
         public static readonly string FS_STORAGE_SQL = "SQL";
+        /// <summary>
+        /// Use it with "c8oSettings.setFullSyncStorageEngine" to choose the SQL fullsync storage engine.
+        /// </summary>
         public static readonly string FS_STORAGE_FORESTDB = "FORESTDB";
-
+        /// <summary>
+        /// Use it with "fs://" request as parameter to enable the live request feature.<br/>
+        /// Must be followed by a string parameter, the 'liveid' that can be use to cancel the live
+        /// request using c8o.cancelLive(liveid) method.<br/>
+        /// A live request automatically recall the then or thenUI handler when the database changed.
+        /// </summary>
         public static readonly string FS_LIVE = "__live";
 
         //*** Local cache keys ***//
@@ -618,22 +630,11 @@ namespace Convertigo.SDK
             get { return fullSyncEncryptionKey; }
             set { fullSyncEncryptionKey = value; }
         }
+
         /// <summary>
         /// Logs a message to Convertigo Server. the message will be seen in Convertigo Server Device logger. Logging messages to the server
         /// helps in monitoring Mobile apps in production.
         /// </summary>
-        /// <param name="c8oLogLevel">Log level such as C8oLogLevel.DEBUG</param>
-        /// <param name="message">The messe to be logged</param>
-        /// <sample>
-        ///     <code>myC8o.Log (C8oLogLevel.DEBUG, "This is my message");</code>
-        /// </sample>
-        /*
-        public void Log(C8oLogLevel c8oLogLevel, string message)
-        {
-            c8oLogger.Log(c8oLogLevel, message);
-        }
-        */
-
         public C8oLogger Log
         {
             get { return c8oLogger; }
@@ -668,6 +669,10 @@ namespace Convertigo.SDK
             }
         }
 
+        /// <summary>
+        /// Run a block of code in a background Thread.
+        /// </summary>
+        /// <param name="code">The code to run in the background Thread.</param>
         public void RunBG(Action code)
         {
             if (defaultBgDispatcher != null)
@@ -750,11 +755,21 @@ namespace Convertigo.SDK
             get { return httpInterface.CookieStore; }
         }
 
+        /// <summary>
+        /// Add a listener to monitor all changes of the 'db'.
+        /// </summary>
+        /// <param name="db">the name of the fullsync database to monitor. Use the default database for a blank or a null value.</param>
+        /// <param name="listener">the listener to trigger on change.</param>
         public void AddFullSyncChangeListener(string db, C8oFullSyncChangeListener listener)
         {
             c8oFullSync.AddFullSyncChangeListener(db, listener);
         }
 
+        /// <summary>
+        /// Remove a listener for changes of the 'db'.
+        /// </summary>
+        /// <param name="db">the name of the fullsync database to monitor. Use the default database for a blank or a null value.</param>
+        /// <param name="listener">the listener instance to remove.</param>
         public void RemoveFullSyncChangeListener(string db, C8oFullSyncChangeListener listener)
         {
             c8oFullSync.RemoveFullSyncChangeListener(db, listener);
@@ -776,6 +791,10 @@ namespace Convertigo.SDK
             AddFullSyncChangeListener(db, HandleFullSyncLive);
         }
 
+        /// <summary>
+        /// Cancel a live request previously enabled by the C8o.FS_LIVE parameter.
+        /// </summary>
+        /// <param name="liveid">The value associated with the C8o.FS_LIVE parameter.</param>
         public void CancelLive(string liveid)
         {
             if (livesDb.ContainsKey(liveid))
