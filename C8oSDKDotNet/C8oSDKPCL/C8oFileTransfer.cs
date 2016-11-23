@@ -31,8 +31,21 @@ namespace Convertigo.SDK
         private C8o c8oTask;
         private Dictionary<string, C8oFileTransferStatus> tasks = null;
         private ISet<string> canceledTasks = new HashSet<string>();
+
+        /// <summary>
+        /// Register an event handler about transfer status update.
+        /// Each step of the transfer will notify this handler.
+        /// </summary>
         public event EventHandler<C8oFileTransferStatus> RaiseTransferStatus;
+        /// <summary>
+        /// Register an event handler about debug information of the filetransfer.
+        /// Each internal debug will notify this handler.
+        /// </summary>
         public event EventHandler<string> RaiseDebug;
+        /// <summary>
+        /// Register an event handler about exception that can append during a transfer.
+        /// Each internal exception will notify this handler.
+        /// </summary>
         public event EventHandler<Exception> RaiseException;
 
         private Dictionary<string, Stream> streamToUpload;
@@ -74,18 +87,7 @@ namespace Convertigo.SDK
         ///         // Use this uuid to start the transfer and give the target filename and path on your device file system.
         ///         fileTransfer.DownloadFile(uuid, "c:\\temp\\MyTransferredFile.data");
         ///     </code>
-        /// </sample>
-        /*public C8oFileTransfer(C8o c8o, string projectName = "lib_FileTransfer", string taskDb = "c8ofiletransfer_tasks", C8oFileTransferSettings c8oFileTransferSettings = null)
-        {
-            if (c8oFileTransferSettings != null)
-            {
-                Copy(c8oFileTransferSettings);
-            }
-            c8oTask = new C8o(c8o.EndpointConvertigo + "/projects/" + projectName, new C8oSettings(c8o).SetDefaultDatabaseName(taskDb));
-            streamToUpload = new Dictionary<string, Stream>();
-
-        }*/
-        
+        /// </sample>        
         public C8oFileTransfer(C8o c8o, C8oFileTransferSettings c8oFileTransferSettings = null)
         {
             if (c8oFileTransferSettings != null)
@@ -97,6 +99,9 @@ namespace Convertigo.SDK
             streamToUpload = new Dictionary<string, Stream>();
         }
 
+        /// <summary>
+        /// Start the filetransfer loop, should be called after "Raise" handler configuration.
+        /// </summary>
         public void Start()
         {
             if (tasks == null)
@@ -496,10 +501,11 @@ namespace Convertigo.SDK
         }
 
         /// <summary>
-        /// Add a file to transfer to the upload queue. 
+        /// Add a file to transfer to the upload queue.
         /// </summary>
-        /// <param name="filepath">a path where the file will be assembled when the transfer is finished</param>
-        public async Task UploadFile(String fileName, Stream fileStream)// String filePath)
+        /// <param name="fileName">the name to identify the uploaded file</param>
+        /// <param name="fileStream">an inputStream where the file to be uploaded is read</param>
+        public async Task UploadFile(String fileName, Stream fileStream)
         {
             // Creates the task database if it doesn't exist
             await CheckTaskDb();
@@ -822,6 +828,10 @@ namespace Convertigo.SDK
             }
         }
 
+        /// <summary>
+        /// List all the current transfers.
+        /// </summary>
+        /// <returns>list of all currents C8oFileTransferStatus</returns>
         public async Task<List<C8oFileTransferStatus>> GetAllFiletransferStatus()
         {
             var list = new List<C8oFileTransferStatus>();
@@ -846,16 +856,27 @@ namespace Convertigo.SDK
             return list;
         }
 
+        /// <summary>
+        /// Cancel a file transfer and clean local parts.
+        /// </summary>
+        /// <param name="filetransferStatus">the C8oFileTransferStatus of the transfer to interrupt</param>
         public async Task CancelFiletransfer(C8oFileTransferStatus filetransferStatus)
         {
             await CancelFiletransfer(filetransferStatus.Uuid);
         }
 
+        /// <summary>
+        /// Cancel a file transfer and clean local parts.
+        /// </summary>
+        /// <param name="uuid">the uuid of the transfer to interrupt</param>
         public async Task CancelFiletransfer(string uuid)
         {
             canceledTasks.Add(uuid);
         }
 
+        /// <summary>
+        /// Cancel all the file transfers.
+        /// </summary>
         public async Task CancelFiletransfers()
         {
             foreach (var filetransferStatus in await GetAllFiletransferStatus())
