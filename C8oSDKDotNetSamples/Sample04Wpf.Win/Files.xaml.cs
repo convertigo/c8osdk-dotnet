@@ -61,6 +61,7 @@ namespace Sample04Wpf.Win
 
             app.fileTransfer.RaiseTransferStatus += (sender, transferStatus) =>
             {
+                app.c8o.Log.Debug("FTS: " + transferStatus);
                 app.c8o.RunUI(() =>
                 {
                     File file = null;
@@ -144,12 +145,61 @@ namespace Sample04Wpf.Win
             }
         }
 
+        private async void LockDownload_Click(object sender, RoutedEventArgs e)
+        {
+            File file = FilesList.SelectedItem as File;
+
+            file.progress = "preparing (lock)";
+
+            FilesList.Items.Remove(file);
+            FilesListProgress.Items.Add(file);
+
+            var doc = await app.c8o.CallXml(".LockFile",
+                "filename", file.name
+            ).Async();
+
+            string xml = doc.ToString();
+            var uuid = doc.XPathSelectElement("/document/uuid");
+
+            app.OutputArea.Text = xml;
+            if (uuid == null)
+            {
+                file.progress = "error";
+
+                FilesListProgress.Items.Remove(file);
+                FilesList.Items.Add(file);
+            }
+
+            if (uuid != null)
+            {
+                file.uuid = uuid.Value;
+                await app.fileTransfer.DownloadFile(file.uuid, "C:\\TMP\\" + file.uuid + "_" + file.name);
+            }
+        }
+
+        private async void Unlock_Click(object sender, RoutedEventArgs e)
+        {
+            File file = FilesList.SelectedItem as File;
+
+            var doc = await app.c8o.CallXml(".UnlockFile",
+                "filename", file.name
+            ).Async();
+
+            string xml = doc.ToString();
+            app.OutputArea.Text = xml;
+        }
+
         private async void Upload_Click(object sender, RoutedEventArgs e)
         {
+            
             string filePath = FilteToUpload.Text; // "C:\\TMP\\vs_langpack.exe";  // "C:\\TMP\\test001.png";
             string fileName = Path.GetFileName(filePath);
             Stream fileStream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read);            
             await app.fileTransfer.UploadFile(fileName, fileStream);
+            /*
+            await app.fileTransfer.CancelFiletransfers();
+            app.c8o.Log.Info("CANCELED");
+            */
         }
 
         private void Browse_Click(object sender, RoutedEventArgs e)

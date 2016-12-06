@@ -25,24 +25,37 @@ namespace Sample04Wpf.Win
             //var cert = File.ReadAllBytes("D:\\COMMON\\C8O\\7.3.3_srv_win\\tomcat\\conf\\client.p12");
 
             c8o = new C8o(
-            // "https://tonus.twinsoft.fr:28443/convertigo/projects/BigFileTransferSample",
-            // "http://localhost:18080/convertigo/projects/BigFileTransferSample",
-            "http://192.168.100.69:18080/convertigo/projects/BigFileTransferSample",
+                  // "https://tonus.twinsoft.fr:28443/convertigo/projects/BigFileTransferSample",
+                  "http://localhost:18080/convertigo/projects/BigFileTransferSample",
+                 // "http://buildus.twinsoft.fr:28080/convertigo/projects/BigFileTransferSample",
+            //"https://192.168.100.156/convertigo/projects/BigFileTransferSample",
             // "http://192.168.100.156:28080/convertigo/projects/BigFileTransferSample",
             //"http://nicolasa.convertigo.net/cems/projects/BigFileTransferSample"
             new C8oSettings()
             .SetTrustAllCertificates(false)
                 .AddClientCertificate("clientDassault.p12", "bhytrd")
                 .SetFullSyncLocalSuffix("_app2")
+                .SetLogLevelLocal(C8oLogLevel.DEBUG)
+                .SetFullSyncReplicationHeartbeat(System.TimeSpan.FromSeconds(33))
                 //.AddClientCertificate(cert, "password"));
             );
-            fileTransfer = new C8oFileTransfer(c8o);
+            fileTransfer = new C8oFileTransfer(c8o, new C8oFileTransferSettings().SetMaxRunning(1));
 
             fileTransfer.RaiseDebug += (sender, debug) =>
             {
+                c8o.Log.Debug("FTD: " + debug);
                 c8o.RunUI(() =>
                 {
                     OutputArea.Text = debug;
+                });
+            };
+
+            fileTransfer.RaiseException += (sender, ex) =>
+            {
+                c8o.Log.Debug("FTE: " + ex);
+                c8o.RunUI(() =>
+                {
+                    OutputArea.Text = "" + ex;
                 });
             };
         }
