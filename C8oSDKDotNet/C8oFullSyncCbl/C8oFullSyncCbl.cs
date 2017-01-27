@@ -28,6 +28,7 @@ namespace Convertigo.SDK.Internal
         private IDictionary<string, C8oFullSyncDatabase> fullSyncDatabases;
         private IDictionary<string, ISet<C8oFullSyncChangeListener>> fullSyncChangeListeners;
         private IDictionary<string, EventHandler<DatabaseChangeEventArgs>> cblChangeListeners;
+        private IDictionary<string, string> viewDDocRev;
 
         //*** Constructors / Initializations ***//
 
@@ -42,6 +43,8 @@ namespace Convertigo.SDK.Internal
             fullSyncDatabases = new Dictionary<string, C8oFullSyncDatabase>();
             fullSyncChangeListeners = new Dictionary<string, ISet<C8oFullSyncChangeListener>>();
             cblChangeListeners = new Dictionary<string, EventHandler<DatabaseChangeEventArgs>>();
+            viewDDocRev = new Dictionary<string, string>();
+
             manager = Manager.SharedInstance;
 
             Debug.Listeners.Remove("Couchbase");
@@ -482,7 +485,7 @@ namespace Convertigo.SDK.Internal
 
         //*** JavaScript View ***//
 
-        private Couchbase.Lite.View CompileView(string viewName, JObject viewProps, Database database)
+        private Couchbase.Lite.View CompileView(Database db, string viewName, JObject viewProps)
         {
             JToken language;
             if (!viewProps.TryGetValue("language", out language))
@@ -494,26 +497,17 @@ namespace Convertigo.SDK.Internal
             {
                 return null;
             }
-
-            //Assembly couchbaseLiteAssembly = Assembly.GetAssembly(typeof(IViewCompiler));
-            //string tmp = "";
-            //foreach (Type type in couchbaseLiteAssembly.ExportedTypes)
-            //{
-            //    tmp = tmp + type.Namespace + " // " + type.Name + " \n";
-            //}
-            //Type jsViewCompilerType = couchbaseLiteAssembly.GetType(FullSyncMobile.JS_VIEW_COMPILER_TYPE);
-            //ConstructorInfo[] constructors = jsViewCompilerType.GetConstructors();
-            // ConstructorInfo attachmentInternalConstructor = attachmentInternalType.GetConstructor(new Type[] { typeof(String), typeof(IDictionary<string, object>) });
-            // object attachmentInternal = attachmentInternalConstructor.Invoke(attachmentInternalConstructorParams);
-
+            
             IViewCompiler viewCompiler = Couchbase.Lite.View.Compiler;
             IViewCompiler test = new JSViewCompilerCopy();
             Couchbase.Lite.View.Compiler = test;
-            MapDelegate mapBlock = Couchbase.Lite.View.Compiler.CompileMap((String) mapSource, (String) language);
+            MapDelegate mapBlock = Couchbase.Lite.View.Compiler.CompileMap(mapSource.Value<string>(), language.Value<string>());
             if (mapBlock == null)
             {
                 return null;
             }
+
+            string mapID = db.Name + ":" + viewName + ":" + mapSource.Value<string>().GetHashCode();
 
             JToken reduceSource = null;
             ReduceDelegate reduceBlock = null;
@@ -521,15 +515,16 @@ namespace Convertigo.SDK.Internal
             {
                 // Couchbase.Lite.View.compiler est null et Couchbase.Lite.Listener.JSViewCompiler est inaccessible (même avec la reflection)
                 
-                reduceBlock = Couchbase.Lite.View.Compiler.CompileReduce((String) reduceSource, (String) language);
+                reduceBlock = Couchbase.Lite.View.Compiler.CompileReduce(reduceSource.Value<string>(), language.Value<string>());
                 if (reduceBlock == null)
                 {
                     return null;
                 }
+                mapID += ":" + reduceSource.Value<string>().GetHashCode();
             }
 
-            Couchbase.Lite.View view = database.GetView(viewName);
-            view.SetMapReduce(mapBlock, reduceBlock, "1");
+            Couchbase.Lite.View view = db.GetView(viewName);
+            view.SetMapReduce(mapBlock, reduceBlock, mapID);
             JToken collation = null;
             if (viewProps.TryGetValue("collation", out collation))
             {
@@ -548,21 +543,40 @@ namespace Convertigo.SDK.Internal
             string tdViewName = ddocName + "/" + viewName;
             Couchbase.Lite.View view = database.GetExistingView(tdViewName);
 
+            Document rev = database.GetExistingDocument(C8oFullSync.FULL_SYNC_DDOC_PREFIX + "/" + ddocName);
+
+            if (rev == null)
+            {
+                return null;
+            }
+
+            string revID = rev.CurrentRevisionId;
+
+            if (view != null)
+            {
+                string mapVersion = view.MapVersion;
+                if (mapVersion == null || !revID.Equals(viewDDocRev[mapVersion]))
+                {
+                    view = null;
+                }
+            }
+
             if (view == null || view.Map == null)
             {
                 // No TouchDB view is defined, or it hasn't had a map block assigned
                 // Searches in the design document if there is a CouchDB view definition we can compile
 
-                Document designDocument = database.GetExistingDocument(C8oFullSync.FULL_SYNC_DDOC_PREFIX + "/" + ddocName);
-                JObject views = designDocument.GetProperty(FULL_SYNC_VIEWS) as JObject;
+                JObject views = rev.GetProperty(FULL_SYNC_VIEWS) as JObject;
                 JToken viewProps;
                 if (!views.TryGetValue(viewName, out viewProps))
                 {
                     return null;
                 }
-                view = CompileView(viewName, viewProps as JObject, database);
-
-                // ???
+                view = CompileView(database, tdViewName, viewProps as JObject);
+                if (view != null)
+                {
+                    viewDDocRev[view.MapVersion] = revID;
+                }
             }
 
             return view;
