@@ -142,6 +142,9 @@ namespace Convertigo.SDK.Internal
 
         public static XDocument StreamToXml(Stream stream)
         {
+            /*var reader = new StreamReader(stream, Encoding.UTF8);
+            var value = reader.ReadToEnd();
+            XDocument xml = XDocument.Parse(value);*/
             XDocument xml = XDocument.Load(stream);
             return xml;
         }
