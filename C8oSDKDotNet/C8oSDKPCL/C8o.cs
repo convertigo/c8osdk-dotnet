@@ -38,7 +38,7 @@ namespace Convertigo.SDK
         /// <summary>
         /// The regex used to get the part of the endpoint before '/projects/'
         /// </summary>
-        private static readonly Regex RE_ENDPOINT = new Regex(@"^(http(s)?://([^:]+)(:[0-9]+)?/?.*?)/projects/([^/]+)$", RegexOptions.IgnoreCase);
+        private static readonly Regex RE_ENDPOINT = new Regex(@"^(http(s)?://([^:/]+)(:[0-9]+)?/?.*?)/projects/([^/]+)$", RegexOptions.IgnoreCase);
 
         //*** Engine reserved parameters ***//
 
