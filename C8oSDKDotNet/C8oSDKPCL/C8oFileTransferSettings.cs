@@ -48,6 +48,12 @@ namespace Convertigo.SDK
             this.maxDurationForTransferAttempt = maxDurationForTransferAttempt;
             return this;
         }
-        
+
+        public C8oFileTransferSettings SetMaxDurationForChunk(TimeSpan maxDurationForChunk)
+        {
+            this.maxDurationForChunk = maxDurationForChunk;
+            return this;
+        }
+
     }
 }

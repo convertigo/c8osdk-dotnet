@@ -274,6 +274,7 @@ namespace Convertigo.SDK
                 {
                     var locker = new bool[] { false };
                     var expireTransfer = DateTime.Now.Add(MaxDurationForTransferAttempt);
+                    var expireChunk = expireTransfer;
 
                     await c8o.CallJson("fs://" + fsConnector + ".create").Async();
 
@@ -286,6 +287,23 @@ namespace Convertigo.SDK
                             Monitor.Pulse(locker);
                         }
                         return null;
+                    }).Progress(progress =>
+                    {
+                        if (progress.Status.Equals("Active"))
+                        {
+                            expireChunk = DateTime.Now.Add(MaxDurationForChunk);
+                            int current = (int) Math.Max(0, progress.Current - 2);
+                            if (current > transferStatus.Current)
+                            {
+                                transferStatus.Current = current;
+                                Notify(transferStatus);
+                            }
+                        }
+                        else
+                        {
+                            Debug("======== NOT ACTIVE >> progress:\n" + progress);
+                            expireChunk = expireTransfer;
+                        }
                     });
 
                     transferStatus.State = C8oFileTransferStatus.StateReplicate;
@@ -308,19 +326,12 @@ namespace Convertigo.SDK
                                     locker[0] = true;
                                     throw new Exception("expireTransfer of " + MaxDurationForTransferAttempt + " : retry soon");
                                 }
-                                Monitor.Wait(locker, 1000);
-                            }
-
-                            var all = await c8o.CallJson("fs://" + fsConnector + ".all", allOptions).Async();
-                            var rows = all["rows"];
-                            if (rows != null)
-                            {
-                                int current = (rows as JArray).Count;
-                                if (current != transferStatus.Current)
+                                if (DateTime.Now > expireChunk)
                                 {
-                                    transferStatus.Current = current;
-                                    Notify(transferStatus);
+                                    locker[0] = true;
+                                    throw new Exception("expireChunk of " + MaxDurationForTransferAttempt + " : retry soon");
                                 }
+                                Monitor.Wait(locker, 1000);
                             }
                         }
                         catch (Exception e)
