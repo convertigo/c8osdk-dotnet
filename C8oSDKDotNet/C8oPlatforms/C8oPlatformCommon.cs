@@ -14,6 +14,9 @@ namespace Convertigo.SDK.Internal
             {
                 FileStream fileStream = File.Open(path, FileMode.Open, FileAccess.Read);
                 return fileStream;
+            }, path =>
+            {
+                File.Delete(path);
             });
 
             C8oFullSyncCbl.Init();

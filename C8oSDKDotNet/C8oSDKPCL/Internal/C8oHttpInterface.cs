@@ -72,6 +72,24 @@ namespace Convertigo.SDK.Internal
             }
         }
 
+        public async Task<HttpWebResponse> HandleGetRequest(string url)
+        {
+            var request = HttpWebRequest.Create(url) as HttpWebRequest;
+            OnRequestCreate(request);
+
+            request.Method = "GET";
+            request.Headers["x-convertigo-sdk"] = C8o.GetSdkVersion();
+            request.CookieContainer = cookieContainer;
+            
+            HttpWebResponse response = await HandleFirstRequest(request);
+            if (response == null)
+            {
+                response = await HandleRequest(request);
+            }
+
+            return response;
+        }
+
         public async Task<HttpWebResponse> HandleRequest(string url, IDictionary<string, object> parameters)
         {
             var request = HttpWebRequest.Create(url) as HttpWebRequest;

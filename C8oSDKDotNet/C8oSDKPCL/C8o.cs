@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -857,6 +858,11 @@ namespace Convertigo.SDK
                     task.ExecuteFromLive();
                 }
             }
+        }
+
+        internal string GetMD5(Stream stream)
+        {
+            return c8oFullSync.GetMD5(stream);
         }
     }
 }

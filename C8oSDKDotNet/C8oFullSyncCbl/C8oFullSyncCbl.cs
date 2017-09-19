@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Convertigo.SDK.Internal
@@ -735,6 +736,20 @@ namespace Convertigo.SDK.Internal
                     C8oFullSyncCblEnum.AddToQuery(query, fullSyncRequestParameter, parameterValue);
                 }
             }
+        }
+
+        public override string GetSHA1(Stream stream)
+        {
+            var hash = SHA1CryptoServiceProvider.Create().ComputeHash(stream);
+            var hexHash = BitConverter.ToString(hash);
+            return hexHash;
+        }
+
+        public override string GetMD5(Stream stream)
+        {
+            var hash = MD5CryptoServiceProvider.Create().ComputeHash(stream);
+            var b64 = Convert.ToBase64String(hash);
+            return b64;
         }
 
         //protected override FullSyncDatabase2 CreateFullSyncDatabase(string databaseName)

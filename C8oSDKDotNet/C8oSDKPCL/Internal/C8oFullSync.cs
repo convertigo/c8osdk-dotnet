@@ -197,5 +197,7 @@ namespace Convertigo.SDK.Internal
 
         public abstract void AddFullSyncChangeListener(string db, C8oFullSyncChangeListener listener);
         public abstract void RemoveFullSyncChangeListener(string db, C8oFullSyncChangeListener listener);
+        
+        public abstract string GetMD5(Stream stream);
     }
 }

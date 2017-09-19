@@ -244,7 +244,7 @@ namespace Convertigo.SDK
                 //
                 // 0 : Authenticates the user on the Convertigo server in order to replicate wanted documents
                 //
-                if (!task["replicated"].Value<bool>() || !task["remoteDeleted"].Value<bool>())
+                if (!task["replicated"].Value<bool>() || !task["remoteDeleted"].Value<bool>() || !task["assembled"].Value<bool>())
                 {
                     needRemoveSession = true;
                     var json = await c8o.CallJson(".SelectUuid", "uuid", uuid).Async();
@@ -269,7 +269,6 @@ namespace Convertigo.SDK
                 //
                 // 1 : Replicate the document discribing the chunks ids list
                 //
-
                 if (!task["replicated"].Value<bool>() && fsConnector != null && !canceledTasks.Contains(uuid))
                 {
                     var locker = new bool[] { false };
@@ -369,15 +368,75 @@ namespace Convertigo.SDK
                     //
                     // 2 : Gets the document describing the chunks list
                     //
-                    var createdFileStream = fileManager.CreateFile(transferStatus.Filepath);
+                    var filepath = transferStatus.Filepath;
+                    var createdFileStream = fileManager.CreateFile(filepath);
                     createdFileStream.Position = 0;
 
                     for (int i = 0; i < transferStatus.Total; i++)
                     {
-                        var meta = await c8o.CallJson("fs://" + fsConnector + ".get", "docid", uuid + "_" + i).Async();
-                        Debug(meta.ToString());
+                        try
+                        {
+                            var meta = await c8o.CallJson("fs://" + fsConnector + ".get", "docid", uuid + "_" + i).Async();
+                            Debug(meta.ToString());
 
-                        AppendChunk(createdFileStream, meta.SelectToken("_attachments.chunk.content_url").ToString());
+                            AppendChunk(createdFileStream, meta.SelectToken("_attachments.chunk.content_url").ToString(), c8o);
+                        } catch (Exception e)
+                        {
+                            var chunkpath = filepath + ".chunk";
+                            try
+                            {
+                                Debug("Failed to retrieve the attachment " + i + " due to: [" + e.GetType().Name + "] " + e.Message);
+                                var fsurl = c8o.EndpointConvertigo + "/fullsync/" + fsConnector + "/" + uuid + "_" + i;
+
+                                Debug("Getting the document at: " + fsurl);
+                                var responseString = C8oTranslator.StreamToString(c8o.httpInterface.HandleGetRequest(fsurl).Result.GetResponseStream());
+
+                                Debug("The document content: " + responseString);
+                                var json = C8oTranslator.StringToJson(responseString);
+
+                                var digest = json["_attachments"]["chunk"]["digest"].ToString();
+
+                                var chunkFS = fileManager.CreateFile(chunkpath);
+                                var fsurlatt = fsurl + "/chunk";
+
+                                int retry = 5;
+                                while (retry > 0)
+                                {
+                                    Debug("Getting the attachment at: " + fsurlatt);
+                                    AppendChunk(chunkFS, fsurlatt, c8o);
+
+                                    chunkFS.Position = 0;
+                                    var md5 = "md5-" + c8o.GetMD5(chunkFS);
+
+                                    Debug("Comparing digests: " + digest + " / " + md5);
+
+                                    if (digest.Equals(md5))
+                                    {
+                                        chunkFS.Position = 0;
+                                        chunkFS.CopyTo(createdFileStream, 4096);
+                                        Debug("Chunk '" + uuid + "_" + i + "' assembled.");
+                                        retry = 0;
+                                    }
+                                    else if (retry-- > 0)
+                                    {
+                                        Debug("The digest doesn't match, retry downloading.");
+                                    }
+                                    else
+                                    {
+                                        throw new Exception("Invalid digest: " + digest + " / " + md5);
+                                    }
+                                }
+                            }
+                            catch (Exception e2)
+                            {
+                                Debug("The digest doesn't match, retry downloading.");
+                                throw e2;
+                            }
+                            finally
+                            {
+                                fileManager.DeleteFile(chunkpath);
+                            }
+                        }
                     }
                     createdFileStream.Dispose();
 
@@ -451,13 +510,12 @@ namespace Convertigo.SDK
             }
         }
 
-        private void AppendChunk(Stream createdFileStream, string contentPath)
+        private void AppendChunk(Stream createdFileStream, string contentPath, C8o c8o)
         {
             Stream chunkStream;
             if (contentPath.StartsWith("http://") || contentPath.StartsWith("https://"))
             {
-                var request = HttpWebRequest.CreateHttp(contentPath);
-                var response = Task<WebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request).Result as HttpWebResponse;
+                var response = c8o.httpInterface.HandleGetRequest(contentPath).Result;
                 chunkStream = response.GetResponseStream();
             }
             else

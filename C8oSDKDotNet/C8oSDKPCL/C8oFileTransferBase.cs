@@ -6,8 +6,8 @@ namespace Convertigo.SDK
     {
         protected string projectName = "lib_FileTransfer";
         protected string taskDb = "c8ofiletransfer_tasks";
-        protected TimeSpan maxDurationForTransferAttempt = TimeSpan.FromMinutes(20);
-        protected TimeSpan maxDurationForChunk = TimeSpan.FromMinutes(4);
+        protected TimeSpan maxDurationForTransferAttempt = TimeSpan.FromMinutes(40);
+        protected TimeSpan maxDurationForChunk = TimeSpan.FromMinutes(10);
         protected int maxRunning = 4;
 
         public string ProjectName

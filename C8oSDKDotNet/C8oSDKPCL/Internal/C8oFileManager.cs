@@ -13,11 +13,16 @@ namespace Convertigo.SDK.Internal
         /// Returns a file stream pointing to the specified path.
         /// </summary>
         public Func<string, Stream> OpenFile;
+        /// <summary>
+        /// Remove the file pointing to the specified path.
+        /// </summary>
+        public Action<string> DeleteFile;
 
-        public C8oFileManager(Func<string, Stream> CreateFile, Func<string, Stream> OpenFile)
+        public C8oFileManager(Func<string, Stream> CreateFile, Func<string, Stream> OpenFile, Action<string> DeleteFile)
         {
             this.CreateFile = CreateFile;
             this.OpenFile = OpenFile;
+            this.DeleteFile = DeleteFile;
         }
     }
 }
