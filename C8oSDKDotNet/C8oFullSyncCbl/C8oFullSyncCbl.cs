@@ -738,13 +738,6 @@ namespace Convertigo.SDK.Internal
             }
         }
 
-        public override string GetSHA1(Stream stream)
-        {
-            var hash = SHA1CryptoServiceProvider.Create().ComputeHash(stream);
-            var hexHash = BitConverter.ToString(hash);
-            return hexHash;
-        }
-
         public override string GetMD5(Stream stream)
         {
             var hash = MD5CryptoServiceProvider.Create().ComputeHash(stream);
