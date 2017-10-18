@@ -34,7 +34,7 @@ namespace Convertigo.SDK.Internal
         {
         }
         
-        protected virtual async Task<HttpWebResponse> HandleFirstRequest(HttpWebRequest request)
+        protected virtual async Task<HttpWebResponse> HandleFirstRequest(HttpWebRequest request, int timeout)
         {
             await firstCallMutex.WaitAsync();
 
@@ -42,7 +42,7 @@ namespace Convertigo.SDK.Internal
             {
                 if (!firstCallEnd)
                 {
-                    var response = await HandleRequest(request);
+                    var response = await HandleRequest(request, timeout);
                     firstCallEnd = true;
                     return response;
                 }
@@ -54,7 +54,7 @@ namespace Convertigo.SDK.Internal
             return null;
         }
 
-        protected async Task<HttpWebResponse> HandleRequest(HttpWebRequest request)
+        protected async Task<HttpWebResponse> HandleRequest(HttpWebRequest request, int timeout)
         {
             var task = Task<WebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request);
             if (timeout > -1)
@@ -68,11 +68,24 @@ namespace Convertigo.SDK.Internal
             }
             else
             {
-                return await task as HttpWebResponse;
+                try
+                {
+                    return await task as HttpWebResponse;
+                }
+                catch (Exception e)
+                {
+                    c8o.Log._Debug("HandleRequest failed, retry", e);
+                    return await HandleRequest(request, timeout);
+                }
             }
         }
 
         public async Task<HttpWebResponse> HandleGetRequest(string url)
+        {
+            return await HandleGetRequest(url, timeout);
+        }
+
+        public async Task<HttpWebResponse> HandleGetRequest(string url, int timeout)
         {
             var request = HttpWebRequest.Create(url) as HttpWebRequest;
             OnRequestCreate(request);
@@ -81,10 +94,10 @@ namespace Convertigo.SDK.Internal
             request.Headers["x-convertigo-sdk"] = C8o.GetSdkVersion();
             request.CookieContainer = cookieContainer;
             
-            HttpWebResponse response = await HandleFirstRequest(request);
+            HttpWebResponse response = await HandleFirstRequest(request, timeout);
             if (response == null)
             {
-                response = await HandleRequest(request);
+                response = await HandleRequest(request, timeout);
             }
 
             return response;
@@ -100,10 +113,10 @@ namespace Convertigo.SDK.Internal
             request.CookieContainer = cookieContainer;
 
             SetRequestEntity(request, parameters);
-            HttpWebResponse response = await HandleFirstRequest(request);
+            HttpWebResponse response = await HandleFirstRequest(request, timeout);
             if (response == null)
             {
-                response = await HandleRequest(request);
+                response = await HandleRequest(request, timeout);
             }
 
             return response;            

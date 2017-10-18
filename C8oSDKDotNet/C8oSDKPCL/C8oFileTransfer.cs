@@ -110,7 +110,7 @@ namespace Convertigo.SDK
 
                 Task.Factory.StartNew(async () =>
                 {
-                    await CheckTaskDb();
+                    CheckTaskDb();
                     int skip = 0;
 
                     var param = new Dictionary<string, object>
@@ -144,15 +144,15 @@ namespace Convertigo.SDK
                                     //await c8oTask.CallJson("fs://.delete", "docid", uuid).Async();
                                     //continue;
 
-                                    string filePath = task["filePath"].Value<string>();
+                                    string filePath = FilePrefix + task["filePath"].Value<string>();
 
                                     // Add the document id to the tasks list
                                     var transferStatus = tasks[uuid] = new C8oFileTransferStatus(uuid, filePath);
                                     transferStatus.State = C8oFileTransferStatus.StateQueued;
-                                    Notify(transferStatus);
 
                                     if (task["download"] != null)
                                     {
+                                        transferStatus.Current = task["download"].Value<int>();
                                         transferStatus.IsDownload = true;
                                         DownloadFile(transferStatus, task).GetAwaiter();
                                     }
@@ -161,6 +161,8 @@ namespace Convertigo.SDK
                                         transferStatus.IsDownload = false;
                                         UploadFile(transferStatus, task).GetAwaiter();
                                     }
+
+                                    Notify(transferStatus);
 
                                     skip = 0;
                                 }
@@ -187,12 +189,16 @@ namespace Convertigo.SDK
             }
         }
 
-        private async Task CheckTaskDb()
+        private void CheckTaskDb()
         {
-            if (!tasksDbCreated)
+            lock (c8oTask)
             {
-                await c8oTask.CallJson("fs://.create").Async();
-                tasksDbCreated = true;
+                if (!tasksDbCreated)
+                {
+                    Debug("Creation of the c8oTask DB.");
+                    c8oTask.CallJson("fs://.create").Sync();
+                    tasksDbCreated = true;
+                }
             }
         }
 
@@ -204,16 +210,22 @@ namespace Convertigo.SDK
         /// <param name="filepath">a path where the file will be assembled when the transfer is finished</param>
         public async Task DownloadFile(string uuid, string filePath)
         {
-            await CheckTaskDb();
+            CheckTaskDb();
 
-            await c8oTask.CallJson("fs://.post",
-                "_id", uuid,
-                "filePath", filePath,
-                "replicated", false,
-                "assembled", false,
-                "remoteDeleted", false,
-                "download", 0
-            ).Async();
+            try
+            {
+                await c8oTask.CallJson("fs://.post",
+                    "_id", uuid,
+                    "filePath", filePath,
+                    "replicated", false,
+                    "assembled", false,
+                    "remoteDeleted", false,
+                    "download", 0
+                ).Async();
+            } catch (Exception e)
+            {
+                throw new C8oException("Skip DownloadFile request with UUID " + uuid + ": already added.", e);
+            }
 
             lock (this)
             {
@@ -226,7 +238,9 @@ namespace Convertigo.SDK
         {
             var uuid = transferStatus.Uuid;
             bool needRemoveSession = false;
+
             C8o c8o = null;
+            Stream createdFileStream = null;
             try
             {
                 lock (_maxRunning)
@@ -266,10 +280,35 @@ namespace Convertigo.SDK
                     }
                 }
 
+                if (!useCouchBaseReplication && !task["replicated"].Value<bool>() && fsConnector != null && !canceledTasks.Contains(uuid))
+                {
+                    var filepath = transferStatus.Filepath + ".tmp";
+                    createdFileStream = fileManager.CreateFile(filepath);
+                    
+                    var res = await c8oTask.CallJson("fs://.get", "docid", task["_id"].Value<string>()).Async();
+
+                    var pos = res["position"] != null ? res["position"].Value<long>() : 0;
+                    var last = res["download"].Value<int>();
+                    createdFileStream.Position = pos;
+                    transferStatus.Current = last;
+
+                    for (var i = last; i < transferStatus.Total; i++)
+                    {
+                        await DownloadChunk(c8o, createdFileStream, filepath, fsConnector, uuid, i, task, transferStatus);
+                    }
+                    createdFileStream.Dispose();
+                    res = await c8oTask.CallJson("fs://.post",
+                        C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                        "_id", task["_id"].Value<string>(),
+                        "replicated", task["replicated"] = true
+                    ).Async();
+                    Debug("replicated true:\n" + res);
+                }
+
                 //
                 // 1 : Replicate the document discribing the chunks ids list
                 //
-                if (!task["replicated"].Value<bool>() && fsConnector != null && !canceledTasks.Contains(uuid))
+                if (useCouchBaseReplication && !task["replicated"].Value<bool>() && fsConnector != null && !canceledTasks.Contains(uuid))
                 {
                     var locker = new bool[] { false };
                     var expireTransfer = DateTime.Now.Add(MaxDurationForTransferAttempt);
@@ -361,7 +400,21 @@ namespace Convertigo.SDK
 
                 var isCanceling = canceledTasks.Contains(uuid);
 
-                if (!task["assembled"].Value<bool>() && fsConnector != null && !isCanceling)
+                if (!useCouchBaseReplication && !task["assembled"].Value<bool>() && fsConnector != null && !isCanceling)
+                {
+                    var filepath = transferStatus.Filepath;
+                    fileManager.DeleteFile(filepath);
+                    fileManager.MoveFile(filepath + ".tmp", filepath);
+
+                    var res = await c8oTask.CallJson("fs://.post",
+                        C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                        "_id", task["_id"].Value<string>(),
+                        "assembled", task["assembled"] = true
+                    ).Async();
+                    Debug("assembled true:\n" + res);
+                }
+
+                if (useCouchBaseReplication && !task["assembled"].Value<bool>() && fsConnector != null && !isCanceling)
                 {
                     transferStatus.State = C8oFileTransferStatus.StateAssembling;
                     Notify(transferStatus);
@@ -369,7 +422,7 @@ namespace Convertigo.SDK
                     // 2 : Gets the document describing the chunks list
                     //
                     var filepath = transferStatus.Filepath;
-                    var createdFileStream = fileManager.CreateFile(filepath);
+                    createdFileStream = fileManager.CreateFile(filepath);
                     createdFileStream.Position = 0;
 
                     for (int i = 0; i < transferStatus.Total; i++)
@@ -382,60 +435,8 @@ namespace Convertigo.SDK
                             AppendChunk(createdFileStream, meta.SelectToken("_attachments.chunk.content_url").ToString(), c8o);
                         } catch (Exception e)
                         {
-                            var chunkpath = filepath + ".chunk";
-                            try
-                            {
-                                Debug("Failed to retrieve the attachment " + i + " due to: [" + e.GetType().Name + "] " + e.Message);
-                                var fsurl = c8o.EndpointConvertigo + "/fullsync/" + fsConnector + "/" + uuid + "_" + i;
-
-                                Debug("Getting the document at: " + fsurl);
-                                var responseString = C8oTranslator.StreamToString(c8o.httpInterface.HandleGetRequest(fsurl).Result.GetResponseStream());
-
-                                Debug("The document content: " + responseString);
-                                var json = C8oTranslator.StringToJson(responseString);
-
-                                var digest = json["_attachments"]["chunk"]["digest"].ToString();
-
-                                var chunkFS = fileManager.CreateFile(chunkpath);
-                                var fsurlatt = fsurl + "/chunk";
-
-                                int retry = 5;
-                                while (retry > 0)
-                                {
-                                    Debug("Getting the attachment at: " + fsurlatt);
-                                    AppendChunk(chunkFS, fsurlatt, c8o);
-
-                                    chunkFS.Position = 0;
-                                    var md5 = "md5-" + c8o.GetMD5(chunkFS);
-
-                                    Debug("Comparing digests: " + digest + " / " + md5);
-
-                                    if (digest.Equals(md5))
-                                    {
-                                        chunkFS.Position = 0;
-                                        chunkFS.CopyTo(createdFileStream, 4096);
-                                        Debug("Chunk '" + uuid + "_" + i + "' assembled.");
-                                        retry = 0;
-                                    }
-                                    else if (retry-- > 0)
-                                    {
-                                        Debug("The digest doesn't match, retry downloading.");
-                                    }
-                                    else
-                                    {
-                                        throw new Exception("Invalid digest: " + digest + " / " + md5);
-                                    }
-                                }
-                            }
-                            catch (Exception e2)
-                            {
-                                Debug("The digest doesn't match, retry downloading.");
-                                throw e2;
-                            }
-                            finally
-                            {
-                                fileManager.DeleteFile(chunkpath);
-                            }
+                            Debug("Failed to retrieve the attachment " + i + " due to: [" + e.GetType().Name + "] " + e.Message);
+                            await DownloadChunk(c8o, createdFileStream, filepath, fsConnector, uuid, i, task, transferStatus);
                         }
                     }
                     createdFileStream.Dispose();
@@ -490,6 +491,10 @@ namespace Convertigo.SDK
             }
             finally
             {
+                if (createdFileStream != null)
+                {
+                    createdFileStream.Dispose();
+                }
                 lock (_maxRunning)
                 {
                     _maxRunning[0]++;
@@ -510,22 +515,103 @@ namespace Convertigo.SDK
             }
         }
 
+        private async Task DownloadChunk(C8o c8o, Stream createdFileStream, string filepath, string fsConnector, string uuid, int i, JObject task, C8oFileTransferStatus transferStatus)
+        {
+            Stream chunkFS = null;
+            var chunkpath = filepath + ".chunk";
+            try
+            {
+                var fsurl = c8o.EndpointConvertigo + "/fullsync/" + fsConnector + "/" + uuid + "_" + i;
+
+                Debug("Getting the document at: " + fsurl);
+                var responseString = C8oTranslator.StreamToString(c8o.httpInterface.HandleGetRequest(fsurl).Result.GetResponseStream());
+
+                Debug("The document content: " + responseString);
+                var json = C8oTranslator.StringToJson(responseString);
+
+                var digest = json["_attachments"]["chunk"]["digest"].ToString();
+
+                chunkFS = fileManager.CreateFile(chunkpath);
+                var fsurlatt = fsurl + "/chunk";
+
+                int retry = 5;
+                while (retry > 0)
+                {
+                    Debug("Getting the attachment at: " + fsurlatt);
+                    AppendChunk(chunkFS, fsurlatt, c8o);
+
+                    chunkFS.Position = 0;
+                    var md5 = "md5-" + c8o.GetMD5(chunkFS);
+
+                    Debug("Comparing digests: " + digest + " / " + md5);
+
+                    if (digest.Equals(md5))
+                    {
+                        chunkFS.Position = 0;
+                        chunkFS.CopyTo(createdFileStream, 4096);
+                        Debug("Chunk '" + uuid + "_" + i + "' assembled.");
+                        retry = 0;
+                        await c8oTask.CallJson("fs://.post",
+                            C8o.FS_POLICY, C8o.FS_POLICY_MERGE,
+                            "_id", task["_id"].Value<string>(),
+                            "download", transferStatus.Current = i + 1,
+                            "position", createdFileStream.Position
+                        ).Async();
+                        Notify(transferStatus);
+                    }
+                    else if (retry-- > 0)
+                    {
+                        Debug("The digest doesn't match, retry downloading.");
+                    }
+                    else
+                    {
+                        throw new Exception("Invalid digest: " + digest + " / " + md5);
+                    }
+                }
+            }
+            catch (Exception e2)
+            {
+                Debug("The digest doesn't match, retry downloading.");
+                throw e2;
+            }
+            finally
+            {
+                if (chunkFS != null)
+                {
+                    chunkFS.Dispose();
+                }
+                fileManager.DeleteFile(chunkpath);
+            }
+        }
+
         private void AppendChunk(Stream createdFileStream, string contentPath, C8o c8o)
         {
-            Stream chunkStream;
-            if (contentPath.StartsWith("http://") || contentPath.StartsWith("https://"))
+            Stream chunkStream = null;
+            try
             {
-                var response = c8o.httpInterface.HandleGetRequest(contentPath).Result;
-                chunkStream = response.GetResponseStream();
+                if (contentPath.StartsWith("http://") || contentPath.StartsWith("https://"))
+                {
+                    var response = c8o.httpInterface.HandleGetRequest(contentPath,(int) MaxDurationForChunk.TotalMilliseconds).Result;
+                    chunkStream = response.GetResponseStream();
+                }
+                else
+                {
+                    string contentPath2 = UrlToPath(contentPath);
+                    chunkStream = fileManager.OpenFile(contentPath2);
+                }
+                Debug("AppendChunk for " + contentPath + " copy");
+                chunkStream.CopyTo(createdFileStream, 4096);
+                Debug("AppendChunk for " + contentPath + " copy finished");
+
+                createdFileStream.Position = createdFileStream.Length;
             }
-            else
+            finally
             {
-                string contentPath2 = UrlToPath(contentPath);
-                chunkStream = fileManager.OpenFile(contentPath2);
+                if (chunkStream != null)
+                {
+                    chunkStream.Dispose();
+                }
             }
-            chunkStream.CopyTo(createdFileStream, 4096);
-            chunkStream.Dispose();
-            createdFileStream.Position = createdFileStream.Length;
         }
 
         private static string UrlToPath(string url)
@@ -577,7 +663,7 @@ namespace Convertigo.SDK
         public async Task UploadFile(String fileName, Stream fileStream)
         {
             // Creates the task database if it doesn't exist
-            await CheckTaskDb();
+            CheckTaskDb();
 
             // Initializes the uuid ending with the number of chunks
             string uuid = System.Guid.NewGuid().ToString();

@@ -34,6 +34,15 @@ namespace Convertigo.SDK
             return this;
         }
 
+        public C8oFileTransferSettings SetFilePrefix(string filePrefix)
+        {
+            if (filePrefix != null)
+            {
+                this.filePrefix = filePrefix;
+            }
+            return this;
+        }
+
         public C8oFileTransferSettings SetMaxRunning(int maxRunning)
         {
             if (maxRunning > 0)
@@ -52,6 +61,12 @@ namespace Convertigo.SDK
         public C8oFileTransferSettings SetMaxDurationForChunk(TimeSpan maxDurationForChunk)
         {
             this.maxDurationForChunk = maxDurationForChunk;
+            return this;
+        }
+
+        public C8oFileTransferSettings SetUseCouchBaseReplication(bool useCouchBaseReplication)
+        {
+            this.useCouchBaseReplication = useCouchBaseReplication;
             return this;
         }
 

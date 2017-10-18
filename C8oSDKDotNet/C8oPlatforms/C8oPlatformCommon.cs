@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace Convertigo.SDK.Internal
@@ -8,8 +9,16 @@ namespace Convertigo.SDK.Internal
         {
             C8oFileTransfer.fileManager = new C8oFileManager(path =>
             {
-                FileStream fileStream = File.Create(path);
-                return fileStream;
+                try
+                {
+                    FileStream fileStream = File.Create(path);
+                    return fileStream;
+                }
+                catch (Exception e)
+                {
+                    FileStream fileStream = File.Open(path, FileMode.Open, FileAccess.ReadWrite);
+                    return fileStream;
+                }
             }, path =>
             {
                 FileStream fileStream = File.Open(path, FileMode.Open, FileAccess.Read);
@@ -17,6 +26,9 @@ namespace Convertigo.SDK.Internal
             }, path =>
             {
                 File.Delete(path);
+            }, (source, dest) =>
+            {
+                File.Move(source, dest);
             });
 
             C8oFullSyncCbl.Init();

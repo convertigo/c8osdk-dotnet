@@ -48,12 +48,24 @@ namespace Convertigo.SDK.Internal
                     options.StorageType = StorageEngineTypes.ForestDB;
                 }
 
-                database = manager.OpenDatabase(databaseName, options);
-                for (int i = 0; i < 6 && database == null; i++)
+                try
+                {
+                    c8o.Log._Debug("manager.OpenDatabase(databaseName, options); //create");
+                    database = manager.OpenDatabase(databaseName, options);
+                    c8o.Log._Debug("manager.OpenDatabase(databaseName, options); //create ok");
+                } catch (Exception ex)
+                {
+                    c8o.Log._Debug("manager.OpenDatabase(databaseName, options); //nocreate");
+                    options.Create = false;
+                    database = manager.OpenDatabase(databaseName, options);
+                    c8o.Log._Debug("manager.OpenDatabase(databaseName, options); //nocreate ok");
+                }
+                
+                /*for (int i = 0; i < 6 && database == null; i++)
                 {
                     Task.Delay(500).Wait();
                     database = manager.OpenDatabase(databaseName, options);
-                }
+                }*/
                 if (database == null)
                 {
                     throw new C8oException("Cannot get the local database: " + databaseName);

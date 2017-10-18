@@ -6,9 +6,11 @@ namespace Convertigo.SDK
     {
         protected string projectName = "lib_FileTransfer";
         protected string taskDb = "c8ofiletransfer_tasks";
+        protected string filePrefix = "";
         protected TimeSpan maxDurationForTransferAttempt = TimeSpan.FromMinutes(40);
         protected TimeSpan maxDurationForChunk = TimeSpan.FromMinutes(10);
         protected int maxRunning = 4;
+        protected bool useCouchBaseReplication = false;
 
         public string ProjectName
         {
@@ -18,6 +20,11 @@ namespace Convertigo.SDK
         public string TaskDb
         {
             get { return taskDb; }
+        }
+
+        public string FilePrefix
+        {
+            get { return filePrefix; }
         }
 
         public int MaxRunning
@@ -35,13 +42,20 @@ namespace Convertigo.SDK
             get { return maxDurationForChunk; }
         }
 
+        public bool UseCouchBaseReplication
+        {
+            get { return useCouchBaseReplication; }
+        }
+
         public void Copy(C8oFileTransferSettings settings)
         {
             projectName = settings.projectName;
             taskDb = settings.taskDb;
+            filePrefix = settings.filePrefix;
             maxRunning = settings.maxRunning;
             maxDurationForTransferAttempt = settings.maxDurationForTransferAttempt;
             maxDurationForChunk = settings.maxDurationForChunk;
+            useCouchBaseReplication = settings.useCouchBaseReplication;
         }
     }
 }

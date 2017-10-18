@@ -108,20 +108,6 @@ namespace Convertigo.SDK.Internal
                 }
             }
         }
-        
-        protected override Task<HttpWebResponse> HandleFirstRequest(HttpWebRequest request)
-        {
-            lock (firstCallMutex)
-            {
-                if (!firstCallEnd)
-                {
-                    var response = request.GetResponse() as HttpWebResponse;
-                    firstCallEnd = true;
-                    return Task.FromResult<HttpWebResponse>(response);
-                }
-            }
-            return Task.FromResult<HttpWebResponse>(null);
-        }
 
         public static void Init()
         {
