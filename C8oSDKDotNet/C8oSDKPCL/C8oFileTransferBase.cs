@@ -10,7 +10,7 @@ namespace Convertigo.SDK
         protected TimeSpan maxDurationForTransferAttempt = TimeSpan.FromMinutes(40);
         protected TimeSpan maxDurationForChunk = TimeSpan.FromMinutes(10);
         protected int maxRunning = 4;
-        protected bool useCouchBaseReplication = false;
+        protected bool useCouchBaseReplication = true;
 
         public string ProjectName
         {
