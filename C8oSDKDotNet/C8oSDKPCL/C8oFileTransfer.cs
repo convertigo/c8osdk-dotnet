@@ -292,6 +292,9 @@ namespace Convertigo.SDK
                     createdFileStream.Position = pos;
                     transferStatus.Current = last;
 
+                    transferStatus.State = C8oFileTransferStatus.StateReplicate;
+                    Notify(transferStatus);
+
                     for (var i = last; i < transferStatus.Total; i++)
                     {
                         await DownloadChunk(c8o, createdFileStream, filepath, fsConnector, uuid, i, task, transferStatus);
@@ -402,6 +405,9 @@ namespace Convertigo.SDK
 
                 if (!useCouchBaseReplication && !task["assembled"].Value<bool>() && fsConnector != null && !isCanceling)
                 {
+                    transferStatus.State = C8oFileTransferStatus.StateAssembling;
+                    Notify(transferStatus);
+
                     var filepath = transferStatus.Filepath;
                     fileManager.DeleteFile(filepath);
                     fileManager.MoveFile(filepath + ".tmp", filepath);
