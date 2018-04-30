@@ -9,14 +9,14 @@ namespace Convertigo.SDK.Internal
         {
             C8oFileTransfer.fileManager = new C8oFileManager(path =>
             {
-                try
-                {
-                    FileStream fileStream = File.Create(path);
-                    return fileStream;
-                }
-                catch (Exception e)
+                if (File.Exists(path))
                 {
                     FileStream fileStream = File.Open(path, FileMode.Open, FileAccess.ReadWrite);
+                    return fileStream;
+                }
+                else
+                {
+                    FileStream fileStream = File.Create(path);
                     return fileStream;
                 }
             }, path =>
