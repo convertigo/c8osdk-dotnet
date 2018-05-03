@@ -21,7 +21,7 @@ namespace Convertigo.SDK
     public class C8oFileTransfer : C8oFileTransferBase
     {
         static internal C8oFileManager fileManager;
-        
+
         private bool tasksDbCreated = false;
         private bool alive = true;
 
@@ -222,7 +222,8 @@ namespace Convertigo.SDK
                     "remoteDeleted", false,
                     "download", 0
                 ).Async();
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 throw new C8oException("Skip DownloadFile request with UUID " + uuid + ": already added.", e);
             }
@@ -284,7 +285,7 @@ namespace Convertigo.SDK
                 {
                     var filepath = transferStatus.Filepath + ".tmp";
                     createdFileStream = fileManager.CreateFile(filepath);
-                    
+
                     var res = await c8oTask.CallJson("fs://.get", "docid", task["_id"].Value<string>()).Async();
 
                     var pos = res["position"] != null ? res["position"].Value<long>() : 0;
@@ -439,7 +440,8 @@ namespace Convertigo.SDK
                             Debug(meta.ToString());
 
                             AppendChunk(createdFileStream, meta.SelectToken("_attachments.chunk.content_url").ToString(), c8o);
-                        } catch (Exception e)
+                        }
+                        catch (Exception e)
                         {
                             Debug("Failed to retrieve the attachment " + i + " due to: [" + e.GetType().Name + "] " + e.Message);
                             await DownloadChunk(c8o, createdFileStream, filepath, fsConnector, uuid, i, task, transferStatus);
@@ -528,26 +530,55 @@ namespace Convertigo.SDK
             try
             {
                 var fsurl = c8o.EndpointConvertigo + "/fullsync/" + fsConnector + "/" + uuid + "_" + i;
-
-                Debug("Getting the document at: " + fsurl);
-                var responseString = C8oTranslator.StreamToString(c8o.httpInterface.HandleGetRequest(fsurl).Result.GetResponseStream());
-
-                Debug("The document content: " + responseString);
-                var json = C8oTranslator.StringToJson(responseString);
-
-                var digest = json["_attachments"]["chunk"]["digest"].ToString();
-
-                chunkFS = fileManager.CreateFile(chunkpath);
                 var fsurlatt = fsurl + "/chunk";
+                var digest = "no digest";
 
                 int retry = 5;
                 while (retry > 0)
                 {
-                    Debug("Getting the attachment at: " + fsurlatt);
-                    AppendChunk(chunkFS, fsurlatt, c8o);
+                    try
+                    {
+                        Debug("Getting the document at: " + fsurl);
+                        var responseString = C8oTranslator.StreamToString(c8o.httpInterface.HandleGetRequest(fsurl).Result.GetResponseStream());
 
-                    chunkFS.Position = 0;
-                    var md5 = "md5-" + c8o.GetMD5(chunkFS);
+                        Debug("The document content: " + responseString);
+                        var json = C8oTranslator.StringToJson(responseString);
+
+                        digest = json["_attachments"]["chunk"]["digest"].ToString();
+                        retry = 0;
+                    }
+                    catch (Exception e)
+                    {
+                        if (retry-- > 0)
+                        {
+                            Debug("Failed to get the chunk descriptor, retry. Cause: " + e.Message);
+                        }
+                        else
+                        {
+                            throw new Exception("Failed to get the chunk descriptor at " + fsurl, e);
+                        }
+                    }
+                }
+
+                chunkFS = fileManager.CreateFile(chunkpath);
+
+                retry = 5;
+                while (retry > 0)
+                {
+                    var md5 = "no md5";
+                    try
+                    {
+                        Debug("Getting the attachment at: " + fsurlatt);
+                        chunkFS.Position = 0;
+                        AppendChunk(chunkFS, fsurlatt, c8o);
+
+                        chunkFS.Position = 0;
+                        md5 = "md5-" + c8o.GetMD5(chunkFS);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug("Download Chunk failed, retry it. Cause: " + e.Message);
+                    }
 
                     Debug("Comparing digests: " + digest + " / " + md5);
 
@@ -577,7 +608,7 @@ namespace Convertigo.SDK
             }
             catch (Exception e2)
             {
-                Debug("The digest doesn't match, retry downloading.");
+                Debug("Failed to DownloadChunk, retry soon.");
                 throw e2;
             }
             finally
@@ -597,7 +628,7 @@ namespace Convertigo.SDK
             {
                 if (contentPath.StartsWith("http://") || contentPath.StartsWith("https://"))
                 {
-                    var response = c8o.httpInterface.HandleGetRequest(contentPath,(int) MaxDurationForChunk.TotalMilliseconds).Result;
+                    var response = c8o.httpInterface.HandleGetRequest(contentPath, (int) MaxDurationForChunk.TotalMilliseconds).Result;
                     chunkStream = response.GetResponseStream();
                 }
                 else
@@ -673,7 +704,7 @@ namespace Convertigo.SDK
 
             // Initializes the uuid ending with the number of chunks
             string uuid = System.Guid.NewGuid().ToString();
-           
+
             // Posts a document describing the state of the upload in the task db
             await c8oTask.CallJson("fs://.post",
                  "_id", uuid,
@@ -694,7 +725,7 @@ namespace Convertigo.SDK
                 Monitor.Pulse(this);
             }
         }
-        
+
         async Task UploadFile(C8oFileTransferStatus transferStatus, JObject task)
         {
             var uuid = transferStatus.Uuid;
@@ -715,7 +746,7 @@ namespace Convertigo.SDK
 
                 // Creates a c8o instance with a specific fullsync local suffix in order to store chunks in a specific database
                 var c8o = new C8o(c8oTask.Endpoint, new C8oSettings(c8oTask).SetFullSyncLocalSuffix("_" + uuid).SetDefaultDatabaseName("c8ofiletransfer"));
-                
+
                 // Creates the local db
                 await c8o.CallJson("fs://.create").Async();
 
@@ -734,7 +765,7 @@ namespace Convertigo.SDK
                         await c8oTask.CallJson("fs://.delete", "docid", uuid).Async();
                         throw new Exception("The file '" + task["fileName"] + "' can't be upload because it was stopped before the file content was handled");
                     }
-                    
+
                     MemoryStream chunk = new MemoryStream(chunkSize);
                     fileStream.Position = 0;
 
@@ -747,13 +778,13 @@ namespace Convertigo.SDK
                         byte[] buffer = new byte[chunkSize];
                         int countTot = -1;
                         int read = 1;
-                        while(read > 0)
+                        while (read > 0)
                         {
-                            countTot ++;
-                            
+                            countTot++;
+
                             //fileStream.Position = chunkSize * countTot;
                             read = fileStream.Read(buffer, 0, chunkSize);
-                            if(read > 0)
+                            if (read > 0)
                             {
                                 string docid = uuid + "_" + countTot;
                                 await c8o.CallJson("fs://.post",
@@ -775,7 +806,7 @@ namespace Convertigo.SDK
 
                                 chunk.Dispose();
                             }
-                            
+
                         }
                         transferStatus.total = countTot;
                     }
@@ -845,7 +876,7 @@ namespace Convertigo.SDK
                                     locker[0] = true;
                                     Monitor.Pulse(locker);
                                 }
-                            }    
+                            }
                         });
 
                         // Waits the end of the replication if it is not finished
