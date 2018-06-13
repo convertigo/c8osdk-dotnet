@@ -18,6 +18,9 @@ namespace C8oSDKNUnitWPF
     [TestFixture]
     class C8oTest
     {
+        /*static readonly string HOST = "c8o-dev.convertigo.net";
+        static readonly string PORT = "80";
+        static readonly string PROJECT_PATH = "/cems/projects/ClientSDKtesting";*/
         static readonly string HOST = "buildus.twinsoft.fr";
         static readonly string PORT = "28080";
         static readonly string PROJECT_PATH = "/convertigo/projects/ClientSDKtesting";
@@ -862,7 +865,7 @@ namespace C8oSDKNUnitWPF
             Assert.AreEqual("step 3", value);
         }
 
-        [Test]
+        //[Test]
         public void C8o0Ssl1TrustFail()
         {
             Exception exception = null;
@@ -1511,6 +1514,8 @@ namespace C8oSDKNUnitWPF
                     json = c8o.CallJson(".LoginTesting").Sync();
                     value = json.SelectToken("document.authenticatedUserID").Value<string>();
                     Assert.AreEqual("testing_user", value);
+                    json = c8o.CallJson("fs://.reset").Sync();
+                    Assert.True(json["ok"].Value<bool>());
                     json = c8o.CallJson("fs://.replicate_pull").Sync();
                     Assert.True(json["ok"].Value<bool>());
                     json = c8o.CallJson("fs://.view",

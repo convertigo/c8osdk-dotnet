@@ -462,6 +462,7 @@ namespace Convertigo.SDK.Internal
         public async override Task<object> HandleResetDatabaseRequest(string databaseName)
         {
             await HandleDestroyDatabaseRequest(databaseName);
+            await Task.Delay(200);
             return await HandleCreateDatabaseRequest(databaseName);
 	    }
 
@@ -556,7 +557,7 @@ namespace Convertigo.SDK.Internal
             if (view != null)
             {
                 string mapVersion = view.MapVersion;
-                if (mapVersion == null || !revID.Equals(viewDDocRev[mapVersion]))
+                if (mapVersion == null || !viewDDocRev.ContainsKey(mapVersion) || !revID.Equals(viewDDocRev[mapVersion]))
                 {
                     view = null;
                 }
