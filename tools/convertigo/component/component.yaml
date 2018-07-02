@@ -1,0 +1,34 @@
+%YAML 1.2
+---
+summary: Integrate your Xamarin Apps with Convertigo MBaaS
+getting-started: GettingStarted.md
+details: Details.md
+screenshots: 
+  - screenshots/screenshot1.png
+license: License.md
+icons: 
+  - convertigo_128x128.png
+  - convertigo_512x512.png
+publisher: Convertigo SA
+name: convertigo-mbaas
+id: convertigo-mbaas
+
+samples: 
+  Xamarin Sample: ../../../../Build Xamarin retailStore Sample/retailstore.sln
+
+publisher-url: http://www.convertigo.com
+libraries: 
+  ios-unified: 
+  - ../../../C8oSDKDotNet.iOS/bin/iPhone/Release/C8oSDKDotNet.iOS.dll
+  - ../../../C8oSDKPCL/bin/Release/C8oSDKPCL.dll
+  android:
+  - ../../../C8oSDKDotNet.Android/bin/Release/C8oSDKDotNet.Android.dll
+  - ../../../C8oSDKPCL/bin/Release/C8oSDKPCL.dll
+packages:
+  "":
+  - Newtonsoft.Json, Version=7.0.1  
+  - Couchbase.Lite, Version=1.4.0.0  
+  - UnicodeNormalization, Version=1.0.4
+  - Jint, Version=2.9.1   
+version: "2.1.5"
+...

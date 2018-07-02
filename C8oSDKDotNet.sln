@@ -1,0 +1,77 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKPCL", "C8oSDKPCL\C8oSDKPCL.csproj", "{1764723D-85B1-4FDE-ACCF-88BB7A3B62A8}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "C8oFullSyncCbl", "C8oFullSyncCbl\C8oFullSyncCbl.shproj", "{863CE965-5C79-48F0-9E97-1AADC3241A87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKDotNet.Android", "C8oSDKDotNet.Android\C8oSDKDotNet.Android.csproj", "{4F9BA553-8252-412D-98C8-C113CC009F82}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKDotNet.iOS", "C8oSDKDotNet.iOS\C8oSDKDotNet.iOS.csproj", "{9D58D300-2DAD-488D-BEF1-6F591CF3E401}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "C8oPlatform", "C8oPlatforms\C8oPlatform.shproj", "{BDF9111D-F09A-4213-9721-114434CA73B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKDotNet.Windows", "C8oSDKDotNet.Windows\C8oSDKDotNet.Windows.csproj", "{FAD46F42-E48D-45D3-BA42-A27298F0B63B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3FCB2A24-57B3-4A12-8A25-C16DD29F72B0}"
+	ProjectSection(SolutionItems) = preProject
+		C8oFullSyncCbl\C8oFullSyncDatabase.cs.bak = C8oFullSyncCbl\C8oFullSyncDatabase.cs.bak
+		C8oFullSyncExtensions.nuspec = C8oFullSyncExtensions.nuspec
+		C8oSDK-PCL.nuspec = C8oSDK-PCL.nuspec
+		C8oSDK-PCL.shfbproj = C8oSDK-PCL.shfbproj
+		tools\convertigo\component\component.yaml = tools\convertigo\component\component.yaml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKNUnitWPF", "C8oSDKNUnitWPF\C8oSDKNUnitWPF.csproj", "{1F0D5C6E-D47D-430F-9C7F-76D8B8B3718E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKNUnitWPF_nuget", "C8oSDKNUnitWPF_nuget\C8oSDKNUnitWPF_nuget.csproj", "{171F9ED3-8216-4201-9370-DEA9FEC9D308}"
+EndProject
+Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		C8oFullSyncCbl\C8oFullSyncNet.projitems*{4f9ba553-8252-412d-98c8-c113cc009f82}*SharedItemsImports = 4
+		C8oPlatforms\C8oPlatforms.projitems*{4f9ba553-8252-412d-98c8-c113cc009f82}*SharedItemsImports = 4
+		C8oFullSyncCbl\C8oFullSyncNet.projitems*{863ce965-5c79-48f0-9e97-1aadc3241a87}*SharedItemsImports = 13
+		C8oFullSyncCbl\C8oFullSyncNet.projitems*{9d58d300-2dad-488d-bef1-6f591cf3e401}*SharedItemsImports = 4
+		C8oPlatforms\C8oPlatforms.projitems*{9d58d300-2dad-488d-bef1-6f591cf3e401}*SharedItemsImports = 4
+		C8oPlatforms\C8oPlatforms.projitems*{bdf9111d-f09a-4213-9721-114434ca73b6}*SharedItemsImports = 13
+		C8oFullSyncCbl\C8oFullSyncNet.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
+		C8oPlatforms\C8oPlatforms.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1764723D-85B1-4FDE-ACCF-88BB7A3B62A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1764723D-85B1-4FDE-ACCF-88BB7A3B62A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1764723D-85B1-4FDE-ACCF-88BB7A3B62A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1764723D-85B1-4FDE-ACCF-88BB7A3B62A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F9BA553-8252-412D-98C8-C113CC009F82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F9BA553-8252-412D-98C8-C113CC009F82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F9BA553-8252-412D-98C8-C113CC009F82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F9BA553-8252-412D-98C8-C113CC009F82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D58D300-2DAD-488D-BEF1-6F591CF3E401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D58D300-2DAD-488D-BEF1-6F591CF3E401}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D58D300-2DAD-488D-BEF1-6F591CF3E401}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D58D300-2DAD-488D-BEF1-6F591CF3E401}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAD46F42-E48D-45D3-BA42-A27298F0B63B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F0D5C6E-D47D-430F-9C7F-76D8B8B3718E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F0D5C6E-D47D-430F-9C7F-76D8B8B3718E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F0D5C6E-D47D-430F-9C7F-76D8B8B3718E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F0D5C6E-D47D-430F-9C7F-76D8B8B3718E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{171F9ED3-8216-4201-9370-DEA9FEC9D308}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{171F9ED3-8216-4201-9370-DEA9FEC9D308}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
