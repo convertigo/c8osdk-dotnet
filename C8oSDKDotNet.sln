@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKPCL", "C8oSDKPCL\C8oSDKPCL.csproj", "{1764723D-85B1-4FDE-ACCF-88BB7A3B62A8}"
 EndProject
@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		C8oSDK-PCL.nuspec = C8oSDK-PCL.nuspec
 		C8oSDK-PCL.shfbproj = C8oSDK-PCL.shfbproj
 		tools\convertigo\component\component.yaml = tools\convertigo\component\component.yaml
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKNUnitWPF", "C8oSDKNUnitWPF\C8oSDKNUnitWPF.csproj", "{1F0D5C6E-D47D-430F-9C7F-76D8B8B3718E}"
@@ -29,10 +30,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKNUnitWPF_nuget", "C8oSDKNUnitWPF_nuget\C8oSDKNUnitWPF_nuget.csproj", "{171F9ED3-8216-4201-9370-DEA9FEC9D308}"
 EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		C8oFullSyncCbl\C8oFullSyncNet.projitems*{4f9ba553-8252-412d-98c8-c113cc009f82}*SharedItemsImports = 4
 		C8oPlatforms\C8oPlatforms.projitems*{4f9ba553-8252-412d-98c8-c113cc009f82}*SharedItemsImports = 4
@@ -73,5 +70,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7C8F43A8-1789-4ADF-AB87-71A21813548B}
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal
