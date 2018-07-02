@@ -25,4 +25,4 @@ Client SDK is available for:
 * [React Native](https://github.com/convertigo/react-native-c8osdk) as a NPM package
 * [Google Angular framework](https://github.com/convertigo/c8osdk-angular) as typescript an NPM package
 * [Vue.js](https://github.com/convertigo/c8osdk-vuejs), [ReactJS](https://github.com/convertigo/c8osdk-vuejs), [AngularJS](https://github.com/convertigo/c8osdk-vuejs) Framework as a standard Javascript NPM package
-* [Windows desktop](https://github.com/convertigo/c8ossdk-dotnet) or [Xamarin apps](https://github.com/convertigo/c8ossdk-dotnet) as Nugets or Xamarin Components
+* [Windows desktop](https://github.com/convertigo/c8osdk-dotnet) or [Xamarin apps](https://github.com/convertigo/c8osdk-dotnet) as Nugets or Xamarin Components
