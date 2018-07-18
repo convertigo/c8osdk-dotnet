@@ -217,3 +217,176 @@ c8o.CallJson(".getSimpleData").ThenUI((jObject, parameters) =>
 });
 // following lines are executed immediately, before the end of the request.
 ```
+
+### Chaining calls ###
+
+The `.then()` or `.thenUI()` returns a C8oPromise that can be use to chain other promise methods, such as `.then()` or `.thenUI()` or failure handlers.  
+ The last `.then()` or `.thenUI()` must return a nil value. `.then()` or `.thenUI()` can be mixed but the returning type must be the same: XML or JSON.
+ 
+```csharp
+c8o.CallJson(".getSimpleData", "callNumber", 1).Then((jObject, parameters) =>
+{
+  // you can do stuff here and return the next C8oPromise<JObject> instead of deep nested blocks
+  return c8o.CallJson(".getSimpleData", "callNumber", 2);
+}).ThenUI((jObject, parameters) => // use .Then or .ThenUI is allowed
+{
+  // you can do stuff here and even modify previous parameters
+  parameters["callNumber"] = 3;
+  parameters["extraParameter"] = "ok";
+  return c8o.CallJson(".getSimpleData", parameters);
+}).Then((jObject, parameters) =>
+{
+  // you can do stuff here and return null because this is the end of the chain
+  return null;
+});
+```
+
+### Handling failures ###
+
+A call can throw an error for many reasons: technical failure, network error and so on.  
+The standard do/catch should be used to handle this.  
+This is the case for the `.sync()` method: if an exception occurs during the request execution, the original exception is thrown by the method and can be encapsulated in a `C8oException`.
+
+#### Try / catch handling ####
+
+```csharp
+try
+{
+  c8o.CallJson(".getSimpleData").Sync();
+  // or in an async scope
+  await c8o.CallJson(".getSimpleData").Async();
+}
+catch (Exception exception)
+{
+  // process the exception
+}
+```
+
+#### Then / ThenUI handling ####
+
+When you use the `.then()` or the `.thenUI()` methods, the do/catch mechanism can’t catch a “future” exception or throwable: you have to use the `.fail()` or `.failUI()` methods at the end on the promise chain.  
+One fail handler per promise chain is allowed. The fail callback provide the object thrown (like an Exception) and the parameters of the failed request.
+
+```csharp
+c8o.CallJson(".getSimpleData", "callNumber", 1).Then((jObject, parameters) =>
+{
+  return c8o.CallJson(".getSimpleData", "callNumber", 2);
+}).ThenUI((jObject, parameters) =>
+{
+  return null;
+}).Fail((exception, parameters) =>
+{
+    // exception caught from the first or the second CallJson, can be an Exception
+    // this code runs in a worker thread
+    …
+});
+
+c8o.CallJson(".getSimpleData", "callNumber", 1).Then((jObject, parameters) =>
+{
+  return c8o.CallJson(".getSimpleData", "callNumber", 2);
+}).ThenUI((jObject, parameters) =>
+{
+  return null;
+}).FailUI((exception, parameters) =>
+{
+    // exception caught from the first or the second CallJson, can be an Exception
+    // this code runs in a UI thread
+    …
+});
+```
+
+### Writing the device logs to the Convertigo server ###
+
+#### Basic ####
+
+An application developer usually adds log information in his code. This is useful for the code execution tracking, statistics or debugging.
+
+The Convertigo Client SDK offers an API to easily log on the standard device logger, generally in a dedicated console. To see this console, a device must be physically connected on a computer.
+
+Fortunately, the same API also send log to the Convertigo server and they are merged with the server log. You can easily debug your device and server code on the same screen, on the same timeline. Logs from a device contain metadata, such as the device UUID and can help to filter logs on the server.
+
+A log level must be specified:
+
+* Fatal: used for critical error message
+* Error: used for common error message
+* Warn: used for not expected case
+* Info: used for high level messages
+* Debug: used for help the developer to understand the execution
+* Trace: used for help the developer to trace the code
+* To write a log string, use the C8oLogger instance of a C8o instance:
+
+```csharp
+try
+{
+  c8o.Log.Info("hello world!"); // the message can be a simple string
+}
+catch (Exception exception)
+{
+  c8o.Log.Error("bye world...", e); // the message can also take an Exception argument
+}
+if (c8o.Log.IsDebug()) // check if currents log levels are enough
+{
+  // enter here only if a log level is 'trace' or 'debug', can prevent unnecessary CPU usage
+  string msg = serializeData(); // compute a special string, like a Document serialization
+  c8o.Log.Debug(msg);
+}
+```
+
+#### Advanced ####
+
+A C8oLogger have 2 log levels, one for local logging and the other for the remote logging. With the Android SDK, the local logging is set by the logcat options. With the .Net SDK, the local logging depends of the LogLevelLocal setting of C8oSettings.
+
+The remote logging level is enslaved by Convertigo server Log levels property: devices output logger. In case of failure, the remote logging is disabled and cannot be re-enabled for the current C8o instance. It can also be disabled using the LogRemote setting of C8oSettings, enabled with true (default) and disabled with false.
+
+To monitor remote logging failure, a LogOnFail handler can be registered with the C8oSetting.
+
+The Convertigo Client SDK itself writes logs. They can be turned off using the LogC8o setting of C8oSettings, enabled with true (default) and disabled with false.
+
+```csharp
+new C8oSetting()
+  .SetLogC8o(false)    // disable log from the Convertigo Client SDK itself
+  .SetLogRemote(false) // disable remote logging
+  .SetLogLevelLocal(C8oLogLevel.TRACE);
+// or
+new C8oSetting().SetLogOnFail((exception, parameters) =>
+{
+  // the exception contains the cause of the remote logging failure
+});
+```
+
+
+### Using the Local Cache ###
+
+Sometimes we would like to use local cache on C8o calls and responses, in order to:
+
+* save network traffic between the device and the server,
+* be able to display data when the device is not connected to the network.
+
+The Local Cache feature allows to store locally on the device the responses to a C8o call, using the variables and their values as cache key.
+
+To use the Local Cache, add to a call a pair parameter of "__localCache" and a C8oLocalCache instance. The constructor of C8oLocalCache needs some parameters:
+
+* C8oLocalCache.Priority (SERVER / LOCAL): defines whether the response should be retrieved from local cache or from Convertigo server when the device can access the network. When the device has no network access, the local cache response is used.
+* ttl: defines the time to live of the cached response, in milliseconds. If no value is passed, the time to live is infinite.
+* enabled: allows to enable or disable the local cache on a Convertigo requestable, default value is true.
+
+```csharp
+// return the response if is already know and less than 180 sec else call the server
+c8o.CallJson(".getSimpleData",
+  C8oLocalCache.PARAM, new C8oLocalCache(C8oLocalCache.Priority.LOCAL, 180 * 1000)
+).Sync();
+
+// same sample but with parameters, also acting as cache keys
+c8o.CallJson(".getSimpleData",
+  "firstname", "John",
+  "lastname", "Doe",
+  C8oLocalCache.PARAM, new C8oLocalCache(C8oLocalCache.Priority.LOCAL, 180 * 1000)
+).Sync();
+
+// make a standard network call with the server
+// but in case of offline move or network failure
+// return the response if is already know and less than 1 hour
+c8o.CallJson(".getSimpleData",
+  C8oLocalCache.PARAM, new C8oLocalCache(C8oLocalCache.Priority.SERVER, 3600 * 1000)
+).Sync();
+```
