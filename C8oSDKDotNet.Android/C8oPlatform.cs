@@ -27,6 +27,7 @@ namespace Convertigo.SDK
             
             C8o.deviceUUID = Android.OS.Build.Serial;
 
+            SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_esqlite3());
             C8oPlatformCommon.Init();
         }
     }

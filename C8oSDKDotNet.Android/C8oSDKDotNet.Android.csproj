@@ -42,56 +42,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Couchbase.Lite, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Couchbase.Lite.1.4.0\lib\MonoAndroid\Couchbase.Lite.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Couchbase.Lite.Storage.ForestDB, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Couchbase.Lite.Storage.ForestDB.1.4.0\lib\MonoAndroid\Couchbase.Lite.Storage.ForestDB.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Couchbase.Lite.Storage.SystemSQLite, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Couchbase.Lite.Storage.SystemSQLite.1.4.0\lib\MonoAndroid\Couchbase.Lite.Storage.SystemSQLite.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib.Portable, Version=0.86.0.51803, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpZipLib.Portable.0.86.0.0003\lib\portable-net45+netcore45+wp8+win8+wpa81+MonoTouch+MonoAndroid+Xamarin.iOS10\ICSharpCode.SharpZipLib.Portable.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Jint, Version=2.9.1.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
-      <HintPath>..\packages\Jint.2.9.1\lib\portable-net40+sl50+win+WindowsPhoneApp81+wp80\Jint.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Mono.Android" />
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Stateless, Version=2.5.80.0, Culture=neutral, PublicKeyToken=93038f0927583c9a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Stateless.2.5.80\lib\portable-net45+wp8+win8+wpa81+monotouch+monoandroid\Stateless.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\monoandroid\System.Net.Http.Extensions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\monoandroid\System.Net.Http.Primitives.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="websocket-sharp, Version=1.0.2.23848, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Couchbase.Lite.1.4.0\lib\MonoAndroid\websocket-sharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Xamarin.Android.Support.v4, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xamarin.Android.Support.v4.23.4.0.1\lib\MonoAndroid403\Xamarin.Android.Support.v4.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="C8oPlatform.cs" />
@@ -100,9 +56,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
     <None Include="Resources\AboutResources.txt" />
@@ -116,10 +69,44 @@
       <Name>C8oSDKPCL</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Couchbase.Lite">
+      <Version>1.4.1</Version>
+    </PackageReference>
+    <PackageReference Include="Couchbase.Lite.Storage.ForestDB">
+      <Version>1.4.1</Version>
+    </PackageReference>
+    <PackageReference Include="Jint">
+      <Version>2.9.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Bcl.Build">
+      <Version>1.0.21</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Net.Http">
+      <Version>2.2.29</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>8.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="SQLitePCL.plugin.sqlite3.android">
+      <Version>0.9.3</Version>
+    </PackageReference>
+    <PackageReference Include="SQLitePCL.raw">
+      <Version>0.9.3</Version>
+    </PackageReference>
+    <PackageReference Include="Stateless">
+      <Version>2.5.80</Version>
+    </PackageReference>
+    <PackageReference Include="UnicodeNormalization">
+      <Version>1.0.4</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Android.Support.v4">
+      <Version>23.4.0.1</Version>
+    </PackageReference>
+  </ItemGroup>
   <Import Project="..\C8oFullSyncCbl\C8oFullSyncNet.projitems" Label="Shared" Condition="Exists('..\C8oFullSyncCbl\C8oFullSyncNet.projitems')" />
   <Import Project="..\C8oPlatforms\C8oPlatforms.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
-  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>Ce projet fait référence à des packages NuGet qui sont manquants sur cet ordinateur. Utilisez l'option de restauration des packages NuGet pour les télécharger. Pour plus d'informations, consultez http://go.microsoft.com/fwlink/?LinkID=322105. Le fichier manquant est : {0}.</ErrorText>
