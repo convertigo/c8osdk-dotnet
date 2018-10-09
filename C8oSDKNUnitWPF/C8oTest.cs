@@ -18,12 +18,14 @@ namespace C8oSDKNUnitWPF
     [TestFixture]
     class C8oTest
     {
-        /*static readonly string HOST = "c8o-dev.convertigo.net";
+        static readonly string HOST = "c8o-dev.convertigo.net";
         static readonly string PORT = "80";
-        static readonly string PROJECT_PATH = "/cems/projects/ClientSDKtesting";*/
+        static readonly string PROJECT_PATH = "/cems/projects/ClientSDKtesting";
+
+        /*
         static readonly string HOST = "buildus.twinsoft.fr";
         static readonly string PORT = "28080";
-        static readonly string PROJECT_PATH = "/convertigo/projects/ClientSDKtesting";
+        static readonly string PROJECT_PATH = "/convertigo/projects/ClientSDKtesting";*/
 
         class Stuff
         {
