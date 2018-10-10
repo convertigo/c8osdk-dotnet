@@ -1,19 +1,26 @@
-﻿using System.Resources;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("C8oNetPclSDK")]
+[assembly: AssemblyTitle("C8oSDKDotNet.UWP")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("C8oNetPclSDK")]
-[assembly: AssemblyCopyright("Copyright © Convertigo  2018")]
+[assembly: AssemblyProduct("C8oSDKDotNet.UWP")]
+[assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: NeutralResourcesLanguage("en")]
+
+// Setting ComVisible to false makes the types in this assembly not visible 
+// to COM components.  If you need to access a type in this assembly from 
+// COM, set the ComVisible attribute to true on that type.
+[assembly: ComVisible(false)]
+
+// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: Guid("738cb073-2b8a-4d6a-b697-536b66884df4")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -27,8 +34,3 @@ using System.Runtime.CompilerServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("2.2.0.0")]
 [assembly: AssemblyFileVersion("2.2.0.0")]
-
-[assembly: InternalsVisibleTo("C8oSDKDotNet.Android")]
-[assembly: InternalsVisibleTo("C8oSDKDotNet.iOS")]
-[assembly: InternalsVisibleTo("C8oSDKDotNet.Windows")]
-[assembly: InternalsVisibleTo("C8oSDKDotNet.UWP")]

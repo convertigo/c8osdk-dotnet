@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FAD46F42-E48D-45D3-BA42-A27298F0B63B}</ProjectGuid>
+    <ProjectGuid>{40462F44-8CDA-4D8C-B8D4-1DA7A0657EC6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>C8oSDKDotNet.Windows</RootNamespace>
-    <AssemblyName>C8oSDKDotNet.Windows</AssemblyName>
+    <RootNamespace>C8oSDKDotNet.UWP</RootNamespace>
+    <AssemblyName>C8oSDKDotNet.UWP</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -66,7 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Couchbase.Lite">
-      <Version>1.4.0</Version>
+      <Version>1.4.1</Version>
     </PackageReference>
     <PackageReference Include="Couchbase.Lite.Storage.ForestDB">
       <Version>1.4.1</Version>

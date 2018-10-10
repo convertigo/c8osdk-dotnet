@@ -48,7 +48,7 @@ namespace Convertigo.SDK.Internal
 
             manager = Manager.SharedInstance;
 
-            Debug.Listeners.Remove("Couchbase");
+            // Debug.Listeners.Remove("Couchbase");
         }
 
         public Task<C8oFullSyncDatabase> GetOrCreateFullSyncDatabase(string databaseName)

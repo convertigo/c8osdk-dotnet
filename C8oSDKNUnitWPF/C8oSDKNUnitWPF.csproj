@@ -115,9 +115,6 @@
     <PackageReference Include="Couchbase.Lite">
       <Version>1.4.1</Version>
     </PackageReference>
-    <PackageReference Include="Couchbase.Lite.Storage.ForestDB">
-      <Version>1.4.1</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.Net.Http">
       <Version>2.2.29</Version>
     </PackageReference>

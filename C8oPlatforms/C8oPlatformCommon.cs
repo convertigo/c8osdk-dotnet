@@ -42,6 +42,7 @@ namespace Convertigo.SDK.Internal
             {
 
             }
+            
             try
             {
                 Couchbase.Lite.Storage.ForestDB.Plugin.Register();
@@ -50,6 +51,7 @@ namespace Convertigo.SDK.Internal
             {
 
             }
+            
         }
     }
 }
