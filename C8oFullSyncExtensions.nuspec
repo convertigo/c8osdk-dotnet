@@ -15,30 +15,46 @@
         <language>en-US</language>
         <tags>Convertigo, MBaaS, MADP, Mobile, Windows Phone, Xamarin, NoSQL, CouchDB, CouchBase Lite</tags>
         <dependencies>
-            <group targetFramework=".NETFramework0.0">
-              <dependency id="UnicodeNormalization" version="1.0.4" />
-              <dependency id="Newtonsoft.Json" version="8.0.3" />
-              <dependency id="Microsoft.Net.Http" version="2.2.29" />
-              <dependency id="Couchbase.Lite" version="1.4.1" />
-              <dependency id="Couchbase.Lite.Storage.ForestDB" version="1.4.1" />
-              <dependency id="Couchbase.Lite.Storage.SystemSQLite" version="1.4.1" />
-              <dependency id="C8oSDK-PCL" version="2.2.0" />
-              <dependency id="Jint" version="2.9.1" />
-            </group>
+          <group targetFramework=".NETFramework0.0">
+            <dependency id="UnicodeNormalization" version="1.0.4" />
+            <dependency id="Newtonsoft.Json" version="8.0.3" />
+            <dependency id="Microsoft.Net.Http" version="2.2.29" />
+            <dependency id="Couchbase.Lite" version="1.4.1" />
+            <dependency id="Couchbase.Lite.Storage.ForestDB" version="1.4.1" />
+            <dependency id="Couchbase.Lite.Storage.SystemSQLite" version="1.4.1" />
+            <dependency id="C8oSDK-PCL" version="2.2.0" />
+            <dependency id="Jint" version="2.9.1" />
+          </group>
 
-            <group targetFramework="MonoAndroid0.0">
-              <dependency id="SQLitePCL.plugin.sqlite3.android" version="0.9.3" />
-              <dependency id="UnicodeNormalization" version="1.0.4" />
-              <dependency id="Newtonsoft.Json" version="8.0.3" />
-              <dependency id="Microsoft.Net.Http" version="2.2.29" />
-              <dependency id="Couchbase.Lite" version="1.4.1" />
-              <dependency id="Couchbase.Lite.Storage.ForestDB" version="1.4.1" />
-              <dependency id="Couchbase.Lite.Storage.SystemSQLite" version="1.4.1" />
-              <dependency id="C8oSDK-PCL" version="2.2.0" />
-              <dependency id="Jint" version="2.9.1" />
-            </group>
-
-            <group targetFramework="uap">
+          <group targetFramework="Xamarin.iOS0.0">
+            <dependency id="UnicodeNormalization" version="1.0.4" />
+            <dependency id="Newtonsoft.Json" version="8.0.3" />
+            <dependency id="Microsoft.Net.Http" version="2.2.29" />
+            <dependency id="Couchbase.Lite" version="1.4.1" />
+            <dependency id="Couchbase.Lite.Storage.ForestDB" version="1.4.1" />
+            <dependency id="Couchbase.Lite.Storage.SystemSQLite" version="1.4.1" />
+            <dependency id="C8oSDK-PCL" version="2.2.0" />
+            <dependency id="Jint" version="2.9.1" />
+            
+            <dependency id="SQLitePCL.raw" version="0.9.3" />
+            <dependency id="SQLitePCL.ugly" version="0.9.3" />
+            <dependency id="System.Configuration.ConfigurationManager" version="4.5.0" />
+            <dependency id="System.Management" version="4.5.0" />
+          </group>
+          
+          <group targetFramework="MonoAndroid0.0">
+            <dependency id="SQLitePCL.plugin.sqlite3.android" version="0.9.3" />
+            <dependency id="UnicodeNormalization" version="1.0.4" />
+            <dependency id="Newtonsoft.Json" version="8.0.3" />
+            <dependency id="Microsoft.Net.Http" version="2.2.29" />
+            <dependency id="Couchbase.Lite" version="1.4.1" />
+            <dependency id="Couchbase.Lite.Storage.ForestDB" version="1.4.1" />
+            <dependency id="Couchbase.Lite.Storage.SystemSQLite" version="1.4.1" />
+            <dependency id="C8oSDK-PCL" version="2.2.0" />
+            <dependency id="Jint" version="2.9.1" />
+          </group>
+          
+          <group targetFramework="uap">
               <dependency id="UnicodeNormalization" version="1.0.4" />
               <dependency id="Newtonsoft.Json" version="8.0.3" />
               <dependency id="Microsoft.Net.Http" version="2.2.29" />

@@ -25,14 +25,16 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;SQLITE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -41,6 +43,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,6 +57,7 @@
     <Compile Include="C8oPlatform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Internal\Ref.cs" />
+    <Compile Include="SecureStorage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -65,9 +69,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Couchbase.Lite">
-      <Version>1.4.1</Version>
-    </PackageReference>
     <PackageReference Include="Couchbase.Lite.Storage.ForestDB">
       <Version>1.4.1</Version>
     </PackageReference>
@@ -83,21 +84,41 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>8.0.3</Version>
     </PackageReference>
+    <PackageReference Include="SharpZipLib.Portable">
+      <Version>0.86.0.3</Version>
+    </PackageReference>
     <PackageReference Include="SQLitePCL.native.sqlite3.v110_xp">
+      <Version>0.9.3</Version>
+    </PackageReference>
+    <PackageReference Include="SQLitePCL.plugin.sqlite3.net45">
       <Version>0.9.3</Version>
     </PackageReference>
     <PackageReference Include="SQLitePCL.raw">
       <Version>0.9.3</Version>
     </PackageReference>
+    <PackageReference Include="SQLitePCL.ugly">
+      <Version>0.9.3</Version>
+    </PackageReference>
     <PackageReference Include="Stateless">
-      <Version>2.5.80</Version>
+      <Version>2.5.53</Version>
+    </PackageReference>
+    <PackageReference Include="System.Configuration.ConfigurationManager">
+      <Version>4.5.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Management">
+      <Version>4.5.0</Version>
     </PackageReference>
     <PackageReference Include="UnicodeNormalization">
       <Version>1.0.4</Version>
     </PackageReference>
+    <PackageReference Include="WebSocketSharp-netstandard">
+      <Version>1.0.1</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="..\C8oPlatforms\C8oPlatforms.projitems" Label="Shared" />
   <Import Project="..\C8oFullSyncCbl\C8oFullSyncNet.projitems" Label="Shared" />
+  <Import Project="..\Couchbase.Lite.Shared\Couchbase.Lite.Shared.projitems" Label="Shared" />
+  <Import Project="..\SQLiteCommon\storage.sqlite.common\storage.sqlite.common.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
