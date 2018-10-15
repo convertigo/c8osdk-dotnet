@@ -58,7 +58,6 @@
               <dependency id="UnicodeNormalization" version="1.0.4" />
               <dependency id="Newtonsoft.Json" version="8.0.3" />
               <dependency id="Microsoft.Net.Http" version="2.2.29" />
-              <dependency id="Couchbase.Lite" version="1.4.1" />
               <dependency id="Couchbase.Lite.Storage.ForestDB" version="1.4.1" />
               <dependency id="Couchbase.Lite.Storage.SystemSQLite" version="1.4.1" />
               <dependency id="C8oSDK-PCL" version="2.2.0" />
@@ -70,15 +69,16 @@
               <dependency id="SQLitePCL.ugly" version="0.9.3" />
               <dependency id="System.Configuration.ConfigurationManager" version="4.5.0" />
               <dependency id="System.Management" version="4.5.0" />
+              <dependency id="Stateless" version="2.5.53.0" />
            </group>
 
 
         </dependencies>
     </metadata>
     <files>
-        <file src="C8oSDKDotNet.Android\bin\Release\C8oSDKDotNet.Android.dll"         target="lib\MonoAndroid\C8oSDKDotNet.Android.dll" />
-        <file src="C8oSDKDotNet.iOS\bin\iPhone\Release\C8oSDKDotNet.iOS.dll"          target="lib\Xamarin.iOS10\C8oSDKDotNet.iOS.dll" />
-        <file src="C8oSDKDotNet.Windows\bin\Release\C8oSDKDotNet.Windows.dll"         target="lib\net45\C8oSDKDotNet.Windows.dll" />
-        <file src="C8oSDKDotNet.UWP\bin\Release\C8oSDKDotNet.UWP.dll"                 target="lib\uap\C8oSDKDotNet.UWP.dll" />
+        <file src="C8oSDKDotNet.Android\bin\Debug\C8oSDKDotNet.Android.dll"         target="lib\MonoAndroid\C8oSDKDotNet.Android.dll" />
+        <file src="C8oSDKDotNet.iOS\bin\iPhone\Debug\C8oSDKDotNet.iOS.dll"          target="lib\Xamarin.iOS10\C8oSDKDotNet.iOS.dll" />
+        <file src="C8oSDKDotNet.Windows\bin\Debug\C8oSDKDotNet.Windows.dll"         target="lib\net45\C8oSDKDotNet.Windows.dll" />
+        <file src="C8oSDKDotNet.UWP\bin\Debug\C8oSDKDotNet.UWP.dll"                 target="lib\uap\C8oSDKDotNet.UWP.dll" />
     </files>
 </package>

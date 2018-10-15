@@ -42,12 +42,7 @@ namespace Convertigo.SDK.Internal
             {
 
             }
-
-
-            /**
-             * This has been commented out as ForestDB is not functional in UWP.
-             * The CBForest-Interop.dll is not copied to the AppX folder for un unkwon reason.
-             * /
+#if !UWP
             try
             {
                 Couchbase.Lite.Storage.ForestDB.Plugin.Register();
@@ -56,8 +51,7 @@ namespace Convertigo.SDK.Internal
             {
 
             }
-            */
-
+#endif
         }
     }
 }

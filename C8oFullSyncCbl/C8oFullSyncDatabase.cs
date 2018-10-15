@@ -191,6 +191,7 @@ namespace Convertigo.SDK.Internal
                 cancel = parameters["cancel"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
             }
 
+
             var rep = GetReplication(fullSyncReplication);
             var _progress = new C8oProgress();
             _progress.Raw = rep;
