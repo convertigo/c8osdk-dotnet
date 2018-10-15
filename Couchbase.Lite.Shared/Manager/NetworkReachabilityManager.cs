@@ -56,6 +56,7 @@ namespace Couchbase.Lite
 
 #if UWP
                 // We do not handle proxys yet on UWP platforms
+                // So, on UWP do not use the proxy
                 Uri proxy = new Uri(remoteUri);
 #else
                 Uri proxy = WebRequest.DefaultWebProxy.GetProxy(new Uri(remoteUri));
