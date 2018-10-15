@@ -161,10 +161,10 @@ namespace Couchbase.Lite.Replicator
 
                 /* Disable this code as .NETCore seems not support the SerializeToStreamAsync API... 
                  * So we do not GZIP Requests in this version...
-                 *!
+                 *
                 if (bodyBytes.Length > 100) {
                     entity = new CompressedContent(entity, "gzip");
-                }*/
+                } */
 
                 request.Content = entity;
 
