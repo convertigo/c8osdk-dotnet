@@ -158,9 +158,13 @@ namespace Couchbase.Lite.Replicator
 
                 HttpContent entity = new ByteArrayContent(bodyBytes);
                 entity.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                /* Disable this code as .NETCore seems not support the SerializeToStreamAsync API... 
+                 * So we do not GZIP Requests in this version...
+                 *!
                 if (bodyBytes.Length > 100) {
                     entity = new CompressedContent(entity, "gzip");
-                }
+                }*/
 
                 request.Content = entity;
 

@@ -53,8 +53,14 @@ namespace Couchbase.Lite
             var uri = new Uri(remoteUri);
             try
             {
+
+#if UWP
+                // We do not handle proxys yet on UWP platforms
+                Uri proxy = new Uri(remoteUri);
+#else
                 Uri proxy = WebRequest.DefaultWebProxy.GetProxy(new Uri(remoteUri));
-                using(var c = new TcpClient(proxy.DnsSafeHost, proxy.Port)) {
+#endif
+                using (var c = new TcpClient(proxy.DnsSafeHost, proxy.Port)) {
                     return true;
                 }
             } catch(Exception e) {

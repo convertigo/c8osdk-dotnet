@@ -145,7 +145,7 @@ namespace Couchbase.Lite.Support
         internal HttpMessageHandler BuildHandlerPipeline (CookieStore store, IRetryStrategy retryStrategy)
 #endif
         {
-#if __MOBILE__
+#if __MOBILE__ || UWP
             var handler = default(HttpClientHandler);
 #if __ANDROID__
             if (global::Android.OS.Build.VERSION.SdkInt >= global::Android.OS.BuildVersionCodes.Lollipop) {
