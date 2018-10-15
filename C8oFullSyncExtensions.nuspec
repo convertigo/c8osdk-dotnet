@@ -76,9 +76,9 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="C8oSDKDotNet.Android\bin\Debug\C8oSDKDotNet.Android.dll"         target="lib\MonoAndroid\C8oSDKDotNet.Android.dll" />
-        <file src="C8oSDKDotNet.iOS\bin\iPhone\Debug\C8oSDKDotNet.iOS.dll"          target="lib\Xamarin.iOS10\C8oSDKDotNet.iOS.dll" />
-        <file src="C8oSDKDotNet.Windows\bin\Debug\C8oSDKDotNet.Windows.dll"         target="lib\net45\C8oSDKDotNet.Windows.dll" />
-        <file src="C8oSDKDotNet.UWP\bin\Debug\C8oSDKDotNet.UWP.dll"                 target="lib\uap\C8oSDKDotNet.UWP.dll" />
+        <file src="C8oSDKDotNet.Android\bin\Release\C8oSDKDotNet.Android.dll"         target="lib\MonoAndroid\C8oSDKDotNet.Android.dll" />
+        <file src="C8oSDKDotNet.iOS\bin\iPhone\Release\C8oSDKDotNet.iOS.dll"          target="lib\Xamarin.iOS10\C8oSDKDotNet.iOS.dll" />
+        <file src="C8oSDKDotNet.Windows\bin\Release\C8oSDKDotNet.Windows.dll"         target="lib\net45\C8oSDKDotNet.Windows.dll" />
+        <file src="C8oSDKDotNet.UWP\bin\Release\C8oSDKDotNet.UWP.dll"                 target="lib\uap\C8oSDKDotNet.UWP.dll" />
     </files>
 </package>
