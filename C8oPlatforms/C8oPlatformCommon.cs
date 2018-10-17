@@ -36,7 +36,7 @@ namespace Convertigo.SDK.Internal
 
             try
             {
-                Couchbase.Lite.Storage.SystemSQLite.Plugin.Register();
+                // Couchbase.Lite.Storage.SystemSQLite.Plugin.Register();
             }
             catch
             {
@@ -45,7 +45,7 @@ namespace Convertigo.SDK.Internal
 #if !UWP
             try
             {
-                Couchbase.Lite.Storage.ForestDB.Plugin.Register();
+                // Couchbase.Lite.Storage.ForestDB.Plugin.Register();
             }
             catch
             {

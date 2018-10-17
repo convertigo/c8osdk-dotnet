@@ -1,5 +1,6 @@
 ﻿using Android.OS;
 using Convertigo.SDK.Internal;
+using Couchbase.Lite;
 
 namespace Convertigo.SDK
 {
