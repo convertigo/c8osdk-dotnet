@@ -177,6 +177,17 @@ namespace C8oSDKNUnitAndroid
                     }
                 }
             }).Start();
+
+#if   WPF 
+            C8oPlatform.Init(action =>
+            {
+                uiQueue.Enqueue(action);
+                lock (uiQueue)
+                {
+                    Monitor.Pulse(uiQueue);
+                }
+            });
+#endif
         }
 
         [Test]

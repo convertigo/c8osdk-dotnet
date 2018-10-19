@@ -40,6 +40,7 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "C8oSDKDoNet.SharedTests", "
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		C8oSDKDoNet.SharedTests\C8oSDKDoNet.SharedTests.projitems*{1f0d5c6e-d47d-430f-9c7f-76d8b8b3718e}*SharedItemsImports = 4
 		C8oFullSyncCbl\C8oFullSyncNet.projitems*{40462f44-8cda-4d8c-b8d4-1da7a0657ec6}*SharedItemsImports = 4
 		C8oPlatforms\C8oPlatforms.projitems*{40462f44-8cda-4d8c-b8d4-1da7a0657ec6}*SharedItemsImports = 4
 		Couchbase.Lite.Shared\Couchbase.Lite.Shared.projitems*{40462f44-8cda-4d8c-b8d4-1da7a0657ec6}*SharedItemsImports = 4
@@ -57,6 +58,8 @@ Global
 		C8oPlatforms\C8oPlatforms.projitems*{bdf9111d-f09a-4213-9721-114434ca73b6}*SharedItemsImports = 13
 		C8oFullSyncCbl\C8oFullSyncNet.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
 		C8oPlatforms\C8oPlatforms.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
+		Couchbase.Lite.Shared\Couchbase.Lite.Shared.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
+		SQLiteCommon\storage.sqlite.common\storage.sqlite.common.projitems*{fad46f42-e48d-45d3-ba42-a27298f0b63b}*SharedItemsImports = 4
 		Couchbase.Lite.Shared\Couchbase.Lite.Shared.projitems*{ff87eed7-5de9-47e9-82f4-d1df659d1dc2}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
