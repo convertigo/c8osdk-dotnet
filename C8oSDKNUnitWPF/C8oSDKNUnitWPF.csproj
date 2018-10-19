@@ -112,37 +112,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Couchbase.Lite">
-      <Version>1.4.1</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Net.Http">
-      <Version>2.2.29</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>8.0.3</Version>
-    </PackageReference>
     <PackageReference Include="NUnit">
       <Version>3.4.1</Version>
     </PackageReference>
     <PackageReference Include="NUnit3TestAdapter">
       <Version>3.4.1</Version>
-    </PackageReference>
-    <PackageReference Include="Scripty.MsBuild">
-      <Version>0.4.0</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="SQLitePCL.native.sqlite3.v110_xp">
-      <Version>0.9.3</Version>
-    </PackageReference>
-    <PackageReference Include="SQLitePCL.raw">
-      <Version>0.9.3</Version>
-    </PackageReference>
-    <PackageReference Include="Stateless">
-      <Version>2.5.80</Version>
-    </PackageReference>
-    <PackageReference Include="UnicodeNormalization">
-      <Version>1.0.4</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
