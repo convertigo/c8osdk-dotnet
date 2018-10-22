@@ -32,6 +32,7 @@ namespace C8oSDKDotNET.Tests.iOS
         {
             // if you want to use a different Application Delegate class from "AppDelegate"
             // you can specify it here.
+            Convertigo.SDK.C8oPlatform.Init();
             UIApplication.Main(args, null, "AppDelegate");
         }
     }
