@@ -1,0 +1,2 @@
+SET ANDROID_HOME=D:\android-sdk
+appcenter test run uitest --app "opic-twinsoft.fr/C8oSDKTESTAndroid" --devices "opic-twinsoft.fr/standard" --app-path C8oSDKDotNet.Tests.Android/bin/Release/C8oSDKDotNet.Tests.Android.apk --test-series "master" --locale "en_US" --build-dir SDKUItest/bin/Release --uitest-tools-dir tools

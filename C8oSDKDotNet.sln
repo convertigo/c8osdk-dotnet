@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		C8oSDK-PCL.shfbproj = C8oSDK-PCL.shfbproj
 		tools\convertigo\component\component.yaml = tools\convertigo\component\component.yaml
 		README.md = README.md
+		tools\runUItests.cmd = tools\runUItests.cmd
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKNUnitWPF", "C8oSDKNUnitWPF\C8oSDKNUnitWPF.csproj", "{1F0D5C6E-D47D-430F-9C7F-76D8B8B3718E}"

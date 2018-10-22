@@ -28,14 +28,17 @@ namespace SDKUItest
         [Test]
         public void WelcomeTextIsDisplayed()
         {
-            AppResult[] results = app.WaitForElement(c => c.Marked("Run Tests"));
+            AppResult[] results;
+
+            results = app.WaitForElement(c => c.Marked("Run Tests"));
             app.Screenshot("Welcome screen.");
 
-            app.Tap("Run Tests");
+            // app.Tap("Run Tests");
+            /*
             results = app.WaitForElement(c => c.Marked("Passed"),
                 "Timeout wating for 'Passed'",
                 new TimeSpan(0, 4, 0)
-            );
+            );*/
 
             Assert.IsTrue(results.Any());
         }

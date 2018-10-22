@@ -2,6 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="15" android:targetSdkVersion="27" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-  <uses-permission android:name="android.permission.INTERNET" />
-  <application></application>
+	<uses-permission android:name="android.permission.INTERNET" />
+	<application></application>
 </manifest>
