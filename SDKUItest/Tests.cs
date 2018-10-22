@@ -32,7 +32,10 @@ namespace SDKUItest
             app.Screenshot("Welcome screen.");
 
             app.Tap("Run Tests");
-            results = app.WaitForElement(c => c.Marked("Passed"));
+            results = app.WaitForElement(c => c.Marked("Passed"),
+                "Timeout wating for 'Passed'",
+                new TimeSpan(0, 4, 0)
+            );
 
             Assert.IsTrue(results.Any());
         }
