@@ -28,8 +28,11 @@ namespace SDKUItest
         [Test]
         public void WelcomeTextIsDisplayed()
         {
-            AppResult[] results = app.WaitForElement(c => c.Marked("Welcome to Xamarin.Forms!"));
+            AppResult[] results = app.WaitForElement(c => c.Marked("Run Tests"));
             app.Screenshot("Welcome screen.");
+
+            app.Tap("Run Tests");
+            results = app.WaitForElement(c => c.Marked("Passed"));
 
             Assert.IsTrue(results.Any());
         }
