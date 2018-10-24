@@ -586,6 +586,7 @@ namespace Convertigo.SDK
                     {
                         chunkFS.Position = 0;
                         chunkFS.CopyTo(createdFileStream, 4096);
+                        createdFileStream.Flush();
                         Debug("Chunk '" + uuid + "_" + i + "' assembled.");
                         retry = 0;
                         await c8oTask.CallJson("fs://.post",
@@ -638,6 +639,7 @@ namespace Convertigo.SDK
                 }
                 Debug("AppendChunk for " + contentPath + " copy");
                 chunkStream.CopyTo(createdFileStream, 4096);
+                createdFileStream.Flush();
                 Debug("AppendChunk for " + contentPath + " copy finished");
 
                 createdFileStream.Position = createdFileStream.Length;

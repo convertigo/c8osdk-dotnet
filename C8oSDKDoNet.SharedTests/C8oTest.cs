@@ -18,7 +18,7 @@ namespace C8oSDKNUnitAndroid
     [TestFixture]
     class C8oTest
     {
-        static readonly string HOST = "c8o-dev.convertigo.net";
+        static readonly string HOST = "c8o.convertigo.net";
         static readonly string PORT = "80";
         static readonly string PROJECT_PATH = "/cems/projects/ClientSDKtesting";
 

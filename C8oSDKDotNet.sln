@@ -20,7 +20,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		C8oFullSyncExtensions.nuspec = C8oFullSyncExtensions.nuspec
 		C8oSDK-PCL.nuspec = C8oSDK-PCL.nuspec
 		C8oSDK-PCL.shfbproj = C8oSDK-PCL.shfbproj
-		tools\convertigo\component\component.yaml = tools\convertigo\component\component.yaml
 		README.md = README.md
 		tools\runUItests.cmd = tools\runUItests.cmd
 	EndProjectSection
@@ -721,9 +720,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7C8F43A8-1789-4ADF-AB87-71A21813548B}
-	EndGlobalSection
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal
