@@ -629,7 +629,15 @@ namespace Convertigo.SDK
             {
                 if (contentPath.StartsWith("http://") || contentPath.StartsWith("https://"))
                 {
+                    Debug("AppendChunk HandleGetRequest " + contentPath);
                     var response = c8o.httpInterface.HandleGetRequest(contentPath, (int) MaxDurationForChunk.TotalMilliseconds).Result;
+                    /*HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(contentPath);
+                    webRequest.Method = "GET";
+                    //webRequest.Timeout = 30000;
+                    var tResponse = webRequest.GetResponseAsync();
+                    tResponse.Wait();
+                    var response = tResponse.Result;*/
+                    Debug("AppendChunk HandleGetRequest " + contentPath + " done!");
                     chunkStream = response.GetResponseStream();
                 }
                 else
@@ -637,10 +645,22 @@ namespace Convertigo.SDK
                     string contentPath2 = UrlToPath(contentPath);
                     chunkStream = fileManager.OpenFile(contentPath2);
                 }
-                Debug("AppendChunk for " + contentPath + " copy");
-                chunkStream.CopyTo(createdFileStream, 4096);
+                Debug("AppendChunk for " + contentPath + " copying...");
+                /*byte[] buffer = new byte[1024 * 1024];
+                using (Stream input = chunkStream)
+                {
+                    //total = input.Length;
+
+                    long size = input.Read(buffer, 0, buffer.Length);
+                    while (size > 0)
+                    {
+                        createdFileStream.Write(buffer, 0, (int)size);
+                        size = input.Read(buffer, 0, buffer.Length);
+                    }
+                }*/
+                chunkStream.CopyTo(createdFileStream, 1024 * 1024);
                 createdFileStream.Flush();
-                Debug("AppendChunk for " + contentPath + " copy finished");
+                Debug("AppendChunk for " + contentPath + " copy finished!");
 
                 createdFileStream.Position = createdFileStream.Length;
             }
@@ -690,7 +710,7 @@ namespace Convertigo.SDK
         {
             if (RaiseDebug != null)
             {
-                RaiseDebug(this, debug);
+                RaiseDebug(this, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + " " + debug);
             }
         }
 

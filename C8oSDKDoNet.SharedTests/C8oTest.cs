@@ -18,10 +18,19 @@ namespace C8oSDKNUnitAndroid
     [TestFixture]
     class C8oTest
     {
+        /*
         static readonly string HOST = "c8o.convertigo.net";
         static readonly string PORT = "80";
         static readonly string PROJECT_PATH = "/cems/projects/ClientSDKtesting";
-
+        */
+        static readonly string HOST = "ci-develop.convertigo.net";
+        static readonly string PORT = "80";
+        static readonly string PROJECT_PATH = "/convertigo/projects/ClientSDKtesting";
+        /*
+        static readonly string HOST = "localhost";
+        static readonly string PORT = "18080";
+        static readonly string PROJECT_PATH = "/convertigo/projects/ClientSDKtesting";
+        */
         /*
         static readonly string HOST = "buildus.twinsoft.fr";
         static readonly string PORT = "28080";
@@ -1381,6 +1390,8 @@ namespace C8oSDKNUnitAndroid
                     json = c8o.CallJson(".LoginTesting").Sync();
                     value = json.SelectToken("document.authenticatedUserID").Value<string>();
                     Assert.AreEqual("testing_user", value);
+                    json = c8o.CallJson("fs://.reset").Sync();
+                    Assert.True(json["ok"].Value<bool>());
                     json = c8o.CallJson("fs://.replicate_pull").Sync();
                     Assert.True(json["ok"].Value<bool>());
                     json = c8o.CallJson("fs://.get", "docid", "456").Sync();
@@ -1828,8 +1839,8 @@ namespace C8oSDKNUnitAndroid
                     json = c8o.CallJson(".qa_fs_push.GetDocument", "_use_docid", "def").Sync();
                     value = json.SelectToken("document.couchdb_output.custom").Value<string>();
                     Assert.AreEqual(id, value);
-                    Assert.True(Regex.IsMatch(livePull, "pull: \\d+/\\d+ \\(live\\)"), "pull: \\d+/\\d+ \\(live\\) for " + livePull);
-                    Assert.True(Regex.IsMatch(livePush, "push: \\d+/\\d+ \\(live\\)"), "push: \\d+/\\d+ \\(live\\) for " + livePush);
+                    Assert.True(Regex.IsMatch(livePull, "pull: \\d+/\\d+ \\((?:live|running)\\)"), "pull: \\d+/\\d+ \\(live\\) for " + livePull);
+                    Assert.True(Regex.IsMatch(livePush, "push: \\d+/\\d+ \\((?:live|running)\\)"), "push: \\d+/\\d+ \\(live\\) for " + livePush);
                 }
                 finally
                 {

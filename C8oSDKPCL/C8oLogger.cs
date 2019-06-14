@@ -135,7 +135,7 @@ namespace Convertigo.SDK
         {
             bool isLogConsole = IsLoggableConsole(logLevel);
             bool isLogRemote = IsLoggableRemote(logLevel);
-
+            System.Diagnostics.Debug.WriteLine("(" + isLogConsole + ") " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + " [" + logLevel.name + "] " + message);
             if (isLogConsole || isLogRemote)
             {
                 if (exception != null)

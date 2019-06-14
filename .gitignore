@@ -345,3 +345,5 @@ ASALocalRun/
 
 # End of https://www.gitignore.io/api/visualstudio
 /XamarinFormsApp
+/nuget.exe
+/C8oSDK-PCL.nuspec.nuspec

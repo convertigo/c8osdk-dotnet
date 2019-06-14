@@ -56,10 +56,13 @@ namespace Convertigo.SDK.Internal
 
         protected async Task<HttpWebResponse> HandleRequest(HttpWebRequest request, int timeout)
         {
+            c8o.Log._Info("HandleRequest FromAsync " + request.RequestUri);
             var task = Task<WebResponse>.Factory.FromAsync(request.BeginGetResponse, request.EndGetResponse, request);
+            c8o.Log._Info("HandleRequest FromAsync done! " + request.RequestUri);
             if (timeout > -1)
             {
                 var taskWithTimeout = await Task.WhenAny(task, Task.Delay(timeout)).ConfigureAwait(false);
+                c8o.Log._Info("HandleRequest WhenAny done!" + request.RequestUri);
                 if (taskWithTimeout is Task<WebResponse>)
                 {
                     return task.Result as HttpWebResponse;
@@ -87,8 +90,10 @@ namespace Convertigo.SDK.Internal
 
         public async Task<HttpWebResponse> HandleGetRequest(string url, int timeout)
         {
+            c8o.Log._Info("HandleGetRequest OnRequestCreate " + url);
             var request = HttpWebRequest.Create(url) as HttpWebRequest;
             OnRequestCreate(request);
+            c8o.Log._Info("HandleGetRequest OnRequestCreate done! " + url);
 
             request.Method = "GET";
             request.Headers["x-convertigo-sdk"] = C8o.GetSdkVersion();
@@ -105,14 +110,17 @@ namespace Convertigo.SDK.Internal
 
         public async Task<HttpWebResponse> HandleRequest(string url, IDictionary<string, object> parameters)
         {
+            c8o.Log._Info("HandleRequest OnRequestCreate " + url);
             var request = HttpWebRequest.Create(url) as HttpWebRequest;
             OnRequestCreate(request);
+            c8o.Log._Info("HandleRequest OnRequestCreate done! " + url);
 
             request.Method = "POST";
             request.Headers["x-convertigo-sdk"] = C8o.GetSdkVersion();
             request.CookieContainer = cookieContainer;
 
             SetRequestEntity(request, parameters);
+            c8o.Log._Info("HandleRequest SetRequestEntity done! " + url);
             HttpWebResponse response = await HandleFirstRequest(request, timeout);
             if (response == null)
             {
