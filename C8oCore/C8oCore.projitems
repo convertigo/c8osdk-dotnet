@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>d022af10-9182-4b85-861b-4072c1b6bc03</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>C8oCore</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)C8o.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oExceptionListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oFileTransfer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oFileTransferBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oFileTransferSettings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oFileTransferStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oFullSyncTranslator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oLocalCache.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oLogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oProgress.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oPromise.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oPromiseFailSync.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oPromiseSync.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oResponseJsonListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oResponseListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oResponseProgressListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oResponseXmlListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oSettings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Delegates.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\C8oCallTask.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\C8oExceptionMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\C8oFileManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\C8oFullSync.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\C8oFullSyncEnum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\C8oFullSyncUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\C8oHttpInterface.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\C8oLocalCacheResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\C8oTranslator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\C8oUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internal\VoidResponse.cs" />
+  </ItemGroup>
+</Project>

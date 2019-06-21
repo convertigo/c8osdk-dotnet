@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>C8oDotNet</id>
+        <version>2.2.11</version>
+        <title>Convertigo Client SDK DotNet</title>
+        <authors>nicolasa@convertigo.com</authors>
+        <owners>Convertigo</owners>
+        <projectUrl>http://www.convertigo.com/convertigo-sdk</projectUrl>
+        <iconUrl>https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSJO-7NGkftreSyo2gVhcO_anvu4FUQ61NVv98py4sNNm0KuckKPQ</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>This package contains everything you need to access the Convertigo Mobile Backend as Service (MBaaS) for extended operations such as using the FullSync technology providing offline data and backend synchronization to enterprise applications for your Xamarin and .NET mobile Apps.</description>
+        <summary>Convertigo MBaaS Extended Client Library for FullSync</summary>
+        <copyright>Convertigo</copyright>
+        <language>en-US</language>
+        <tags>Convertigo, MBaaS, MADP, Mobile, Windows Phone, Xamarin, NoSQL, CouchDB, CouchBase Lite</tags>
+        <dependencies>
+          <group targetFramework=".NETFramework0.0">
+            <dependency id="UnicodeNormalization" version="1.0.4" />
+            <dependency id="Newtonsoft.Json" version="8.0.3" />
+            <dependency id="Microsoft.Net.Http" version="2.2.29" />
+            <dependency id="Couchbase.Lite" version="1.4.1" />
+            <dependency id="Couchbase.Lite.Storage.ForestDB" version="1.4.1" />
+            <dependency id="Couchbase.Lite.Storage.SystemSQLite" version="1.4.1" />
+            <dependency id="Jint" version="2.9.1" />
+          </group>
+
+          <group targetFramework="Xamarin.iOS0.0">
+            <dependency id="UnicodeNormalization" version="1.0.4" />
+            <dependency id="Newtonsoft.Json" version="8.0.3" />
+            <dependency id="Microsoft.Net.Http" version="2.2.29" />
+            <dependency id="Jint" version="2.9.1" />
+            <dependency id="SQLitePCL.raw" version="0.9.3" />
+            <dependency id="SQLitePCL.ugly" version="0.9.3" />
+            <dependency id="System.Configuration.ConfigurationManager" version="4.5.0" />
+            <dependency id="System.Management" version="4.5.0" />
+            <dependency id="SharpZipLib.Portable" version="0.86.0.3" />
+            <dependency id="WebSocketSharp-netstandard" version="1.0.1" />
+            <dependency id="Stateless" version="2.5.53.0" />
+            <dependency id="Couchbase.Lite" version="1.4.1" />
+            <dependency id="Couchbase.Lite.Storage.ForestDB" version="1.4.1" />
+            <dependency id="Couchbase.Lite.Storage.SystemSQLite" version="1.4.1" />
+          </group>
+          
+          <group targetFramework="MonoAndroid0.0">
+            <dependency id="SQLitePCL.raw" version="0.9.3" />
+            <dependency id="SQLitePCL.ugly" version="0.9.3" />
+            <dependency id="Newtonsoft.Json" version="8.0.3" />
+            <dependency id="Stateless" version="2.5.53.0" />
+            <dependency id="SQLitePCL.plugin.sqlite3.android" version="0.9.3" />
+            <dependency id="UnicodeNormalization" version="1.0.4" />
+            <dependency id="Newtonsoft.Json" version="8.0.3" />
+            <dependency id="Microsoft.Net.Http" version="2.2.29" />
+            <dependency id="Jint" version="2.9.1" />
+            <dependency id="SharpZipLib.Portable" version="0.86.0.3" />
+            <dependency id="WebSocketSharp-netstandard" version="1.0.1" />
+            <dependency id="Couchbase.Lite" version="1.4.1" />
+            <dependency id="Couchbase.Lite.Storage.ForestDB" version="1.4.1" />
+            <dependency id="Couchbase.Lite.Storage.SystemSQLite" version="1.4.1" />
+          </group>
+          
+          <group targetFramework="uap">
+              <dependency id="UnicodeNormalization" version="1.0.4" />
+              <dependency id="Newtonsoft.Json" version="8.0.3" />
+              <dependency id="Microsoft.Net.Http" version="2.2.29" />
+            <dependency id="Couchbase.Lite" version="1.4.1" />
+            <dependency id="Couchbase.Lite.Storage.ForestDB" version="1.4.1" />
+            <dependency id="Couchbase.Lite.Storage.SystemSQLite" version="1.4.1" />
+              <dependency id="Jint" version="2.9.1" />
+
+              <dependency id="SQLitePCL.native.sqlite3.v110_xp" version="0.9.3" />
+              <dependency id="SQLitePCL.plugin.sqlite3.net45" version="0.9.3" />
+              <dependency id="SQLitePCL.raw" version="0.9.3" />
+              <dependency id="SQLitePCL.ugly" version="0.9.3" />
+              <dependency id="System.Configuration.ConfigurationManager" version="4.5.0" />
+              <dependency id="System.Management" version="4.5.0" />
+              <dependency id="Stateless" version="2.5.53.0" />
+           </group>
+
+
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="C8oSDKDotNet.Android\bin\Release\C8oSDKDotNet.Android.dll"         target="lib\MonoAndroid\C8oSDKDotNet.Android.dll" />
+        <file src="C8oSDKDotNet.iOS\bin\iPhone\Release\C8oSDKDotNet.iOS.dll"          target="lib\Xamarin.iOS10\C8oSDKDotNet.iOS.dll" />
+        <file src="C8oSDKDotNet.Windows\bin\Release\C8oSDKDotNet.Windows.dll"         target="lib\net45\C8oSDKDotNet.Windows.dll" />
+        <file src="C8oSDKDotNet.UWP\bin\Release\C8oSDKDotNet.UWP.dll"                 target="lib\uap\C8oSDKDotNet.UWP.dll" />
+    </files>
+</package>

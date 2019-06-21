@@ -61,12 +61,6 @@
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\C8oSDKPCL\C8oSDKPCL.csproj">
-      <Project>{1764723d-85b1-4fde-accf-88bb7a3b62a8}</Project>
-      <Name>C8oSDKPCL</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Jint">
       <Version>2.9.1</Version>
     </PackageReference>
@@ -99,6 +93,7 @@
   <Import Project="..\C8oPlatforms\C8oPlatforms.projitems" Label="Shared" />
   <Import Project="..\Couchbase.Lite.Shared\Couchbase.Lite.Shared.projitems" Label="Shared" />
   <Import Project="..\SQLiteCommon\storage.sqlite.common\storage.sqlite.common.projitems" Label="Shared" />
+  <Import Project="..\C8oCore\C8oCore.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
