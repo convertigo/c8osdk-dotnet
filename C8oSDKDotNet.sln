@@ -47,6 +47,7 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "C8oCore", "C8oCore\C8oCore.
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		C8oCore\C8oCore.projitems*{1764723d-85b1-4fde-accf-88bb7a3b62a8}*SharedItemsImports = 4
 		C8oSDKDoNet.SharedTests\C8oSDKDoNet.SharedTests.projitems*{1f0d5c6e-d47d-430f-9c7f-76d8b8b3718e}*SharedItemsImports = 4
 		C8oFullSyncCbl\C8oFullSyncNet.projitems*{40462f44-8cda-4d8c-b8d4-1da7a0657ec6}*SharedItemsImports = 4
 		C8oPlatforms\C8oPlatforms.projitems*{40462f44-8cda-4d8c-b8d4-1da7a0657ec6}*SharedItemsImports = 4
