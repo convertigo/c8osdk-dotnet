@@ -9,7 +9,14 @@
     <Import_RootNamespace>C8oPlatforms</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)C8oFullSyncCbl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oFullSyncCblEnum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oFullSyncCblTranslator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oFullSyncDatabase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)C8oHttpInterfaceSSL.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)C8oPlatformCommon.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)C8oResponseCblListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FullSyncResponses.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)JSViewCompilerCopy.cs" />
   </ItemGroup>
 </Project>

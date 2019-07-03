@@ -103,7 +103,6 @@
     </PackageReference>
   </ItemGroup>
   <Import Project="..\C8oPlatforms\C8oPlatforms.projitems" Label="Shared" />
-  <Import Project="..\C8oFullSyncCbl\C8oFullSyncNet.projitems" Label="Shared" />
   <Import Project="..\Couchbase.Lite.Shared\Couchbase.Lite.Shared.projitems" Label="Shared" />
   <Import Project="..\SQLiteCommon\storage.sqlite.common\storage.sqlite.common.projitems" Label="Shared" />
   <Import Project="..\C8oCore\C8oCore.projitems" Label="Shared" />
