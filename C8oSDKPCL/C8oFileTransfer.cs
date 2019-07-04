@@ -296,9 +296,27 @@ namespace Convertigo.SDK
                     transferStatus.State = C8oFileTransferStatus.StateReplicate;
                     Notify(transferStatus);
 
+                    var semaphore = new SemaphoreSlim(MaxParallelChunkDownload);
+                    Task previous = null;
+
                     for (var i = last; i < transferStatus.Total; i++)
                     {
-                        await DownloadChunk(c8o, createdFileStream, filepath, fsConnector, uuid, i, task, transferStatus);
+                        var my_i = i;
+                        var my_previous = previous;
+                        Debug("waiting semaphore " + my_i);
+                        semaphore.Wait();
+                        Debug("ok semaphore " + my_i);
+                        previous = Task.Factory.StartNew(async () =>
+                        {
+                            await DownloadChunk(c8o, createdFileStream, filepath, fsConnector, uuid, my_i, task, transferStatus, my_previous);
+                            semaphore.Release();
+                            Debug("release semaphore " + my_i);
+                        });
+                    }
+
+                    for (int i = 0; i < MaxParallelChunkDownload; i++)
+                    {
+                        semaphore.Wait();
                     }
                     createdFileStream.Dispose();
                     res = await c8oTask.CallJson("fs://.post",
@@ -444,7 +462,7 @@ namespace Convertigo.SDK
                         catch (Exception e)
                         {
                             Debug("Failed to retrieve the attachment " + i + " due to: [" + e.GetType().Name + "] " + e.Message);
-                            await DownloadChunk(c8o, createdFileStream, filepath, fsConnector, uuid, i, task, transferStatus);
+                            await DownloadChunk(c8o, createdFileStream, filepath, fsConnector, uuid, i, task, transferStatus, null);
                         }
                     }
                     createdFileStream.Dispose();
@@ -523,10 +541,10 @@ namespace Convertigo.SDK
             }
         }
 
-        private async Task DownloadChunk(C8o c8o, Stream createdFileStream, string filepath, string fsConnector, string uuid, int i, JObject task, C8oFileTransferStatus transferStatus)
+        private async Task DownloadChunk(C8o c8o, Stream createdFileStream, string filepath, string fsConnector, string uuid, int i, JObject task, C8oFileTransferStatus transferStatus, Task previous)
         {
             Stream chunkFS = null;
-            var chunkpath = filepath + ".chunk";
+            var chunkpath = filepath + "." + i + ".chunk";
             try
             {
                 var fsurl = c8o.EndpointConvertigo + "/fullsync/" + fsConnector + "/" + uuid + "_" + i;
@@ -584,8 +602,12 @@ namespace Convertigo.SDK
 
                     if (digest.Equals(md5))
                     {
+                        if (previous != null)
+                        {
+                            previous.Wait();
+                        }
                         chunkFS.Position = 0;
-                        chunkFS.CopyTo(createdFileStream, 4096);
+                        chunkFS.CopyTo(createdFileStream, 1024 * 1024);
                         createdFileStream.Flush();
                         Debug("Chunk '" + uuid + "_" + i + "' assembled.");
                         retry = 0;
@@ -629,6 +651,7 @@ namespace Convertigo.SDK
             {
                 if (contentPath.StartsWith("http://") || contentPath.StartsWith("https://"))
                 {
+                    Debug("AppendChunk HandleGetRequest " + contentPath);
                     var response = c8o.httpInterface.HandleGetRequest(contentPath, (int) MaxDurationForChunk.TotalMilliseconds).Result;
                     chunkStream = response.GetResponseStream();
                 }
@@ -637,10 +660,9 @@ namespace Convertigo.SDK
                     string contentPath2 = UrlToPath(contentPath);
                     chunkStream = fileManager.OpenFile(contentPath2);
                 }
-                Debug("AppendChunk for " + contentPath + " copy");
-                chunkStream.CopyTo(createdFileStream, 4096);
+                chunkStream.CopyTo(createdFileStream, 1024 * 1024);
                 createdFileStream.Flush();
-                Debug("AppendChunk for " + contentPath + " copy finished");
+                Debug("AppendChunk for " + contentPath + " copy finished!");
 
                 createdFileStream.Position = createdFileStream.Length;
             }
@@ -690,7 +712,7 @@ namespace Convertigo.SDK
         {
             if (RaiseDebug != null)
             {
-                RaiseDebug(this, debug);
+                RaiseDebug(this, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + " " + debug);
             }
         }
 

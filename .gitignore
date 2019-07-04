@@ -345,3 +345,4 @@ ASALocalRun/
 
 # End of https://www.gitignore.io/api/visualstudio
 /XamarinFormsApp
+/nuget.exe

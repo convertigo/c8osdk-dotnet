@@ -11,6 +11,7 @@ namespace Convertigo.SDK
         protected TimeSpan maxDurationForChunk = TimeSpan.FromMinutes(10);
         protected int maxRunning = 4;
         protected bool useCouchBaseReplication = true;
+        protected int maxParallelChunkDownload = 2;
 
         public string ProjectName
         {
@@ -47,6 +48,11 @@ namespace Convertigo.SDK
             get { return useCouchBaseReplication; }
         }
 
+        public int MaxParallelChunkDownload
+        {
+            get { return maxParallelChunkDownload; }
+        }
+
         public void Copy(C8oFileTransferSettings settings)
         {
             projectName = settings.projectName;
@@ -56,6 +62,7 @@ namespace Convertigo.SDK
             maxDurationForTransferAttempt = settings.maxDurationForTransferAttempt;
             maxDurationForChunk = settings.maxDurationForChunk;
             useCouchBaseReplication = settings.useCouchBaseReplication;
+            maxParallelChunkDownload = settings.maxParallelChunkDownload;
         }
     }
 }

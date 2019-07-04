@@ -70,5 +70,11 @@ namespace Convertigo.SDK
             return this;
         }
 
+        public C8oFileTransferSettings SetMaxParallelChunkDownload(int maxParallelChunkDownload)
+        {
+            this.maxParallelChunkDownload = maxParallelChunkDownload;
+            return this;
+        }
+
     }
 }

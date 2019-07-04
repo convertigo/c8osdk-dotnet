@@ -43,7 +43,6 @@ namespace Convertigo.SDK.Internal
 
             }
 #if !UWP && !__ANDROID__
-            /*
             try
             {
                 Couchbase.Lite.Storage.ForestDB.Plugin.Register();
@@ -52,7 +51,6 @@ namespace Convertigo.SDK.Internal
             {
 
             }
-            */
 #endif
         }
     }
