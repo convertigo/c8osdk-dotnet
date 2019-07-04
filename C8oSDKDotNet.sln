@@ -18,9 +18,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		C8oDotNet.nuspec = C8oDotNet.nuspec
 		C8oSDK-PCL.nuspec = C8oSDK-PCL.nuspec
 		C8oSDK-PCL.shfbproj = C8oSDK-PCL.shfbproj
-		C8oSDK-Platform.nuspec = C8oSDK-Platform.nuspec
 		README.md = README.md
 		tools\runUItests.cmd = tools\runUItests.cmd
+		C8oFullSyncExtensions.nuspec = C8oFullSyncExtensions.nuspec
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8oSDKNUnitWPF", "C8oSDKNUnitWPF\C8oSDKNUnitWPF.csproj", "{1F0D5C6E-D47D-430F-9C7F-76D8B8B3718E}"
